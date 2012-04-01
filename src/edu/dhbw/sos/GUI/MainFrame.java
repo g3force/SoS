@@ -9,6 +9,8 @@
  */
 package edu.dhbw.sos.GUI;
 
+import helper.Messages;
+
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 
@@ -29,37 +31,38 @@ import edu.dhbw.sos.SuperFelix;
  * 
  */
 public class MainFrame extends JFrame implements WindowStateListener {
-	private static final long	serialVersionUID	= -1401997967192989464L;
-	private static final Logger	logger	= Logger.getLogger(MainFrame.class);
+	private static final long		serialVersionUID	= -1401997967192989464L;
+	private static final Logger	logger				= Logger.getLogger(MainFrame.class);
 	private JPanel						contentPane;
 	
+	
 	public MainFrame() {
-		logger.debug("Initializing..."); 
+		logger.debug("Initializing..."); //$NON-NLS-1$
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLocationByPlatform(true);
-		this.setTitle("SoS"); 
+		this.setTitle(Messages.getString("MainFrame.1")); //$NON-NLS-1$
 		this.setVisible(true);
 		this.addWindowStateListener(this);
 		this.setSize(500, 300);
 		
 		// load icon
-//		logger.debug("load icon now"); 
-//		URL iconUrl = getClass().getResource("/res/icons/useacc_logo.png"); 
-//		if (iconUrl != null) {
-//			this.setIconImage(Toolkit.getDefaultToolkit().getImage(iconUrl));
-//		}
-
-		// get a reference to the content pane
-		logger.debug("add content now"); 
-		contentPane = (JPanel) getContentPane();
-//		contentPane.add(mainPanel);
-//		contentPane.add(statusPane, java.awt.BorderLayout.SOUTH);
+		// logger.debug("load icon now");
+		// URL iconUrl = getClass().getResource("/res/icons/useacc_logo.png");
+		// if (iconUrl != null) {
+		// this.setIconImage(Toolkit.getDefaultToolkit().getImage(iconUrl));
+		// }
 		
-	// build GUI
-		logger.debug("pack() now");
+		// get a reference to the content pane
+		logger.debug("add content now"); //$NON-NLS-1$
+		contentPane = (JPanel) getContentPane();
+		// contentPane.add(mainPanel);
+		// contentPane.add(statusPane, java.awt.BorderLayout.SOUTH);
+		
+		// build GUI
+		logger.debug("pack() now"); //$NON-NLS-1$
 		pack();
 		
-		logger.debug("Initialized.");
+		logger.debug("Initialized."); //$NON-NLS-1$
 	}
 	
 	

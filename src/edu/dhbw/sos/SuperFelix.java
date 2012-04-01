@@ -11,8 +11,9 @@ import edu.dhbw.sos.GUI.MainFrame;
 
 
 public class SuperFelix {
-	private static final Logger	logger					= Logger.getLogger(SuperFelix.class);
+	private static final Logger	logger	= Logger.getLogger(SuperFelix.class);
 	private static String			datapath;
+	
 	
 	public SuperFelix() {
 		/*
@@ -33,25 +34,28 @@ public class SuperFelix {
 		
 		// load datapath
 		// works for Windows and Linux... so the data is stored in the systems userdata folder...
-		datapath = System.getProperty("user.home") + "/.t10keyboard"; //$NON-NLS-1$ //$NON-NLS-2$
+		datapath = System.getProperty("user.home") + "/.sos"; //$NON-NLS-1$ //$NON-NLS-2$
 		
 		new MainFrame();
-		logger.info("Keyboard started.");
+		logger.info("Sim of Students started."); //$NON-NLS-1$
 	}
 	
+	
 	/**
-	 * @param args 
+	 * @param args
 	 */
 	public static void main(String[] args) {
 		new SuperFelix();
 	}
 	
+	
 	public static String getDatapath() {
 		return datapath;
 	}
 	
+	
 	public static void setDatapath(String datapath) {
 		SuperFelix.datapath = datapath;
 	}
-
+	
 }
