@@ -9,6 +9,8 @@
  */
 package edu.dhbw.sos.GUI;
 
+import helper.Messages;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.WindowEvent;
@@ -43,7 +45,7 @@ public class MainFrame extends JFrame implements WindowStateListener {
 		logger.debug("Initializing...");
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLocationByPlatform(true);
-		this.setTitle("SoS");
+		this.setTitle(Messages.getString("MainFrame.1"));
 		this.setVisible(true);
 		this.addWindowStateListener(this);
 		this.setPreferredSize(new Dimension(900, 700));
@@ -60,7 +62,7 @@ public class MainFrame extends JFrame implements WindowStateListener {
 		bottomPanel = new BottomPanel();
 		statusBar = new StatusBar();
 		
-		// put BottomPanel and StatusBar in a new Panel 
+		// put BottomPanel and StatusBar in a new Panel
 		JPanel bsPanel = new JPanel();
 		bsPanel.setLayout(new BorderLayout());
 		bsPanel.add(bottomPanel, BorderLayout.NORTH);
@@ -79,7 +81,7 @@ public class MainFrame extends JFrame implements WindowStateListener {
 		logger.debug("pack() now");
 		pack();
 		
-		logger.debug("Initialized.");
+		logger.debug("Initialized."); //$NON-NLS-1$
 	}
 	
 	
