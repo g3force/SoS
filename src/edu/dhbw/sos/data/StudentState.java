@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 6, 2012
- * Author(s): bene
+ * Author(s): Benedikt Zirbes
  * 
  * *********************************************************
  */
@@ -15,7 +15,7 @@ package edu.dhbw.sos.data;
  * Positive values stand for the state while negative values stand for the exact opposite e.g.the state LOUD with a
  * positive value indicates a loud student while with a negative value it indicates a quiet student.
  * 
- * @author bene
+ * @author Benedikt Zirbes
  * 
  */
 public enum StudentState {
