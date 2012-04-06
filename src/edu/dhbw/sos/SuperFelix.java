@@ -1,6 +1,7 @@
 package edu.dhbw.sos;
 
 import java.net.URL;
+import java.util.Locale;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
@@ -35,6 +36,9 @@ public class SuperFelix {
 		// load datapath
 		// works for Windows and Linux... so the data is stored in the systems userdata folder...
 		datapath = System.getProperty("user.home") + "/.sos"; //$NON-NLS-1$ //$NON-NLS-2$
+		
+		// Locale.setDefault(new Locale("en", "EN"));
+		Locale.setDefault(new Locale("de", "DE")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		new MainFrame();
 		logger.info("Sim of Students started."); //$NON-NLS-1$

@@ -31,41 +31,43 @@ import org.apache.log4j.Logger;
  * 
  */
 public class CoursePanel extends JPanel {
-	private static final long	serialVersionUID	= 5542875796802944785L;
+	private static final long		serialVersionUID	= 5542875796802944785L;
 	private static final Logger	logger				= Logger.getLogger(CoursePanel.class);
-	private Shape[][] studentArray;
+	private Shape[][]					studentArray;
 	
 	
 	public CoursePanel() {
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
 	}
 	
+	
 	public void setStudentArray() {
-		int testx=6, testy=5;
+		int testx = 6, testy = 5;
 		float border = 6;
 		float size = 100;
-		float offset_x = 0, offset_y=0;
+		float offset_x = 0, offset_y = 0;
 		Dimension p = this.getSize();
 		logger.debug(p);
-		if(p.height==0 || p.width == 0) {
+		if (p.height == 0 || p.width == 0) {
 			logger.warn("Dimension has a zero value");
 			return;
 		}
-		float ratioA = (float)testx/(float)testy;
-		float ratioB = (float)p.width/(float)p.height;
-		if(ratioA < ratioB) {
+		float ratioA = (float) testx / (float) testy;
+		float ratioB = (float) p.width / (float) p.height;
+		if (ratioA < ratioB) {
 			// TODO
-			size = p.height/testy - (testy+1)/testy*border;
-			offset_x = (p.width-(testx*(size+border)+border))/2;
+			size = p.height / testy - (testy + 1) / testy * border;
+			offset_x = (p.width - (testx * (size + border) + border)) / 2;
 		} else {
-			size = p.width/testx - (testx+1)/testx*border;
-			offset_y = (p.height-(testy*(size+border)+border))/2;
+			size = p.width / testx - (testx + 1) / testx * border;
+			offset_y = (p.height - (testy * (size + border) + border)) / 2;
 		}
-			
+		
 		studentArray = new Shape[testy][testx];
-		for(int x=0;x<studentArray[0].length;x++) {
-			for(int y=0;y<studentArray.length;y++) {
-				studentArray[y][x] = new Ellipse2D.Float(offset_x+x*(size)+(x+1.0f)*border, offset_y+y*(size)+(y+1)*border, size, size);
+		for (int x = 0; x < studentArray[0].length; x++) {
+			for (int y = 0; y < studentArray.length; y++) {
+				studentArray[y][x] = new Ellipse2D.Float(offset_x + x * (size) + (x + 1.0f) * border, offset_y + y * (size)
+						+ (y + 1) * border, size, size);
 			}
 		}
 	}
@@ -74,8 +76,8 @@ public class CoursePanel extends JPanel {
 	public void paint(Graphics g) {
 		setStudentArray();
 		Graphics2D ga = (Graphics2D) g;
-		for(int x=0;x<studentArray[0].length;x++) {
-			for(int y=0;y<studentArray.length;y++) {
+		for (int x = 0; x < studentArray[0].length; x++) {
+			for (int y = 0; y < studentArray.length; y++) {
 				ga.setPaint(Color.green);
 				ga.draw(studentArray[y][x]);
 				ga.fill(studentArray[y][x]);

@@ -22,8 +22,8 @@ import java.util.ResourceBundle;
  * 
  */
 public class Messages {
-	private static final String			BUNDLE_NAME			= "res.lang.messages";
-																																	
+	private static final String			BUNDLE_NAME			= "res.lang.sos";
+	
 	private static final ResourceBundle	RESOURCE_BUNDLE	= ResourceBundle.getBundle(BUNDLE_NAME);
 	
 	
