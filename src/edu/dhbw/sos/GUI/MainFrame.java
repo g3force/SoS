@@ -9,8 +9,6 @@
  */
 package edu.dhbw.sos.GUI;
 
-import helper.Messages;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.WindowEvent;
@@ -21,6 +19,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
+
+import edu.dhbw.sos.helper.Messages;
 
 
 /**
