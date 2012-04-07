@@ -40,14 +40,18 @@ import org.apache.log4j.Logger;
 public class CoursePanel extends JPanel implements MouseListener, MouseMotionListener {
 	private static final long			serialVersionUID	= 5542875796802944785L;
 	private static final Logger		logger				= Logger.getLogger(CoursePanel.class);
+	// how much circle is scaled, when hovered
+	private static final float			scaleHover			= 1.5f;
+	private static final float			scaleSpacing		= 1.2f;
 	private Shape[][]						studentArray;
+	// space between circles
+	private float			spacing;
 	private int								hover_x				= -1;
 	private int								hover_y				= -1;
-	private float							border				= 6;
-	private float							size					= 100;
+	private float							size;
 	private int								testx					= 6, testy = 5;
-	private float							offset_x				= 0, offset_y = 0;
-	private float							scaleFactor			= 0.2f;
+	private float							offset_x, offset_y;
+	private float							border;
 	private LinkedList<Arc2D.Double>	circle;
 	
 	
@@ -69,20 +73,24 @@ public class CoursePanel extends JPanel implements MouseListener, MouseMotionLis
 		float ratioA = (float) testx / (float) testy;
 		float ratioB = (float) p.width / (float) p.height;
 		if (ratioA < ratioB) {
-			size = p.height / testy - (testy + 1) / testy * border;
-			offset_x = (p.width - (testx * (size + border) + border)) / 2;
-			offset_y = 0;
+			size = (p.height) / (scaleHover - 1 + testy + (testy + 1) * (scaleSpacing - 1) / 2);
+			spacing = size * (scaleSpacing - 1) / 2;
+			border = (size * (scaleHover - 1)) / 2;
+			offset_x = (p.width - (testx * (size + spacing) + spacing)) / 2;
+			offset_y = border;
 		} else {
-			size = p.width / testx - (testx + 1) / testx * border;
-			offset_y = (p.height - (testy * (size + border) + border)) / 2;
-			offset_x = 0;
+			size = (p.width) / (scaleHover - 1 + testx + (testx + 1) * (scaleSpacing - 1) / 2);
+			spacing = size * (scaleSpacing - 1) / 2;
+			border = (size * (scaleHover - 1)) / 2;
+			offset_x = border;
+			offset_y = (p.height - (testy * (size + spacing) + spacing)) / 2;
 		}
 		
 		studentArray = new Shape[testy][testx];
 		for (int x = 0; x < studentArray[0].length; x++) {
 			for (int y = 0; y < studentArray.length; y++) {
-				studentArray[y][x] = new Ellipse2D.Float(offset_x + x * (size) + (x + 1.0f) * border, offset_y + y * (size)
-						+ (y + 1) * border, size, size);
+				studentArray[y][x] = new Ellipse2D.Float(offset_x + x * (size) + (x + 1.0f) * spacing, offset_y + y
+						* (size) + (y + 1) * spacing, size, size);
 			}
 		}
 	}
@@ -104,7 +112,7 @@ public class CoursePanel extends JPanel implements MouseListener, MouseMotionLis
 			hover_y = -1;
 		} else {
 			Rectangle2D rect = studentArray[hover_y][hover_x].getBounds2D();
-			float offset = (float) rect.getWidth() * scaleFactor;
+			float offset = ((float) rect.getWidth() * scaleHover - size) / 2;
 			
 			// Arc2D.Double circlePart = new Arc2D.Double(rect.getX() - offset, rect.getY() - offset, rect.getWidth() + 2
 			// * offset, rect.getHeight() + 2 * offset, i / debugCount * 360, 360 / debugCount, Arc2D.PIE);
@@ -112,10 +120,13 @@ public class CoursePanel extends JPanel implements MouseListener, MouseMotionLis
 			circle.clear();
 			int tmpNumber = 5;
 			for (float i = 0; i < tmpNumber; i++) {
-				ga.setPaint((int) i % 2 == 1 ? Color.gray : Color.BLACK);
-				Arc2D.Double pizza = new Arc2D.Double(rect.getX() - offset, rect.getY() - offset, rect.getWidth() + 2 * offset, rect.getHeight() + 2
-						* offset, i / tmpNumber * 360, 360 / tmpNumber, Arc2D.PIE);
+				// ga.setPaint((int) i % 2 == 1 ? Color.gray : Color.BLACK);
+				Arc2D.Double pizza = new Arc2D.Double(rect.getX() - offset, rect.getY() - offset, rect.getWidth() + 2
+						* offset, rect.getHeight() + 2 * offset, i / tmpNumber * 360, 360 / tmpNumber, Arc2D.PIE);
+				ga.setColor(Color.red);
 				ga.fill(pizza);
+				ga.setColor(Color.black);
+				ga.draw(pizza);
 				circle.add(pizza);
 			}
 		}
@@ -134,8 +145,8 @@ public class CoursePanel extends JPanel implements MouseListener, MouseMotionLis
 				|| p.y > (this.getSize().height - offset_y)) {
 			return;
 		}
-		float ratiox = ((float) p.x - offset_x - border) / ((float) this.getSize().width - 2 * offset_x - border);
-		float ratioy = ((float) p.y - offset_y - border) / ((float) this.getSize().height - 2 * offset_y - border);
+		float ratiox = ((float) p.x - offset_x - spacing) / ((float) this.getSize().width - 2 * offset_x - spacing);
+		float ratioy = ((float) p.y - offset_y - spacing) / ((float) this.getSize().height - 2 * offset_y - spacing);
 		hover_x = (int) (ratiox * (float) testx);
 		hover_y = (int) (ratioy * (float) testy);
 		
@@ -150,8 +161,8 @@ public class CoursePanel extends JPanel implements MouseListener, MouseMotionLis
 	public void mouseClicked(MouseEvent e) {
 		// TODO NicolaiO Auto-generated method stub
 		for (Arc2D.Double pizza : circle) {
-			if(pizza.contains(e.getPoint())) {
-				logger.debug("blubb"+pizza);
+			if (pizza.contains(e.getPoint())) {
+				logger.debug("blubb" + pizza);
 				break;
 			}
 		}
