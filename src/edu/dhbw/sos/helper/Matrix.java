@@ -28,7 +28,7 @@ public class Matrix {
 	 * matched with the parameter names in parameters.
 	 * 
 	 * SoS specific: the Matrix object does not ignore values at i, j for i==j. In order to get a correct result, the
-	 * values at positions with i==j in the values parameter have to be 0.
+	 * values at positions with i==j in the values parameter have to be 0 (or 1 ???).
 	 * 
 	 * @param parameters
 	 * @param values
@@ -51,7 +51,14 @@ public class Matrix {
 		}
 	}
 	
-	
+	/**
+	 * Returns the Parameter Object stored at the position x (=row), y (=column).
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 * @author bene
+	 */
 	public Parameter getElementAt(int x, int y) {
 		if (x >= this.matrix.size() || y >= this.matrix.size()) {
 			throw new IllegalArgumentException("Can not accesse value at x or y position larger than matrix size.");
