@@ -32,7 +32,7 @@ public class StudentPanel extends JPanel {
 	
 	public StudentPanel() {
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
-		this.setPreferredSize(new Dimension(200, 0));
+		this.setPreferredSize(new Dimension(200, 150));
 	}
 	
 }

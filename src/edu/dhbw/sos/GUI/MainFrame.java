@@ -37,8 +37,9 @@ public class MainFrame extends JFrame implements WindowStateListener {
 	private JPanel						contentPane;
 	private CoursePanel				coursePanel;
 	private RightPanel				rightPanel;
-	private BottomPanel				bottomPanel;
 	private StatusBar					statusBar;
+	private StudentPanel				studentPanel;
+	private PlanPanel					planPanel;
 	
 	
 	public MainFrame() {
@@ -59,13 +60,15 @@ public class MainFrame extends JFrame implements WindowStateListener {
 		
 		coursePanel = new CoursePanel();
 		rightPanel = new RightPanel();
-		bottomPanel = new BottomPanel();
 		statusBar = new StatusBar();
+		studentPanel = new StudentPanel();
+		planPanel = new PlanPanel();
 		
 		// put BottomPanel and StatusBar in a new Panel
 		JPanel bsPanel = new JPanel();
-		bsPanel.setLayout(new BorderLayout());
-		bsPanel.add(bottomPanel, BorderLayout.NORTH);
+		bsPanel.setLayout(new BorderLayout(5,5));
+		bsPanel.add(studentPanel, BorderLayout.WEST);
+		bsPanel.add(planPanel, BorderLayout.CENTER);
 		bsPanel.add(statusBar, BorderLayout.SOUTH);
 		
 		// add everything to contentPane
