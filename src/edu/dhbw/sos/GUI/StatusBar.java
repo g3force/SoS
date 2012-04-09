@@ -37,7 +37,7 @@ public class StatusBar extends JPanel {
 		lblStatusText.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.add(lblStatusText, BorderLayout.CENTER);
 
-		JLabel lblcopyright = new JLabel("(c) SimSoft");
+		JLabel lblcopyright = new JLabel("© SimSoft");
 		lblcopyright.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.add(lblcopyright, BorderLayout.EAST);
 	}
