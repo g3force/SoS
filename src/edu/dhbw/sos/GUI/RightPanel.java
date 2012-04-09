@@ -11,8 +11,11 @@ package edu.dhbw.sos.GUI;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 
@@ -33,5 +36,19 @@ public class RightPanel extends JPanel {
 	public RightPanel() {
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.setPreferredSize(new Dimension(250, 0));
+		this.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		
+		// drop down list
+		
+		// statistics
+		JPanel statsPanel = new JPanel(new GridLayout(0, 2));
+		
+		for(int i=0;i<5;i++) {
+			statsPanel.add(new JLabel("Test"+i));
+			statsPanel.add(new JLabel(""+i*2));
+		}
+		this.add(statsPanel);
+		// suggestions
+		
 	}
 }

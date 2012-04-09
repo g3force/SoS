@@ -9,6 +9,10 @@
  */
 package edu.dhbw.sos.GUI;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -28,7 +32,14 @@ public class StatusBar extends JPanel {
 	
 	
 	public StatusBar() {
-		this.add(new JLabel("This is the statusbar. It looks really ugly, but that`s Daniels problem :)"));
+		this.setLayout(new BorderLayout(5,0));
+		JLabel lblStatusText = new JLabel("This is the statusbar. It looks really ugly, but that`s Daniels problem :)");
+		lblStatusText.setBorder(BorderFactory.createLineBorder(Color.black));
+		this.add(lblStatusText, BorderLayout.CENTER);
+
+		JLabel lblcopyright = new JLabel("(c) SimSoft");
+		lblcopyright.setBorder(BorderFactory.createLineBorder(Color.black));
+		this.add(lblcopyright, BorderLayout.EAST);
 	}
 	
 }
