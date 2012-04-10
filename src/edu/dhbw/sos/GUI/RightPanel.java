@@ -11,10 +11,11 @@ package edu.dhbw.sos.GUI;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -36,16 +37,26 @@ public class RightPanel extends JPanel {
 	public RightPanel() {
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.setPreferredSize(new Dimension(250, 0));
-		this.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-		
+		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+			
 		// drop down list
+		JPanel courseListPanel = new JPanel();
+		this.add(courseListPanel);
+		String[] petStrings = { "Bird", "Cat", "Dog", "Rabbit", "Pig" };
+		
+		// Create the combo box, select item at index 4.
+		// Indices start at 0, so 4 specifies the pig.
+		JComboBox courseList = new JComboBox(petStrings);
+		courseList.setSelectedIndex(4);
+		// petList.addActionListener(this);
+		courseListPanel.add(courseList);
 		
 		// statistics
 		JPanel statsPanel = new JPanel(new GridLayout(0, 2));
 		
-		for(int i=0;i<5;i++) {
-			statsPanel.add(new JLabel("Test"+i));
-			statsPanel.add(new JLabel(""+i*2));
+		for (int i = 0; i < 5; i++) {
+			statsPanel.add(new JLabel("Test" + i));
+			statsPanel.add(new JLabel("" + i * 2));
 		}
 		this.add(statsPanel);
 		// suggestions
