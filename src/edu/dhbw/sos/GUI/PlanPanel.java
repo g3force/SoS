@@ -14,6 +14,8 @@ import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
+import edu.dhbw.sos.data.GUIData;
+
 
 /**
  * TODO NicolaiO, add comment!
@@ -23,14 +25,21 @@ import javax.swing.JPanel;
  * @author NicolaiO
  * 
  */
-public class PlanPanel extends JPanel {
+public class PlanPanel extends JPanel implements IUpdateable {
 	
 	/**  */
 	private static final long	serialVersionUID	= -1665784555881941508L;
 	
 	
-	public PlanPanel() {
+	public PlanPanel(GUIData data) {
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
+	}
+
+
+	@Override
+	public void update() {
+		// TODO NicolaiO Auto-generated method stub
+		
 	}
 	
 }
