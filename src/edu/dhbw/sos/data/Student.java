@@ -23,7 +23,7 @@ import edu.dhbw.sos.helper.Parameter;
  * @author bene
  * 
  */
-public class Student {
+public class Student implements IPlace {
 	private CalcVector	actualState;
 	private CalcVector	changeVector;
 	
