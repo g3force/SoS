@@ -17,7 +17,7 @@ package edu.dhbw.sos.data;
  * @author NicolaiO
  * 
  */
-public class Student {
+public class Student implements IPlace {
 	// just for testing, can not be done this way, because it should be dynamic
 	private StudentState[]	ss	= { StudentState.LOUD, StudentState.DISTRACTED };
 	

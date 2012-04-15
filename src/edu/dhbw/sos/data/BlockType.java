@@ -11,57 +11,37 @@ package edu.dhbw.sos.data;
 
 /**
  * This enum provides different Block types for a lecture. <br>
- * For each type a value called refreshSpirit is set. This can be used for the Simulation to decide what to do after
- * this block. <br>
- * For each type a value called simActive is set. So that it is known if for this block a simulation can be calculated
- * (for group work or breaks it is useless).
+ * For each type a vektor called simFormulaFactors is set. This is used for simulation formula.<br>
  * 
  * @author andres
  * 
  */
 public enum BlockType {
-	theory(true, 0),
-	group(false, 1),
-	pause(false, 2);
+	theory(0),
+	group(1),
+	exercise(1),
+	pause(2);
 	
-	private boolean	simActive;
-	private int			refreshSpirit;
+	private int	simFormulaFactors; 
 	
 	
-	BlockType(boolean simActive, int refreshSpirit) {
-		this.setSimActive(simActive);
-		this.setRefreshSpirit(refreshSpirit);
+	BlockType(int simFormulaFactors) {
+		this.setSimFormulaFactors(simFormulaFactors);
 	}
 	
 	
 	/**
-	 * @return the refreshSpirit
+	 * @return the simFormulaFactors
 	 */
-	public int getRefreshSpirit() {
-		return refreshSpirit;
+	public int getSimFormulaFactors() {
+		return simFormulaFactors;
 	}
 	
 	
 	/**
 	 * @param refreshSpirit the refreshSpirit to set
 	 */
-	private void setRefreshSpirit(int refreshSpirit) {
-		this.refreshSpirit = refreshSpirit;
-	}
-	
-	
-	/**
-	 * @return the simActive
-	 */
-	public boolean getSimActive() {
-		return simActive;
-	}
-	
-	
-	/**
-	 * @param simActive the simActive to set
-	 */
-	public void setSimActive(boolean simActive) {
-		this.simActive = simActive;
+	private void setSimFormulaFactors(int simFormulaFactors) {
+		this.simFormulaFactors = simFormulaFactors;
 	}
 }
