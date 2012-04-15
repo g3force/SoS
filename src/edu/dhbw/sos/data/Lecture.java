@@ -118,17 +118,18 @@ public class Lecture {
 		setLength(length + timeBlock.getLen());
 	}
 	
+	
 	/**
 	 * This method trims the next lecture of the given index with the value of lengthToTrim. <br>
-	 * If lengthToTrim is greater then the next block, it will be deleted and the method calls itself. 
+	 * If lengthToTrim is greater then the next block, it will be deleted and the method calls itself.
 	 * 
 	 * @param index
 	 * @param lengthToTrim
 	 * @author andres
 	 */
 	private void trimTBlen(int index, int lengthToTrim) {
-		//Wenn das aktuelle Element das letzte ist, wird die verbleibende Zeit zur Gesamtlänge hinzugefügt
-		if (timeBlocks.size() == (index + 1)){
+		// Wenn das aktuelle Element das letzte ist, wird die verbleibende Zeit zur Gesamtlänge hinzugefügt
+		if (timeBlocks.size() == (index + 1)) {
 			length += lengthToTrim;
 			return;
 		}
@@ -138,9 +139,9 @@ public class Lecture {
 			// werden
 			timeBlocks.get(index + 1).setLen(lengthNext - lengthToTrim);
 		} else {
-			// Wenn verschobene Block Länge - neue Block Länge kleiner 0 ist wird der verschobene Blcok gelöscht 
-			timeBlocks.remove(index+1);
-			trimTBlen(index, lengthToTrim-lengthNext);
+			// Wenn verschobene Block Länge - neue Block Länge kleiner 0 ist wird der verschobene Blcok gelöscht
+			timeBlocks.remove(index + 1);
+			trimTBlen(index, lengthToTrim - lengthNext);
 		}
 		return;
 	}
@@ -166,6 +167,18 @@ public class Lecture {
 			time += timeBlocks.get(index).getLen();
 		}
 		return index;
+	}
+	
+	/**
+	 * 
+	 * Get the TimeBlock for a specific time position. 
+	 * 
+	 * @param pos
+	 * @return
+	 * @author andres
+	 */
+	public TimeBlock getTimeBlock(int pos) {
+		return timeBlocks.get(getIndexAtPos(pos));
 	}
 	
 }

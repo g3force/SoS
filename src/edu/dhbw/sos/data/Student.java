@@ -1,10 +1,10 @@
-/* 
+/*
  * *********************************************************
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 6, 2012
  * Author(s): Benedikt Zirbes
- *
+ * 
  * *********************************************************
  */
 package edu.dhbw.sos.data;
@@ -13,6 +13,7 @@ import java.util.LinkedList;
 
 import edu.dhbw.sos.helper.CalcVector;
 import edu.dhbw.sos.helper.Parameter;
+
 
 /**
  * TODO bene, add comment!
@@ -23,13 +24,16 @@ import edu.dhbw.sos.helper.Parameter;
  * 
  */
 public class Student {
-	private CalcVector actualState;
-	private CalcVector changeVector;
+	private CalcVector	actualState;
+	private CalcVector	changeVector;
+	
 	
 	public Student(LinkedList<String> params) {
 		this.actualState = new CalcVector(params);
 		this.changeVector = new CalcVector(params);
 	}
+	
+	
 	/**
 	 * Adds the parameter to the actualState and changeVector of this student.
 	 * 
@@ -43,15 +47,43 @@ public class Student {
 		this.changeVector.addParamToVector(p);
 	}
 	
+	/**
+	 * Returns the actualState of this student to allow further access to it.
+	 * 
+	 * NOTE: this is only for testing. Should be replaced by a separate method in Student.
+	 * 
+	 * @return
+	 * @author bene
+	 */
 	public CalcVector getActualState() {
 		return this.actualState;
 	}
+	
+	/**
+	 * Returns the changeVector of this student to allow further access to it.
+	 * 
+	 * NOTE: this is only for testing. Should be replaced by a separate method in Student.
+	 * 
+	 * @return
+	 * @author bene
+	 */
 	public CalcVector getChangeVector() {
 		return this.changeVector;
 	}
+	
+	
+	/**
+	 * Adds value to the value of the parmeter with name paramName. Returns true if successful and false if a parameter
+	 * with name paramName was not in the vector.
+	 * 
+	 * @param paramName
+	 * @param value
+	 * @return
+	 * @author bene
+	 */
 	public boolean addValueToChangeVector(String paramName, int value) {
 		boolean ret = false;
-		for(int i = 0; i < changeVector.size(); i++) {
+		for (int i = 0; i < changeVector.size(); i++) {
 			if (paramName.compareTo(changeVector.getTypeAt(i)) == 0) {
 				changeVector.setValueAt(i, changeVector.getValueAt(i) + value);
 				ret = true;
@@ -60,8 +92,32 @@ public class Student {
 		}
 		return ret;
 	}
+	
 	public Student deepCopy() {
 		//TODO: a function that makes a deep copy of this object (copying all sub objects)
 		return this;
+	}
+	/**
+	 * Adds value to the value of the parmeter at position index.
+	 * 
+	 * @param index
+	 * @param value
+	 * @return
+	 * @author bene
+	 */
+	public void addValueToChangeVector(int index, int value) {
+		if (index >= changeVector.size()) {
+			throw new IndexOutOfBoundsException();
+		}
+		changeVector.setValueAt(index, changeVector.getValueAt(index) + value);
+	}
+	/**
+	 * Invokes to calculate one step in the simulation.
+	 * The actualState vector will have the newly calculated values afterwards.
+	 * 
+	 * @author bene
+	 */
+	public void step() {
+		
 	}
 }
