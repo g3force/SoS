@@ -11,6 +11,7 @@ package edu.dhbw.sos.data;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map.Entry;
 
 /**
@@ -32,7 +33,12 @@ public class Course {
 				if(i==3||j==4) {
 					students[i][j] = new EmptyPlace();
 				} else {
-					students[i][j] = new Student();
+					LinkedList<String> l = new LinkedList<String>();
+					l.add("Tireness");
+					l.add("Loudness");
+					l.add("Attention");
+					l.add("Quality");
+					students[i][j] = new Student(l);
 				}
 			}
 		}
