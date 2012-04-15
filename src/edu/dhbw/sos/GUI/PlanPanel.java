@@ -20,6 +20,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -30,8 +31,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import edu.dhbw.sos.GUI.components.MoveableBlock;
+import edu.dhbw.sos.GUI.components.MovableBlock;
 import edu.dhbw.sos.data.GUIData;
+import edu.dhbw.sos.data.TimeBlock;
+import edu.dhbw.sos.data.TimeBlocks;
 
 
 /**
@@ -48,9 +51,14 @@ public class PlanPanel extends JPanel implements IUpdateable {
 	private static final long			serialVersionUID	= -1665784555881941508L;
 	private final PlanPanelPaintArea	paintArea;
 	private JLabel							lblSpeed;
+	private TimeBlocks					timeBlocks;
+	private LinkedList<MovableBlock>	movableBlocks;
+	private MovableBlock					moveBlock			= null;
 	
 	
 	public PlanPanel(GUIData data) {
+		timeBlocks = new TimeBlocks(data.getLecture().getTimeBlocks());
+		movableBlocks = new LinkedList<MovableBlock>();
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.setLayout(new BorderLayout());
 		paintArea = new PlanPanelPaintArea();
@@ -107,7 +115,7 @@ public class PlanPanel extends JPanel implements IUpdateable {
 	
 	private class PlanPanelPaintArea extends JPanel implements MouseListener, MouseMotionListener {
 		private static final long	serialVersionUID	= 5194596384018441495L;
-		private MoveableBlock		r;
+		private MovableBlock			r;
 		
 		
 		/**
@@ -116,7 +124,7 @@ public class PlanPanel extends JPanel implements IUpdateable {
 		 * @author NicolaiO
 		 */
 		public PlanPanelPaintArea() {
-			r = new MoveableBlock(new Point(42, 42), new Dimension(100, 30));
+			r = new MovableBlock(new Point(42, 42), new Dimension(100, 30));
 			this.addMouseListener(this);
 			this.addMouseMotionListener(this);
 		}
@@ -140,8 +148,40 @@ public class PlanPanel extends JPanel implements IUpdateable {
 			}
 			
 			// draw block
-			ga.setPaint(Color.red);
-			ga.fill(r);
+			int start = 20;
+			float scaleRatio = (this.getWidth() - start) / timeBlocks.getTotalLength();
+			movableBlocks.clear();
+			for (TimeBlock tb : timeBlocks) {
+				Point location;
+				switch (tb.getType()) {
+					case pause:
+						location = new Point(start, 10);
+						ga.setPaint(Color.red);
+						break;
+					case exercise:
+						location = new Point(start, 40);
+						ga.setPaint(Color.green);
+						break;
+					case group:
+						location = new Point(start, 70);
+						ga.setPaint(Color.blue);
+						break;
+					case theory:
+						location = new Point(start, 100);
+						ga.setPaint(Color.yellow);
+						break;
+					default:
+						location = new Point(start, 130);
+						ga.setPaint(Color.gray);
+				}
+//				if (moveBlock == null) {
+					MovableBlock mb = new MovableBlock(location, new Dimension((int) (tb.getLen() * scaleRatio), 30));
+					movableBlocks.add(mb);
+					ga.fill(mb);
+					System.out.println("start:" + start + " location:" + location + " type:" + tb.getType());
+					start += tb.getLen() * scaleRatio;
+//				}
+			}
 		}
 		
 		
@@ -153,17 +193,21 @@ public class PlanPanel extends JPanel implements IUpdateable {
 		
 		@Override
 		public void mousePressed(MouseEvent e) {
-			if (r.contains(e.getPoint())) {
-				Point relML = new Point(r.x - e.getPoint().x, r.y - e.getPoint().y);
-				r.setRelMouseLocation(relML);
-				r.setMoveable(true);
+			for (MovableBlock mb : movableBlocks) {
+				if (mb.contains(e.getPoint())) {
+					Point relML = new Point(mb.x - e.getPoint().x, mb.y - e.getPoint().y);
+					mb.setRelMouseLocation(relML);
+					mb.setMoveable(true); // obsolete
+					moveBlock = mb;
+				}
 			}
 		}
 		
 		
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			r.setMoveable(false);
+			r.setMoveable(false); // obsolete
+			moveBlock = null;
 		}
 		
 		
@@ -179,8 +223,8 @@ public class PlanPanel extends JPanel implements IUpdateable {
 		
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			if (r.isMoveable()) {
-				r.setLocation(e.getPoint());
+			if (moveBlock != null) {
+				moveBlock.setLocation(e.getPoint());
 				this.repaint();
 			}
 		}

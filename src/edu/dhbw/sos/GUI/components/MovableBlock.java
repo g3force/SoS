@@ -22,7 +22,7 @@ import java.awt.Rectangle;
  * @author NicolaiO
  * 
  */
-public class MoveableBlock extends Rectangle {
+public class MovableBlock extends Rectangle {
 	private static final long	serialVersionUID	= 4199245975719637289L;
 	private boolean				moveable				= false;
 	private Point					relMouseLocation	= new Point();
@@ -33,7 +33,7 @@ public class MoveableBlock extends Rectangle {
 	 * 
 	 * @author NicolaiO
 	 */
-	public MoveableBlock(Dimension size) {
+	public MovableBlock(Dimension size) {
 		super(size);
 	}
 	
@@ -43,7 +43,7 @@ public class MoveableBlock extends Rectangle {
 	 * 
 	 * @author NicolaiO
 	 */
-	public MoveableBlock(Point location, Dimension size) {
+	public MovableBlock(Point location, Dimension size) {
 		super(location, size);
 	}
 	
