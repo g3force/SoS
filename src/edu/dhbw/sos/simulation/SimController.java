@@ -9,18 +9,15 @@
  */
 package edu.dhbw.sos.simulation;
 
-import java.util.LinkedList;
+import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Map.Entry;
 
 import edu.dhbw.sos.GUI.MainFrame;
 import edu.dhbw.sos.data.Course;
 import edu.dhbw.sos.data.GUIData;
 import edu.dhbw.sos.data.IPlace;
-import edu.dhbw.sos.data.StudentState;
-import edu.dhbw.sos.helper.CalcVector;
-import edu.dhbw.sos.helper.Matrix;
+import edu.dhbw.sos.data.Student;
 
 /**
  * controls the simulation
@@ -42,10 +39,6 @@ public class SimController {
 		run();
 	}
 	
-	public StudentState nextState(StudentState oldState) {
-		return null;
-		
-	}
 	public static void main(String[] args) {
 		new SimController(new Course(), new MainFrame(new GUIData()));
 	}
@@ -68,6 +61,13 @@ public class SimController {
 		Entry<Integer, IPlace[][]> donInteraction = course.historyStateInInterval(currentTime-speed, currentTime);
 		if(donInteraction != null) {
 			course.setStudents(donInteraction.getValue());
+		}
+		IPlace[][] oldState = course.getStudents();
+		IPlace[][] newState = new IPlace[oldState.length][oldState[0].length];
+		for(IPlace[] studentsRow:oldState) {
+			for(IPlace student:studentsRow) {
+				Student newStudent = null;
+			}
 		}
 	}
 	
