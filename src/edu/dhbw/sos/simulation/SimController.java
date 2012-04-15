@@ -9,13 +9,15 @@
  */
 package edu.dhbw.sos.simulation;
 
-import java.util.LinkedList;
+import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import edu.dhbw.sos.data.StudentState;
-import edu.dhbw.sos.helper.CalcVector;
-import edu.dhbw.sos.helper.Matrix;
+import edu.dhbw.sos.GUI.MainFrame;
+import edu.dhbw.sos.data.Course;
+import edu.dhbw.sos.data.GUIData;
+import edu.dhbw.sos.data.IPlace;
+import edu.dhbw.sos.data.Student;
 
 /**
  * controls the simulation
@@ -27,35 +29,18 @@ import edu.dhbw.sos.helper.Matrix;
 
 public class SimController {
 	
-	
+	Course course;
+	int currentTime; //in milliseconds from "begin"
+	int speed; //in milliseconds  
 	Timer pulse = new Timer();
-	public SimController() {
-		int[][] array = new int[4][4];
-		for (int i=0; i < array.length;i++) {
-			for (int j = 0; j < array[i].length;j++) {
-				array[i][j]=Integer.parseInt((i+1)+""+(j+1));
-			}
-		}
-		LinkedList<String> l = new LinkedList<String>();
-		l.add("P1");
-		l.add("P2");
-		l.add("P3");
-		l.add("P4");
-		CalcVector v = new CalcVector(l);
-		Matrix m = new Matrix(l, array);
-		v.printCalcVector();
-		v = v.multiplyWithMatrix(m);
-		System.out.println();
-		v.printCalcVector();
+	public SimController(Course course, MainFrame mf) {
+		currentTime = 0;
+		speed = 1000;
 		run();
 	}
 	
-	public StudentState nextState(StudentState oldState) {
-		return null;
-		
-	}
 	public static void main(String[] args) {
-		new SimController();
+		new SimController(new Course(), new MainFrame(new GUIData()));
 	}
 	public void run() {
 		TimerTask simulation = new TimerTask(){
@@ -63,8 +48,7 @@ public class SimController {
 				simulationStep();
 			}
 		};
-		pulse.scheduleAtFixedRate(simulation, 0, 100);
-		
+		pulse.scheduleAtFixedRate(simulation, 0, speed);
 	}
 	
 	public void stop() {
@@ -73,7 +57,41 @@ public class SimController {
 	}
 	
 	private void simulationStep() {
-		
+		currentTime += speed;
+		Entry<Integer, IPlace[][]> donInteraction = course.historyStateInInterval(currentTime-speed, currentTime);
+		if(donInteraction != null) {
+			course.setStudents(donInteraction.getValue());
+		}
+		IPlace[][] oldState = course.getStudents();
+		IPlace[][] newState = new IPlace[oldState.length][oldState[0].length];
+		for(IPlace[] studentsRow:oldState) {
+			for(IPlace student:studentsRow) {
+				Student newStudent = null;
+			}
+		}
+	}
+	
+	public void jumpTo(int time) {
+		currentTime = time;
+		//fetch start state from history
+	}
+	
+	// --- GETTERS and SETTERS ---
+
+	public int getCurrentTime() {
+		return currentTime;
+	}
+
+	public void setCurrentTime(int currentTime) {
+		this.currentTime = currentTime;
+	}
+
+	public int getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(int speed) {
+		this.speed = speed;
 	}
 }
 
