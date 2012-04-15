@@ -39,6 +39,9 @@ public class CalcVector implements Cloneable {
 		}
 		params = (LinkedList<String>) arguments.clone();
 	}
+	public CalcVector(int initSize) {
+		this.vector = new Vector<Parameter>(initSize);
+	}
 	/**
 	 * Appends the Parameter object p to the end of this vector.
 	 * 
@@ -167,9 +170,9 @@ public class CalcVector implements Cloneable {
 	 * Creates an exact clone of this CalcVector with the same values.
 	 */
 	public CalcVector clone() {
-		CalcVector result = new CalcVector(params);
+		CalcVector result = new CalcVector(this.size());
 		for (int i = 0; i < this.size(); i++) {
-			result.vector.get(i).setValue(this.getValueAt(i));
+			result.vector.add(i, new Parameter(this.getTypeAt(i), this.getValueAt(i)));
 		}
 		return result;
 	}
