@@ -15,5 +15,7 @@ package edu.dhbw.sos.data;
  * 
  */
 public class EmptyPlace implements IPlace {
+	public EmptyPlace() {
+	}
 	
 }
