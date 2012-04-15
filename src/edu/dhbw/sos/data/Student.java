@@ -60,4 +60,8 @@ public class Student {
 		}
 		return ret;
 	}
+	public Student deepCopy() {
+		//TODO: a function that makes a deep copy of this object (copying all sub objects)
+		return this;
+	}
 }
