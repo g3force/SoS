@@ -64,9 +64,11 @@ public class SimController {
 		}
 		IPlace[][] oldState = course.getStudents();
 		IPlace[][] newState = new IPlace[oldState.length][oldState[0].length];
-		for(IPlace[] studentsRow:oldState) {
-			for(IPlace student:studentsRow) {
-				Student newStudent = null;
+		for(int i=0; i<oldState.length;i++) {
+			for(int j=0; j<oldState[i].length;j++) {
+				Student newStudent = ((Student)oldState[i][j]).deepCopy();
+				newState[i][j] = (IPlace) newStudent;
+				
 			}
 		}
 	}
