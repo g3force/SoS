@@ -23,9 +23,9 @@ import java.util.Vector;
  * 
  */
 public class GUIData {
-	private Vector<String>				profiles		= new Vector<String>();
+	private Vector<String>						profiles		= new Vector<String>();
 	private LinkedHashMap<String, String>	statistics	= new LinkedHashMap<String, String>();
-	private LinkedList<String>			suggestions	= new LinkedList<String>();
+	private LinkedList<String>					suggestions	= new LinkedList<String>();
 	
 	
 	public GUIData() {
