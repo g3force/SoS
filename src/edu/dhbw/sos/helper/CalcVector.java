@@ -39,6 +39,16 @@ public class CalcVector implements Cloneable {
 		}
 		params = (LinkedList<String>) arguments.clone();
 	}
+	/**
+	 * Appends the Parameter object p to the end of this vector.
+	 * 
+	 * @param p
+	 * @return
+	 * @author bene
+	 */
+	public boolean addParamToVector(Parameter p) {
+		return this.vector.add(p);
+	}
 	
 	
 	/**
@@ -50,6 +60,9 @@ public class CalcVector implements Cloneable {
 	 */
 	public int getValueAt(int index) {
 		return this.vector.get(index).getValue();
+	}
+	public void setValueAt(int index, int value) {
+		this.vector.get(index).setValue(value);
 	}
 	
 	
