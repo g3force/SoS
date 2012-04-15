@@ -23,7 +23,7 @@ import edu.dhbw.sos.helper.Parameter;
  * @author bene
  * 
  */
-public class Student implements IPlace {
+public class Student implements IPlace, Cloneable {
 	private CalcVector	actualState;
 	private CalcVector	changeVector;
 	
@@ -31,6 +31,13 @@ public class Student implements IPlace {
 	public Student(LinkedList<String> params) {
 		this.actualState = new CalcVector(params);
 		this.changeVector = new CalcVector(params);
+	}
+	public Student(int vectorInitSize) {
+		this.actualState = new CalcVector(vectorInitSize);
+		this.changeVector = new CalcVector(vectorInitSize);
+	}
+	private Student() {
+		
 	}
 	
 	
@@ -111,13 +118,10 @@ public class Student implements IPlace {
 		}
 		changeVector.setValueAt(index, changeVector.getValueAt(index) + value);
 	}
-	/**
-	 * Invokes to calculate one step in the simulation.
-	 * The actualState vector will have the newly calculated values afterwards.
-	 * 
-	 * @author bene
-	 */
-	public void step() {
-		
+	public Student clone() {
+		Student ret = new Student();
+		ret.actualState = this.actualState.clone();
+		ret.changeVector = this.changeVector.clone();
+		return ret;
 	}
 }
