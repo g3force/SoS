@@ -9,11 +9,14 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import edu.dhbw.sos.GUI.MainFrame;
+import edu.dhbw.sos.data.GUIData;
 
 
 public class SuperFelix {
 	private static final Logger	logger	= Logger.getLogger(SuperFelix.class);
 	private static String			datapath;
+	private final GUIData data;
+	private final MainFrame mainFrame;
 	
 	
 	public SuperFelix() {
@@ -24,7 +27,7 @@ public class SuperFelix {
 		 * 
 		 * configuration is stored in a config file. If it does not exist, use basic config
 		 */
-		URL logUrl = getClass().getResource("/res/log4j.conf"); //$NON-NLS-1$
+		URL logUrl = getClass().getResource("/res/log4j.conf");
 		if (logUrl != null) {
 			PropertyConfigurator.configure(logUrl);
 		} else {
@@ -35,13 +38,17 @@ public class SuperFelix {
 		
 		// load datapath
 		// works for Windows and Linux... so the data is stored in the systems userdata folder...
-		datapath = System.getProperty("user.home") + "/.sos"; //$NON-NLS-1$ //$NON-NLS-2$
+		datapath = System.getProperty("user.home") + "/.sos";
 		
 		// Locale.setDefault(new Locale("en", "EN"));
-		Locale.setDefault(new Locale("de", "DE")); //$NON-NLS-1$ //$NON-NLS-2$
+		Locale.setDefault(new Locale("de", "DE"));
 		
-		new MainFrame();
-		logger.info("Sim of Students started."); //$NON-NLS-1$
+		// create object for the data to be displayed in GUI
+		// the references will be used to update it afterwards
+		data = new GUIData();
+		mainFrame = new MainFrame(data);
+		mainFrame.update();
+		logger.info("Sim of Students started.");
 	}
 	
 	

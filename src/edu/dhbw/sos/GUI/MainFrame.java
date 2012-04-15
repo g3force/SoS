@@ -10,16 +10,20 @@
 package edu.dhbw.sos.GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
+import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 import org.apache.log4j.Logger;
 
+import edu.dhbw.sos.data.GUIData;
 import edu.dhbw.sos.helper.Messages;
 
 
@@ -31,17 +35,24 @@ import edu.dhbw.sos.helper.Messages;
  * @author NicolaiO
  * 
  */
-public class MainFrame extends JFrame implements WindowStateListener {
-	private static final long		serialVersionUID	= -1401997967192989464L;
-	private static final Logger	logger				= Logger.getLogger(MainFrame.class);
-	private JPanel						contentPane;
-	private CoursePanel				coursePanel;
-	private RightPanel				rightPanel;
-	private BottomPanel				bottomPanel;
-	private StatusBar					statusBar;
+public class MainFrame extends JFrame implements IUpdateable, WindowStateListener {
+	private static final long			serialVersionUID	= -1401997967192989464L;
+	private static final Logger		logger				= Logger.getLogger(MainFrame.class);
+	
+	public static final Border blackBorder = BorderFactory.createLineBorder(Color.black);
+	public static final Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
+	public static final Border compoundBorder = BorderFactory.createCompoundBorder(blackBorder, emptyBorder);
+	
+	private JPanel							contentPane;
+	private CoursePanel					coursePanel;
+	private RightPanel					rightPanel;
+	private StatusBar						statusBar;
+	private StudentPanel					studentPanel;
+	private PlanPanel						planPanel;
+	private LinkedList<IUpdateable>	components			= new LinkedList<IUpdateable>();
 	
 	
-	public MainFrame() {
+	public MainFrame(GUIData data) {
 		logger.debug("Initializing...");
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLocationByPlatform(true);
@@ -57,15 +68,22 @@ public class MainFrame extends JFrame implements WindowStateListener {
 		// this.setIconImage(Toolkit.getDefaultToolkit().getImage(iconUrl));
 		// }
 		
-		coursePanel = new CoursePanel();
-		rightPanel = new RightPanel();
-		bottomPanel = new BottomPanel();
-		statusBar = new StatusBar();
+		coursePanel = new CoursePanel(data);
+		components.add(coursePanel);
+		rightPanel = new RightPanel(data);
+		components.add(rightPanel);
+		statusBar = new StatusBar(data);
+		components.add(statusBar);
+		studentPanel = new StudentPanel(data);
+		components.add(studentPanel);
+		planPanel = new PlanPanel(data);
+		components.add(planPanel);
 		
 		// put BottomPanel and StatusBar in a new Panel
 		JPanel bsPanel = new JPanel();
-		bsPanel.setLayout(new BorderLayout());
-		bsPanel.add(bottomPanel, BorderLayout.NORTH);
+		bsPanel.setLayout(new BorderLayout(5, 5));
+		bsPanel.add(studentPanel, BorderLayout.WEST);
+		bsPanel.add(planPanel, BorderLayout.CENTER);
 		bsPanel.add(statusBar, BorderLayout.SOUTH);
 		
 		// add everything to contentPane
@@ -78,17 +96,23 @@ public class MainFrame extends JFrame implements WindowStateListener {
 		contentPane.add(bsPanel, BorderLayout.SOUTH);
 		
 		// build GUI
-		logger.debug("pack() now");
+		logger.debug("update() and pack() now");
 		pack();
 		
-		logger.debug("Initialized."); //$NON-NLS-1$
+		logger.debug("Initialized.");
 	}
 	
 	
 	@Override
 	public void windowStateChanged(WindowEvent e) {
-		// TODO NicolaiO Auto-generated method stub
-		
+	}
+	
+	
+	@Override
+	public void update() {
+		for (IUpdateable comp : components) {
+			comp.update();
+		}
 	}
 	
 }

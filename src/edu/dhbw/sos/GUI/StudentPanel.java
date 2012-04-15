@@ -15,6 +15,8 @@ import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
+import edu.dhbw.sos.data.GUIData;
+
 
 /**
  * TODO NicolaiO, add comment!
@@ -24,15 +26,22 @@ import javax.swing.JPanel;
  * @author NicolaiO
  * 
  */
-public class StudentPanel extends JPanel {
+public class StudentPanel extends JPanel implements IUpdateable {
 	
 	/**  */
 	private static final long	serialVersionUID	= 722304874911423036L;
 	
 	
-	public StudentPanel() {
+	public StudentPanel(GUIData data) {
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
-		this.setPreferredSize(new Dimension(200, 0));
+		this.setPreferredSize(new Dimension(200, 150));
+	}
+
+
+	@Override
+	public void update() {
+		// TODO NicolaiO Auto-generated method stub
+		
 	}
 	
 }

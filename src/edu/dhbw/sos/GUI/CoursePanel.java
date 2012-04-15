@@ -9,8 +9,11 @@
  */
 package edu.dhbw.sos.GUI;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -23,56 +26,85 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 
+import edu.dhbw.sos.data.GUIData;
+
 
 /**
- * TODO NicolaiO, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
+ * The CoursePanel is the biggest part of the GUI.
+ * It contains the students.
  * 
  * @author NicolaiO
  * 
  */
-public class CoursePanel extends JPanel implements MouseListener, MouseMotionListener {
+public class CoursePanel extends JPanel implements IUpdateable, MouseListener, MouseMotionListener {
 	private static final long			serialVersionUID	= 5542875796802944785L;
 	private static final Logger		logger				= Logger.getLogger(CoursePanel.class);
+	private static final Font			sanSerifFont		= new Font("SanSerif", Font.PLAIN, 12);
 	// how much circle is scaled, when hovered
 	private static final float			scaleHover			= 1.5f;
 	private static final float			scaleSpacing		= 1.2f;
 	private Shape[][]						studentArray;
 	// space between circles
-	private float			spacing;
+	private float							spacing;
+	// diameter of a circle
+	private float							size;
+	/*
+	 * Offset in whole Panel
+	 * Will contain the border and any extra space that can not be filled,
+	 * because the circles should be real circles.
+	 * At least one of the offsets should be exactly equal to border
+	 */
+	private float							offset_x, offset_y;
+	// border size around the border of the panel
+	private float							border;
+	// hover indicates the x and y index within the studentArray for the student
+	// that should be highlighted currently
 	private int								hover_x				= -1;
 	private int								hover_y				= -1;
-	private float							size;
+	// dummy data
 	private int								testx					= 6, testy = 5;
-	private float							offset_x, offset_y;
-	private float							border;
+	// circle consisting of several pizza peaces
 	private LinkedList<Arc2D.Double>	circle;
 	
 	
-	public CoursePanel() {
-		this.setBorder(BorderFactory.createLineBorder(Color.black));
-		this.setLayout(null);
+	/**
+	 * @brief Initialize the CoursePanel
+	 * 
+	 * @param data GUIData
+	 * @author NicolaiO
+	 */
+	public CoursePanel(GUIData data) {
+		this.setBorder(MainFrame.compoundBorder);
+		this.setLayout(new BorderLayout());
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		circle = new LinkedList<Arc2D.Double>();
 	}
 	
 	
+	/**
+	 * 
+	 * TODO NicolaiO, add comment!
+	 * 
+	 * @author NicolaiO
+	 */
 	public void setStudentArray() {
+		// get available size
 		Dimension p = this.getSize();
 		if (p.height == 0 || p.width == 0) {
 			logger.warn("Dimension has a zero value");
 			return;
 		}
+		// compare ratio of x/y from number of circles and from available size
+		// thus we can decide, if the offset has to be vertically or horizontally
 		float ratioA = (float) testx / (float) testy;
 		float ratioB = (float) p.width / (float) p.height;
 		if (ratioA < ratioB) {
+			// Formula, received by doing some equation calculations
 			size = (p.height) / (scaleHover - 1 + testy + (testy + 1) * (scaleSpacing - 1) / 2);
 			spacing = size * (scaleSpacing - 1) / 2;
 			border = (size * (scaleHover - 1)) / 2;
@@ -86,6 +118,7 @@ public class CoursePanel extends JPanel implements MouseListener, MouseMotionLis
 			offset_y = (p.height - (testy * (size + spacing) + spacing)) / 2;
 		}
 		
+		// set the shapes (the circles) orccording to the values calculated above
 		studentArray = new Shape[testy][testx];
 		for (int x = 0; x < studentArray[0].length; x++) {
 			for (int y = 0; y < studentArray.length; y++) {
@@ -96,6 +129,13 @@ public class CoursePanel extends JPanel implements MouseListener, MouseMotionLis
 	}
 	
 	
+	/**
+	 * 
+	 * TODO NicolaiO, add comment!
+	 * 
+	 * @param g
+	 * @author NicolaiO
+	 */
 	public void paint(Graphics g) {
 		setStudentArray();
 		Graphics2D ga = (Graphics2D) g;
@@ -118,7 +158,8 @@ public class CoursePanel extends JPanel implements MouseListener, MouseMotionLis
 			// * offset, rect.getHeight() + 2 * offset, i / debugCount * 360, 360 / debugCount, Arc2D.PIE);
 			
 			circle.clear();
-			int tmpNumber = 5;
+			String[] dummyText = { "aaaaa", "bbbbb", "ccccc", "dddddd" };
+			int tmpNumber = dummyText.length;
 			for (float i = 0; i < tmpNumber; i++) {
 				// ga.setPaint((int) i % 2 == 1 ? Color.gray : Color.BLACK);
 				Arc2D.Double pizza = new Arc2D.Double(rect.getX() - offset, rect.getY() - offset, rect.getWidth() + 2
@@ -127,6 +168,13 @@ public class CoursePanel extends JPanel implements MouseListener, MouseMotionLis
 				ga.fill(pizza);
 				ga.setColor(Color.black);
 				ga.draw(pizza);
+				
+				g.setFont(sanSerifFont);
+				FontMetrics fm = g.getFontMetrics();
+				int w = fm.stringWidth(dummyText[(int)i]);
+				int h = fm.getAscent();
+				g.drawString(dummyText[(int)i], (int)(rect.getX() - offset - (w / 2)), (int)(rect.getY() - offset + (h / 4)));
+				
 				circle.add(pizza);
 			}
 		}
@@ -150,7 +198,6 @@ public class CoursePanel extends JPanel implements MouseListener, MouseMotionLis
 		hover_x = (int) (ratiox * (float) testx);
 		hover_y = (int) (ratioy * (float) testy);
 		
-		
 		// logger.debug((int) (ratiox * (float) testx));
 		// logger.debug((int) (ratioy * (float) testy));
 		this.repaint();
@@ -159,35 +206,27 @@ public class CoursePanel extends JPanel implements MouseListener, MouseMotionLis
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO NicolaiO Auto-generated method stub
 		for (Arc2D.Double pizza : circle) {
 			if (pizza.contains(e.getPoint())) {
-				logger.debug("blubb" + pizza);
+				logger.debug("blubb" + pizza.getAngleStart()/360 * circle.size());
 				break;
 			}
 		}
-		
 	}
 	
 	
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO NicolaiO Auto-generated method stub
-		
 	}
 	
 	
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO NicolaiO Auto-generated method stub
-		
 	}
 	
 	
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO NicolaiO Auto-generated method stub
-		
 	}
 	
 	
@@ -196,5 +235,11 @@ public class CoursePanel extends JPanel implements MouseListener, MouseMotionLis
 		hover_x = -1;
 		hover_y = -1;
 		this.repaint();
+	}
+	
+	
+	@Override
+	public void update() {
+		
 	}
 }
