@@ -247,7 +247,6 @@ public class CoursePanel extends JPanel implements IUpdateable, MouseListener, M
 				int count = properties.size();
 				int arc = 360 / 2 / count;
 				for (int i = 0; i < count; i++) {
-					// ga.setPaint((int) i % 2 == 1 ? Color.gray : Color.BLACK);
 					Arc2D.Double pizza = new Arc2D.Double(rect.getX() - offset, rect.getY() - offset, rect.getWidth() + 2
 							* offset, rect.getHeight() + 2 * offset, (float) i / (float) count * 360, 360 / count,
 							Arc2D.PIE);
@@ -255,14 +254,14 @@ public class CoursePanel extends JPanel implements IUpdateable, MouseListener, M
 						ga.setColor(this.getBackground());
 					} else if(students[hoveredStudent_y][hoveredStudent_x] instanceof Student) {
 						Student stud = (Student) students[hoveredStudent_y][hoveredStudent_x];
-						int red = 70*(i+3);//stud.getActualState().getValueAt(i);
+						int red = (510/100)*stud.getActualState().getValueAt(i);
 						int green = 255;
 						if(red>255) {
 							green -= red-255;
 							red = 255;
 						}
 						if(green<0) green = 0;
-						ga.setColor(new Color(red, green, 0)); // FIXME only experimental yet
+						ga.setColor(new Color(red, green, 0));
 					} else {
 						logger.warn("GUI does not know about IPlace object :o");
 					}
