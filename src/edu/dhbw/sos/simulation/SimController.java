@@ -66,7 +66,7 @@ public class SimController {
 		IPlace[][] newState = new IPlace[oldState.length][oldState[0].length];
 		for(int i=0; i<oldState.length;i++) {
 			for(int j=0; j<oldState[i].length;j++) {
-				Student newStudent = ((Student)oldState[i][j]).deepCopy();
+				Student newStudent = ((Student)oldState[i][j]).clone();
 				newState[i][j] = (IPlace) newStudent;
 				
 			}
