@@ -26,17 +26,35 @@ import edu.dhbw.sos.helper.Parameter;
 public class Student implements IPlace, Cloneable {
 	private CalcVector	actualState;
 	private CalcVector	changeVector;
+	private boolean		isEmpty;
 	
 	
 	public Student(LinkedList<String> params) {
 		this.actualState = new CalcVector(params);
 		this.changeVector = new CalcVector(params);
+		this.isEmpty = false;
+		
 	}
 	
 	
 	public Student(int vectorInitSize) {
 		this.actualState = new CalcVector(vectorInitSize);
 		this.changeVector = new CalcVector(vectorInitSize);
+		this.isEmpty = false;
+	}
+	
+	public Student(LinkedList<String> params, boolean empty) {
+		this.actualState = new CalcVector(params);
+		this.changeVector = new CalcVector(params);
+		this.isEmpty = empty;
+		
+	}
+	
+	
+	public Student(int vectorInitSize, boolean empty) {
+		this.actualState = new CalcVector(vectorInitSize);
+		this.changeVector = new CalcVector(vectorInitSize);
+		this.isEmpty = empty;
 	}
 	
 	
@@ -72,6 +90,7 @@ public class Student implements IPlace, Cloneable {
 	}
 	
 	
+	
 	/**
 	 * Returns the changeVector of this student to allow further access to it.
 	 * 
@@ -82,6 +101,28 @@ public class Student implements IPlace, Cloneable {
 	 */
 	public CalcVector getChangeVector() {
 		return this.changeVector;
+	}
+	
+	
+	/**
+	 * Returns whether the position in course which is represented by this student object is empty or not.
+	 * 
+	 * @return
+	 * @author bene
+	 */
+	public boolean isEmpty() {
+		return this.isEmpty;
+	}
+	
+	
+	/**
+	 * Sets the isEmpty to value
+	 * 
+	 * @param value
+	 * @author bene
+	 */
+	public void setEmpty(boolean value) {
+		this.isEmpty = value;
 	}
 	
 	
@@ -123,10 +164,38 @@ public class Student implements IPlace, Cloneable {
 	}
 	
 	
+	/**
+	 * Returns a string representation of this student object for saving it to a file. Note that only the actualState
+	 * vector and the attribute isEmpty are saved.
+	 * 
+	 * @return
+	 * @author bene
+	 */
+	public String getSaveableString() {
+		String ret = "<student isEmpty=";
+		if (this.isEmpty) {
+			ret += "\"1\">";
+		} else {
+			ret += "\"0\">";
+		}
+		
+		for (int i = 0; i < this.actualState.size(); i++) {
+			ret += "<attribute name=\"" + this.actualState.getTypeAt(i) + "\" value=\"" + this.actualState.getValueAt(i)
+					+ "\"></attribute>";
+		}
+		ret += "</student>";
+		return ret;
+	}
+	
+	
+	/**
+	 * Creates an exact clone of this student object. All values are copied into a completely new object (no references!)
+	 */
 	public Student clone() {
 		Student ret = new Student();
 		ret.actualState = this.actualState.clone();
 		ret.changeVector = this.changeVector.clone();
+		ret.isEmpty = this.isEmpty;
 		return ret;
 	}
 }

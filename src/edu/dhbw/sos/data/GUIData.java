@@ -9,6 +9,7 @@
  */
 package edu.dhbw.sos.data;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Vector;
@@ -23,13 +24,21 @@ import java.util.Vector;
  * 
  */
 public class GUIData {
-	private Vector<String>				profiles		= new Vector<String>();
+	private Vector<String>						profiles		= new Vector<String>();
 	private LinkedHashMap<String, String>	statistics	= new LinkedHashMap<String, String>();
-	private LinkedList<String>			suggestions	= new LinkedList<String>();
+	private LinkedList<String>					suggestions	= new LinkedList<String>();
+	private Lecture lecture;
 	
 	
 	public GUIData() {
 		// dummy data
+		lecture = new Lecture(new Date(), 100);
+		lecture.addTimeBlock(new TimeBlock(10,BlockType.theory));
+		lecture.addTimeBlock(new TimeBlock(20,BlockType.pause));
+		lecture.addTimeBlock(new TimeBlock(30,BlockType.exercise));
+		lecture.addTimeBlock(new TimeBlock(10,BlockType.pause));
+		lecture.addTimeBlock(new TimeBlock(30,BlockType.group));
+		
 		profiles.add("Profile0");
 		profiles.add("Profile1");
 		
@@ -71,5 +80,15 @@ public class GUIData {
 	
 	public void setSuggestions(LinkedList<String> suggestions) {
 		this.suggestions = suggestions;
+	}
+
+
+	public Lecture getLecture() {
+		return lecture;
+	}
+
+
+	public void setLecture(Lecture lecture) {
+		this.lecture = lecture;
 	}
 }

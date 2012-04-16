@@ -19,6 +19,16 @@ public class TimeBlock {
 	private int			len;
 	private BlockType	type;
 	
+	/**
+	 * TODO NicolaiO, add comment!
+	 * 
+	 * @author NicolaiO
+	 */
+	public TimeBlock(int _len, BlockType _type) {
+		len = _len;
+		type = _type;
+	}
+	
 	
 	/**
 	 * @return the length

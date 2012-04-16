@@ -21,7 +21,6 @@ import java.util.Vector;
  */
 public class CalcVector implements Cloneable {
 	private Vector<Parameter>	vector;
-	private LinkedList<String>	params;	// used to store the string list of parameter names
 													
 													
 	/**
@@ -37,7 +36,6 @@ public class CalcVector implements Cloneable {
 		for (int i = 0; i < arguments.size(); i++) {
 			this.vector.add(i, new Parameter(arguments.get(i), 1));
 		}
-		params = (LinkedList<String>) arguments.clone();
 	}
 	public CalcVector(int initSize) {
 		this.vector = new Vector<Parameter>(initSize);
