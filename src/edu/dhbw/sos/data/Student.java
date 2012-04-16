@@ -43,7 +43,6 @@ public class Student implements IPlace, Cloneable {
 		this.isEmpty = false;
 	}
 	
-	
 	public Student(LinkedList<String> params, boolean empty) {
 		this.actualState = new CalcVector(params);
 		this.changeVector = new CalcVector(params);
@@ -89,6 +88,7 @@ public class Student implements IPlace, Cloneable {
 	public CalcVector getActualState() {
 		return this.actualState;
 	}
+	
 	
 	
 	/**
