@@ -14,10 +14,15 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
+import edu.dhbw.sos.course.influence.EInfluenceType;
+import edu.dhbw.sos.course.influence.Influence;
+import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.Lecture;
 import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
+import edu.dhbw.sos.helper.CalcVector;
+import edu.dhbw.sos.helper.Matrix;
 
 /**
  * This class is a data holder for the data belonging to the course
@@ -30,6 +35,7 @@ public class Course {
 	Influence influence;
 	Lecture lecture;
 	HashMap<Integer, IPlace[][]> historyStates;
+	LinkedList<String> l;
 	
 	public Course() {
 		students = new IPlace[5][5];
@@ -38,7 +44,7 @@ public class Course {
 				if(i==3||j==4) {
 					students[i][j] = new EmptyPlace();
 				} else {
-					LinkedList<String> l = new LinkedList<String>();
+					l = new LinkedList<String>();
 					l.add("Tireness");
 					l.add("Loudness");
 					l.add("Attention");
@@ -89,17 +95,61 @@ public class Course {
 			if (donInteraction != null) {
 				students = donInteraction.getValue();
 			}
-			
+			//the new array for the calculated students
 			IPlace[][] newState = new IPlace[students.length][students[0].length];
+			
+			//student independent calculations
+			CalcVector preChangeVector = new CalcVector(l);
+			
+			// - - - breakReaction -> inf(Break) * breakInf
+			double breakInf = 0.01;
+			if(lecture.getTimeBlock(currentTime/1000).getType() == BlockType.pause) {
+				preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.BREAK_REACTION, breakInf));
+			}
+			
+			// - - - timeDending -> inf(Time) * currentTime/1000 * timeInf
+			double timeInf = 0.001;
+			double timeTimeInf = timeInf * currentTime / 1000;
+			preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.TIME_DEPENDING, timeTimeInf));
 			
 			// iterate over all students
 			for (int i = 0; i < students.length; i++) {
 				for (int j = 0; j < students[i].length; j++) {
 					Student newStudent = ((Student) students[i][j]).clone();
 					newState[i][j] = (IPlace) newStudent;
+					
 					// calculation
+					CalcVector changeVector = new CalcVector(l);
+					changeVector.addCalcVector(preChangeVector);
+					
+					// - influence
+					// - - environment
+					// - - - neighbor -> inf(Neighbor) * state(studentLeft) * neighbor + inf(Neighbor) * state(studentRight) * neighbor
+					double neighborInf = 0.0001;
+					if(j>0) {
+						changeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.BREAK_REACTION, neighborInf));
+								//TODO: A function to multiply two vectors (each value with each other)
+								//.multiplyWithMatrix(new Matrix(l, ((Student)students[i][j-1]).getActualState().getValues()));
+					}
+					
+					// - - parameter
+					double parameterInf = 0.001;
+					changeVector.addCalcVector(influence.getInfluencedParameterVector(newStudent.getActualState(), parameterInf));
+					
+					// - usual behavior of the student -> usualBehav * timeInf
+					double behaviorInf = 0.001;
+					CalcVector temp = new CalcVector(l);
+					newStudent.getActualState().addCalcVector(newStudent.getChangeVector().clone().multiplyWithDouble(behaviorInf));
+					
+					//adds the changes stored in the changeVector to the new student
+					newStudent.getActualState().addCalcVector(changeVector);
+					
+					//time depending
+					//TODO: bring all values to an average value by time
 				}
 			}
+			//give the reference from newState to real students array
+			students = newState;
 	}
 	
 	// --- GETTERS and SETTERS ---
@@ -127,4 +177,5 @@ public class Course {
 	public void setLecture(Lecture lecture) {
 		this.lecture = lecture;
 	}
+
 }
