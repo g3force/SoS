@@ -22,7 +22,6 @@ import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
 import edu.dhbw.sos.helper.CalcVector;
-import edu.dhbw.sos.helper.Matrix;
 
 /**
  * This class is a data holder for the data belonging to the course
@@ -30,26 +29,26 @@ import edu.dhbw.sos.helper.Matrix;
  * @author DirkK
  */
 public class Course {
-	
-	IPlace[][] students;
-	Influence influence;
-	Lecture lecture;
-	HashMap<Integer, IPlace[][]> historyStates;
-	LinkedList<String> l;
+	private IPlace[][] students;
+	private Influence influence;
+	private Lecture lecture;
+	private HashMap<Integer, IPlace[][]> historyStates;
+	private LinkedList<String> properties;
 	
 	public Course() {
-		students = new IPlace[5][5];
-		for (int i=0; i < 5;i++) {
-			for (int j = 0; j < 5;j++) {
-				if(i==3||j==4) {
-					students[i][j] = new EmptyPlace();
+		students = new IPlace[5][7];
+		properties = new LinkedList<String>();
+		properties.add("Tireness");
+		properties.add("Loudness");
+		properties.add("Attention");
+		properties.add("Quality");
+		for (int y=0; y < 5;y++) {
+			for (int x = 0; x < 7;x++) {
+				if(y==3||x==4) {
+					students[y][x] = new EmptyPlace();
 				} else {
-					l = new LinkedList<String>();
-					l.add("Tireness");
-					l.add("Loudness");
-					l.add("Attention");
-					l.add("Quality");
-					students[i][j] = new Student(l);
+					students[y][x] = new Student(properties);
+//					((Student)students[y][x]).
 				}
 			}
 		}
@@ -99,7 +98,7 @@ public class Course {
 			IPlace[][] newState = new IPlace[students.length][students[0].length];
 			
 			//student independent calculations
-			CalcVector preChangeVector = new CalcVector(l);
+			CalcVector preChangeVector = new CalcVector(properties);
 			
 			// - - - breakReaction -> inf(Break) * breakInf
 			double breakInf = 0.01;
@@ -119,7 +118,7 @@ public class Course {
 					newState[i][j] = (IPlace) newStudent;
 					
 					// calculation
-					CalcVector changeVector = new CalcVector(l);
+					CalcVector changeVector = new CalcVector(properties);
 					changeVector.addCalcVector(preChangeVector);
 					
 					// - influence
@@ -138,7 +137,7 @@ public class Course {
 					
 					// - usual behavior of the student -> usualBehav * timeInf
 					double behaviorInf = 0.001;
-					CalcVector temp = new CalcVector(l);
+					CalcVector temp = new CalcVector(properties);
 					newStudent.getActualState().addCalcVector(newStudent.getChangeVector().clone().multiplyWithDouble(behaviorInf));
 					
 					//adds the changes stored in the changeVector to the new student
@@ -176,6 +175,14 @@ public class Course {
 
 	public void setLecture(Lecture lecture) {
 		this.lecture = lecture;
+	}
+
+	public LinkedList<String> getProperties() {
+		return properties;
+	}
+
+	public void setProperties(LinkedList<String> properties) {
+		this.properties = properties;
 	}
 
 }
