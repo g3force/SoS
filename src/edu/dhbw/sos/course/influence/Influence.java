@@ -7,7 +7,7 @@
  *
  * *********************************************************
  */
-package edu.dhbw.sos.course;
+package edu.dhbw.sos.course.influence;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -26,7 +26,7 @@ import edu.dhbw.sos.helper.Matrix;
 public class Influence {
 	
 	Matrix parameterInfl; 
-	HashMap<String, CalcVector> environmentalInfl;
+	HashMap<EInfluenceType, CalcVector> environmentalInfl;
 	
 	public Influence() {
 		int[][] array = new int[4][4];
@@ -41,9 +41,27 @@ public class Influence {
 		l.add("Attention");
 		l.add("Quality");
 		parameterInfl = new Matrix(l, array);
-		environmentalInfl = new HashMap<String, CalcVector>();
-		environmentalInfl.put("neighbour" , new CalcVector(l));
-		environmentalInfl.put("breakReaction" , new CalcVector(l));
-		environmentalInfl.put("timeDending" , new CalcVector(l));
+		environmentalInfl = new HashMap<EInfluenceType, CalcVector>();
+		environmentalInfl.put(EInfluenceType.NEIGHBOR , new CalcVector(l));
+		environmentalInfl.put(EInfluenceType.BREAK_REACTION , new CalcVector(l));
+		environmentalInfl.put(EInfluenceType.TIME_DEPENDING , new CalcVector(l));
 	}
+	
+	public CalcVector getEnvironmentVector(EInfluenceType type, double times) {
+		return getEnvironmentVector(type).multiplyWithDouble(times);
+	}
+	
+	public CalcVector getEnvironmentVector(EInfluenceType type) {
+		return environmentalInfl.get(type).clone();
+	}
+	
+	public CalcVector getInfluencedParameterVector(CalcVector toInfluence, double times) {
+		return getInfluencedParameterVector(toInfluence).multiplyWithDouble(times);
+	}
+	
+	public CalcVector getInfluencedParameterVector(CalcVector toInfluence) {
+		return toInfluence.multiplyWithMatrix(parameterInfl);
+	}
+	
+	
 }
