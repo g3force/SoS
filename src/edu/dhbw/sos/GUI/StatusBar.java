@@ -16,7 +16,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import edu.dhbw.sos.data.GUIData;
 
 
 /**

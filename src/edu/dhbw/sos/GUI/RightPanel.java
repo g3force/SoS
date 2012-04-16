@@ -31,7 +31,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import edu.dhbw.sos.data.GUIData;
 import edu.dhbw.sos.helper.Messages;
 
 

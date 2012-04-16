@@ -8,8 +8,8 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import edu.dhbw.sos.GUI.GUIData;
 import edu.dhbw.sos.GUI.MainFrame;
-import edu.dhbw.sos.data.GUIData;
 
 
 public class SuperFelix {

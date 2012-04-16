@@ -9,15 +9,11 @@
  */
 package edu.dhbw.sos.simulation;
 
-import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import edu.dhbw.sos.GUI.MainFrame;
 import edu.dhbw.sos.course.Course;
-import edu.dhbw.sos.course.student.IPlace;
-import edu.dhbw.sos.course.student.Student;
-import edu.dhbw.sos.data.GUIData;
 
 
 /**
@@ -71,23 +67,7 @@ public class SimController {
 	private void simulationStep() {
 		currentTime += speed;
 		
-		// check if there was an interaction from the don
-		Entry<Integer, IPlace[][]> donInteraction = course.historyStateInInterval(currentTime - speed, currentTime);
-		if (donInteraction != null) {
-			course.setStudents(donInteraction.getValue());
-		}
 		
-		IPlace[][] oldState = course.getStudents();
-		IPlace[][] newState = new IPlace[oldState.length][oldState[0].length];
-		
-		// iterate over all students
-		for (int i = 0; i < oldState.length; i++) {
-			for (int j = 0; j < oldState[i].length; j++) {
-				Student newStudent = ((Student) oldState[i][j]).clone();
-				newState[i][j] = (IPlace) newStudent;
-				// calculation
-			}
-		}
 	}
 	
 	

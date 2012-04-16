@@ -11,7 +11,6 @@ package edu.dhbw.sos.course;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Vector;
 
 import edu.dhbw.sos.helper.CalcVector;
 import edu.dhbw.sos.helper.Matrix;

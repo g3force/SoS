@@ -30,7 +30,6 @@ import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 
-import edu.dhbw.sos.data.GUIData;
 
 
 /**

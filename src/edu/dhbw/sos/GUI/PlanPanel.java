@@ -34,7 +34,6 @@ import javax.swing.SwingConstants;
 import edu.dhbw.sos.GUI.components.MovableBlock;
 import edu.dhbw.sos.course.lecture.TimeBlock;
 import edu.dhbw.sos.course.lecture.TimeBlocks;
-import edu.dhbw.sos.data.GUIData;
 
 
 /**

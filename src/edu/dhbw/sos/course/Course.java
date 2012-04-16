@@ -83,6 +83,25 @@ public class Course {
 		return latest;
 	}
 	
+	public void simulationStep(int currentTime, int speed) {
+		// check if there was an interaction from the don
+			Entry<Integer, IPlace[][]> donInteraction = historyStateInInterval(currentTime - speed, currentTime);
+			if (donInteraction != null) {
+				students = donInteraction.getValue();
+			}
+			
+			IPlace[][] newState = new IPlace[students.length][students[0].length];
+			
+			// iterate over all students
+			for (int i = 0; i < students.length; i++) {
+				for (int j = 0; j < students[i].length; j++) {
+					Student newStudent = ((Student) students[i][j]).clone();
+					newState[i][j] = (IPlace) newStudent;
+					// calculation
+				}
+			}
+	}
+	
 	// --- GETTERS and SETTERS ---
 	
 	public IPlace[][] getStudents() {
