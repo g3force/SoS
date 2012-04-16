@@ -30,7 +30,6 @@ public class CalcVector implements Cloneable {
 	 * @param arguments A List of all Parameters
 	 * @author bene
 	 */
-	@SuppressWarnings("unchecked")
 	public CalcVector(LinkedList<String> arguments) {
 		this.vector = new Vector<Parameter>(arguments.size());
 		for (int i = 0; i < arguments.size(); i++) {
@@ -99,11 +98,10 @@ public class CalcVector implements Cloneable {
 	 * @author bene
 	 */
 	public CalcVector multiplyWithInteger(int constant) {
-		CalcVector result = new CalcVector(this.params);
 		for (int i = 0; i < this.size(); i++) {
-			result.vector.get(i).setValue(this.getValueAt(i) * constant);
+			this.vector.get(i).setValue(this.getValueAt(i) * constant);
 		}
-		return result;
+		return this;
 	}
 	
 	
@@ -116,11 +114,10 @@ public class CalcVector implements Cloneable {
 	 * @author bene
 	 */
 	public CalcVector multiplyWithDouble(double constant) {
-		CalcVector result = new CalcVector(this.params);
 		for (int i = 0; i < this.size(); i++) {
-			result.vector.get(i).setValue((int) (this.getValueAt(i) * constant));
+			this.vector.get(i).setValue((int) (this.getValueAt(i) * constant));
 		}
-		return result;
+		return this;
 	}
 	
 	/**
@@ -132,15 +129,14 @@ public class CalcVector implements Cloneable {
 	 * @author bene
 	 */
 	public CalcVector multiplyWithMatrix(Matrix m) {
-		CalcVector result = new CalcVector(this.params);
 		for (int i = 0; i < this.size(); i++) {
 			int value = 0;
-			for (int j = 0; j < result.size(); j++) {
+			for (int j = 0; j < this.size(); j++) {
 				value += this.getValueAt(i) * m.getElementAt(i, j).getValue();
 			}
-			result.vector.get(i).setValue(value);
+			this.vector.get(i).setValue(value);
 		}
-		return result;
+		return this;
 	}
 	
 	
@@ -156,11 +152,10 @@ public class CalcVector implements Cloneable {
 		if (v.size() != this.size()) {
 			throw new IllegalArgumentException("Can not add vectors with different sizes.");
 		}
-		CalcVector result = new CalcVector(this.params);
 		for (int i = 0; i < this.size(); i++) {
-			result.vector.get(i).setValue(this.getValueAt(i) + v.getValueAt(i));
+			this.vector.get(i).setValue(this.getValueAt(i) + v.getValueAt(i));
 		}
-		return result;
+		return this;
 	}
 	
 	
