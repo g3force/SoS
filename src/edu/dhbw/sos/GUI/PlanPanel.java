@@ -46,19 +46,16 @@ import edu.dhbw.sos.data.TimeBlocks;
  * 
  */
 public class PlanPanel extends JPanel implements IUpdateable {
-	
-	/**  */
 	private static final long			serialVersionUID	= -1665784555881941508L;
 	private final PlanPanelPaintArea	paintArea;
 	private JLabel							lblSpeed;
 	private TimeBlocks					timeBlocks;
-	private LinkedList<MovableBlock>	movableBlocks;
-	private MovableBlock					moveBlock			= null;
+	private LinkedList<MovableBlock>	movableBlocks = new LinkedList<MovableBlock>();
+	private MovableBlock					moveBlock = null;
 	
 	
 	public PlanPanel(GUIData data) {
 		timeBlocks = new TimeBlocks(data.getLecture().getTimeBlocks());
-		movableBlocks = new LinkedList<MovableBlock>();
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.setLayout(new BorderLayout());
 		paintArea = new PlanPanelPaintArea();
@@ -105,17 +102,58 @@ public class PlanPanel extends JPanel implements IUpdateable {
 		sidePanel.add(lblFromTo);
 		sidePanel.add(txtFrom);
 		sidePanel.add(txtTo);
+		
+	}
+	
+	
+	private void initMovableBlocks() {
+		movableBlocks = new LinkedList<MovableBlock>();
+		int start = 20;
+		float scaleRatio = (paintArea.getWidth() - start) / timeBlocks.getTotalLength();
+		System.out.println("sr:"+scaleRatio+"paw:"+paintArea.getWidth());
+		for (TimeBlock tb : timeBlocks) {
+			Point location;
+			Color color;
+			switch (tb.getType()) {
+				case pause:
+					location = new Point(start, 10);
+					color = Color.red;
+					break;
+				case exercise:
+					location = new Point(start, 40);
+					color = Color.green;
+					break;
+				case group:
+					location = new Point(start, 70);
+					color = Color.blue;
+					break;
+				case theory:
+					location = new Point(start, 100);
+					color = Color.yellow;
+					break;
+				default:
+					location = new Point(start, 130);
+					color = Color.gray;
+			}
+			MovableBlock mb = new MovableBlock(location, new Dimension((int) (tb.getLen() * scaleRatio), 30), color, tb);
+			movableBlocks.add(mb);
+			System.out.println("start:" + start + " location:" + location + " type:" + tb.getType());
+			start += tb.getLen() * scaleRatio;
+		}
 	}
 	
 	
 	@Override
 	public void update() {
-		
+		initMovableBlocks();
+		paintArea.repaint(); // FIXME should not be needed
 	}
 	
 	private class PlanPanelPaintArea extends JPanel implements MouseListener, MouseMotionListener {
 		private static final long	serialVersionUID	= 5194596384018441495L;
-		private MovableBlock			r;
+		
+		
+		// private MovableBlock r;
 		
 		
 		/**
@@ -124,7 +162,7 @@ public class PlanPanel extends JPanel implements IUpdateable {
 		 * @author NicolaiO
 		 */
 		public PlanPanelPaintArea() {
-			r = new MovableBlock(new Point(42, 42), new Dimension(100, 30));
+			// r = new MovableBlock(new Point(42, 42), new Dimension(100, 30));
 			this.addMouseListener(this);
 			this.addMouseMotionListener(this);
 		}
@@ -148,38 +186,12 @@ public class PlanPanel extends JPanel implements IUpdateable {
 			}
 			
 			// draw block
-			int start = 20;
-			float scaleRatio = (this.getWidth() - start) / timeBlocks.getTotalLength();
-			movableBlocks.clear();
-			for (TimeBlock tb : timeBlocks) {
-				Point location;
-				switch (tb.getType()) {
-					case pause:
-						location = new Point(start, 10);
-						ga.setPaint(Color.red);
-						break;
-					case exercise:
-						location = new Point(start, 40);
-						ga.setPaint(Color.green);
-						break;
-					case group:
-						location = new Point(start, 70);
-						ga.setPaint(Color.blue);
-						break;
-					case theory:
-						location = new Point(start, 100);
-						ga.setPaint(Color.yellow);
-						break;
-					default:
-						location = new Point(start, 130);
-						ga.setPaint(Color.gray);
-				}
-//				if (moveBlock == null) {
-					MovableBlock mb = new MovableBlock(location, new Dimension((int) (tb.getLen() * scaleRatio), 30));
-					movableBlocks.add(mb);
+			for (MovableBlock mb : movableBlocks) {
+//				if (mb == moveBlock) {
+//					
+//				} else {
+					ga.setPaint(mb.getColor());
 					ga.fill(mb);
-					System.out.println("start:" + start + " location:" + location + " type:" + tb.getType());
-					start += tb.getLen() * scaleRatio;
 //				}
 			}
 		}
@@ -206,7 +218,7 @@ public class PlanPanel extends JPanel implements IUpdateable {
 		
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			r.setMoveable(false); // obsolete
+//			r.setMoveable(false); // obsolete
 			moveBlock = null;
 		}
 		
