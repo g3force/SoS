@@ -32,10 +32,14 @@ public class Student implements IPlace, Cloneable {
 		this.actualState = new CalcVector(params);
 		this.changeVector = new CalcVector(params);
 	}
+	
+	
 	public Student(int vectorInitSize) {
 		this.actualState = new CalcVector(vectorInitSize);
 		this.changeVector = new CalcVector(vectorInitSize);
 	}
+	
+	
 	private Student() {
 		
 	}
@@ -54,6 +58,7 @@ public class Student implements IPlace, Cloneable {
 		this.changeVector.addParamToVector(p);
 	}
 	
+	
 	/**
 	 * Returns the actualState of this student to allow further access to it.
 	 * 
@@ -65,6 +70,7 @@ public class Student implements IPlace, Cloneable {
 	public CalcVector getActualState() {
 		return this.actualState;
 	}
+	
 	
 	/**
 	 * Returns the changeVector of this student to allow further access to it.
@@ -100,10 +106,7 @@ public class Student implements IPlace, Cloneable {
 		return ret;
 	}
 	
-	public Student deepCopy() {
-		//TODO: a function that makes a deep copy of this object (copying all sub objects)
-		return this;
-	}
+	
 	/**
 	 * Adds value to the value of the parmeter at position index.
 	 * 
@@ -118,6 +121,8 @@ public class Student implements IPlace, Cloneable {
 		}
 		changeVector.setValueAt(index, changeVector.getValueAt(index) + value);
 	}
+	
+	
 	public Student clone() {
 		Student ret = new Student();
 		ret.actualState = this.actualState.clone();
