@@ -7,10 +7,11 @@
  * 
  * *********************************************************
  */
-package edu.dhbw.sos.data;
+package edu.dhbw.sos.course.lecture;
 
 import java.util.Date;
 import java.util.LinkedList;
+
 
 
 /**
@@ -30,14 +31,14 @@ public class Lecture {
 	private LinkedList<TimeBlock>	timeBlocks;
 	
 	
-	Lecture(Date start, long length) {
+	public Lecture(Date start, long length) {
 		this.start = start;
 		this.length = length;
 		this.timeBlocks = new LinkedList<TimeBlock>();
 	}
 	
 	
-	Lecture(Date start, LinkedList<TimeBlock> timeBlocks) {
+	public Lecture(Date start, LinkedList<TimeBlock> timeBlocks) {
 		this.start = start;
 		setTimeBlocks(timeBlocks);
 	}

@@ -14,6 +14,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Vector;
 
+import edu.dhbw.sos.course.lecture.BlockType;
+import edu.dhbw.sos.course.lecture.Lecture;
+import edu.dhbw.sos.course.lecture.TimeBlock;
+
 
 /**
  * This class stores all objects, that are given to the GUI to display the corresponding data.

@@ -7,7 +7,7 @@
  *
  * *********************************************************
  */
-package edu.dhbw.sos.data;
+package edu.dhbw.sos.course.lecture;
 
 import java.util.LinkedList;
 

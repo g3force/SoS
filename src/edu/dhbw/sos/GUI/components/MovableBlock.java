@@ -14,7 +14,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import edu.dhbw.sos.data.TimeBlock;
+import edu.dhbw.sos.course.lecture.TimeBlock;
 
 
 /**

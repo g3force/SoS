@@ -7,12 +7,17 @@
  *
  * *********************************************************
  */
-package edu.dhbw.sos.data;
+package edu.dhbw.sos.course;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
+
+import edu.dhbw.sos.course.lecture.Lecture;
+import edu.dhbw.sos.course.student.EmptyPlace;
+import edu.dhbw.sos.course.student.IPlace;
+import edu.dhbw.sos.course.student.Student;
 
 /**
  * This class is a data holder for the data belonging to the course

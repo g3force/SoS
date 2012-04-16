@@ -7,7 +7,7 @@
  * 
  * *********************************************************
  */
-package edu.dhbw.sos.data;
+package edu.dhbw.sos.course.lecture;
 
 /**
  * This enum provides different Block types for a lecture. <br>

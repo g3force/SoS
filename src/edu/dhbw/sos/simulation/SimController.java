@@ -14,10 +14,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import edu.dhbw.sos.GUI.MainFrame;
-import edu.dhbw.sos.data.Course;
+import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.course.student.IPlace;
+import edu.dhbw.sos.course.student.Student;
 import edu.dhbw.sos.data.GUIData;
-import edu.dhbw.sos.data.IPlace;
-import edu.dhbw.sos.data.Student;
 
 
 /**

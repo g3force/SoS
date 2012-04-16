@@ -7,16 +7,15 @@
  *
  * *********************************************************
  */
-package edu.dhbw.sos.data;
+package edu.dhbw.sos.course.student;
 
 /**
- * TODO dirk, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
- * 
+ * this is an empty place in the class
  * @author dirk
  * 
  */
-public interface IPlace {
+public class EmptyPlace implements IPlace {
+	public EmptyPlace() {
+	}
 	
 }

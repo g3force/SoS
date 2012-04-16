@@ -7,7 +7,9 @@
  * 
  * *********************************************************
  */
-package edu.dhbw.sos.data;
+package edu.dhbw.sos.course.lecture;
+
+
 
 /**
  * The TiomeBlock class is a single Block in a Lecture. It provides Information about the length and the type

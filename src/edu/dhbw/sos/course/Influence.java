@@ -7,7 +7,7 @@
  *
  * *********************************************************
  */
-package edu.dhbw.sos.data;
+package edu.dhbw.sos.course;
 
 import java.util.HashMap;
 import java.util.LinkedList;
