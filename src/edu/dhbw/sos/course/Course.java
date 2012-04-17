@@ -22,7 +22,6 @@ import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
 import edu.dhbw.sos.helper.CalcVector;
-import edu.dhbw.sos.helper.Matrix;
 
 /**
  * This class is a data holder for the data belonging to the course
