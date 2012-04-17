@@ -34,6 +34,7 @@ public class Course {
 	private Lecture lecture;
 	private HashMap<Integer, IPlace[][]> historyStates;
 	private LinkedList<String> properties;
+	private String name; // useful here? than add get/set
 	
 	public Course() {
 		students = new IPlace[5][7];

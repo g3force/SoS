@@ -30,7 +30,6 @@ import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 
-import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
 
@@ -121,11 +120,21 @@ public class CoursePanel extends JPanel implements IUpdateable, MouseListener, M
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// find pizza piece that mouse clicked on
-		for (Arc2D.Double pizza : circle) {
-			if (pizza.contains(e.getPoint())) {
-				logger.debug((int) (pizza.getAngleStart() / 360 * circle.size()));
-				break;
+		// check if current student is a real student and not an empty place, etc.
+		if (students[hoveredStudent_y][hoveredStudent_y] != null
+				&& students[hoveredStudent_y][hoveredStudent_y] instanceof Student) {
+			// find pizza piece that mouse clicked on
+			for (Arc2D.Double pizza : circle) {
+				if (pizza.contains(e.getPoint())) {
+					int index = (int) (pizza.getAngleStart() / 360 * circle.size());
+					int value = 10;
+					// right click
+					if (e.getButton() == MouseEvent.BUTTON3)
+						value *= -1;
+					((Student) students[hoveredStudent_y][hoveredStudent_x]).donInput(index, value);
+					this.repaint();
+					break;
+				}
 			}
 		}
 	}
@@ -226,8 +235,11 @@ public class CoursePanel extends JPanel implements IUpdateable, MouseListener, M
 			ga.clearRect(0, 0, this.getWidth(), this.getHeight());
 			for (int x = 0; x < studentArray[0].length; x++) {
 				for (int y = 0; y < studentArray.length; y++) {
-					ga.setPaint(Color.green);
-					ga.fill(studentArray[y][x]);
+					if(students[y][x] instanceof Student) {
+						int avgVal = ((Student) students[y][x]).getAverageState();
+						ga.setPaint(getColorFromValue(avgVal, 100));
+						ga.fill(studentArray[y][x]);
+					}
 				}
 			}
 			if (hoveredStudent_x < 0 || hoveredStudent_x >= studentArray[0].length || hoveredStudent_y < 0
@@ -244,47 +256,60 @@ public class CoursePanel extends JPanel implements IUpdateable, MouseListener, M
 				// * offset, rect.getHeight() + 2 * offset, i / debugCount * 360, 360 / debugCount, Arc2D.PIE);
 				
 				circle.clear();
-				int count = properties.size();
-				int arc = 360 / 2 / count;
-				for (int i = 0; i < count; i++) {
-					Arc2D.Double pizza = new Arc2D.Double(rect.getX() - offset, rect.getY() - offset, rect.getWidth() + 2
-							* offset, rect.getHeight() + 2 * offset, (float) i / (float) count * 360, 360 / count,
-							Arc2D.PIE);
-					if(students[hoveredStudent_y][hoveredStudent_x] instanceof EmptyPlace) {
-						ga.setColor(this.getBackground());
-					} else if(students[hoveredStudent_y][hoveredStudent_x] instanceof Student) {
+				if (students[hoveredStudent_y][hoveredStudent_x] instanceof Student) {
+					int count = properties.size();
+					int arc = 360 / 2 / count;
+					for (int i = 0; i < count; i++) {
+						Arc2D.Double pizza = new Arc2D.Double(rect.getX() - offset, rect.getY() - offset, rect.getWidth() + 2
+								* offset, rect.getHeight() + 2 * offset, (float) i / (float) count * 360, 360 / count,
+								Arc2D.PIE);
 						Student stud = (Student) students[hoveredStudent_y][hoveredStudent_x];
-						int red = (510/100)*stud.getActualState().getValueAt(i);
-						int green = 255;
-						if(red>255) {
-							green -= red-255;
-							red = 255;
-						}
-						if(green<0) green = 0;
-						ga.setColor(new Color(red, green, 0));
-					} else {
-						logger.warn("GUI does not know about IPlace object :o");
+						ga.setColor(getColorFromValue(stud.getActualState().getValueAt(i), 100));
+						ga.fill(pizza);
+						ga.setColor(Color.black);
+						ga.draw(pizza);
+						
+						g.setFont(sanSerifFont);
+						String letter = properties.get(i).substring(0, 1).toUpperCase();
+						FontMetrics fm = g.getFontMetrics();
+						int w = fm.stringWidth(letter);
+						int h = fm.getAscent();
+						
+						int x = (int) (Math.cos((double) arc * Math.PI / 180) * (size * scaleHover / 4));
+						int y = -(int) (Math.sin((double) arc * Math.PI / 180) * (size * scaleHover / 4));
+						// System.out.println("x:"+x+" y:"+y+"arc: "+arc+" letter:"+letter);
+						arc += 360 / count;
+						g.drawString(letter, (int) (rect.getX() - offset - (w / 2) + size * scaleHover / 2 + x),
+								(int) (rect.getY() - offset + (h / 4) + size * scaleHover / 2 + y));
+						
+						circle.add(pizza);
 					}
-					ga.fill(pizza);
-					ga.setColor(Color.black);
-					ga.draw(pizza);
-					
-					g.setFont(sanSerifFont);
-					String letter = properties.get(i).substring(0, 1).toUpperCase();
-					FontMetrics fm = g.getFontMetrics();
-					int w = fm.stringWidth(letter);
-					int h = fm.getAscent();
-					
-					int x = (int) (Math.cos((double) arc * Math.PI / 180) * (size * scaleHover / 4));
-					int y = -(int) (Math.sin((double) arc * Math.PI / 180) * (size * scaleHover / 4));
-					// System.out.println("x:"+x+" y:"+y+"arc: "+arc+" letter:"+letter);
-					arc += 360 / count;
-					g.drawString(letter, (int) (rect.getX() - offset - (w / 2) + size * scaleHover / 2 + x),
-							(int) (rect.getY() - offset + (h / 4) + size * scaleHover / 2 + y));
-					
-					circle.add(pizza);
 				}
 			}
+		}
+		
+		
+		/**
+		 * 
+		 * TODO NicolaiO, add comment!
+		 * 
+		 * @param value
+		 * @param max
+		 * @return
+		 * @author NicolaiO
+		 */
+		private Color getColorFromValue(int value, int max) {
+			int red = (510/max) * value;
+			if (red < 0)
+				red = 0;
+			int green = 255;
+			if (red > 255) {
+				green -= red - 255;
+				red = 255;
+			}
+			if (green < 0)
+				green = 0;
+			return new Color(red, green, 0);
 		}
 	}
 }

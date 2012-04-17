@@ -37,20 +37,22 @@ import edu.dhbw.sos.course.lecture.TimeBlocks;
 
 
 /**
- * TODO NicolaiO, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
+ * The PlanPanel displays information about the lecture.
+ * This is especially the timeblocks and whole time
+ * 
+ * It also contains some controls
  * 
  * @author NicolaiO
  * 
  */
 public class PlanPanel extends JPanel implements IUpdateable {
 	private static final long			serialVersionUID	= -1665784555881941508L;
+	// paintArea is the part of the Panel, where some drawings have to be done
 	private final PlanPanelPaintArea	paintArea;
 	private JLabel							lblSpeed;
 	private TimeBlocks					timeBlocks;
-	private LinkedList<MovableBlock>	movableBlocks = new LinkedList<MovableBlock>();
-	private MovableBlock					moveBlock = null;
+	private LinkedList<MovableBlock>	movableBlocks		= new LinkedList<MovableBlock>();
+	private MovableBlock					moveBlock			= null;
 	
 	
 	public PlanPanel(GUIData data) {
@@ -109,7 +111,6 @@ public class PlanPanel extends JPanel implements IUpdateable {
 		movableBlocks = new LinkedList<MovableBlock>();
 		int start = 20;
 		float scaleRatio = (paintArea.getWidth() - start) / timeBlocks.getTotalLength();
-		System.out.println("sr:"+scaleRatio+"paw:"+paintArea.getWidth());
 		for (TimeBlock tb : timeBlocks) {
 			Point location;
 			Color color;
@@ -136,7 +137,7 @@ public class PlanPanel extends JPanel implements IUpdateable {
 			}
 			MovableBlock mb = new MovableBlock(location, new Dimension((int) (tb.getLen() * scaleRatio), 30), color, tb);
 			movableBlocks.add(mb);
-			System.out.println("start:" + start + " location:" + location + " type:" + tb.getType());
+			// System.out.println("start:" + start + " location:" + location + " type:" + tb.getType());
 			start += tb.getLen() * scaleRatio;
 		}
 	}
@@ -145,14 +146,11 @@ public class PlanPanel extends JPanel implements IUpdateable {
 	@Override
 	public void update() {
 		initMovableBlocks();
-		paintArea.repaint(); // FIXME should not be needed
+		paintArea.repaint();
 	}
 	
 	private class PlanPanelPaintArea extends JPanel implements MouseListener, MouseMotionListener {
 		private static final long	serialVersionUID	= 5194596384018441495L;
-		
-		
-		// private MovableBlock r;
 		
 		
 		/**
@@ -186,12 +184,8 @@ public class PlanPanel extends JPanel implements IUpdateable {
 			
 			// draw block
 			for (MovableBlock mb : movableBlocks) {
-//				if (mb == moveBlock) {
-//					
-//				} else {
-					ga.setPaint(mb.getColor());
-					ga.fill(mb);
-//				}
+				ga.setPaint(mb.getColor());
+				ga.fill(mb);
 			}
 		}
 		
@@ -208,7 +202,6 @@ public class PlanPanel extends JPanel implements IUpdateable {
 				if (mb.contains(e.getPoint())) {
 					Point relML = new Point(mb.x - e.getPoint().x, mb.y - e.getPoint().y);
 					mb.setRelMouseLocation(relML);
-					mb.setMoveable(true); // obsolete
 					moveBlock = mb;
 				}
 			}
@@ -217,7 +210,6 @@ public class PlanPanel extends JPanel implements IUpdateable {
 		
 		@Override
 		public void mouseReleased(MouseEvent e) {
-//			r.setMoveable(false); // obsolete
 			moveBlock = null;
 		}
 		

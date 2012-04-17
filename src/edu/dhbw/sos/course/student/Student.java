@@ -43,6 +43,7 @@ public class Student implements IPlace, Cloneable {
 		this.isEmpty = false;
 	}
 	
+	
 	public Student(LinkedList<String> params, boolean empty) {
 		this.actualState = new CalcVector(params);
 		this.changeVector = new CalcVector(params);
@@ -60,6 +61,41 @@ public class Student implements IPlace, Cloneable {
 	
 	private Student() {
 		
+	}
+	
+	
+	/**
+	 * Only for testing yet. Should be tested and discussed
+	 * 
+	 * @param index index in vector
+	 * @param value value to add (negative to sub)
+	 * @author NicolaiO
+	 */
+	public void donInput(int index, int value) {
+		int newVal = actualState.getValueAt(index) + value;
+		if (newVal < 0)
+			newVal = 0;
+		if (newVal > 100)
+			newVal = 100;
+		this.actualState.setValueAt(index, newVal);
+		this.changeVector.setValueAt(index, newVal);
+	}
+	
+	
+	/**
+	 * another interface that is needed but should be reconsidered
+	 * 
+	 * @return
+	 * @author NicolaiO
+	 */
+	public int getAverageState() {
+		int res = 0;
+		for (int i = 0; i < actualState.size(); i++) {
+			res += actualState.getValueAt(i);
+		}
+		if (actualState.size() != 0)
+			res /= actualState.size();
+		return res;
 	}
 	
 	
@@ -88,7 +124,6 @@ public class Student implements IPlace, Cloneable {
 	public CalcVector getActualState() {
 		return this.actualState;
 	}
-	
 	
 	
 	/**

@@ -18,26 +18,32 @@ import edu.dhbw.sos.course.lecture.TimeBlock;
 
 
 /**
- * TODO NicolaiO, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
+ * A movable block is a rectangle in a paintarea, that has some attributes for supporting
+ * move operations.
+ * It does not actually move itself, but it has some flags and attributes for controlling
+ * movement.
  * 
  * @author NicolaiO
  * 
  */
 public class MovableBlock extends Rectangle {
 	private static final long	serialVersionUID	= 4199245975719637289L;
-	private boolean				moveable				= false;
+	// save the point, where the mouse holds the block, relative to the block itself
 	private Point					relMouseLocation	= new Point();
+	// corresponding timeblock object for this block
 	private TimeBlock				timeBlock;
+	// color of the block
 	private Color					color;
+	// flags for enabling/disabling movement
 	private boolean				moveHorizontal		= false;
 	private boolean				moveVertical		= true;
 	
 	
 	/**
-	 * TODO NicolaiO, add comment!
+	 * Initialize a new block with given size and color
 	 * 
+	 * @param size size of the block
+	 * @param _color color of the block
 	 * @author NicolaiO
 	 */
 	public MovableBlock(Dimension size, Color _color) {
@@ -47,8 +53,12 @@ public class MovableBlock extends Rectangle {
 	
 	
 	/**
-	 * TODO NicolaiO, add comment!
-	 * 
+	 * Initialize a new block with given size and color
+	 * Additionally set the location within the parent of this block
+	 * (this is given to the constructor of the rectangle
+	 * @param location location within parent
+	 * @param size size of the block
+	 * @param _color color of the block
 	 * @author NicolaiO
 	 */
 	public MovableBlock(Point location, Dimension size, Color _color) {
@@ -58,8 +68,15 @@ public class MovableBlock extends Rectangle {
 	
 	
 	/**
-	 * TODO NicolaiO, add comment!
+	 * Initialize a new block with given size and color
+	 * Additionally set the location within the parent of this block
+	 * (this is given to the constructor of the rectangle
+	 * Additionally set the corresponding timeblock
 	 * 
+	 * @param location location within parent
+	 * @param size size of the block
+	 * @param _color color of the block
+	 * @param tb reference to the corresponding timeblock
 	 * @author NicolaiO
 	 */
 	public MovableBlock(Point location, Dimension size, Color _color, TimeBlock tb) {
@@ -69,6 +86,11 @@ public class MovableBlock extends Rectangle {
 	}
 	
 	
+	/**
+	 * Sets the location within parent
+	 * This method respects the movement flags moveVertical and moveHorizontal
+	 * @param p new location
+	 */
 	@Override
 	public void setLocation(Point p) {
 		int x = this.getLocation().x;
@@ -81,16 +103,6 @@ public class MovableBlock extends Rectangle {
 		}
 		Point abs = new Point(x, y);
 		super.setLocation(abs);
-	}
-	
-	
-	public boolean isMoveable() {
-		return moveable;
-	}
-	
-	
-	public void setMoveable(boolean moveable) {
-		this.moveable = moveable;
 	}
 	
 	
