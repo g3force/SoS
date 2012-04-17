@@ -112,10 +112,10 @@ public class Course {
 			preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.TIME_DEPENDING, timeTimeInf));
 			
 			// iterate over all students
-			for (int i = 0; i < students.length; i++) {
-				for (int j = 0; j < students[i].length; j++) {
-					Student newStudent = ((Student) students[i][j]).clone();
-					newState[i][j] = (IPlace) newStudent;
+			for (int y = 0; y < students.length; y++) {
+				for (int x = 0; x < students[y].length; x++) {
+					Student newStudent = ((Student) students[y][x]).clone();
+					newState[y][x] = (IPlace) newStudent;
 					
 					// calculation
 					CalcVector changeVector = new CalcVector(properties);
@@ -125,7 +125,7 @@ public class Course {
 					// - - environment
 					// - - - neighbor -> inf(Neighbor) * state(studentLeft) * neighbor + inf(Neighbor) * state(studentRight) * neighbor
 					double neighborInf = 0.0001;
-					if(j>0) {
+					if(x>0) {
 						changeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.BREAK_REACTION, neighborInf));
 								//TODO: A function to multiply two vectors (each value with each other)
 								//.multiplyWithMatrix(new Matrix(l, ((Student)students[i][j-1]).getActualState().getValues()));
