@@ -2,12 +2,12 @@
  * *********************************************************
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
- * Date: Apr 15, 2012
+ * Date: Apr 16, 2012
  * Author(s): dirk
  *
  * *********************************************************
  */
-package edu.dhbw.sos.data;
+package edu.dhbw.sos.course.influence;
 
 /**
  * TODO dirk, add comment!
@@ -17,6 +17,8 @@ package edu.dhbw.sos.data;
  * @author dirk
  * 
  */
-public interface IPlace {
-	
+public enum EInfluenceType {
+	NEIGHBOR,
+	BREAK_REACTION,
+	TIME_DEPENDING;
 }

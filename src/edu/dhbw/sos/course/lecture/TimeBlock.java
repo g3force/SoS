@@ -7,7 +7,9 @@
  * 
  * *********************************************************
  */
-package edu.dhbw.sos.data;
+package edu.dhbw.sos.course.lecture;
+
+
 
 /**
  * The TiomeBlock class is a single Block in a Lecture. It provides Information about the length and the type
@@ -18,6 +20,16 @@ package edu.dhbw.sos.data;
 public class TimeBlock {
 	private int			len;
 	private BlockType	type;
+	
+	/**
+	 * TODO NicolaiO, add comment!
+	 * 
+	 * @author NicolaiO
+	 */
+	public TimeBlock(int _len, BlockType _type) {
+		len = _len;
+		type = _type;
+	}
 	
 	
 	/**

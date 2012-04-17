@@ -15,7 +15,6 @@ import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-import edu.dhbw.sos.data.GUIData;
 
 
 /**

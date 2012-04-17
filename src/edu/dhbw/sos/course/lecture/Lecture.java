@@ -7,10 +7,11 @@
  * 
  * *********************************************************
  */
-package edu.dhbw.sos.data;
+package edu.dhbw.sos.course.lecture;
 
 import java.util.Date;
 import java.util.LinkedList;
+
 
 
 /**
@@ -23,18 +24,21 @@ import java.util.LinkedList;
 public class Lecture {
 	
 	private Date						start;
-	private long						length;
+	private long						length;		// Nico: what happens, if this is not equal to the sum of the length of all
+															// blocks? maybe just calculate total length?
+															// besides, what is the unit and why long?
+															// please also look at TimeBlocks (mind the s!!) class
 	private LinkedList<TimeBlock>	timeBlocks;
 	
 	
-	Lecture(Date start, long length) {
+	public Lecture(Date start, long length) {
 		this.start = start;
 		this.length = length;
 		this.timeBlocks = new LinkedList<TimeBlock>();
 	}
 	
 	
-	Lecture(Date start, LinkedList<TimeBlock> timeBlocks) {
+	public Lecture(Date start, LinkedList<TimeBlock> timeBlocks) {
 		this.start = start;
 		setTimeBlocks(timeBlocks);
 	}
@@ -169,9 +173,10 @@ public class Lecture {
 		return index;
 	}
 	
+	
 	/**
 	 * 
-	 * Get the TimeBlock for a specific time position. 
+	 * Get the TimeBlock for a specific time position.
 	 * 
 	 * @param pos
 	 * @return

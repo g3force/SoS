@@ -7,11 +7,17 @@
  * 
  * *********************************************************
  */
-package edu.dhbw.sos.data;
+package edu.dhbw.sos.GUI;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Vector;
+
+import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.course.lecture.BlockType;
+import edu.dhbw.sos.course.lecture.Lecture;
+import edu.dhbw.sos.course.lecture.TimeBlock;
 
 
 /**
@@ -23,13 +29,24 @@ import java.util.Vector;
  * 
  */
 public class GUIData {
-	private Vector<String>				profiles		= new Vector<String>();
+	private Vector<String>						profiles		= new Vector<String>();
 	private LinkedHashMap<String, String>	statistics	= new LinkedHashMap<String, String>();
-	private LinkedList<String>			suggestions	= new LinkedList<String>();
+	private LinkedList<String>					suggestions	= new LinkedList<String>();
+	private Lecture lecture;
+	private Course course;
 	
 	
 	public GUIData() {
 		// dummy data
+		lecture = new Lecture(new Date(), 100);
+		lecture.addTimeBlock(new TimeBlock(10,BlockType.theory));
+		lecture.addTimeBlock(new TimeBlock(20,BlockType.pause));
+		lecture.addTimeBlock(new TimeBlock(30,BlockType.exercise));
+		lecture.addTimeBlock(new TimeBlock(10,BlockType.pause));
+		lecture.addTimeBlock(new TimeBlock(30,BlockType.group));
+		
+		setCourse(new Course());
+		
 		profiles.add("Profile0");
 		profiles.add("Profile1");
 		
@@ -71,5 +88,31 @@ public class GUIData {
 	
 	public void setSuggestions(LinkedList<String> suggestions) {
 		this.suggestions = suggestions;
+	}
+
+
+	public Lecture getLecture() {
+		return lecture;
+	}
+
+
+	public void setLecture(Lecture lecture) {
+		this.lecture = lecture;
+	}
+
+
+	/**
+	 * @return the course
+	 */
+	public Course getCourse() {
+		return course;
+	}
+
+
+	/**
+	 * @param course the course to set
+	 */
+	public void setCourse(Course course) {
+		this.course = course;
 	}
 }

@@ -23,7 +23,6 @@ import javax.swing.border.Border;
 
 import org.apache.log4j.Logger;
 
-import edu.dhbw.sos.data.GUIData;
 import edu.dhbw.sos.helper.Messages;
 
 
