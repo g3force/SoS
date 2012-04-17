@@ -13,6 +13,10 @@ import java.io.FileWriter;
 
 import javax.xml.stream.*;
 
+import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.course.student.EmptyPlace;
+import edu.dhbw.sos.course.student.IPlace;
+import edu.dhbw.sos.course.student.Student;
 import edu.dhbw.sos.helper.Parameter;
 
 
@@ -22,8 +26,9 @@ import edu.dhbw.sos.helper.Parameter;
  * 
  */
 public class CourseManager {
-	private static Course[] courses;
-	private static String savepath = System.getProperty("user.dir") + "//courses.xml";
+	private Course[] courses;
+	private Course curCourse;
+	private String savepath = System.getProperty("user.dir") + "//courses.xml";
 
 	/* File format
 	 * <savefile>
@@ -42,7 +47,7 @@ public class CourseManager {
 	 * 		</changevector>
 	 * </savefile>
 	 */
-public static void saveCourses() {
+public void saveCourses() {
 	XMLOutputFactory factory = XMLOutputFactory.newInstance();
 	try {
 		FileWriter fw = new FileWriter(savepath,false);
@@ -121,7 +126,7 @@ public static void saveCourses() {
 	}
 }
 	
-public static void loadCourses() {
+public void loadCourses() {
 	XMLInputFactory factory = XMLInputFactory.newInstance();
 	try {
 		XMLStreamReader reader = factory.createXMLStreamReader(new FileReader(savepath));
@@ -129,8 +134,8 @@ public static void loadCourses() {
 		
 		int courseIdx = -1;
 		IPlace[][] students = null;
-		int x, y = 0;
-		int max_x, max_y = 0;
+		int x = 0, y = 0;
+		int max_x = 0, max_y = 0;
 		while(reader.hasNext()) {
 			reader.next(); //Next element
 			
@@ -184,8 +189,26 @@ public static void loadCourses() {
 	}
 	return;
 }
+
+public Course getCurrentCourse() {
+	return curCourse;
+}
+
+public void setCurrentCourse( Course newCurrent ) {
+	curCourse = newCurrent;
+}
+
+public Course getCourseByName( String name ) {
+	for(int i=0;i<courses.length;i++) {
+		/**
+		 * FIXME: if(name.concat(courses[i].getName()) {
+			return courses[i];
+		}*/
+	}
+	return null;
+}
 	
-	public static Course getCourseById( int id ) {
+	public Course getCourseById( int id ) {
 		if(courses!=null && id>=0 && id<courses.length) {
 			return courses[id];
 		}
