@@ -65,4 +65,14 @@ public class Matrix {
 		}
 		return this.matrix.get(x).get(y);
 	}
+	/**
+	 * Returns the size of this matrix (which is valid for the number of rows as well as the number of columns)
+	 * TODO bene, add comment!
+	 * 
+	 * @return
+	 * @author bene
+	 */
+	public int size() {
+		return matrix.size();
+	}
 }

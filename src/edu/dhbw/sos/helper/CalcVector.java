@@ -90,8 +90,7 @@ public class CalcVector implements Cloneable {
 	
 	
 	/**
-	 * Multiplies this CalcVector object with a constant of type int and returns the result as a new CalcVector. The
-	 * original CalcVector is not changed.
+	 * Multiplies this CalcVector object with a constant of type int.
 	 * 
 	 * @param constant
 	 * @return
@@ -106,8 +105,7 @@ public class CalcVector implements Cloneable {
 	
 	
 	/**
-	 * Multiplies this CalcVector object with a constant of type double and returns the result as a new CalcVector. The
-	 * original CalcVector is not changed.
+	 * Multiplies this CalcVector object with a constant of type double.
 	 * 
 	 * @param constant
 	 * @return
@@ -119,16 +117,34 @@ public class CalcVector implements Cloneable {
 		}
 		return this;
 	}
+	/**
+	 * Multiplies this CalcVector object with another CalcVector.
+	 * 
+	 * @param constant
+	 * @return
+	 * @author bene
+	 */
+	public CalcVector multiplyWithVector(CalcVector v) {
+		if (v.size() != this.size()) {
+			throw new IllegalArgumentException("Cannot multiply vectors of different sizes.");
+		}
+		for (int i = 0; i < this.size(); i++) {
+			this.vector.get(i).setValue((int) (this.getValueAt(i) * v.getValueAt(i)));
+		}
+		return this;
+	}
 	
 	/**
-	 * Multiplies this CalcVector object with a Matrix object and returns the result as a new CalcVector. The
-	 * original CalcVector is not changed.
+	 * Multiplies this CalcVector object with a Matrix object.
 	 * 
 	 * @param constant
 	 * @return
 	 * @author bene
 	 */
 	public CalcVector multiplyWithMatrix(Matrix m) {
+		if (m.size() != this.size()) {
+			throw new IllegalArgumentException("Cannot multiply vectors of different sizes.");
+		}
 		for (int i = 0; i < this.size(); i++) {
 			int value = 0;
 			for (int j = 0; j < this.size(); j++) {
@@ -141,8 +157,7 @@ public class CalcVector implements Cloneable {
 	
 	
 	/**
-	 * Adds the CalcVector v to this CalcVector object and returns the result as a new CalcVector object. This CalcVector
-	 * object remains unchanged.
+	 * Adds the CalcVector v to this CalcVector object.
 	 * 
 	 * @param v
 	 * @return
