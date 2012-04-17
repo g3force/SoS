@@ -30,6 +30,9 @@ import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 
+import edu.dhbw.sos.course.student.EmptyPlace;
+import edu.dhbw.sos.course.student.IPlace;
+import edu.dhbw.sos.course.student.Student;
 
 
 /**
@@ -49,6 +52,7 @@ public class CoursePanel extends JPanel implements IUpdateable, MouseListener, M
 	private static final float				scaleSpacing		= 1.2f;
 	// student circles - not final, rather for testing
 	private Shape[][]							studentArray;
+	private IPlace[][]						students;
 	// space between circles
 	private float								spacing;
 	// diameter of a circle
@@ -64,13 +68,12 @@ public class CoursePanel extends JPanel implements IUpdateable, MouseListener, M
 	private float								border;
 	// hover indicates the x and y index within the studentArray for the student
 	// that should be highlighted currently
-	private int									hoveredStudent_x				= -1;
-	private int									hoveredStudent_y				= -1;
-	// dummy data
-	private int									numStudx					= 6, numStudy = 5;
+	private int									hoveredStudent_x	= -1;
+	private int									hoveredStudent_y	= -1;
 	// circle consisting of several pizza peaces
 	private LinkedList<Arc2D.Double>		circle;
 	private final CoursePanelPaintArea	paintArea;
+	private LinkedList<String>				properties;
 	
 	
 	/**
@@ -88,6 +91,8 @@ public class CoursePanel extends JPanel implements IUpdateable, MouseListener, M
 		circle = new LinkedList<Arc2D.Double>();
 		paintArea = new CoursePanelPaintArea();
 		this.add(paintArea, BorderLayout.CENTER);
+		students = data.getCourse().getStudents();
+		properties = data.getCourse().getProperties();
 	}
 	
 	
@@ -105,8 +110,8 @@ public class CoursePanel extends JPanel implements IUpdateable, MouseListener, M
 		}
 		float ratiox = ((float) p.x - offset_x - spacing) / ((float) this.getSize().width - 2 * offset_x - spacing);
 		float ratioy = ((float) p.y - offset_y - spacing) / ((float) this.getSize().height - 2 * offset_y - spacing);
-		hoveredStudent_x = (int) (ratiox * (float) numStudx);
-		hoveredStudent_y = (int) (ratioy * (float) numStudy);
+		hoveredStudent_x = (int) (ratiox * (float) students[0].length);
+		hoveredStudent_y = (int) (ratioy * (float) students.length);
 		
 		// logger.debug((int) (ratiox * (float) testx));
 		// logger.debug((int) (ratioy * (float) testy));
@@ -119,7 +124,7 @@ public class CoursePanel extends JPanel implements IUpdateable, MouseListener, M
 		// find pizza piece that mouse clicked on
 		for (Arc2D.Double pizza : circle) {
 			if (pizza.contains(e.getPoint())) {
-				logger.debug((int)(pizza.getAngleStart() / 360 * circle.size()));
+				logger.debug((int) (pizza.getAngleStart() / 360 * circle.size()));
 				break;
 			}
 		}
@@ -157,6 +162,7 @@ public class CoursePanel extends JPanel implements IUpdateable, MouseListener, M
 	private class CoursePanelPaintArea extends JPanel {
 		private static final long	serialVersionUID	= 5194596384018441495L;
 		
+		
 		/**
 		 * 
 		 * TODO NicolaiO, add comment!
@@ -170,6 +176,13 @@ public class CoursePanel extends JPanel implements IUpdateable, MouseListener, M
 				logger.warn("Dimension has a zero value");
 				return;
 			}
+			// get num of student rows and cols from students array
+			int numStudy = students.length;
+			if (numStudy == 0) {
+				logger.error("there are no students!");
+				return;
+			}
+			int numStudx = students[0].length;
 			// compare ratio of x/y from number of circles and from available size
 			// thus we can decide, if the offset has to be vertically or horizontally
 			float ratioA = (float) numStudx / (float) numStudy;
@@ -199,6 +212,7 @@ public class CoursePanel extends JPanel implements IUpdateable, MouseListener, M
 			}
 		}
 		
+		
 		/**
 		 * 
 		 * TODO NicolaiO, add comment!
@@ -216,7 +230,8 @@ public class CoursePanel extends JPanel implements IUpdateable, MouseListener, M
 					ga.fill(studentArray[y][x]);
 				}
 			}
-			if (hoveredStudent_x < 0 || hoveredStudent_x >= studentArray[0].length || hoveredStudent_y < 0 || hoveredStudent_y >= studentArray.length) {
+			if (hoveredStudent_x < 0 || hoveredStudent_x >= studentArray[0].length || hoveredStudent_y < 0
+					|| hoveredStudent_y >= studentArray.length) {
 				// logger.warn("paint: x or y not within index range: " + hover_x + "|" + hover_y);
 				hoveredStudent_x = -1;
 				hoveredStudent_y = -1;
@@ -229,30 +244,43 @@ public class CoursePanel extends JPanel implements IUpdateable, MouseListener, M
 				// * offset, rect.getHeight() + 2 * offset, i / debugCount * 360, 360 / debugCount, Arc2D.PIE);
 				
 				circle.clear();
-				String[] dummyText = { "aaaaa", "bbbbb", "ccccc", "dddddd", "eeee" };
-				int tmpNumber = dummyText.length;
-				int arc = 360/2/tmpNumber;
-				for (float i = 0; i < tmpNumber; i++) {
-					// ga.setPaint((int) i % 2 == 1 ? Color.gray : Color.BLACK);
+				int count = properties.size();
+				int arc = 360 / 2 / count;
+				for (int i = 0; i < count; i++) {
 					Arc2D.Double pizza = new Arc2D.Double(rect.getX() - offset, rect.getY() - offset, rect.getWidth() + 2
-							* offset, rect.getHeight() + 2 * offset, i / tmpNumber * 360, 360 / tmpNumber, Arc2D.PIE);
-					ga.setColor(Color.red);
+							* offset, rect.getHeight() + 2 * offset, (float) i / (float) count * 360, 360 / count,
+							Arc2D.PIE);
+					if(students[hoveredStudent_y][hoveredStudent_x] instanceof EmptyPlace) {
+						ga.setColor(this.getBackground());
+					} else if(students[hoveredStudent_y][hoveredStudent_x] instanceof Student) {
+						Student stud = (Student) students[hoveredStudent_y][hoveredStudent_x];
+						int red = (510/100)*stud.getActualState().getValueAt(i);
+						int green = 255;
+						if(red>255) {
+							green -= red-255;
+							red = 255;
+						}
+						if(green<0) green = 0;
+						ga.setColor(new Color(red, green, 0));
+					} else {
+						logger.warn("GUI does not know about IPlace object :o");
+					}
 					ga.fill(pizza);
 					ga.setColor(Color.black);
 					ga.draw(pizza);
 					
 					g.setFont(sanSerifFont);
-					String letter = dummyText[(int) i].substring(0, 1).toUpperCase();  
+					String letter = properties.get(i).substring(0, 1).toUpperCase();
 					FontMetrics fm = g.getFontMetrics();
 					int w = fm.stringWidth(letter);
 					int h = fm.getAscent();
 					
-					int x = (int) (Math.cos((double)arc*Math.PI/180) * (size*scaleHover/4));
-					int y = -(int) (Math.sin((double)arc*Math.PI/180) * (size*scaleHover/4));
-//					System.out.println("x:"+x+" y:"+y+"arc: "+arc+" letter:"+letter);
-					arc += 360/tmpNumber;
-					g.drawString(letter, (int) (rect.getX() - offset - (w / 2) + size*scaleHover/2 + x),
-							(int) (rect.getY() - offset + (h / 4) + size*scaleHover/2 + y));
+					int x = (int) (Math.cos((double) arc * Math.PI / 180) * (size * scaleHover / 4));
+					int y = -(int) (Math.sin((double) arc * Math.PI / 180) * (size * scaleHover / 4));
+					// System.out.println("x:"+x+" y:"+y+"arc: "+arc+" letter:"+letter);
+					arc += 360 / count;
+					g.drawString(letter, (int) (rect.getX() - offset - (w / 2) + size * scaleHover / 2 + x),
+							(int) (rect.getY() - offset + (h / 4) + size * scaleHover / 2 + y));
 					
 					circle.add(pizza);
 				}
