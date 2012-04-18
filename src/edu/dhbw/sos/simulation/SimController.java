@@ -38,7 +38,6 @@ public class SimController {
 		this.course = course;
 		currentTime = 0;
 		speed = 1000;
-		run();
 	}
 	
 	public static void init(Course course, MainFrame mf) {
@@ -47,7 +46,7 @@ public class SimController {
 	
 	public static SimController getInstance() throws Exception {
 		if(instance == null) {
-			throw new Exception();
+			throw new NotInitializedException("Please call the init function first. Thank you.");
 		} else {
 			return instance;
 		}

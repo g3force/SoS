@@ -18,6 +18,7 @@ import edu.dhbw.sos.course.influence.EInfluenceType;
 import edu.dhbw.sos.course.influence.Influence;
 import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.Lecture;
+import edu.dhbw.sos.course.lecture.TimeBlock;
 import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
@@ -60,6 +61,11 @@ public class Course {
 		influence = new Influence();
 		historyStates = new HashMap<Integer, IPlace[][]>();
 		lecture = new Lecture(new Date());
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10,BlockType.theory));
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(20,BlockType.pause));
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30,BlockType.exercise));
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10,BlockType.pause));
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30,BlockType.group));
 	}
 	
 	/**
@@ -107,7 +113,7 @@ public class Course {
 			
 			// - - - breakReaction -> inf(Break) * breakInf
 			double breakInf = 0.01;
-			if(lecture.getTimeBlocks().getTimeBlockAtTime(currentTime/1000).getType() == BlockType.pause) {
+			if(lecture.getTimeBlocks().getTimeBlockAtTime(currentTime/60000).getType() == BlockType.pause) {
 				preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.BREAK_REACTION, breakInf));
 			}
 			
