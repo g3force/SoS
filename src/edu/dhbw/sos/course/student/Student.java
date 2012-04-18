@@ -104,6 +104,17 @@ public class Student implements IPlace, Cloneable {
 		this.setActualState(changeVector);
 	}
 	
+	public void addToStateVector(CalcVector addVector) {
+		for(int i=0; i<addVector.size(); i++) {
+			double sValue = actualState.getValueAt(i);
+			double vValue = actualState.getValueAt(i);
+			if(sValue < 50 && vValue>0) {
+				
+			}
+				
+		}
+	}
+	
 	/**
 	 * another interface that is needed but should be reconsidered
 	 * 
