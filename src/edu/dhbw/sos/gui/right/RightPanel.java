@@ -38,23 +38,25 @@ import edu.dhbw.sos.helper.Messages;
 
 
 /**
- * TODO NicolaiO, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
+ * This Panel contains everything that is on the right.
+ * This is the course management and some information
  * 
  * @author NicolaiO
  * 
  */
 public class RightPanel extends JPanel implements IUpdateable, ActionListener {
-	
 	private static final long					serialVersionUID	= -6879799823225506209L;
-	private static final int					prefSize				= 200;
-	private static final int					marginLR				= 5;
+	// width of panel
+	private static final int					PREF_SIZE				= 200;
+	// margin left and right
+	private static final int					MARGIN_LR				= 5;
 	
+	// child elements
 	private JPanel									statsPanel;
 	private JPanel									suggestionPanel;
 	private JComboBox								courseList;
 	
+	// some data - might be replaced by original data
 	private Vector<String>						profiles;
 	private LinkedHashMap<String, String>	statistics;
 	private LinkedList<String>					suggestions;
@@ -66,7 +68,7 @@ public class RightPanel extends JPanel implements IUpdateable, ActionListener {
 		this.suggestions = data.getSuggestions();
 		
 		this.setBorder(MainFrame.compoundBorder);
-		this.setPreferredSize(new Dimension(prefSize, 0));
+		this.setPreferredSize(new Dimension(PREF_SIZE, 0));
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		
 		// #############################################################################
@@ -74,7 +76,7 @@ public class RightPanel extends JPanel implements IUpdateable, ActionListener {
 		JPanel courseListPanel = new JPanel();
 		courseListPanel.setBorder(MainFrame.compoundBorder);
 		courseListPanel.setLayout(new BorderLayout(5, 5));
-		courseListPanel.setMaximumSize(new Dimension(prefSize - marginLR * 2, 10));
+		courseListPanel.setMaximumSize(new Dimension(PREF_SIZE - MARGIN_LR * 2, 10));
 		this.add(courseListPanel);
 		
 		courseList = new JComboBox();
@@ -100,7 +102,7 @@ public class RightPanel extends JPanel implements IUpdateable, ActionListener {
 		statsPanel = new JPanel();
 		statsPanel.setBorder(MainFrame.compoundBorder);
 		statsPanel.setLayout(new GridLayout(0, 2, 5, 5));
-		statsPanel.setMaximumSize(new Dimension(prefSize - marginLR * 2, 200));
+		statsPanel.setMaximumSize(new Dimension(PREF_SIZE - MARGIN_LR * 2, 200));
 		this.add(Box.createVerticalStrut(10));
 		this.add(statsPanel);
 		
@@ -110,7 +112,7 @@ public class RightPanel extends JPanel implements IUpdateable, ActionListener {
 		suggestionPanel = new JPanel();
 		suggestionPanel.setBorder(MainFrame.compoundBorder);
 		suggestionPanel.setLayout(new GridLayout(0, 1, 5, 5));
-		suggestionPanel.setMaximumSize(new Dimension(prefSize - marginLR * 2, 100));
+		suggestionPanel.setMaximumSize(new Dimension(PREF_SIZE - MARGIN_LR * 2, 100));
 		this.add(Box.createVerticalStrut(10));
 		this.add(suggestionPanel);
 		
@@ -122,7 +124,7 @@ public class RightPanel extends JPanel implements IUpdateable, ActionListener {
 	
 	@Override
 	public void update() {
-		
+		// course list
 		courseList.removeAllItems();
 		for (String profile : profiles) {
 			courseList.addItem(profile);
@@ -130,6 +132,7 @@ public class RightPanel extends JPanel implements IUpdateable, ActionListener {
 		if (profiles.size() > 0)
 			courseList.setSelectedIndex(0);
 		
+		// statistics
 		statsPanel.removeAll();
 		for (Map.Entry<String, String> entry : statistics.entrySet()) {
 			JLabel lblKey = new JLabel(entry.getKey());
@@ -138,6 +141,7 @@ public class RightPanel extends JPanel implements IUpdateable, ActionListener {
 			statsPanel.add(lblValue);
 		}
 		
+		// suggestions
 		suggestionPanel.removeAll();
 		suggestionPanel.add(new JLabel(Messages.getString("suggestions")));
 		for (String sugg : suggestions) {

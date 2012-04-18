@@ -13,7 +13,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowStateListener;
+import java.awt.event.WindowListener;
 import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
@@ -32,21 +32,22 @@ import edu.dhbw.sos.helper.Messages;
 
 
 /**
- * TODO NicolaiO, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
+ * This is the main window that contains all the elements, that are needed...
+ * It adds the different panels and organize the layout.
  * 
  * @author NicolaiO
  * 
  */
-public class MainFrame extends JFrame implements IUpdateable, WindowStateListener {
+public class MainFrame extends JFrame implements IUpdateable, WindowListener {
 	private static final long			serialVersionUID	= -1401997967192989464L;
 	private static final Logger		logger				= Logger.getLogger(MainFrame.class);
 	
-	public static final Border blackBorder = BorderFactory.createLineBorder(Color.black);
-	public static final Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
-	public static final Border compoundBorder = BorderFactory.createCompoundBorder(blackBorder, emptyBorder);
+	// standard borders
+	public static final Border			blackBorder			= BorderFactory.createLineBorder(Color.black);
+	public static final Border			emptyBorder			= BorderFactory.createEmptyBorder(5, 5, 5, 5);
+	public static final Border			compoundBorder		= BorderFactory.createCompoundBorder(blackBorder, emptyBorder);
 	
+	// panels
 	private JPanel							contentPane;
 	private CoursePanel					coursePanel;
 	private RightPanel					rightPanel;
@@ -55,14 +56,19 @@ public class MainFrame extends JFrame implements IUpdateable, WindowStateListene
 	private PlanPanel						planPanel;
 	private LinkedList<IUpdateable>	components			= new LinkedList<IUpdateable>();
 	
-	
+	/**
+	 * Initialize GUI with given data.
+	 * 
+	 * @param data
+	 * @author NicolaiO
+	 */
 	public MainFrame(GUIData data) {
 		logger.debug("Initializing...");
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLocationByPlatform(true);
 		this.setTitle(Messages.getString("MainFrame.1"));
 		this.setVisible(true);
-		this.addWindowStateListener(this);
+		this.addWindowListener(this);
 		this.setPreferredSize(new Dimension(900, 700));
 		
 		// load icon
@@ -108,15 +114,46 @@ public class MainFrame extends JFrame implements IUpdateable, WindowStateListene
 	
 	
 	@Override
-	public void windowStateChanged(WindowEvent e) {
-	}
-	
-	
-	@Override
 	public void update() {
+		// update all known sub components
 		for (IUpdateable comp : components) {
 			comp.update();
 		}
 	}
 	
+	
+	@Override
+	public void windowOpened(WindowEvent e) {
+	}
+	
+	
+	@Override
+	public void windowClosing(WindowEvent e) {
+	}
+	
+	
+	@Override
+	public void windowClosed(WindowEvent e) {
+		System.exit(0);
+	}
+	
+	
+	@Override
+	public void windowIconified(WindowEvent e) {
+	}
+	
+	
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+	}
+	
+	
+	@Override
+	public void windowActivated(WindowEvent e) {
+	}
+	
+	
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+	}
 }

@@ -11,7 +11,10 @@ package edu.dhbw.sos.data;
 import java.io.FileReader;
 import java.io.FileWriter;
 
-import javax.xml.stream.*;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.student.EmptyPlace;
@@ -26,10 +29,19 @@ import edu.dhbw.sos.helper.Parameter;
  * 
  */
 public class CourseManager {
-	private Course[] courses;
+	private static CourseManager		instance;
+	private Course[] courses; // not really extensible, is it?
 	private Course curCourse;
-	private String savepath = System.getProperty("user.dir") + "//courses.xml";
+	private String savepath = System.getProperty("user.dir") + "//courses.xml"; // are you crazzy? :o I do not want a "courses.xml" directly in my home folder ;)
 
+	public CourseManager() {
+		if(CourseManager.getInstance() != null) {
+			// catch this case
+//			throw new Exception("Duplicate instances");
+		}
+		instance = this;
+	}
+	
 	/* File format
 	 * <savefile>
 	 * 		<courses count="X">
@@ -227,5 +239,9 @@ public Course getCourseByName( String name ) {
 		return null;
 	}
 	*/
+	
+	public static CourseManager getInstance() {
+		return instance;
+	}
 	
 }
