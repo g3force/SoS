@@ -30,6 +30,90 @@ public class CourseManager {
 	private Course curCourse;
 	private String savepath = System.getProperty("user.dir") + "//courses.xml";
 
+	
+	public void addCourse( Course addthis ) {
+		Course[] newCourses = null;
+		
+		if(courses!=null) {//if courses exist already
+			newCourses = new Course[courses.length+1];
+			
+			//"copy" the courses
+			for(int i=0;i<courses.length;i++) {
+				newCourses[i] = courses[i];
+			}
+			
+			//add new course
+			newCourses[courses.length]= addthis;
+			
+			//assign new courseslist
+			courses = newCourses;
+			
+		} else { //courses don't exist	
+			newCourses = new Course[1];
+			newCourses[0] = addthis;
+			courses = newCourses;
+		
+		}
+		return;
+	}
+	
+	/**
+	 * 
+	 * @brief Checks whether a place is empty of not - based on x,y
+	 * 
+	 * @param row
+	 * @param column
+	 * @return TRUE if student is an instance of "EmptyPlace", otherwise FALSE.
+	 * @author SebastianN
+	 */
+	public boolean IsPlaceEmpty( int row, int column ) {
+		IPlace[][] students = curCourse.getStudents();
+		if(students!=null) {
+			
+			if( students[row][column] instanceof EmptyPlace ) {
+				return true;
+			}
+			
+		}
+		throw new IllegalStateException();
+	}
+	
+	/**
+	 * 
+	 * Gets a certain student-instance based on x- and y-coordinates
+	 * 
+	 * @param row
+	 * @param column
+	 * @return
+	 * @author SebastianN
+	 */
+	public IPlace getPlace( int row, int column ) {
+		IPlace[][] students = curCourse.getStudents();
+		if(students!=null) {
+			return students[row][column];
+		}
+		throw new IllegalStateException();
+	}
+	
+	/**
+	 * 
+	 * Assigns a student-instance to a place (based on row/column)
+	 * 
+	 * @param row
+	 * @param column
+	 * @param student
+	 * @return TRUE if assignment was successful, otherwise FALSE
+	 * @author SebastianN
+	 */
+	public boolean setPlace( int row, int column, IPlace student ) {
+		IPlace[][] students = curCourse.getStudents();
+		if(students!=null) {
+			students[row][column] = student;
+			return true;
+		}
+		throw new IllegalStateException();
+	}
+	
 	/* File format
 	 * <savefile>
 	 * 		<courses count="X">
@@ -103,7 +187,7 @@ public void saveCourses() {
 				
 
 				
-			writer.writeStartElement("changevector");
+			writer.writeStartElement("changematrix");
 			writer.writeAttribute("count", "5");
 			for(int i=0;i<5;i++) {
 				writer.writeStartElement("change");
@@ -134,8 +218,8 @@ public void loadCourses() {
 		
 		int courseIdx = -1;
 		IPlace[][] students = null;
-		int x = 0, y = 0;
-		int max_x = 0, max_y = 0;
+		int rows = 0, columns = 0;
+		int max_rows = 0, max_columns = 0;
 		while(reader.hasNext()) {
 			reader.next(); //Next element
 			
@@ -152,23 +236,23 @@ public void loadCourses() {
 /**
  * FIXME:			courses[courseIdx].setName( reader.getAttributeValue(0) );
  */
-						max_x = Integer.parseInt(reader.getAttributeValue(1));
-						max_y = Integer.parseInt(reader.getAttributeValue(2));
-						students = new EmptyPlace[max_y][max_x];
+						max_columns = Integer.parseInt(reader.getAttributeValue(1));
+						max_rows = Integer.parseInt(reader.getAttributeValue(2));
+						students = new EmptyPlace[max_rows][max_columns];
 						
 					} else if(tagname.contentEquals("student")) {
 						if(Integer.parseInt(reader.getAttributeValue(0))==0) {
 /**
  * FIXME:				students[y][x] = new Student();
  */
-							x++;
-							if(x>=max_x) { //
-								x = 0;
-								y++;
+							columns++;
+							if(columns>=max_columns) { //
+								columns = 0;
+								rows++;
 							}
 						}
 					} else if(tagname.contentEquals("attribute")) {
-						Student curStudent = (Student)students[y][x];
+						Student curStudent = (Student)students[rows][columns];
 						Parameter p = new Parameter( reader.getAttributeValue(0), Integer.parseInt( reader.getAttributeValue(1) ) );
 						curStudent.addParamToStudent(p);
 					} else if(tagname.contentEquals("changevector")) {
