@@ -11,7 +11,6 @@ package edu.dhbw.sos.gui.course;
 
 import java.awt.Color;
 import java.awt.geom.Arc2D;
-import java.awt.geom.Rectangle2D;
 
 
 /**
@@ -40,22 +39,18 @@ public class PizzaPiece extends Arc2D.Double {
 	 * @param arg6
 	 * @author NicolaiO
 	 */
-	public PizzaPiece(double arg0, double arg1, double arg2, double arg3, double arg4, double arg5, int arg6) {
+	public PizzaPiece(String _text, double arg0, double arg1, double arg2, double arg3, double arg4, double arg5,
+			int arg6) {
 		super(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+		text = _text;
 	}
 	
 	
-	/**
-	 * TODO NicolaiO, add comment!
-	 * 
-	 * @param arg0
-	 * @param arg1
-	 * @param arg2
-	 * @param arg3
-	 * @author NicolaiO
-	 */
-	public PizzaPiece(Rectangle2D arg0, double arg1, double arg2, int arg3) {
-		super(arg0, arg1, arg2, arg3);
+	public String getFirstLetter() {
+		if (text.isEmpty()) {
+			return "";
+		}
+		return text.substring(0, 1).toUpperCase();
 	}
 	
 	

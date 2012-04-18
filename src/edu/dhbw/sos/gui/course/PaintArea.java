@@ -19,7 +19,6 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 
 import javax.swing.JPanel;
@@ -52,33 +51,30 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	private float						offset_x, offset_y;
 	// hover indicates the x and y index within the studentArray for the student
 	// that should be highlighted currently
-	private int							hoveredStudent_x	= -1;
-	private int							hoveredStudent_y	= -1;
+	private StudentCircle			hoveredStudent		= null;
 	private static final Font		sanSerifFont		= new Font("SanSerif", Font.PLAIN, 12);
 	// how much circle is scaled, when hovered
-	private static final float		scaleHover			= 1.5f;
+	private static final float		SCALE_HOVER			= 1.5f;
 	// scaling for space between circles
-	private static final float		scaleSpacing		= 1.2f;
+	private static final float		SCALE_SPACING		= 1.2f;
 	// student circles - not final, rather for testing
 	private StudentCircle[][]		studentCircles;
 	// diameter of a circle
 	private float						size;
 	// border size around the border of the panel
 	private float						border;
-	private LinkedList<String>		properties;															// FIXME maybe rather in
-																															// CoursePanel
-																															
-																															
+	private float						offset;
+	
+	
 	/**
 	 * TODO NicolaiO, add comment!
 	 * 
 	 * @author NicolaiO
 	 */
-	public PaintArea(IPlace[][] students) {
+	public PaintArea() {
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
-		assert(students != null);
-		this.updateStudentCircles(students);
+		studentCircles = new StudentCircle[0][0];
 	}
 	
 	
@@ -108,23 +104,23 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		float ratioB = (float) p.width / (float) p.height;
 		if (ratioA < ratioB) {
 			// Formula, received by doing some equation calculations
-			size = (p.height) / (scaleHover - 1 + numStudy + (numStudy + 1) * (scaleSpacing - 1) / 2);
-			spacing = size * (scaleSpacing - 1) / 2;
-			border = (size * (scaleHover - 1)) / 2;
+			size = (p.height) / (SCALE_HOVER - 1 + numStudy + (numStudy + 1) * (SCALE_SPACING - 1) / 2);
+			spacing = size * (SCALE_SPACING - 1) / 2;
+			border = (size * (SCALE_HOVER - 1)) / 2;
 			offset_x = (p.width - (numStudx * (size + spacing) + spacing)) / 2;
 			offset_y = border;
 		} else {
-			size = (p.width) / (scaleHover - 1 + numStudx + (numStudx + 1) * (scaleSpacing - 1) / 2);
-			spacing = size * (scaleSpacing - 1) / 2;
-			border = (size * (scaleHover - 1)) / 2;
+			size = (p.width) / (SCALE_HOVER - 1 + numStudx + (numStudx + 1) * (SCALE_SPACING - 1) / 2);
+			spacing = size * (SCALE_SPACING - 1) / 2;
+			border = (size * (SCALE_HOVER - 1)) / 2;
 			offset_x = border;
 			offset_y = (p.height - (numStudy * (size + spacing) + spacing)) / 2;
 		}
 		
 		// set the shapes (the circles) according to the values calculated above
 		studentCircles = new StudentCircle[numStudy][numStudx];
-		for (int x = 0; x < studentCircles[0].length; x++) {
-			for (int y = 0; y < studentCircles.length; y++) {
+		for (int y = 0; y < studentCircles.length; y++) {
+			for (int x = 0; x < studentCircles[0].length; x++) {
 				if (students[y][x] instanceof Student) {
 					studentCircles[y][x] = new StudentCircle(students[y][x], offset_x + x * (size) + (x + 1.0f) * spacing,
 							offset_y + y * (size) + (y + 1) * spacing, size, size);
@@ -139,6 +135,23 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	
 	
 	/**
+	 * Update any data that uses the properties
+	 * this is:
+	 * * pizzas of studentCircles
+	 * 
+	 * @param properties list of properties
+	 * @author NicolaiO
+	 */
+	public void updateProperties(LinkedList<String> properties) {
+		for (int y = 0; y < studentCircles.length; y++) {
+			for (int x = 0; x < studentCircles[0].length; x++) {
+				studentCircles[y][x].initPizza(properties, offset);
+			}
+		}
+	}
+	
+	
+	/**
 	 * 
 	 * TODO NicolaiO, add comment!
 	 * 
@@ -146,29 +159,28 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	 * @author NicolaiO
 	 */
 	public void paint(Graphics g) {
+		// get a 2D graphics object for better drawing
 		Graphics2D ga = (Graphics2D) g;
+		
+		// Initialize
 		ga.clearRect(0, 0, this.getWidth(), this.getHeight());
-		if(studentCircles == null || studentCircles.length == 0)
-			return;
-		for (int x = 0; x < studentCircles[0].length; x++) {
-			for (int y = 0; y < studentCircles.length; y++) {
-				ga.setPaint(studentCircles[y][x].getColor());
-				ga.fill(studentCircles[y][x]);
+		
+		// draw all students
+		for (int y = 0; y < studentCircles.length; y++) {
+			for (int x = 0; x < studentCircles[0].length; x++) {
+				if (studentCircles[y][x].isExistent()) {
+					ga.setPaint(studentCircles[y][x].getColor());
+					ga.fill(studentCircles[y][x]);
+				}
 			}
 		}
-		if (hoveredStudent_x < 0 || hoveredStudent_x >= studentCircles[0].length || hoveredStudent_y < 0
-				|| hoveredStudent_y >= studentCircles.length) {
-			// logger.warn("paint: x or y not within index range: " + hover_x + "|" + hover_y);
-			hoveredStudent_x = -1;
-			hoveredStudent_y = -1;
-		} else {
-			Rectangle2D rect = studentCircles[hoveredStudent_y][hoveredStudent_x].getBounds2D();
-			float offset = ((float) rect.getWidth() * scaleHover - size) / 2;
-			
-			int count = properties.size();
-			int arc = 360 / 2 / count;
-			int i = 0;
-			for (PizzaPiece pp : studentCircles[hoveredStudent_y][hoveredStudent_x].getPizza()) {
+		
+		// if a students is hovered by mouse, draw the pizza
+		if (hoveredStudent != null && hoveredStudent.getPizza().size() != 0) {
+			offset = ((float) hoveredStudent.getBounds2D().getWidth() * SCALE_HOVER - size) / 2;
+			// set the angle of pizza pieces
+			int angle = 360 / 2 / hoveredStudent.getPizza().size();
+			for (PizzaPiece pp : hoveredStudent.getPizza()) {
 				// draw pizza piece
 				ga.setColor(pp.getColor());
 				ga.fill(pp);
@@ -176,21 +188,18 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 				ga.draw(pp);
 				
 				// write text into pizza piece
-				g.setFont(sanSerifFont);
-				String letter = properties.get(i).substring(0, 1).toUpperCase();
+				ga.setFont(sanSerifFont);
 				FontMetrics fm = g.getFontMetrics();
-				int w = fm.stringWidth(letter);
+				int w = fm.stringWidth(pp.getFirstLetter());
 				int h = fm.getAscent();
 				
-				int x = (int) (Math.cos((double) arc * Math.PI / 180) * (size * scaleHover / 4));
-				int y = -(int) (Math.sin((double) arc * Math.PI / 180) * (size * scaleHover / 4));
+				int x = (int) (Math.cos((double) angle * Math.PI / 180) * (size * SCALE_HOVER / 4));
+				int y = -(int) (Math.sin((double) angle * Math.PI / 180) * (size * SCALE_HOVER / 4));
 				// System.out.println("x:"+x+" y:"+y+"arc: "+arc+" letter:"+letter);
-				arc += 360 / count;
-				g.drawString(letter, (int) (rect.getX() - offset - (w / 2) + size * scaleHover / 2 + x), (int) (rect.getY()
-						- offset + (h / 4) + size * scaleHover / 2 + y));
-				
-				// increment index
-				i++;
+				angle += 360 / hoveredStudent.getPizza().size();
+				g.drawString(pp.getFirstLetter(), (int) (hoveredStudent.getBounds2D().getX() - offset - (w / 2) + size
+						* SCALE_HOVER / 2 + x), (int) (hoveredStudent.getBounds2D().getY() - offset + (h / 4) + size
+						* SCALE_HOVER / 2 + y));
 			}
 		}
 	}
@@ -210,13 +219,14 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		}
 		float ratiox = ((float) p.x - offset_x - spacing) / ((float) this.getSize().width - 2 * offset_x - spacing);
 		float ratioy = ((float) p.y - offset_y - spacing) / ((float) this.getSize().height - 2 * offset_y - spacing);
-		hoveredStudent_x = (int) (ratiox * (float) studentCircles[0].length);
-		hoveredStudent_y = (int) (ratioy * (float) studentCircles.length);
-		
-		Rectangle2D rect = studentCircles[hoveredStudent_y][hoveredStudent_x].getBounds2D();
-		float offset = ((float) rect.getWidth() * scaleHover - size) / 2;
-		studentCircles[hoveredStudent_y][hoveredStudent_x].initPizza(properties, offset);
-		
+		if (studentCircles.length == 0) {
+			hoveredStudent = null;
+		} else {
+			int x = (int) (ratiox * (float) studentCircles[0].length);
+			int y = (int) (ratioy * (float) studentCircles.length);
+			hoveredStudent = studentCircles[y][x];
+		}
+		hoveredStudent.updatePizza();
 		this.repaint();
 	}
 	
@@ -224,7 +234,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// check if current student is a real student and not an empty place, etc.
-		StudentCircle studC = studentCircles[hoveredStudent_y][hoveredStudent_y];
+		StudentCircle studC = hoveredStudent;
 		if (studC != null && studC.isExistent()) {
 			// find pizza piece that mouse clicked on
 			for (PizzaPiece pizza : studC.getPizza()) {
@@ -261,18 +271,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	
 	@Override
 	public void mouseExited(MouseEvent e) {
-		hoveredStudent_x = -1;
-		hoveredStudent_y = -1;
+		hoveredStudent = null;
 		this.repaint();
-	}
-	
-	
-	public LinkedList<String> getProperties() {
-		return properties;
-	}
-	
-	
-	public void setProperties(LinkedList<String> properties) {
-		this.properties = properties;
 	}
 }

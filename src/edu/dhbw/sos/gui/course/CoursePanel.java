@@ -10,6 +10,7 @@
 package edu.dhbw.sos.gui.course;
 
 import java.awt.BorderLayout;
+import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
@@ -27,11 +28,11 @@ import edu.dhbw.sos.gui.MainFrame;
  * 
  */
 public class CoursePanel extends JPanel implements IUpdateable {
-	private static final long				serialVersionUID	= 5542875796802944785L;
-//	private static final Logger			logger				= Logger.getLogger(CoursePanel.class);
-	private final PaintArea	paintArea;
-	private IPlace[][] students;
-	
+	private static final long	serialVersionUID	= 5542875796802944785L;
+	// private static final Logger logger = Logger.getLogger(CoursePanel.class);
+	private final PaintArea		paintArea;
+	private IPlace[][]			students;
+	private LinkedList<String>	properties;
 	
 	
 	/**
@@ -45,16 +46,15 @@ public class CoursePanel extends JPanel implements IUpdateable {
 		this.setLayout(new BorderLayout());
 		this.setLayout(new BorderLayout());
 		students = data.getCourse().getStudents();
-		paintArea = new PaintArea(data.getCourse().getStudents());
+		properties = data.getCourse().getProperties();
+		paintArea = new PaintArea();
 		this.add(paintArea, BorderLayout.CENTER);
-		paintArea.setProperties(data.getCourse().getProperties());
 	}
 	
 	
 	@Override
 	public void update() {
 		paintArea.updateStudentCircles(students);
+		paintArea.updateProperties(properties);
 	}
-	
-	
 }

@@ -82,16 +82,15 @@ public class StudentCircle extends Ellipse2D.Float {
 	 * @author NicolaiO
 	 */
 	public void initPizza(LinkedList<String> properties, float offset) {
-		if (!existent)
+		if (!existent) // FIXME should not be need, when IPlace is set up correct
 			return;
 		Rectangle2D rect = this.getBounds2D();
 		pizza.clear();
 		int count = properties.size();
 		for (int i = 0; i < count; i++) {
-			PizzaPiece pizzaPiece = new PizzaPiece(rect.getX() - offset, rect.getY() - offset, rect.getWidth() + 2
+			PizzaPiece pizzaPiece = new PizzaPiece(properties.get(i), rect.getX() - offset, rect.getY() - offset, rect.getWidth() + 2
 					* offset, rect.getHeight() + 2 * offset, (float) i / (float) count * 360, 360 / count, Arc2D.PIE);
 			pizzaPiece.setColor(getColorFromValue(((Student) student).getActualState().getValueAt(i), 100));
-			pizzaPiece.setText(properties.get(i).substring(0, 1).toUpperCase());
 			pizza.add(pizzaPiece);
 		}
 	}
@@ -102,6 +101,7 @@ public class StudentCircle extends Ellipse2D.Float {
 			return;
 		int i=0;
 		for (PizzaPiece pizzaPiece : pizza) {
+			// FIXME casting
 			pizzaPiece.setColor(getColorFromValue(((Student) student).getActualState().getValueAt(i), 100));
 			i++;
 		}
