@@ -11,6 +11,7 @@ package edu.dhbw.sos.course.student;
 
 import java.util.LinkedList;
 
+import edu.dhbw.sos.course.influence.Influence;
 import edu.dhbw.sos.helper.CalcVector;
 import edu.dhbw.sos.helper.Parameter;
 
@@ -81,6 +82,27 @@ public class Student implements IPlace, Cloneable {
 		this.changeVector.setValueAt(index, newVal);
 	}
 	
+	/**
+	 * calculates the next state for the actual state vector
+	 * @param changeVector
+	 * @param influence
+	 * @author dirk
+	 */
+	public void calcNextSimulationStep(CalcVector changeVector, Influence influence) {
+		
+		// - - parameter
+		double parameterInf = 0.001;
+		changeVector.addCalcVector(influence.getInfluencedParameterVector(this.getActualState(), parameterInf));
+		
+		// - usual behavior of the student -> usualBehav * timeInf
+		double behaviorInf = 0.001;
+		changeVector.addCalcVector(this.getChangeVector().clone().multiplyWithDouble(behaviorInf));
+		
+		//time depending
+		//TODO: bring all values to an average value by time
+		
+		this.setActualState(changeVector);
+	}
 	
 	/**
 	 * another interface that is needed but should be reconsidered
@@ -116,13 +138,21 @@ public class Student implements IPlace, Cloneable {
 	/**
 	 * Returns the actualState of this student to allow further access to it.
 	 * 
-	 * NOTE: this is only for testing. Should be replaced by a separate method in Student.
-	 * 
 	 * @return
 	 * @author bene
 	 */
 	public CalcVector getActualState() {
 		return this.actualState;
+	}
+	
+	/**
+	 * Sets the actualState vector
+	 * 
+	 * @return
+	 * @author dirk
+	 */
+	public void setActualState(CalcVector cv) {
+		this.actualState = cv;
 	}
 	
 	
@@ -197,6 +227,8 @@ public class Student implements IPlace, Cloneable {
 		}
 		changeVector.setValueAt(index, changeVector.getValueAt(index) + value);
 	}
+	
+	
 	
 	
 	/**
