@@ -8,8 +8,10 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.gui.GUIData;
 import edu.dhbw.sos.gui.MainFrame;
+import edu.dhbw.sos.simulation.SimController;
 
 
 public class SuperFelix {
@@ -48,6 +50,8 @@ public class SuperFelix {
 		data = new GUIData();
 		mainFrame = new MainFrame(data);
 		mainFrame.update();
+		
+		SimController.init(new Course(), mainFrame);
 		logger.info("Sim of Students started.");
 	}
 	

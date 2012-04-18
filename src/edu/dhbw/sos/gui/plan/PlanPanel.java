@@ -13,6 +13,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -26,6 +28,7 @@ import javax.swing.SwingConstants;
 import edu.dhbw.sos.course.lecture.TimeBlocks;
 import edu.dhbw.sos.gui.GUIData;
 import edu.dhbw.sos.gui.IUpdateable;
+import edu.dhbw.sos.simulation.SimController;
 
 
 /**
@@ -62,7 +65,7 @@ public class PlanPanel extends JPanel implements IUpdateable {
 		this.setLayout(new BorderLayout());
 		
 		// init paintArea
-		paintArea = new PaintArea();
+		paintArea = new PaintArea(timeBlocks);
 		this.add(paintArea, BorderLayout.CENTER);
 		
 		// create sidePanel
@@ -74,10 +77,19 @@ public class PlanPanel extends JPanel implements IUpdateable {
 		// control panel (play, pause, etc.)
 		JPanel controlPanel = new JPanel();
 		JButton btnPlay = new JButton("Pl");
-		JButton btnPause = new JButton("Pa");
+		btnPlay.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					SimController.getInstance().toggle();
+				} catch (Exception err) {
+					// TODO andres Auto-generated catch block
+					err.printStackTrace();
+				}
+			}
+		});
 		JButton btnLive = new JButton("L");
 		controlPanel.add(btnPlay);
-		controlPanel.add(btnPause);
 		controlPanel.add(btnLive);
 		sidePanel.add(controlPanel);
 		
@@ -111,7 +123,7 @@ public class PlanPanel extends JPanel implements IUpdateable {
 	
 	@Override
 	public void update() {
-		paintArea.initMovableBlocks(timeBlocks);
+		paintArea.initMovableBlocks();
 		paintArea.repaint();
 	}
 }

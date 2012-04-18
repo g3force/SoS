@@ -63,5 +63,13 @@ public class Influence {
 		return toInfluence.multiplyWithMatrix(parameterInfl);
 	}
 	
+	public Matrix getParameterMatrix() {
+		return parameterInfl;
+	}
+	
+	public void setParameterMatrix(Matrix newMatrix) {
+		this.parameterInfl = newMatrix;
+	}
+	
 	
 }

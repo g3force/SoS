@@ -21,8 +21,9 @@ import java.util.Vector;
  */
 public class CalcVector implements Cloneable {
 	private Vector<Parameter>	vector;
-													
-													
+			
+	
+												
 	/**
 	 * Creates a new CalcVector object with all the Parameters defined by the List of Strings.
 	 * The initial values of the Parameter objects are all set to 1.
@@ -36,8 +37,16 @@ public class CalcVector implements Cloneable {
 			this.vector.add(i, new Parameter(arguments.get(i), 1));
 		}
 	}
+	
+	/**
+	 * TODO Es ist etwas blöd, dass man immer die arguments liste braucht um ein Vektor anzulegen, da man bei Berechnungen auch mal einen Zwischenvektor anlegt.
+	 * Also es wäre cool, wenn diese Funktion dann noch den Vektor mit 0 initialisiert
+	 * @author dirk
+	 */
 	public CalcVector(int initSize) {
 		this.vector = new Vector<Parameter>(initSize);
+		for(int i=0; i<initSize; i++)
+			this.vector.add(i, new Parameter("something", 0));
 	}
 	/**
 	 * Appends the Parameter object p to the end of this vector.

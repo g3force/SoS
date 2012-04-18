@@ -26,16 +26,38 @@ import edu.dhbw.sos.gui.MainFrame;
 
 public class SimController {
 	
-	Course	course;
-	int		currentTime;			// in milliseconds from "begin"
-	int		speed;					// in milliseconds
-	Timer		pulse	= new Timer();
+	private Course	course;
+	private int		currentTime;			// in milliseconds from "begin"
+	private int		speed;					// in milliseconds
+	private Timer		pulse	= new Timer();
+	private static SimController instance = null;
+	private boolean run = false;
 	
 	
-	public SimController(Course course, MainFrame mf) {
+	private SimController(Course course, MainFrame mf) {
+		this.course = course;
 		currentTime = 0;
 		speed = 1000;
 		run();
+	}
+	
+	public static void init(Course course, MainFrame mf) {
+		instance = new SimController(course, mf);
+	}
+	
+	public static SimController getInstance() throws Exception {
+		if(instance == null) {
+			throw new Exception();
+		} else {
+			return instance;
+		}
+	}
+	
+	public void toggle() {
+		if(run)
+			stop();
+		else
+			run();
 	}
 	
 	
@@ -66,8 +88,7 @@ public class SimController {
 	 */
 	private void simulationStep() {
 		currentTime += speed;
-		
-		
+		course.simulationStep(currentTime, speed);
 	}
 	
 	

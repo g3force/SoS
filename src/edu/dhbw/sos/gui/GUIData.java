@@ -38,12 +38,12 @@ public class GUIData {
 	
 	public GUIData() {
 		// dummy data
-		lecture = new Lecture(new Date(), 100);
-		lecture.addTimeBlock(new TimeBlock(10,BlockType.theory));
-		lecture.addTimeBlock(new TimeBlock(20,BlockType.pause));
-		lecture.addTimeBlock(new TimeBlock(30,BlockType.exercise));
-		lecture.addTimeBlock(new TimeBlock(10,BlockType.pause));
-		lecture.addTimeBlock(new TimeBlock(30,BlockType.group));
+		lecture = new Lecture(new Date());
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10,BlockType.theory));
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(20,BlockType.pause));
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30,BlockType.exercise));
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10,BlockType.pause));
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30,BlockType.group));
 		
 		setCourse(new Course());
 		
