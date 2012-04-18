@@ -1,15 +1,16 @@
-/* 
+/*
  * *********************************************************
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 15, 2012
  * Author(s): dirk
- *
+ * 
  * *********************************************************
  */
 package edu.dhbw.sos.course.student;
 
 import edu.dhbw.sos.helper.CalcVector;
+
 
 /**
  * TODO dirk, add comment!
@@ -21,5 +22,10 @@ import edu.dhbw.sos.helper.CalcVector;
  */
 public interface IPlace {
 	CalcVector getActualState();
+	
+	
 	void setActualState(CalcVector acutalState);
+	
+	
+	int getAverageState();
 }
