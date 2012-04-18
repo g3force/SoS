@@ -41,6 +41,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	// it is set to the reference to the moving block
 	// it should be null, if no block is moved
 	private MovableBlock					moveBlock			= null;
+	private TimeBlocks					tbs;
 	
 	
 	/**
@@ -48,9 +49,11 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	 * 
 	 * @author NicolaiO
 	 */
-	public PaintArea() {
+	public PaintArea(TimeBlocks tbs) {
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
+		this.tbs = tbs;
+		this.initMovableBlocks();
 	}
 	
 	
@@ -63,10 +66,10 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	 * @param tbs TimeBlocks from which to initialize
 	 * @author NicolaiO
 	 */
-	public void initMovableBlocks(TimeBlocks tbs) {
+	public void initMovableBlocks() {
 		movableBlocks = new LinkedList<MovableBlock>();
 		int start = 20;
-		float scaleRatio = (this.getWidth() - start) / tbs.getTotalLength();
+		float scaleRatio = (this.getWidth() - start) / (tbs.getTotalLength() != 0 ? tbs.getTotalLength() : 1);
 		for (TimeBlock tb : tbs) {
 			Point location;
 			Color color;
@@ -151,6 +154,11 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		moveBlock = null;
+		tbs.clear();
+		for (MovableBlock mb : movableBlocks) {
+			tbs.addTimeBlock(mb.getTimeBlock());
+		}
+		return;
 	}
 	
 	
@@ -168,6 +176,10 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	public void mouseDragged(MouseEvent e) {
 		// while mouse is pressed and moving, this will move the button
 		if (moveBlock != null) {
+			// Calculate the movement in x. Negative Value means to the left and positive to the right. 
+			double mmt_X = e.getPoint().getX() - moveBlock.getLocation().getX();
+			moveBlock.getTimeBlock();
+			//tbs.
 			moveBlock.setLocation(e.getPoint());
 			this.repaint();
 		}

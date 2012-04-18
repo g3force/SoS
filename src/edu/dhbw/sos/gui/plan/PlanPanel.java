@@ -80,7 +80,12 @@ public class PlanPanel extends JPanel implements IUpdateable {
 		btnPlay.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				SimController.getInstance().toggle();
+				try {
+					SimController.getInstance().toggle();
+				} catch (Exception err) {
+					// TODO andres Auto-generated catch block
+					err.printStackTrace();
+				}
 			}
 		});
 		JButton btnLive = new JButton("L");
