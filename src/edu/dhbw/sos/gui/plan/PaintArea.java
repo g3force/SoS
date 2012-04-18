@@ -15,12 +15,15 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.LinkedList;
 
 import javax.swing.JPanel;
+
+import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.lecture.TimeBlock;
 import edu.dhbw.sos.course.lecture.TimeBlocks;
@@ -35,6 +38,8 @@ import edu.dhbw.sos.course.lecture.TimeBlocks;
  */
 public class PaintArea extends JPanel implements MouseListener, MouseMotionListener {
 	private static final long			serialVersionUID	= 5194596384018441495L;
+	private static final Logger		logger				= Logger.getLogger(PaintArea.class);
+	
 	// list of all movable blocks
 	private LinkedList<MovableBlock>	movableBlocks		= new LinkedList<MovableBlock>();
 	// this block is set, when a block is moved by dragging with the mouse.
@@ -176,11 +181,48 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	public void mouseDragged(MouseEvent e) {
 		// while mouse is pressed and moving, this will move the button
 		if (moveBlock != null) {
-			// Calculate the movement in x. Negative Value means to the left and positive to the right. 
-			double mmt_X = e.getPoint().getX() - moveBlock.getLocation().getX();
-			moveBlock.getTimeBlock();
-			//tbs.
-			moveBlock.setLocation(e.getPoint());
+			// Calculate the movement in x. Negative Value means to
+			// the left and positive to the right.
+			int mmt_X = (int) Math.floor(e.getPoint().getX() + moveBlock.getRelMouseLocation().getX() - moveBlock.getX());
+			logger.debug("Movement in x " + mmt_X);
+			logger.debug("e.getPoint().getX " + e.getPoint().getX());
+			logger.debug("getRelMouseLocation " + moveBlock.getRelMouseLocation().getX());
+			logger.debug("moveBlock.getX() " + moveBlock.getX());
+			logger.debug("moveBlock.getWidth() " + moveBlock.getWidth());
+
+			// Any block must exist only one time in the list
+			int index = movableBlocks.indexOf(moveBlock);
+			
+			// calculate new position of moveBlock
+			Point movPos = new Point();
+			double x = e.getPoint().getX();
+			if (x < 0)
+				e.getPoint().setLocation(0, e.getPoint().getY());
+			else if (x > this.getWidth())
+				e.getPoint().setLocation(this.getWidth(), e.getPoint().getY());
+			movPos.setLocation(x, e.getPoint().getY());
+			moveBlock.setLocation(movPos);
+			
+			// Calculate width of left block
+			if (index - 1 >= 0) {
+				movableBlocks.get(index - 1).width = movableBlocks.get(index - 1).width + mmt_X;
+			}
+			
+			// Calculate width of right block and new position
+			if (movableBlocks.size() > index + 1 && index >= 0) {
+				movableBlocks.get(index + 1).width = movableBlocks.get(index + 1).width - mmt_X;
+				// FIXME BLock verschwindet nach links ??!?!?
+				Point movPos_P1 = new Point();
+				 double x_P1 = movableBlocks.get(index + 1).getLocation().getX() + mmt_X;
+				 if(x_P1 <= 0)
+					 	x_P1 = 0;
+				 else if(x_P1 >= this.getWidth())
+					 x_P1 = this.getWidth();
+				// x_P1 = x + moveBlock.getWidth();
+				movPos_P1.setLocation(x_P1, movableBlocks.get(index + 1).getLocation().getY());
+				((Rectangle) movableBlocks.get(index + 1)).setLocation(movPos_P1);
+			}
+			
 			this.repaint();
 		}
 	}

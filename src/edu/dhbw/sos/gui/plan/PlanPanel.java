@@ -83,7 +83,6 @@ public class PlanPanel extends JPanel implements IUpdateable {
 				try {
 					SimController.getInstance().toggle();
 				} catch (Exception err) {
-					// TODO andres Auto-generated catch block
 					err.printStackTrace();
 				}
 			}
