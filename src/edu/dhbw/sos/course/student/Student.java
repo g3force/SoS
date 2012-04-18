@@ -107,11 +107,23 @@ public class Student implements IPlace, Cloneable {
 	public void addToStateVector(CalcVector addVector) {
 		for(int i=0; i<addVector.size(); i++) {
 			double sValue = actualState.getValueAt(i);
-			double vValue = actualState.getValueAt(i);
-			if(sValue < 50 && vValue>0) {
-				
+			double vValue = addVector.getValueAt(i);
+			//if the add value is positive, take the percentage missing to 100, and multiply it with 2
+			//i.e. acutalState = 30, addVector = 20 -> (100-30)*2/100 -> 1,4*20 = 28 -> 58
+			//i.e. acutalState = 80, addVector = 20 -> (100-80)*2/100 -> 0,4*20 = 8 -> 88
+			//i.e. acutalState = 95, addVector = 20 -> (100-95)*2/100 -> 0,1*20 = 2 -> 97
+			//i.e. acutalState = 98, addVector = 20 -> (100-98)*2/100 -> 0,04*20 = 0.8 -> 98.8
+			if(vValue>0) {
+				actualState.setValueAt(i, (int)(vValue*((100-sValue)*2/100)));
+			} else {
+				actualState.setValueAt(i, (int)(vValue*((sValue)*2/100)));
 			}
-				
+			if(actualState.getValueAt(i)<0) {
+				actualState.setValueAt(i, 0);
+			}
+			if(actualState.getValueAt(i)>100) {
+				actualState.setValueAt(i, 100);
+			}	
 		}
 	}
 	
