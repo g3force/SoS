@@ -55,7 +55,7 @@ public class Course {
 		}
 		influence = new Influence();
 		historyStates = new HashMap<Integer, IPlace[][]>();
-		lecture = new Lecture(new Date(), 200);
+		lecture = new Lecture(new Date());
 	}
 	
 	/**
@@ -103,7 +103,7 @@ public class Course {
 			
 			// - - - breakReaction -> inf(Break) * breakInf
 			double breakInf = 0.01;
-			if(lecture.getTimeBlock(currentTime/1000).getType() == BlockType.pause) {
+			if(lecture.getTimeBlocks().getTimeBlockAtTime(currentTime/1000).getType() == BlockType.pause) {
 				preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.BREAK_REACTION, breakInf));
 			}
 			
