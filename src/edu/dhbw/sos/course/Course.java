@@ -34,7 +34,7 @@ public class Course {
 	private Lecture lecture;
 	private HashMap<Integer, IPlace[][]> historyStates;
 	private LinkedList<String> properties;
-	private String name; // useful here? than add get/set
+	private String name;
 	
 	public Course() {
 		students = new IPlace[5][7];
@@ -48,8 +48,12 @@ public class Course {
 				if(y==3||x==4) {
 					students[y][x] = new EmptyPlace(properties.size());
 				} else {
-					students[y][x] = new Student(properties);
+					Student newStud = new Student(properties);
+					for(int i=0; i<4; i++)
+						newStud.addValueToChangeVector(0, (int)(Math.random()*100));
+					
 //					((Student)students[y][x]).
+					students[y][x] = newStud;
 				}
 			}
 		}
@@ -193,5 +197,15 @@ public class Course {
 	public void setProperties(LinkedList<String> properties) {
 		this.properties = properties;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	
 
 }

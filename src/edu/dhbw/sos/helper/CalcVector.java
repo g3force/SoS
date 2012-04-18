@@ -45,6 +45,8 @@ public class CalcVector implements Cloneable {
 	 */
 	public CalcVector(int initSize) {
 		this.vector = new Vector<Parameter>(initSize);
+		for(int i=0; i<initSize; i++)
+			this.vector.add(i, new Parameter("something", 0));
 	}
 	/**
 	 * Appends the Parameter object p to the end of this vector.
