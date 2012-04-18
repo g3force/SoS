@@ -7,7 +7,7 @@
  * 
  * *********************************************************
  */
-package edu.dhbw.sos.GUI;
+package edu.dhbw.sos.gui.status;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -15,6 +15,9 @@ import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import edu.dhbw.sos.gui.GUIData;
+import edu.dhbw.sos.gui.IUpdateable;
 
 
 

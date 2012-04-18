@@ -7,7 +7,7 @@
  * 
  * *********************************************************
  */
-package edu.dhbw.sos.GUI;
+package edu.dhbw.sos.gui;
 
 import java.util.Date;
 import java.util.LinkedHashMap;

@@ -7,7 +7,7 @@
  * 
  * *********************************************************
  */
-package edu.dhbw.sos.GUI;
+package edu.dhbw.sos.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -23,6 +23,11 @@ import javax.swing.border.Border;
 
 import org.apache.log4j.Logger;
 
+import edu.dhbw.sos.gui.course.CoursePanel;
+import edu.dhbw.sos.gui.plan.PlanPanel;
+import edu.dhbw.sos.gui.right.RightPanel;
+import edu.dhbw.sos.gui.status.StatusBar;
+import edu.dhbw.sos.gui.student.StudentPanel;
 import edu.dhbw.sos.helper.Messages;
 
 

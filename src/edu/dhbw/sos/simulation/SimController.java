@@ -12,8 +12,8 @@ package edu.dhbw.sos.simulation;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import edu.dhbw.sos.GUI.MainFrame;
 import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.gui.MainFrame;
 
 
 /**

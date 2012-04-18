@@ -7,13 +7,16 @@
  * 
  * *********************************************************
  */
-package edu.dhbw.sos.GUI;
+package edu.dhbw.sos.gui.student;
 
 import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+
+import edu.dhbw.sos.gui.GUIData;
+import edu.dhbw.sos.gui.IUpdateable;
 
 
 

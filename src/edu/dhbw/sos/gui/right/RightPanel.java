@@ -7,7 +7,7 @@
  * 
  * *********************************************************
  */
-package edu.dhbw.sos.GUI;
+package edu.dhbw.sos.gui.right;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -31,6 +31,9 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import edu.dhbw.sos.gui.GUIData;
+import edu.dhbw.sos.gui.IUpdateable;
+import edu.dhbw.sos.gui.MainFrame;
 import edu.dhbw.sos.helper.Messages;
 
 
