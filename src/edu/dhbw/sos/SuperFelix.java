@@ -18,8 +18,8 @@ import edu.dhbw.sos.simulation.SimController;
 public class SuperFelix {
 	private static final Logger	logger	= Logger.getLogger(SuperFelix.class);
 	private static String			datapath;
-	private final GUIData data;
-	private final MainFrame mainFrame;
+	private final GUIData			data;
+	private final MainFrame			mainFrame;
 	
 	
 	public SuperFelix() {

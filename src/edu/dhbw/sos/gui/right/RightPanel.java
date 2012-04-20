@@ -47,9 +47,9 @@ import edu.dhbw.sos.helper.Messages;
 public class RightPanel extends JPanel implements IUpdateable, ActionListener {
 	private static final long					serialVersionUID	= -6879799823225506209L;
 	// width of panel
-	private static final int					PREF_SIZE				= 200;
+	private static final int					PREF_SIZE			= 200;
 	// margin left and right
-	private static final int					MARGIN_LR				= 5;
+	private static final int					MARGIN_LR			= 5;
 	
 	// child elements
 	private JPanel									statsPanel;

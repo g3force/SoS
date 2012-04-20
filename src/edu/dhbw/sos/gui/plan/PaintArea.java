@@ -219,7 +219,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 				 else if(x_P1 >= this.getWidth())
 					 x_P1 = this.getWidth();
 				// x_P1 = x + moveBlock.getWidth();
-				movPos_P1.setLocation(x_P1, movableBlocks.get(index + 1).getLocation().getY());
+				movPos_P1.setLocation(x_P1, movableBlocks.get(index + 1).getLocation().getX());
 				((Rectangle) movableBlocks.get(index + 1)).setLocation(movPos_P1);
 			}
 			
