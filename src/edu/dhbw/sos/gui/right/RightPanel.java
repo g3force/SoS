@@ -124,61 +124,73 @@ public class RightPanel extends JPanel implements IUpdateable, ActionListener {
 	
 	@Override
 	public void update() {
+		updateData();
+	}
+	
+	
+	private void updateData() {
 		// course list
-		courseList.removeAllItems();
-		for (String profile : profiles) {
-			courseList.addItem(profile);
+		if (courseList.getItemCount() != profiles.size()) {
+			courseList.removeAllItems();
+			for (String profile : profiles) {
+				courseList.addItem(profile);
+			}
 		}
+		
 		if (profiles.size() > 0)
 			courseList.setSelectedIndex(0);
 		
 		// statistics
-		statsPanel.removeAll();
-		for (Map.Entry<String, String> entry : statistics.entrySet()) {
-			JLabel lblKey = new JLabel(entry.getKey());
-			JLabel lblValue = new JLabel(entry.getValue(), JLabel.CENTER);
-			statsPanel.add(lblKey);
-			statsPanel.add(lblValue);
+		if (statsPanel.getComponentCount() != statistics.size()) {
+			statsPanel.removeAll();
+			for (Map.Entry<String, String> entry : statistics.entrySet()) {
+				JLabel lblKey = new JLabel(entry.getKey());
+				JLabel lblValue = new JLabel(entry.getValue(), JLabel.CENTER);
+				statsPanel.add(lblKey);
+				statsPanel.add(lblValue);
+			}
 		}
 		
 		// suggestions
-		suggestionPanel.removeAll();
-		suggestionPanel.add(new JLabel(Messages.getString("suggestions")));
-		for (String sugg : suggestions) {
-			JLabel lblSug = new JLabel(sugg);
-			lblSug.addMouseListener(new MouseListener() {
-				@Override
-				public void mouseReleased(MouseEvent e) {
-				}
-				
-				
-				@Override
-				public void mousePressed(MouseEvent e) {
-				}
-				
-				
-				@Override
-				public void mouseExited(MouseEvent e) {
-				}
-				
-				
-				@Override
-				public void mouseEntered(MouseEvent e) {
-				}
-				
-				
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					JLabel me = (JLabel) e.getSource();
-					if (me != null) {
-						suggestions.remove(me.getText());
+		if (suggestionPanel.getComponentCount() != suggestions.size() + 1) {
+			suggestionPanel.removeAll();
+			suggestionPanel.add(new JLabel(Messages.getString("suggestions")));
+			for (String sugg : suggestions) {
+				JLabel lblSug = new JLabel(sugg);
+				lblSug.addMouseListener(new MouseListener() {
+					@Override
+					public void mouseReleased(MouseEvent e) {
 					}
-					RightPanel.this.update();
-				}
-			});
-			suggestionPanel.add(lblSug);
+					
+					
+					@Override
+					public void mousePressed(MouseEvent e) {
+					}
+					
+					
+					@Override
+					public void mouseExited(MouseEvent e) {
+					}
+					
+					
+					@Override
+					public void mouseEntered(MouseEvent e) {
+					}
+					
+					
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						JLabel me = (JLabel) e.getSource();
+						if (me != null) {
+							suggestions.remove(me.getText());
+							suggestionPanel.remove(me);
+							suggestionPanel.updateUI();
+						}
+					}
+				});
+				suggestionPanel.add(lblSug);
+			}
 		}
-		
 	}
 	
 	

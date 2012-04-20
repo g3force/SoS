@@ -9,15 +9,16 @@
  */
 package edu.dhbw.sos.gui.student;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import edu.dhbw.sos.gui.GUIData;
 import edu.dhbw.sos.gui.IUpdateable;
-
 
 
 /**
@@ -29,21 +30,31 @@ import edu.dhbw.sos.gui.IUpdateable;
  * 
  */
 public class StudentPanel extends JPanel implements IUpdateable {
-	
-	/**  */
 	private static final long	serialVersionUID	= 722304874911423036L;
+	private final PaintArea		paintArea;
 	
 	
 	public StudentPanel(GUIData data) {
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.setPreferredSize(new Dimension(200, 150));
+		this.setLayout(new BorderLayout());
+		
+		LinkedList<Integer> diaData = new LinkedList<Integer>();
+		double last = 50;
+		for (int i = 0; i < 50; i++) {
+			last = last + ((Math.random() - 0.5) * 30.0);
+			if(last<0) last = 0;
+			diaData.add((int) last);
+			
+		}
+		paintArea = new PaintArea(diaData);
+		this.add(paintArea, BorderLayout.CENTER);
 	}
-
-
+	
+	
 	@Override
 	public void update() {
-		// TODO NicolaiO Auto-generated method stub
-		
+		paintArea.update();
 	}
 	
 }
