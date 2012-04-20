@@ -11,12 +11,12 @@ package edu.dhbw.sos.course;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
-import edu.dhbw.sos.SuperFelix;
 import edu.dhbw.sos.course.influence.EInfluenceType;
 import edu.dhbw.sos.course.influence.Influence;
 import edu.dhbw.sos.course.lecture.BlockType;
@@ -36,7 +36,7 @@ public class Course {
 	private IPlace[][] students;
 	private Influence influence;
 	private Lecture lecture;
-	private HashMap<Integer, IPlace[][]> historyStates;
+	private HashMap<Integer, IPlace[][]> historyDonInput;
 	private LinkedList<String> properties;
 	private String name;
 	private static final Logger	logger	= Logger.getLogger(Course.class);
@@ -66,7 +66,7 @@ public class Course {
 		}
 		
 		influence = new Influence();
-		historyStates = new HashMap<Integer, IPlace[][]>();
+		historyDonInput = new HashMap<Integer, IPlace[][]>();
 		lecture = new Lecture(new Date());
 		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10,BlockType.theory));
 		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(20,BlockType.pause));
@@ -75,14 +75,16 @@ public class Course {
 		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30,BlockType.group));
 	}
 	
+	
+	
 	/**
 	 * adds a new state to the history states
 	 * @param time
 	 * @param currentState
 	 * @author dirk
 	 */
-	public void addHistoryState(int time, IPlace[][] currentState) {
-		historyStates.put(time, currentState);
+	public void addHistoryDonInput(int time, IPlace[][] currentState) {
+		historyDonInput.put(time, currentState);
 	}
 	
 	/**
@@ -94,9 +96,9 @@ public class Course {
 	 * @return 
 	 * @author dirk
 	 */
-	public Entry<Integer, IPlace[][]> historyStateInInterval(int start, int end) {
+	public Entry<Integer, IPlace[][]> historyDonInputInInterval(int start, int end) {
 		Entry<Integer, IPlace[][]> latest = null;
-		for(Entry<Integer, IPlace[][]> historyState : historyStates.entrySet())
+		for(Entry<Integer, IPlace[][]> historyState : historyDonInput.entrySet())
 		{
 			if(historyState.getKey()>start && historyState.getKey()<end) {
 				if(latest==null || latest.getKey()<historyState.getKey())
@@ -107,9 +109,10 @@ public class Course {
 	}
 	
 	public void simulationStep(int currentTime, int speed) {
+		
 			students[0][0].printAcutalState();
 			// check if there was an interaction from the don
-			Entry<Integer, IPlace[][]> donInteraction = historyStateInInterval(currentTime - speed, currentTime);
+			Entry<Integer, IPlace[][]> donInteraction = historyDonInputInInterval(currentTime - speed, currentTime);
 			if (donInteraction != null) {
 				students = donInteraction.getValue();
 			}
@@ -155,11 +158,12 @@ public class Course {
 						((Student)newState[y][x]).calcNextSimulationStep(preChangeVectorSpecial, influence, x,y);
 						if(y==0 && x==0)
 							((Student)newState[y][x]).printAcutalState();
-					}
+						((Student)students[y][x]).saveHistoryStates(currentTime);					}
 				}
 			}
 			//give the reference from newState to real students array
 			students = newState;
+			
 	}
 	
 	/**
@@ -172,13 +176,16 @@ public class Course {
 	 */
 	private CalcVector getNeighborsInfluence(Student student, int x, int y) {
 	// - - - neighbor -> inf(Neighbor) * state(studentLeft) * neighbor + inf(Neighbor) * state(studentRight) * neighbor
+		
 			CalcVector changeVector = new CalcVector(student.getActualState().size());
 			double[][] neighborInf = new double[3][3];
 			for(int i = 0; i<3; i++) {
 				for(int j = 0; j<3; j++) {
-					neighborInf[j][i] = 0.0001;
+					neighborInf[j][i] = 0.01;
 				}
 			}
+			
+			influence.getEnvironmentVector(EInfluenceType.NEIGHBOR, neighborInf[0][0]).printCalcVector("Influence neighbor: ");
 			
 			//System.out.println("x: "+x+" / y: "+y);
 			for(int i = -1; i<=1; i++) {
@@ -192,6 +199,7 @@ public class Course {
 							CalcVector studentsState = s.getActualState();
 							changeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR, neighborInf[j+1][i+1])
 									.multiplyWithVector(studentsState));
+							
 						}
 					}
 				}

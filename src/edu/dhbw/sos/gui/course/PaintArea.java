@@ -241,7 +241,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 			for (PizzaPiece pizza : studC.getPizza()) {
 				if (pizza.contains(e.getPoint())) {
 					int index = (int) (pizza.getAngleStart() / 360 * studC.getPizza().size());
-					int value = 10;
+					int value = 100;
 					// right click
 					if (e.getButton() == MouseEvent.BUTTON3)
 						value *= -1;
