@@ -32,7 +32,7 @@ import edu.dhbw.sos.gui.MainFrame;
 public class CoursePanel extends JPanel implements IUpdateable, ComponentListener {
 	private static final long	serialVersionUID	= 5542875796802944785L;
 	// private static final Logger logger = Logger.getLogger(CoursePanel.class);
-	private final PaintArea		paintArea;
+	private final CPaintArea		paintArea;
 	private IPlace[][]			students;
 	private LinkedList<String>	properties;
 	GUIData data;
@@ -51,7 +51,7 @@ public class CoursePanel extends JPanel implements IUpdateable, ComponentListene
 		this.addComponentListener(this);
 		students = data.getCourse().getStudents();
 		properties = data.getCourse().getProperties();
-		paintArea = new PaintArea();
+		paintArea = new CPaintArea(data);
 		this.add(paintArea, BorderLayout.CENTER);
 	}
 	

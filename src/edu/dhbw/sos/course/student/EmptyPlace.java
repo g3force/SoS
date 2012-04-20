@@ -9,6 +9,8 @@
  */
 package edu.dhbw.sos.course.student;
 
+import java.util.LinkedHashMap;
+
 import edu.dhbw.sos.helper.CalcVector;
 
 
@@ -49,7 +51,20 @@ public class EmptyPlace implements IPlace {
 		return 0;
 	}
 	
+	
 	public void printAcutalState() {
 		System.out.println("Empty Place");
+	}
+	
+	
+	@Override
+	public void donInput(int index, int value) {
+		// just do nothing
+	}
+	
+	
+	@Override
+	public LinkedHashMap<Integer, CalcVector> getHistoryStates() {
+		return new LinkedHashMap<Integer, CalcVector>();
 	}
 }

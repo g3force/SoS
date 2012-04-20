@@ -9,6 +9,8 @@
  */
 package edu.dhbw.sos.course.student;
 
+import java.util.LinkedHashMap;
+
 import edu.dhbw.sos.helper.CalcVector;
 
 
@@ -29,5 +31,12 @@ public interface IPlace {
 	
 	int getAverageState();
 	
+	
 	void printAcutalState();
+	
+	
+	void donInput(int index, int value);
+	
+	
+	public LinkedHashMap<Integer, CalcVector> getHistoryStates();
 }

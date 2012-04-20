@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import javax.swing.JPanel;
 
 import edu.dhbw.sos.gui.Diagram;
+import edu.dhbw.sos.gui.GUIData;
 import edu.dhbw.sos.gui.IUpdateable;
 
 
@@ -28,9 +29,10 @@ import edu.dhbw.sos.gui.IUpdateable;
  * @author NicolaiO
  * 
  */
-public class PaintArea extends JPanel implements IUpdateable {
+public class SPaintArea extends JPanel implements IUpdateable {
 	private static final long	serialVersionUID	= 1L;
 	private Diagram				diagram;
+	private GUIData				data;
 	
 	
 	// private static final Logger logger = Logger.getLogger(PaintArea.class);
@@ -41,9 +43,10 @@ public class PaintArea extends JPanel implements IUpdateable {
 	 * 
 	 * @author NicolaiO
 	 */
-	public PaintArea(LinkedList<Integer> data) {
-		diagram = new Diagram(data);
+	public SPaintArea(GUIData _data) {
+		diagram = new Diagram(new LinkedList<Integer>());
 		diagram.setLocation(new Point(10, 10));
+		data = _data;
 	}
 	
 	
@@ -67,6 +70,22 @@ public class PaintArea extends JPanel implements IUpdateable {
 	public void update() {
 		diagram.setHeight(this.getHeight() - 20);
 		diagram.setWidth(this.getWidth() - 20);
+		LinkedList<Integer> newData = new LinkedList<Integer>();
+		if (data.getSelectedStudent() != null) {
+			for (int key : data.getSelectedStudent().getHistoryStates().keySet()) {
+				newData.add(data.getSelectedStudent().getHistoryStates().get(key).getValueAt(data.getSelectedProperty()));
+			}
+		} else {
+			// dummy data
+			double last = 50;
+			for (int i = 0; i < 50; i++) {
+				last = last + ((Math.random() - 0.5) * 30.0);
+				if (last < 0)
+					last = 0;
+				newData.add((int) last);
+			}
+		}
+		diagram.setData(newData);
 		repaint();
 	}
 }
