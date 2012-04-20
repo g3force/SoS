@@ -11,6 +11,8 @@ package edu.dhbw.sos.gui.status;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -44,12 +46,39 @@ public class StatusBar extends JPanel implements IUpdateable {
 		JLabel lblcopyright = new JLabel("© SimSoft");
 		lblcopyright.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.add(lblcopyright, BorderLayout.EAST);
+		lblcopyright.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+			
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+			
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}
+			
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			}
+			
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// new JDialog((Frame) StatusBar.this.getTopLevelAncestor(),"About");
+				// new JDialog(SwingUtilities.getWindowAncestor(StatusBar.this.getTopLevelAncestor()),"About");
+			}
+		});
 	}
 
 
 	@Override
 	public void update() {
-		// TODO NicolaiO Auto-generated method stub
 		
 	}
 	

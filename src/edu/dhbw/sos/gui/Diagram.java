@@ -16,9 +16,9 @@ import java.util.LinkedList;
 
 
 /**
- * TODO NicolaiO, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
+ * A class for drawing a diagram.
+ * It will use an integer list for data and is used by calling the draw() method with a
+ * Graphics2D object.
  * 
  * @author NicolaiO
  * 
@@ -28,6 +28,11 @@ public class Diagram {
 	private int							height	= 0;
 	private int							width		= 0;
 	private Point						location	= new Point();
+	/*
+	 * If rescale is true, the diagram will always take the whole
+	 * available space.
+	 * If false, it will use maxY and maxX. This should not be zero then ;)
+	 */
 	private boolean					rescaleY	= true;
 	private boolean					rescaleX	= true;
 	private int							maxY		= 0;
@@ -35,7 +40,12 @@ public class Diagram {
 	
 	
 	/**
-	 * TODO NicolaiO, add comment!
+	 * Initialize the diagram with the given data
+	 * You should also call some other methods like
+	 * setHeight/Width, because otherwise the diagram has
+	 * a zero size.
+	 * However, this should be done on every update, so
+	 * that the diagram can be resized, when the GUI was resized
 	 * 
 	 * @author NicolaiO
 	 */
@@ -46,6 +56,15 @@ public class Diagram {
 	}
 	
 	
+	/**
+	 * Draws the diagram into the paint area given by the ga object
+	 * It only draws Line2D.Float lines.
+	 * Things like define color and strength of line can be done
+	 * before calling this method
+	 * 
+	 * @param ga Graphics2D object for drawing
+	 * @author NicolaiO
+	 */
 	public void draw(Graphics2D ga) {
 		if (data.size() == 0 || width <= 0 || height <= 0)
 			return;
@@ -61,7 +80,7 @@ public class Diagram {
 			float x2 = location.x + (i) * scalex;
 			float y1 = (height + location.y) - lastValue * scaley;
 			float y2 = (height + location.y) - value * scaley;
-//			System.out.printf("%f %f %f %f\n", x1, y1, x2, y2);
+			// System.out.printf("%f %f %f %f\n", x1, y1, x2, y2);
 			Line2D.Float l = new Line2D.Float(x1, y1, x2, y2);
 			ga.draw(l);
 			lastValue = value;
@@ -69,6 +88,12 @@ public class Diagram {
 	}
 	
 	
+	/**
+	 * Return the maximum Y depending on rescaleY
+	 * 
+	 * @return maximum Y
+	 * @author NicolaiO
+	 */
 	private int getMaxY() {
 		if (rescaleY) {
 			int max = 0;
@@ -83,6 +108,12 @@ public class Diagram {
 	}
 	
 	
+	/**
+	 * Return the maximum X depending on rescaleX
+	 * 
+	 * @return maximum X
+	 * @author NicolaiO
+	 */
 	private int getMaxX() {
 		if (rescaleX) {
 			return data.size();
