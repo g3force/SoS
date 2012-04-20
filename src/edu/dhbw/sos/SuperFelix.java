@@ -53,7 +53,7 @@ public class SuperFelix {
 		mainFrame = new MainFrame(data);
 		mainFrame.update();
 		
-		SimController.init(new Course(), mainFrame);
+		SimController.init(data.getCourse(), mainFrame);
 		logger.info("Sim of Students started.");
 	}
 	

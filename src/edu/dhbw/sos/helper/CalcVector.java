@@ -12,6 +12,10 @@ package edu.dhbw.sos.helper;
 import java.util.LinkedList;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
+import edu.dhbw.sos.simulation.SimController;
+
 
 /**
  * This Vector object contains the influencing factors needed during the simulation.
@@ -21,6 +25,7 @@ import java.util.Vector;
  */
 public class CalcVector implements Cloneable {
 	private Vector<Parameter>	vector;
+	private static final Logger	logger	= Logger.getLogger(CalcVector.class);
 			
 	
 												
@@ -187,7 +192,7 @@ public class CalcVector implements Cloneable {
 	 * Creates an exact clone of this CalcVector with the same values.
 	 */
 	public CalcVector clone() {
-		CalcVector result = new CalcVector(this.size());
+		CalcVector result = new CalcVector(0);
 		for (int i = 0; i < this.size(); i++) {
 			result.vector.add(i, new Parameter(this.getTypeAt(i), this.getValueAt(i)));
 		}
@@ -197,8 +202,15 @@ public class CalcVector implements Cloneable {
 	
 	// debug method
 	public void printCalcVector() {
+		printCalcVector("");
+	}
+	
+// debug method
+	public void printCalcVector(String message) {
+		String out=message+": ";
 		for (int i = 0; i < this.size(); i++) {
-			System.out.println(this.vector.get(i).getType() + ": " + this.vector.get(i).getValue());
+			out+=this.vector.get(i).getType().substring(0,1) + ": " + this.vector.get(i).getValue()+" / ";
 		}
+		logger.info(out.subSequence(0, out.length()-3));
 	}
 }

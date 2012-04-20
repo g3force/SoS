@@ -11,9 +11,12 @@ package edu.dhbw.sos.course.student;
 
 import java.util.LinkedList;
 
+import org.apache.log4j.Logger;
+
 import edu.dhbw.sos.course.influence.Influence;
 import edu.dhbw.sos.helper.CalcVector;
 import edu.dhbw.sos.helper.Parameter;
+import edu.dhbw.sos.simulation.SimController;
 
 
 /**
@@ -28,6 +31,7 @@ public class Student implements IPlace, Cloneable {
 	private CalcVector	actualState;
 	private CalcVector	changeVector;
 	private boolean		isEmpty;
+	private static final Logger	logger	= Logger.getLogger(Student.class);
 	
 	
 	public Student(LinkedList<String> params) {
@@ -73,13 +77,10 @@ public class Student implements IPlace, Cloneable {
 	 * @author NicolaiO
 	 */
 	public void donInput(int index, int value) {
-		int newVal = actualState.getValueAt(index) + value;
-		if (newVal < 0)
-			newVal = 0;
-		if (newVal > 100)
-			newVal = 100;
-		this.actualState.setValueAt(index, newVal);
-		this.changeVector.setValueAt(index, newVal);
+		CalcVector cv = new CalcVector(4);
+		cv.setValueAt(index, value);
+		this.addToStateVector(cv, 0, 0);
+		this.addToChangeVector(cv, 0, 0);
 	}
 	
 	/**
@@ -88,23 +89,33 @@ public class Student implements IPlace, Cloneable {
 	 * @param influence
 	 * @author dirk
 	 */
-	public void calcNextSimulationStep(CalcVector changeVector, Influence influence) {
+	public void calcNextSimulationStep(CalcVector changeVector, Influence influence, int x, int y) {
 		
 		// - - parameter
 		double parameterInf = 0.001;
-		changeVector.addCalcVector(influence.getInfluencedParameterVector(this.getActualState(), parameterInf));
+		changeVector.addCalcVector(influence.getInfluencedParameterVector(this.getActualState().clone(), parameterInf));
+		
+		if(y==0 && x==0)
+			changeVector.printCalcVector("matrix influenced");
 		
 		// - usual behavior of the student -> usualBehav * timeInf
 		double behaviorInf = 0.001;
 		changeVector.addCalcVector(this.getChangeVector().clone().multiplyWithDouble(behaviorInf));
 		
+		if(y==0 && x==0)
+			changeVector.printCalcVector("student influenced");
+		
 		//time depending
 		//TODO: bring all values to an average value by time
 		
-		this.setActualState(changeVector);
+		this.addToStateVector(changeVector, x, y);
 	}
 	
-	public void addToStateVector(CalcVector addVector) {
+	public void addToStateVector(CalcVector addVector, int x, int y) {
+		if(y==0 && x==0)
+			addVector.printCalcVector("ADD Vector");
+		if(y==0 && x==0)
+			actualState.printCalcVector("Actual State");
 		for(int i=0; i<addVector.size(); i++) {
 			double sValue = actualState.getValueAt(i);
 			double vValue = addVector.getValueAt(i);
@@ -114,9 +125,9 @@ public class Student implements IPlace, Cloneable {
 			//i.e. acutalState = 95, addVector = 20 -> (100-95)*2/100 -> 0,1*20 = 2 -> 97
 			//i.e. acutalState = 98, addVector = 20 -> (100-98)*2/100 -> 0,04*20 = 0.8 -> 98.8
 			if(vValue>0) {
-				actualState.setValueAt(i, (int)(vValue*((100-sValue)*2/100)));
+				actualState.setValueAt(i, actualState.getValueAt(i) + (int)(vValue*((100-sValue)*2/100)));
 			} else {
-				actualState.setValueAt(i, (int)(vValue*((sValue)*2/100)));
+				actualState.setValueAt(i, actualState.getValueAt(i) + (int)(vValue*((sValue)*2/100)));
 			}
 			if(actualState.getValueAt(i)<0) {
 				actualState.setValueAt(i, 0);
@@ -125,6 +136,19 @@ public class Student implements IPlace, Cloneable {
 				actualState.setValueAt(i, 100);
 			}	
 		}
+	}
+	
+	public void addToChangeVector(CalcVector addVector, int x, int y) {
+		//TODO check limits keep in normal values
+		changeVector.addCalcVector(addVector);
+	}
+	
+	public void printAcutalState() {
+		String out = "Students state: ";
+		for(int i=0; i<actualState.size(); i++)
+			out += actualState.getValueAt(i)+", ";
+		out = out.substring(0, out.length()-2);
+		logger.info(out);
 	}
 	
 	/**
@@ -249,6 +273,21 @@ public class Student implements IPlace, Cloneable {
 			throw new IndexOutOfBoundsException();
 		}
 		changeVector.setValueAt(index, changeVector.getValueAt(index) + value);
+	}
+	
+	/**
+	 * Adds value to the value of the parmeter at position index.
+	 * 
+	 * @param index
+	 * @param value
+	 * @return
+	 * @author bene
+	 */
+	public void addValueToStateVector(int index, int value) {
+		if (index >= changeVector.size()) {
+			throw new IndexOutOfBoundsException();
+		}
+		actualState.setValueAt(index, actualState.getValueAt(index) + value);
 	}
 	
 	

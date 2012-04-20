@@ -12,6 +12,8 @@ package edu.dhbw.sos.course.influence;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import edu.dhbw.sos.course.student.EmptyPlace;
+import edu.dhbw.sos.course.student.Student;
 import edu.dhbw.sos.helper.CalcVector;
 import edu.dhbw.sos.helper.Matrix;
 
@@ -32,7 +34,7 @@ public class Influence {
 		int[][] array = new int[4][4];
 		for (int i=0; i < array.length;i++) {
 			for (int j = 0; j < array[i].length;j++) {
-				array[i][j]=Integer.parseInt((i+1)+""+(j+1));
+				array[i][j]=(int)(Math.random()*200)-100;
 			}
 		}
 		LinkedList<String> l = new LinkedList<String>();
@@ -42,9 +44,18 @@ public class Influence {
 		l.add("Quality");
 		parameterInfl = new Matrix(l, array);
 		environmentalInfl = new HashMap<EInfluenceType, CalcVector>();
-		environmentalInfl.put(EInfluenceType.NEIGHBOR , new CalcVector(l));
-		environmentalInfl.put(EInfluenceType.BREAK_REACTION , new CalcVector(l));
-		environmentalInfl.put(EInfluenceType.TIME_DEPENDING , new CalcVector(l));
+		CalcVector cv1 = new CalcVector(l);
+		CalcVector cv2 = new CalcVector(l);
+		CalcVector cv3 = new CalcVector(l);
+		for(int i=0; i<4; i++) {
+			cv1.setValueAt(i, (int)(Math.random()*200)-100);
+			cv2.setValueAt(i, (int)(Math.random()*200)-100);
+			cv3.setValueAt(i, (int)(Math.random()*200)-100);
+		}
+		environmentalInfl.put(EInfluenceType.NEIGHBOR , cv1);
+		environmentalInfl.put(EInfluenceType.BREAK_REACTION , cv2);
+		environmentalInfl.put(EInfluenceType.TIME_DEPENDING , cv3);
+		
 	}
 	
 	public CalcVector getEnvironmentVector(EInfluenceType type, double times) {
@@ -52,7 +63,8 @@ public class Influence {
 	}
 	
 	public CalcVector getEnvironmentVector(EInfluenceType type) {
-		return environmentalInfl.get(type).clone();
+		CalcVector temp =  environmentalInfl.get(type).clone();
+		return temp;
 	}
 	
 	public CalcVector getInfluencedParameterVector(CalcVector toInfluence, double times) {
