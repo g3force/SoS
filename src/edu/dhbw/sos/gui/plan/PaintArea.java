@@ -46,7 +46,13 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	// it is set to the reference to the moving block
 	// it should be null, if no block is moved
 	private MovableBlock					moveBlock			= null;
+	private int								index					= -1;
+	private int								widthLeft			= -1;
+	private int								widthRight			= -1;
 	private TimeBlocks					tbs;
+	
+	double									scaleRatio			= 1;
+	int										start;
 	
 	
 	/**
@@ -73,8 +79,8 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	 */
 	public void initMovableBlocks() {
 		movableBlocks = new LinkedList<MovableBlock>();
-		int start = 20;
-		float scaleRatio = (this.getWidth() - start) / (tbs.getTotalLength() != 0 ? tbs.getTotalLength() : 1);
+		start = 20;
+		scaleRatio = (this.getWidth() - start) / (tbs.getTotalLength() != 0 ? tbs.getTotalLength() : 1);
 		for (TimeBlock tb : tbs) {
 			Point location;
 			Color color;
@@ -118,21 +124,33 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		ga.clearRect(0, 0, this.getWidth(), this.getHeight());
 		
 		// draw sinus
-		ga.setPaint(Color.green);
-		ga.setStroke(new BasicStroke(2F));
-		int x1 = 0, x2 = 50, y1 = 0, y2 = 100;
-		for (int i = 0; i < 200; i++) {
-			x1 = i * 2 + 50;
-			y1 = (int) (Math.sin((double) i) * 70 + 70);
-			ga.drawLine(x2, y2, x1, y1);
-			x2 = x1;
-			y2 = y1;
-		}
+		// ga.setPaint(Color.green);
+		// ga.setStroke(new BasicStroke(2F));
+		// int x1 = 0, x2 = 50, y1 = 0, y2 = 100;
+		// for (int i = 0; i < 200; i++) {
+		// x1 = i * 2 + 50;
+		// y1 = (int) (Math.sin((double) i) * 70 + 70);
+		// ga.drawLine(x2, y2, x1, y1);
+		// x2 = x1;
+		// y2 = y1;
+		// }
 		
 		// draw block
 		for (MovableBlock mb : movableBlocks) {
 			ga.setPaint(mb.getColor());
 			ga.fill(mb);
+		}
+		
+		// draw Timeline
+		ga.setPaint(Color.blue);
+		ga.drawLine(start, 140, this.getWidth() - start, 140);
+		
+		// Timemarkers for each 60 min
+		double mi = 60.0;
+		double timemarkers = scaleRatio * mi;
+		// logger.debug(timemarkers + "");
+		for (int i = start; i < this.getWidth(); i += (int) mi) {
+			ga.drawLine(i, 135, i, 145);
 		}
 	}
 	
@@ -151,6 +169,10 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 				Point relML = new Point(mb.x - e.getPoint().x, mb.y - e.getPoint().y);
 				mb.setRelMouseLocation(relML);
 				moveBlock = mb;
+				// Any block must exist only one time in the list
+				index = movableBlocks.indexOf(moveBlock);
+				widthLeft = (index >= 0) ? movableBlocks.get(index - 1).width : -1;
+				widthRight = (index + 1 < movableBlocks.size()) ? movableBlocks.get(index + 1).width : -1;
 			}
 		}
 	}
@@ -159,6 +181,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		moveBlock = null;
+		index = widthLeft = widthRight = -1;
 		tbs.clear();
 		for (MovableBlock mb : movableBlocks) {
 			tbs.addTimeBlock(mb.getTimeBlock());
@@ -186,8 +209,6 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 			// the left and positive to the right.
 			int mmt_X = (int) Math.floor(e.getPoint().getX() + moveBlock.getRelMouseLocation().getX() - moveBlock.getX());
 			
-			// Any block must exist only one time in the list
-			int index = movableBlocks.indexOf(moveBlock);
 			
 			// double x_P1 = moveBlock.getLocation().getX() + mmt_X;
 			
@@ -204,9 +225,11 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 			}
 			double x = e.getPoint().getX();
 			if (x < 0) {
-				e.getPoint().setLocation(0, 0);
+				// e.getPoint().setLocation(0, 0);
+				x = 0.0;
 			} else if (x > paWidth) {
-				e.getPoint().setLocation(paWidth, 0);
+				// e.getPoint().setLocation(paWidth, 0);
+				x = paWidth;
 			}
 			
 			movPos.setLocation(x, e.getPoint().getY());
@@ -218,7 +241,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 			}
 			
 			// Calculate width of right block and new position
-			if (movableBlocks.size() > index + 1 && index >= 0) {
+			if (index + 1 < movableBlocks.size() && index >= 0) {
 				// FIXME BLock verschwindet nach links ??!?!?
 				Point movPos_P1 = new Point();
 				double x_P1 = movableBlocks.get(index + 1).getLocation().getX() + mmt_X;
@@ -233,8 +256,40 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 				movableBlocks.get(index + 1).setLocation(movPos_P1);
 				
 				movableBlocks.get(index + 1).width -= mmt_X;
+			}
+			
+			// Checks wether the width of left and right Blocks are lower or equal then 0
+			//FIXME Exceptions IndexOutOfBounds
+			if (index > 1 && movableBlocks.get(index - 1).width <= 0) {
+				movableBlocks.get(index - 1).width = widthLeft;
+				movableBlocks.get(index + 1).width = widthRight;
+				
+				movableBlocks.get(index - 1).setLocation((int) moveBlock.getLocation().getX() + moveBlock.width,
+						(int) movableBlocks.get(index - 1).getLocation().getY());
+				swap(index, index - 1);
+				
+				index--;
+				
+				widthLeft = (index >= 1) ? movableBlocks.get(index - 1).width : -1;
+				widthRight = movableBlocks.get(index + 1).width;
+				
+			} else if (index + 2 < movableBlocks.size() && movableBlocks.get(index + 1).width <= 0) {
+				movableBlocks.get(index - 1).width = widthLeft;
+				movableBlocks.get(index + 1).width = widthRight;
+				
+				movableBlocks.get(index + 1).setLocation((int) moveBlock.getLocation().getX() + moveBlock.width,
+						(int) movableBlocks.get(index + 1).getLocation().getY());
+				swap(index, index + 1);
+				
+				
+				index++;
+				
+				widthLeft = movableBlocks.get(index - 1).width;
+				widthRight = (index + 1 < movableBlocks.size()) ? movableBlocks.get(index + 1).width : -1;
 				
 			}
+			
+			movableBlocks.descendingIterator();
 			
 			this.repaint();
 		}
@@ -243,5 +298,10 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	
 	@Override
 	public void mouseMoved(MouseEvent e) {
+	}
+	
+	
+	private void swap(int mb1, int mb2) {
+		movableBlocks.add(mb1, movableBlocks.remove(mb2));
 	}
 }
