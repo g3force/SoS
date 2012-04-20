@@ -251,7 +251,7 @@ public class CPaintArea extends JPanel implements MouseListener, MouseMotionList
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		int index = data.getSelectedProperty();
-		int value = 10;
+		int value = 100;
 		// right click
 		if (e.getButton() == MouseEvent.BUTTON3)
 			value *= -1;

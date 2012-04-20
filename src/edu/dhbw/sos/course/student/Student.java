@@ -9,7 +9,9 @@
  */
 package edu.dhbw.sos.course.student;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
@@ -29,6 +31,7 @@ import edu.dhbw.sos.simulation.SimController;
  */
 public class Student implements IPlace, Cloneable {
 	private CalcVector	actualState;
+	private LinkedHashMap<Integer, CalcVector> historyStates;
 	private CalcVector	changeVector;
 	private boolean		isEmpty;
 	private static final Logger	logger	= Logger.getLogger(Student.class);
@@ -326,5 +329,20 @@ public class Student implements IPlace, Cloneable {
 		ret.changeVector = this.changeVector.clone();
 		ret.isEmpty = this.isEmpty;
 		return ret;
+	}
+	
+	/**
+	 * adds a new state to the history states
+	 * @param time
+	 * @param currentState
+	 * @author dirk
+	 */
+	public void saveHistoryStates(int time) {
+		historyStates.put(time, actualState);
+	}
+	
+	
+	public LinkedHashMap<Integer, CalcVector> getHistoryStates() {
+		 return historyStates;
 	}
 }
