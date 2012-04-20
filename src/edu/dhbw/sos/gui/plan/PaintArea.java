@@ -9,13 +9,11 @@
  */
 package edu.dhbw.sos.gui.plan;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -27,6 +25,7 @@ import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.lecture.TimeBlock;
 import edu.dhbw.sos.course.lecture.TimeBlocks;
+import edu.dhbw.sos.gui.Diagram;
 
 
 /**
@@ -54,6 +53,8 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	double									scaleRatio			= 1;
 	int										start;
 	
+	private Diagram						attDia;
+	
 	
 	/**
 	 * Initialize PaintArea
@@ -65,6 +66,9 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		this.addMouseMotionListener(this);
 		this.tbs = tbs;
 		this.initMovableBlocks();
+		
+		attDia = new Diagram(new LinkedList<Integer>());
+		attDia.setLocation(new Point(20, 10));
 	}
 	
 	
@@ -152,6 +156,29 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		for (int i = start; i < this.getWidth(); i += (int) mi) {
 			ga.drawLine(i, 135, i, 145);
 		}
+
+		// draw diagram
+		updateDiagram();
+		ga.setColor(Color.black);
+		attDia.draw(ga);
+	}
+	
+	
+	private void updateDiagram() {
+		attDia.setHeight(this.getHeight() - 20);
+		attDia.setWidth(this.getWidth() - 20);
+		LinkedList<Integer> newData = new LinkedList<Integer>();
+		{
+			// dummy data
+			double last = 50;
+			for (int i = 0; i < 50; i++) {
+				last = last + ((Math.random() - 0.5) * 30.0);
+				if (last < 0)
+					last = 0;
+				newData.add((int) last);
+			}
+		}
+		attDia.setData(newData);
 	}
 	
 	
@@ -259,7 +286,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 			}
 			
 			// Checks wether the width of left and right Blocks are lower or equal then 0
-			//FIXME Exceptions IndexOutOfBounds
+			// FIXME Exceptions IndexOutOfBounds
 			if (index > 1 && movableBlocks.get(index - 1).width <= 0) {
 				movableBlocks.get(index - 1).width = widthLeft;
 				movableBlocks.get(index + 1).width = widthRight;
