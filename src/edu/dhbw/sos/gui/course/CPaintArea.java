@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
 import edu.dhbw.sos.gui.GUIData;
+import edu.dhbw.sos.gui.MainFrame;
 
 
 /**
@@ -222,6 +223,7 @@ public class CPaintArea extends JPanel implements MouseListener, MouseMotionList
 		// catch empty studentCircles
 		if (studentCircles.length == 0) {
 			hoveredStudent = null;
+			data.setSelectedStudent(null);
 		} else {
 			// calculate position so that the correct student can be selected
 			float ratiox = ((float) p.x - offset_x - spacing) / ((float) this.getSize().width - 2 * offset_x - spacing);
@@ -245,6 +247,7 @@ public class CPaintArea extends JPanel implements MouseListener, MouseMotionList
 			}
 		}
 		this.repaint();
+		MainFrame.getInstance().update();
 	}
 	
 	
@@ -279,6 +282,8 @@ public class CPaintArea extends JPanel implements MouseListener, MouseMotionList
 	@Override
 	public void mouseExited(MouseEvent e) {
 		hoveredStudent = null;
-		this.repaint();
+		data.setSelectedStudent(null);
+		MainFrame.getInstance().update();
+//		this.repaint();
 	}
 }

@@ -11,14 +11,12 @@ package edu.dhbw.sos.course.student;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.influence.Influence;
 import edu.dhbw.sos.helper.CalcVector;
 import edu.dhbw.sos.helper.Parameter;
-import edu.dhbw.sos.simulation.SimController;
 
 
 /**
@@ -30,11 +28,11 @@ import edu.dhbw.sos.simulation.SimController;
  * 
  */
 public class Student implements IPlace, Cloneable {
-	private CalcVector	actualState;
-	private LinkedHashMap<Integer, CalcVector> historyStates;
-	private CalcVector	changeVector;
-	private boolean		isEmpty;
-	private static final Logger	logger	= Logger.getLogger(Student.class);
+	private CalcVector									actualState;
+	private LinkedHashMap<Integer, CalcVector>	historyStates = new LinkedHashMap<Integer, CalcVector>();
+	private CalcVector									changeVector;
+	private boolean										isEmpty;
+	private static final Logger						logger	= Logger.getLogger(Student.class);
 	
 	
 	public Student(LinkedList<String> params) {
@@ -86,6 +84,7 @@ public class Student implements IPlace, Cloneable {
 		this.addToChangeVector(cv, 0, 0);
 	}
 	
+	
 	/**
 	 * calculates the next state for the actual state vector
 	 * @param changeVector
@@ -98,61 +97,65 @@ public class Student implements IPlace, Cloneable {
 		double parameterInf = 0.001;
 		changeVector.addCalcVector(influence.getInfluencedParameterVector(this.getActualState().clone(), parameterInf));
 		
-		if(y==0 && x==0)
+		if (y == 0 && x == 0)
 			changeVector.printCalcVector("matrix influenced");
 		
 		// - usual behavior of the student -> usualBehav * timeInf
 		double behaviorInf = 0.001;
 		changeVector.addCalcVector(this.getChangeVector().clone().multiplyWithDouble(behaviorInf));
 		
-		if(y==0 && x==0)
+		if (y == 0 && x == 0)
 			changeVector.printCalcVector("student influenced");
 		
-		//time depending
-		//TODO: bring all values to an average value by time
+		// time depending
+		// TODO: bring all values to an average value by time
 		
 		this.addToStateVector(changeVector, x, y);
 	}
 	
+	
 	public void addToStateVector(CalcVector addVector, int x, int y) {
-		if(y==0 && x==0)
+		if (y == 0 && x == 0)
 			addVector.printCalcVector("ADD Vector");
-		if(y==0 && x==0)
+		if (y == 0 && x == 0)
 			actualState.printCalcVector("Actual State");
-		for(int i=0; i<addVector.size(); i++) {
+		for (int i = 0; i < addVector.size(); i++) {
 			double sValue = actualState.getValueAt(i);
 			double vValue = addVector.getValueAt(i);
-			//if the add value is positive, take the percentage missing to 100, and multiply it with 2
-			//i.e. acutalState = 30, addVector = 20 -> (100-30)*2/100 -> 1,4*20 = 28 -> 58
-			//i.e. acutalState = 80, addVector = 20 -> (100-80)*2/100 -> 0,4*20 = 8 -> 88
-			//i.e. acutalState = 95, addVector = 20 -> (100-95)*2/100 -> 0,1*20 = 2 -> 97
-			//i.e. acutalState = 98, addVector = 20 -> (100-98)*2/100 -> 0,04*20 = 0.8 -> 98.8
-			if(vValue>0) {
-				actualState.setValueAt(i, actualState.getValueAt(i) + (int)(vValue*((100-sValue)*2/100)));
+			// if the add value is positive, take the percentage missing to 100, and multiply it with 2
+			// i.e. acutalState = 30, addVector = 20 -> (100-30)*2/100 -> 1,4*20 = 28 -> 58
+			// i.e. acutalState = 80, addVector = 20 -> (100-80)*2/100 -> 0,4*20 = 8 -> 88
+			// i.e. acutalState = 95, addVector = 20 -> (100-95)*2/100 -> 0,1*20 = 2 -> 97
+			// i.e. acutalState = 98, addVector = 20 -> (100-98)*2/100 -> 0,04*20 = 0.8 -> 98.8
+			if (vValue > 0) {
+				actualState.setValueAt(i, actualState.getValueAt(i) + (int) (vValue * ((100 - sValue) * 2 / 100)));
 			} else {
-				actualState.setValueAt(i, actualState.getValueAt(i) + (int)(vValue*((sValue)*2/100)));
+				actualState.setValueAt(i, actualState.getValueAt(i) + (int) (vValue * ((sValue) * 2 / 100)));
 			}
-			if(actualState.getValueAt(i)<0) {
+			if (actualState.getValueAt(i) < 0) {
 				actualState.setValueAt(i, 0);
 			}
-			if(actualState.getValueAt(i)>100) {
+			if (actualState.getValueAt(i) > 100) {
 				actualState.setValueAt(i, 100);
-			}	
+			}
 		}
 	}
 	
+	
 	public void addToChangeVector(CalcVector addVector, int x, int y) {
-		//TODO check limits keep in normal values
+		// TODO check limits keep in normal values
 		changeVector.addCalcVector(addVector);
 	}
 	
+	
 	public void printAcutalState() {
 		String out = "Students state: ";
-		for(int i=0; i<actualState.size(); i++)
-			out += actualState.getValueAt(i)+", ";
-		out = out.substring(0, out.length()-2);
+		for (int i = 0; i < actualState.size(); i++)
+			out += actualState.getValueAt(i) + ", ";
+		out = out.substring(0, out.length() - 2);
 		logger.info(out);
 	}
+	
 	
 	/**
 	 * another interface that is needed but should be reconsidered
@@ -194,6 +197,7 @@ public class Student implements IPlace, Cloneable {
 	public CalcVector getActualState() {
 		return this.actualState;
 	}
+	
 	
 	/**
 	 * Sets the actualState vector
@@ -278,6 +282,7 @@ public class Student implements IPlace, Cloneable {
 		changeVector.setValueAt(index, changeVector.getValueAt(index) + value);
 	}
 	
+	
 	/**
 	 * Adds value to the value of the parmeter at position index.
 	 * 
@@ -292,8 +297,6 @@ public class Student implements IPlace, Cloneable {
 		}
 		actualState.setValueAt(index, actualState.getValueAt(index) + value);
 	}
-	
-	
 	
 	
 	/**
@@ -331,6 +334,7 @@ public class Student implements IPlace, Cloneable {
 		return ret;
 	}
 	
+	
 	/**
 	 * adds a new state to the history states
 	 * @param time
@@ -342,7 +346,8 @@ public class Student implements IPlace, Cloneable {
 	}
 	
 	
+	@Override
 	public LinkedHashMap<Integer, CalcVector> getHistoryStates() {
-		 return historyStates;
+		return historyStates;
 	}
 }

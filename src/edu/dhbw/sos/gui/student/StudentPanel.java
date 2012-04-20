@@ -12,7 +12,6 @@ package edu.dhbw.sos.gui.student;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -43,17 +42,7 @@ public class StudentPanel extends JPanel implements IUpdateable {
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.setPreferredSize(new Dimension(200, 150));
 		this.setLayout(new BorderLayout());
-		
-		// dummy data
-		LinkedList<Integer> diaData = new LinkedList<Integer>();
-		double last = 50;
-		for (int i = 0; i < 50; i++) {
-			last = last + ((Math.random() - 0.5) * 30.0);
-			if(last<0) last = 0;
-			diaData.add((int) last);
-			
-		}
-		paintArea = new SPaintArea(diaData);
+		paintArea = new SPaintArea(data);
 		this.add(paintArea, BorderLayout.CENTER);
 	}
 	
