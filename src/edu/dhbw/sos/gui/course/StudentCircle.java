@@ -120,16 +120,21 @@ public class StudentCircle extends Ellipse2D.Float implements IUpdateable {
 	 * @author NicolaiO
 	 */
 	public static Color getColorFromValue(int value, int max) {
-		int red = (510 / max) * value;
-		if (red < 0)
-			red = 0;
-		int green = 255;
-		if (red > 255) {
-			green -= red - 255;
-			red = 255;
+		int LOWER_GREEN = 0;
+		int LOWER_RED = 100;
+		int UPPER_GREEN = 240;
+		int UPPER_RED = 255;
+		int red = LOWER_RED;
+		red += ((510-(LOWER_RED+255-UPPER_RED)-(LOWER_GREEN+255-UPPER_GREEN)) / max) * value;
+		if (red < LOWER_RED)
+			red = LOWER_RED;
+		int green = UPPER_GREEN;
+		if (red > UPPER_RED) {
+			green -= red - UPPER_GREEN;
+			red = UPPER_RED;
 		}
-		if (green < 0)
-			green = 0;
+		if (green < LOWER_GREEN)
+			green = LOWER_GREEN;
 		return new Color(red, green, 0);
 	}
 	

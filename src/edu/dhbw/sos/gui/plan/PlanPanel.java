@@ -15,6 +15,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -40,7 +42,7 @@ import edu.dhbw.sos.simulation.SimController;
  * @author NicolaiO
  * 
  */
-public class PlanPanel extends JPanel implements IUpdateable {
+public class PlanPanel extends JPanel implements IUpdateable, ComponentListener {
 	private static final long	serialVersionUID	= -1665784555881941508L;
 	// paintArea is the part of the Panel, where some drawings have to be done
 	private final PaintArea		paintArea;
@@ -63,6 +65,7 @@ public class PlanPanel extends JPanel implements IUpdateable {
 		// init this Panel
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.setLayout(new BorderLayout());
+		this.addComponentListener(this);
 		
 		// init paintArea
 		paintArea = new PaintArea(timeBlocks);
@@ -83,7 +86,6 @@ public class PlanPanel extends JPanel implements IUpdateable {
 				try {
 					SimController.getInstance().toggle();
 				} catch (Exception err) {
-					// TODO andres Auto-generated catch block
 					err.printStackTrace();
 				}
 			}
@@ -125,5 +127,26 @@ public class PlanPanel extends JPanel implements IUpdateable {
 	public void update() {
 		paintArea.initMovableBlocks();
 		paintArea.repaint();
+	}
+
+
+	@Override
+	public void componentResized(ComponentEvent e) {
+		update();
+	}
+
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+	}
+
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+	}
+
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
 	}
 }

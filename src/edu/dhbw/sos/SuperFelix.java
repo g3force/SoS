@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.data.CourseManager;
 import edu.dhbw.sos.gui.GUIData;
 import edu.dhbw.sos.gui.MainFrame;
 import edu.dhbw.sos.simulation.SimController;
@@ -17,8 +18,8 @@ import edu.dhbw.sos.simulation.SimController;
 public class SuperFelix {
 	private static final Logger	logger	= Logger.getLogger(SuperFelix.class);
 	private static String			datapath;
-	private final GUIData data;
-	private final MainFrame mainFrame;
+	private final GUIData			data;
+	private final MainFrame			mainFrame;
 	
 	
 	public SuperFelix() {
@@ -48,6 +49,7 @@ public class SuperFelix {
 		// create object for the data to be displayed in GUI
 		// the references will be used to update it afterwards
 		data = new GUIData();
+		new CourseManager();
 		mainFrame = new MainFrame(data);
 		mainFrame.update();
 		
