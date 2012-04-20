@@ -56,6 +56,9 @@ public class MainFrame extends JFrame implements IUpdateable, WindowListener {
 	private PlanPanel						planPanel;
 	private LinkedList<IUpdateable>	components			= new LinkedList<IUpdateable>();
 	
+	private static MainFrame			instance;
+	
+	
 	/**
 	 * Initialize GUI with given data.
 	 * 
@@ -64,6 +67,7 @@ public class MainFrame extends JFrame implements IUpdateable, WindowListener {
 	 */
 	public MainFrame(GUIData data) {
 		logger.debug("Initializing...");
+		instance = this;
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLocationByPlatform(true);
 		this.setTitle(Messages.getString("MainFrame.1"));
@@ -155,5 +159,10 @@ public class MainFrame extends JFrame implements IUpdateable, WindowListener {
 	
 	@Override
 	public void windowDeactivated(WindowEvent e) {
+	}
+	
+	
+	public static MainFrame getInstance() {
+		return instance;
 	}
 }

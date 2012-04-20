@@ -29,5 +29,9 @@ public interface IPlace {
 	
 	int getAverageState();
 	
+	
 	void printAcutalState();
+	
+	
+	void donInput(int index, int value);
 }

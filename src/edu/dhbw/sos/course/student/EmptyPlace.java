@@ -52,4 +52,10 @@ public class EmptyPlace implements IPlace {
 	public void printAcutalState() {
 		System.out.println("Empty Place");
 	}
+
+
+	@Override
+	public void donInput(int index, int value) {
+		// just do nothing
+	}
 }

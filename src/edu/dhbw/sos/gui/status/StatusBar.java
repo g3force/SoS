@@ -24,9 +24,7 @@ import edu.dhbw.sos.gui.IUpdateable;
 
 
 /**
- * TODO NicolaiO, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
+ * The StatusBar should show some helpful information like tool tips
  * 
  * @author NicolaiO
  * 

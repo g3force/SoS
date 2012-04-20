@@ -75,7 +75,7 @@ public class StudentCircle extends Ellipse2D.Float implements IUpdateable {
 	 * @author NicolaiO
 	 */
 	public void initPizza(LinkedList<String> properties) {
-		float offset = (float) (this.getBounds2D().getWidth() * (PaintArea.SCALE_HOVER - 1)) / 2;
+		float offset = (float) (this.getBounds2D().getWidth() * (CPaintArea.SCALE_HOVER - 1)) / 2;
 		Rectangle2D rect = this.getBounds2D();
 		pizza.clear();
 		int count = properties.size();

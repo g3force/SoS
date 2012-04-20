@@ -28,7 +28,7 @@ import edu.dhbw.sos.gui.IUpdateable;
  * @author NicolaiO
  * 
  */
-public class PaintArea extends JPanel implements IUpdateable {
+public class SPaintArea extends JPanel implements IUpdateable {
 	private static final long	serialVersionUID	= 1L;
 	private Diagram				diagram;
 	
@@ -41,7 +41,7 @@ public class PaintArea extends JPanel implements IUpdateable {
 	 * 
 	 * @author NicolaiO
 	 */
-	public PaintArea(LinkedList<Integer> data) {
+	public SPaintArea(LinkedList<Integer> data) {
 		diagram = new Diagram(data);
 		diagram.setLocation(new Point(10, 10));
 	}

@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
+import edu.dhbw.sos.gui.GUIData;
 
 
 /**
@@ -36,9 +37,9 @@ import edu.dhbw.sos.course.student.Student;
  * @author NicolaiO
  * 
  */
-public class PaintArea extends JPanel implements MouseListener, MouseMotionListener {
+public class CPaintArea extends JPanel implements MouseListener, MouseMotionListener {
 	private static final long		serialVersionUID	= 5194596384018441495L;
-	private static final Logger	logger				= Logger.getLogger(PaintArea.class);
+	private static final Logger	logger				= Logger.getLogger(CPaintArea.class);
 	// space between circles
 	private float						spacing;
 	/*
@@ -60,6 +61,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	private StudentCircle[][]		studentCircles;
 	// border size around the border of the panel
 	private float						border;
+	private GUIData					data;
 	
 	
 	/**
@@ -67,10 +69,11 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	 * 
 	 * @author NicolaiO
 	 */
-	public PaintArea() {
+	public CPaintArea(GUIData _data) {
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		studentCircles = new StudentCircle[0][0];
+		data = _data;
 	}
 	
 	
@@ -192,7 +195,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 				int y = -(int) (Math.sin((double) angle * Math.PI / 180) * (hoveredStudent.getHeight() * SCALE_HOVER / 4));
 				// System.out.println("x:"+x+" y:"+y+"arc: "+arc+" letter:"+letter);
 				angle += 360 / hoveredStudent.getPizza().size();
-				float offset = (float) (hoveredStudent.getBounds2D().getWidth() * (PaintArea.SCALE_HOVER - 1)) / 2;
+				float offset = (float) (hoveredStudent.getBounds2D().getWidth() * (CPaintArea.SCALE_HOVER - 1)) / 2;
 				g.drawString(pp.getFirstLetter(), (int) (hoveredStudent.getBounds2D().getX() - offset - (w / 2)
 						+ hoveredStudent.getWidth() * SCALE_HOVER / 2 + x), (int) (hoveredStudent.getBounds2D().getY()
 						- offset + (h / 4) + hoveredStudent.getHeight() * SCALE_HOVER / 2 + y));
@@ -227,6 +230,19 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 			int y = (int) (ratioy * (float) studentCircles.length);
 			hoveredStudent = studentCircles[y][x];
 			hoveredStudent.update();
+			data.setSelectedStudent(hoveredStudent.getStudent());
+			
+			// check if current student is a real student and not an empty place, etc.
+			if (hoveredStudent.getStudent() instanceof Student) {
+				// find pizza piece that mouse clicked on
+				for (PizzaPiece pizza : hoveredStudent.getPizza()) {
+					if (pizza.contains(e.getPoint())) {
+						int index = (int) (pizza.getAngleStart() / 360 * hoveredStudent.getPizza().size());
+						data.setSelectedProperty(index);
+						break;
+					}
+				}
+			}
 		}
 		this.repaint();
 	}
@@ -234,24 +250,14 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// check if current student is a real student and not an empty place, etc.
-		StudentCircle studC = hoveredStudent;
-		if (studC != null && studC.getStudent() instanceof Student) {
-			// find pizza piece that mouse clicked on
-			for (PizzaPiece pizza : studC.getPizza()) {
-				if (pizza.contains(e.getPoint())) {
-					int index = (int) (pizza.getAngleStart() / 360 * studC.getPizza().size());
-					int value = 10;
-					// right click
-					if (e.getButton() == MouseEvent.BUTTON3)
-						value *= -1;
-					((Student) studC.getStudent()).donInput(index, value);
-					studC.update();
-					this.repaint();
-					break;
-				}
-			}
-		}
+		int index = data.getSelectedProperty();
+		int value = 10;
+		// right click
+		if (e.getButton() == MouseEvent.BUTTON3)
+			value *= -1;
+		hoveredStudent.getStudent().donInput(index, value);
+		hoveredStudent.update();
+		this.repaint();
 	}
 	
 	

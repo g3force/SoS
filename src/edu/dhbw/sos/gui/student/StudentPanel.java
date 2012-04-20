@@ -31,7 +31,7 @@ import edu.dhbw.sos.gui.IUpdateable;
  */
 public class StudentPanel extends JPanel implements IUpdateable {
 	private static final long	serialVersionUID	= 722304874911423036L;
-	private final PaintArea		paintArea;
+	private final SPaintArea		paintArea;
 	
 	/**
 	 * Initialize StudentPanel with GUIData
@@ -53,7 +53,7 @@ public class StudentPanel extends JPanel implements IUpdateable {
 			diaData.add((int) last);
 			
 		}
-		paintArea = new PaintArea(diaData);
+		paintArea = new SPaintArea(diaData);
 		this.add(paintArea, BorderLayout.CENTER);
 	}
 	
