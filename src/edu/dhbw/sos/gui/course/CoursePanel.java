@@ -33,7 +33,7 @@ public class CoursePanel extends JPanel implements IUpdateable {
 	private final PaintArea		paintArea;
 	private IPlace[][]			students;
 	private LinkedList<String>	properties;
-	
+	GUIData data;
 	
 	/**
 	 * @brief Initialize the CoursePanel
@@ -42,6 +42,7 @@ public class CoursePanel extends JPanel implements IUpdateable {
 	 * @author NicolaiO
 	 */
 	public CoursePanel(GUIData data) {
+		this.data = data;
 		this.setBorder(MainFrame.compoundBorder);
 		this.setLayout(new BorderLayout());
 		this.setLayout(new BorderLayout());
@@ -54,6 +55,7 @@ public class CoursePanel extends JPanel implements IUpdateable {
 	
 	@Override
 	public void update() {
+		students = data.getCourse().getStudents();
 		paintArea.updateStudentCircles(students);
 		paintArea.updateProperties(properties);
 	}

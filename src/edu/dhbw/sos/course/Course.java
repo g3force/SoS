@@ -14,6 +14,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
+
+import edu.dhbw.sos.SuperFelix;
 import edu.dhbw.sos.course.influence.EInfluenceType;
 import edu.dhbw.sos.course.influence.Influence;
 import edu.dhbw.sos.course.lecture.BlockType;
@@ -36,6 +39,7 @@ public class Course {
 	private HashMap<Integer, IPlace[][]> historyStates;
 	private LinkedList<String> properties;
 	private String name;
+	private static final Logger	logger	= Logger.getLogger(Course.class);
 	
 	public Course() {
 		students = new IPlace[5][7];
@@ -44,20 +48,23 @@ public class Course {
 		properties.add("Loudness");
 		properties.add("Attention");
 		properties.add("Quality");
-		for (int y=0; y < 5;y++) {
+		for (int y = 0; y < 5;y++) {
 			for (int x = 0; x < 7;x++) {
-				if(y==3||x==4) {
+				if(y==3) {
 					students[y][x] = new EmptyPlace(properties.size());
 				} else {
 					Student newStud = new Student(properties);
-					for(int i=0; i<4; i++)
-						newStud.addValueToChangeVector(0, (int)(Math.random()*100));
 					
+					for(int i=0; i<4; i++) {
+						newStud.addValueToChangeVector(i, (int)(Math.random()*100));
+						newStud.addValueToStateVector(i, (int)(Math.random()*100));
+					}
 //					((Student)students[y][x]).
 					students[y][x] = newStud;
 				}
 			}
 		}
+		
 		influence = new Influence();
 		historyStates = new HashMap<Integer, IPlace[][]>();
 		lecture = new Lecture(new Date());
@@ -100,27 +107,36 @@ public class Course {
 	}
 	
 	public void simulationStep(int currentTime, int speed) {
-		// check if there was an interaction from the don
+			students[0][0].printAcutalState();
+			// check if there was an interaction from the don
 			Entry<Integer, IPlace[][]> donInteraction = historyStateInInterval(currentTime - speed, currentTime);
 			if (donInteraction != null) {
 				students = donInteraction.getValue();
 			}
 			//the new array for the calculated students
 			IPlace[][] newState = new IPlace[students.length][students[0].length];
+			for (int y = 0; y < 5;y++) {
+				for (int x = 0; x < 7;x++) {
+					newState[y][x] = new EmptyPlace(properties.size());
+				}
+			}
 			
 			//student independent calculations
 			CalcVector preChangeVector = new CalcVector(properties);
-			
+			preChangeVector.printCalcVector("Init");
 			// - - - breakReaction -> inf(Break) * breakInf
 			double breakInf = 0.01;
 			if(lecture.getTimeBlocks().getTimeBlockAtTime(currentTime/60000).getType() == BlockType.pause) {
+				logger.info("Influenced by break");
 				preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.BREAK_REACTION, breakInf));
 			}
+			preChangeVector.printCalcVector("after break");
 			
 			// - - - timeDending -> inf(Time) * currentTime/1000 * timeInf
 			double timeInf = 0.001;
 			double timeTimeInf = timeInf * currentTime / 1000;
 			preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.TIME_DEPENDING, timeTimeInf));
+			preChangeVector.printCalcVector("after time depending");
 			
 			// iterate over all students
 			for (int y = 0; y < students.length; y++) {
@@ -128,11 +144,17 @@ public class Course {
 					if(students[y][x] instanceof Student) {
 						//influence of the surrounding students
 						CalcVector neighborInfl = getNeighborsInfluence((Student)students[y][x], x, y);
+						if(y==0 && x==0)
+							neighborInfl.printCalcVector("Neighbor");
 						CalcVector preChangeVectorSpecial = neighborInfl.addCalcVector(preChangeVector);
+						if(y==0 && x==0)
+							neighborInfl.printCalcVector("preChangeVectorSpecial = Neighbor + preChangeVector");
 						
 						//create a new student and let him calculate a new change vector
 						newState[y][x] = ((Student)students[y][x]).clone();
-						((Student)newState[y][x]).calcNextSimulationStep(preChangeVectorSpecial, influence);
+						((Student)newState[y][x]).calcNextSimulationStep(preChangeVectorSpecial, influence, x,y);
+						if(y==0 && x==0)
+							((Student)newState[y][x]).printAcutalState();
 					}
 				}
 			}
@@ -157,17 +179,45 @@ public class Course {
 					neighborInf[j][i] = 0.0001;
 				}
 			}
-			for(int i = 0; i<3; i++) {
-				for(int j = 0; j<3; j++) {
-					if(i!=j) {
-						if(students[y+j][x+i] != null) {
-							changeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.BREAK_REACTION, neighborInf[j][i])
-									.multiplyWithVector(students[y+j][x+i].getActualState()));
+			
+			//System.out.println("x: "+x+" / y: "+y);
+			for(int i = -1; i<=1; i++) {
+				for(int j = -1; j<=1; j++) {
+					if(i!=0 || j!=0) {
+						int newx = x+i;
+						int newy = y+j;
+						if(newx < students[0].length && newx >= 0 && newy < students.length && newy >= 0) {
+							//System.out.println("newx: "+newx+" / newy: "+newy);
+							IPlace s = students[newy][newx];
+							CalcVector studentsState = s.getActualState();
+							changeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR, neighborInf[j+1][i+1])
+									.multiplyWithVector(studentsState));
 						}
 					}
 				}
 			}
 			return changeVector;
+	}
+	
+	public void printFieldInformation() {
+		int isnull = 0;
+		int studentsA= 0;
+		int empty= 0;
+		for (int a = 0; a < 5;a++) {
+			for (int b = 0; b < 7;b++) {
+				if(students[a][b]==null) {
+					isnull++;
+					System.out.println(a+" / "+b);
+				} else if (students[a][b] instanceof EmptyPlace)
+					empty++;
+				else if (students[a][b] instanceof Student)
+					studentsA++;
+			}
+		}
+		System.out.println("null: "+isnull);
+		System.out.println("empty: "+empty);
+		System.out.println("studentsA: "+studentsA);
+		
 	}
 	
 	// --- GETTERS and SETTERS ---

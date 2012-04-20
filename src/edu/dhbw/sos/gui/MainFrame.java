@@ -114,6 +114,7 @@ public class MainFrame extends JFrame implements IUpdateable, WindowStateListene
 	
 	@Override
 	public void update() {
+		logger.info("Update GUI data");
 		for (IUpdateable comp : components) {
 			comp.update();
 		}

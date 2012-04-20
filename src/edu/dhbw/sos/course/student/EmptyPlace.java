@@ -48,4 +48,8 @@ public class EmptyPlace implements IPlace {
 	public int getAverageState() {
 		return 0;
 	}
+	
+	public void printAcutalState() {
+		System.out.println("Empty Place");
+	}
 }
