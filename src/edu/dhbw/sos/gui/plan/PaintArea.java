@@ -67,7 +67,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		this.tbs = tbs;
 		this.initMovableBlocks();
 		
-		attDia = new Diagram(new LinkedList<Integer>());
+		attDia = new Diagram(new LinkedList<Float>());
 		attDia.setLocation(new Point(20, 10));
 	}
 	
@@ -167,15 +167,15 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	private void updateDiagram() {
 		attDia.setHeight(this.getHeight() - 20);
 		attDia.setWidth(this.getWidth() - 20);
-		LinkedList<Integer> newData = new LinkedList<Integer>();
+		LinkedList<Float> newData = new LinkedList<Float>();
 		{
 			// dummy data
-			double last = 50;
+			float last = 50;
 			for (int i = 0; i < 50; i++) {
-				last = last + ((Math.random() - 0.5) * 30.0);
+				last = last + (float)((Math.random() - 0.5) * 30.0);
 				if (last < 0)
 					last = 0;
-				newData.add((int) last);
+				newData.add(last);
 			}
 		}
 		attDia.setData(newData);
