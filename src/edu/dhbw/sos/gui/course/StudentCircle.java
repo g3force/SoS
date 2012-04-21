@@ -119,7 +119,7 @@ public class StudentCircle extends Ellipse2D.Float implements IUpdateable {
 	 * @return Color between Green and Red
 	 * @author NicolaiO
 	 */
-	public static Color getColorFromValue(int value, int max) {
+	public static Color getColorFromValue(float value, int max) {
 		int LOWER_GREEN = 0;
 		int LOWER_RED = 100;
 		int UPPER_GREEN = 240;

@@ -17,26 +17,26 @@ import java.util.LinkedList;
 
 /**
  * A class for drawing a diagram.
- * It will use an integer list for data and is used by calling the draw() method with a
+ * It will use an float list for data and is used by calling the draw() method with a
  * Graphics2D object.
  * 
  * @author NicolaiO
  * 
  */
 public class Diagram {
-	private LinkedList<Integer>	data;
-	private int							height	= 0;
-	private int							width		= 0;
-	private Point						location	= new Point();
+	private LinkedList<Float>	data;
+	private int						height	= 0;
+	private int						width		= 0;
+	private Point					location	= new Point();
 	/*
 	 * If rescale is true, the diagram will always take the whole
 	 * available space.
 	 * If false, it will use maxY and maxX. This should not be zero then ;)
 	 */
-	private boolean					rescaleY	= true;
-	private boolean					rescaleX	= true;
-	private int							maxY		= 0;
-	private int							maxX		= 0;
+	private boolean				rescaleY	= true;
+	private boolean				rescaleX	= true;
+	private float					maxY		= 0;
+	private float					maxX		= 0;
 	
 	
 	/**
@@ -49,7 +49,7 @@ public class Diagram {
 	 * 
 	 * @author NicolaiO
 	 */
-	public Diagram(LinkedList<Integer> _data) {
+	public Diagram(LinkedList<Float> _data) {
 		data = _data;
 		rescaleY = true;
 		rescaleX = true;
@@ -94,10 +94,10 @@ public class Diagram {
 	 * @return maximum Y
 	 * @author NicolaiO
 	 */
-	private int getMaxY() {
+	private float getMaxY() {
 		if (rescaleY) {
-			int max = 0;
-			for (int val : data) {
+			float max = 0;
+			for (float val : data) {
 				if (val > max)
 					max = val;
 			}
@@ -114,7 +114,7 @@ public class Diagram {
 	 * @return maximum X
 	 * @author NicolaiO
 	 */
-	private int getMaxX() {
+	private float getMaxX() {
 		if (rescaleX) {
 			return data.size();
 		} else {
@@ -123,12 +123,12 @@ public class Diagram {
 	}
 	
 	
-	public LinkedList<Integer> getData() {
+	public LinkedList<Float> getData() {
 		return data;
 	}
 	
 	
-	public void setData(LinkedList<Integer> data) {
+	public void setData(LinkedList<Float> data) {
 		this.data = data;
 	}
 	

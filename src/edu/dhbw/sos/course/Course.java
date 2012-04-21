@@ -53,7 +53,7 @@ public class Course {
 				if(y==3) {
 					students[y][x] = new EmptyPlace(properties.size());
 				} else {
-					Student newStud = new Student(properties);
+					Student newStud = new Student(properties.size());
 					
 					for(int i=0; i<4; i++) {
 						newStud.addValueToChangeVector(i, (int)(Math.random()*100));
@@ -125,7 +125,7 @@ public class Course {
 			}
 			
 			//student independent calculations
-			CalcVector preChangeVector = new CalcVector(properties);
+			CalcVector preChangeVector = new CalcVector(properties.size());
 			preChangeVector.printCalcVector("Init");
 			// - - - breakReaction -> inf(Break) * breakInf
 			double breakInf = 0.01;

@@ -58,7 +58,7 @@ public class EmptyPlace implements IPlace {
 	
 	
 	@Override
-	public void donInput(int index, int value) {
+	public void donInput(int index, float value) {
 		// just do nothing
 	}
 	

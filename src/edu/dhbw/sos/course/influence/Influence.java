@@ -12,10 +12,8 @@ package edu.dhbw.sos.course.influence;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import edu.dhbw.sos.course.student.EmptyPlace;
-import edu.dhbw.sos.course.student.Student;
+//import quicktime.std.image.Matrix;
 import edu.dhbw.sos.helper.CalcVector;
-import edu.dhbw.sos.helper.Matrix;
 
 /**
  * TODO dirk, add comment!
@@ -27,14 +25,14 @@ import edu.dhbw.sos.helper.Matrix;
  */
 public class Influence {
 	
-	Matrix parameterInfl; 
+	float[][] parameterInfl;
 	HashMap<EInfluenceType, CalcVector> environmentalInfl;
 	
 	public Influence() {
-		int[][] array = new int[4][4];
+		float[][] array = new float[4][4];
 		for (int i=0; i < array.length;i++) {
 			for (int j = 0; j < array[i].length;j++) {
-				array[i][j]=(int)(Math.random()*200)-100;
+				array[i][j]=(float)(Math.random()*200)-100;
 			}
 		}
 		LinkedList<String> l = new LinkedList<String>();
@@ -42,15 +40,15 @@ public class Influence {
 		l.add("Loudness");
 		l.add("Attention");
 		l.add("Quality");
-		parameterInfl = new Matrix(l, array);
+		parameterInfl = array.clone();
 		environmentalInfl = new HashMap<EInfluenceType, CalcVector>();
-		CalcVector cv1 = new CalcVector(l);
-		CalcVector cv2 = new CalcVector(l);
-		CalcVector cv3 = new CalcVector(l);
+		CalcVector cv1 = new CalcVector(l.size());
+		CalcVector cv2 = new CalcVector(l.size());
+		CalcVector cv3 = new CalcVector(l.size());
 		for(int i=0; i<4; i++) {
-			cv1.setValueAt(i, (int)(Math.random()*200)-100);
-			cv2.setValueAt(i, (int)(Math.random()*200)-100);
-			cv3.setValueAt(i, (int)(Math.random()*200)-100);
+			cv1.setValueAt(i, (float)(Math.random()*200)-100);
+			cv2.setValueAt(i, (float)(Math.random()*200)-100);
+			cv3.setValueAt(i, (float)(Math.random()*200)-100);
 		}
 		environmentalInfl.put(EInfluenceType.NEIGHBOR , cv1);
 		environmentalInfl.put(EInfluenceType.BREAK_REACTION , cv2);
@@ -72,14 +70,14 @@ public class Influence {
 	}
 	
 	public CalcVector getInfluencedParameterVector(CalcVector toInfluence) {
-		return toInfluence.multiplyWithMatrix(parameterInfl);
+		return toInfluence.multiplyWithArray(parameterInfl);
 	}
 	
-	public Matrix getParameterMatrix() {
+	public float[][] getParameterMatrix() {
 		return parameterInfl;
 	}
 	
-	public void setParameterMatrix(Matrix newMatrix) {
+	public void setParameterMatrix(float[][] newMatrix) {
 		this.parameterInfl = newMatrix;
 	}
 	

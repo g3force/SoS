@@ -44,7 +44,7 @@ public class SPaintArea extends JPanel implements IUpdateable {
 	 * @author NicolaiO
 	 */
 	public SPaintArea(GUIData _data) {
-		diagram = new Diagram(new LinkedList<Integer>());
+		diagram = new Diagram(new LinkedList<Float>());
 		diagram.setLocation(new Point(10, 10));
 		data = _data;
 	}
@@ -70,7 +70,7 @@ public class SPaintArea extends JPanel implements IUpdateable {
 	public void update() {
 		diagram.setHeight(this.getHeight() - 20);
 		diagram.setWidth(this.getWidth() - 20);
-		LinkedList<Integer> newData = new LinkedList<Integer>();
+		LinkedList<Float> newData = new LinkedList<Float>();
 		if (data.getSelectedStudent() != null) {
 			for (int key : data.getSelectedStudent().getHistoryStates().keySet()) {
 				newData.add(data.getSelectedStudent().getHistoryStates().get(key).getValueAt(data.getSelectedProperty()));
@@ -82,7 +82,7 @@ public class SPaintArea extends JPanel implements IUpdateable {
 				last = last + ((Math.random() - 0.5) * 30.0);
 				if (last < 0)
 					last = 0;
-				newData.add((int) last);
+				newData.add((float)last);
 			}
 		}
 		diagram.setData(newData);

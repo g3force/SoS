@@ -16,7 +16,6 @@ import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.influence.Influence;
 import edu.dhbw.sos.helper.CalcVector;
-import edu.dhbw.sos.helper.Parameter;
 
 
 /**
@@ -29,41 +28,16 @@ import edu.dhbw.sos.helper.Parameter;
  */
 public class Student implements IPlace, Cloneable {
 	private CalcVector									actualState;
-	private LinkedHashMap<Integer, CalcVector>	historyStates = new LinkedHashMap<Integer, CalcVector>();
+	private LinkedHashMap<Integer, CalcVector>	historyStates	= new LinkedHashMap<Integer, CalcVector>();
 	private CalcVector									changeVector;
-	private boolean										isEmpty;
-	private static final Logger						logger	= Logger.getLogger(Student.class);
+	private static final Logger						logger			= Logger.getLogger(Student.class);
 	
-	
-	public Student(LinkedList<String> params) {
-		this.actualState = new CalcVector(params);
-		this.changeVector = new CalcVector(params);
-		this.isEmpty = false;
-		
-	}
 	
 	
 	public Student(int vectorInitSize) {
 		this.actualState = new CalcVector(vectorInitSize);
 		this.changeVector = new CalcVector(vectorInitSize);
-		this.isEmpty = false;
 	}
-	
-	
-	public Student(LinkedList<String> params, boolean empty) {
-		this.actualState = new CalcVector(params);
-		this.changeVector = new CalcVector(params);
-		this.isEmpty = empty;
-		
-	}
-	
-	
-	public Student(int vectorInitSize, boolean empty) {
-		this.actualState = new CalcVector(vectorInitSize);
-		this.changeVector = new CalcVector(vectorInitSize);
-		this.isEmpty = empty;
-	}
-	
 	
 	private Student() {
 		
@@ -77,7 +51,7 @@ public class Student implements IPlace, Cloneable {
 	 * @param value value to add (negative to sub)
 	 * @author NicolaiO
 	 */
-	public void donInput(int index, int value) {
+	public void donInput(int index, float value) {
 		CalcVector cv = new CalcVector(4);
 		cv.setValueAt(index, value);
 		this.addToStateVector(cv, 0, 0);
@@ -174,19 +148,6 @@ public class Student implements IPlace, Cloneable {
 	}
 	
 	
-	/**
-	 * Adds the parameter to the actualState and changeVector of this student.
-	 * 
-	 * NOTE: This means it has the same value in both vectors!
-	 * 
-	 * @param p
-	 * @author bene
-	 */
-	public void addParamToStudent(Parameter p) {
-		this.actualState.addParamToVector(p);
-		this.changeVector.addParamToVector(p);
-	}
-	
 	
 	/**
 	 * Returns the actualState of this student to allow further access to it.
@@ -222,50 +183,7 @@ public class Student implements IPlace, Cloneable {
 		return this.changeVector;
 	}
 	
-	
-	/**
-	 * Returns whether the position in course which is represented by this student object is empty or not.
-	 * 
-	 * @return
-	 * @author bene
-	 */
-	public boolean isEmpty() {
-		return this.isEmpty;
-	}
-	
-	
-	/**
-	 * Sets the isEmpty to value
-	 * 
-	 * @param value
-	 * @author bene
-	 */
-	public void setEmpty(boolean value) {
-		this.isEmpty = value;
-	}
-	
-	
-	/**
-	 * Adds value to the value of the parmeter with name paramName. Returns true if successful and false if a parameter
-	 * with name paramName was not in the vector.
-	 * 
-	 * @param paramName
-	 * @param value
-	 * @return
-	 * @author bene
-	 */
-	public boolean addValueToChangeVector(String paramName, int value) {
-		boolean ret = false;
-		for (int i = 0; i < changeVector.size(); i++) {
-			if (paramName.compareTo(changeVector.getTypeAt(i)) == 0) {
-				changeVector.setValueAt(i, changeVector.getValueAt(i) + value);
-				ret = true;
-				break;
-			}
-		}
-		return ret;
-	}
-	
+
 	
 	/**
 	 * Adds value to the value of the parmeter at position index.
@@ -275,7 +193,7 @@ public class Student implements IPlace, Cloneable {
 	 * @return
 	 * @author bene
 	 */
-	public void addValueToChangeVector(int index, int value) {
+	public void addValueToChangeVector(int index, float value) {
 		if (index >= changeVector.size()) {
 			throw new IndexOutOfBoundsException();
 		}
@@ -291,7 +209,7 @@ public class Student implements IPlace, Cloneable {
 	 * @return
 	 * @author bene
 	 */
-	public void addValueToStateVector(int index, int value) {
+	public void addValueToStateVector(int index, float value) {
 		if (index >= changeVector.size()) {
 			throw new IndexOutOfBoundsException();
 		}
@@ -306,16 +224,11 @@ public class Student implements IPlace, Cloneable {
 	 * @return
 	 * @author bene
 	 */
-	public String getSaveableString() {
-		String ret = "<student isEmpty=";
-		if (this.isEmpty) {
-			ret += "\"1\">";
-		} else {
-			ret += "\"0\">";
-		}
+	public String getSaveableString(LinkedList<String> params) {
+		String ret = "<student isEmpty=\"0\">";
 		
 		for (int i = 0; i < this.actualState.size(); i++) {
-			ret += "<attribute name=\"" + this.actualState.getTypeAt(i) + "\" value=\"" + this.actualState.getValueAt(i)
+			ret += "<attribute name=\"" + params.get(i) + "\" value=\"" + this.actualState.getValueAt(i)
 					+ "\"></attribute>";
 		}
 		ret += "</student>";
@@ -330,7 +243,6 @@ public class Student implements IPlace, Cloneable {
 		Student ret = new Student();
 		ret.actualState = this.actualState.clone();
 		ret.changeVector = this.changeVector.clone();
-		ret.isEmpty = this.isEmpty;
 		return ret;
 	}
 	
