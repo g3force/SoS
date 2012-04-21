@@ -198,6 +198,8 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 				moveBlock = mb;
 				// Any block must exist only one time in the list
 				index = movableBlocks.indexOf(moveBlock);
+				logger.error("index:" + index);
+				mb.printMbTb(index, "M");
 				widthLeft = (index > 0) ? movableBlocks.get(index - 1).width : -1;
 				widthRight = (index + 1 < movableBlocks.size()) ? movableBlocks.get(index + 1).width : -1;
 			}
@@ -236,23 +238,24 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 			// the left and positive to the right.
 			int mmt_X = (int) Math.floor(e.getPoint().getX() + moveBlock.getRelMouseLocation().getX() - moveBlock.getX());
 			double paWidth = this.getWidth();
-			int newIndex = -1;
+			int newIndex = 0;
 			
-			if(!calcMoveBlock(e.getPoint(), mmt_X)){
+			if (!calcMoveBlock(e.getPoint(), mmt_X)) {
 				return;
 			}
 			
 			// Calculate width of left block
 			if (index - 1 >= 0) {
-				logger.debug("index - 1 >= 0");
-				logger.debug(movableBlocks.get(index - 1).width);
+				// logger.debug("index - 1 >= 0");
+				// logger.debug(movableBlocks.get(index - 1).width);
 				movableBlocks.get(index - 1).width += mmt_X;
 				movableBlocks.get(index - 1).getTimeBlock().setLen((int) (movableBlocks.get(index - 1).width / scaleRatio));
+				movableBlocks.get(index - 1).printMbTb(index - 1, "L");
 			}
 			
 			// Calculate width of right block and new position
 			if (index + 1 < movableBlocks.size() && index >= 0) {
-				logger.debug("index + 1 < movableBlocks.size() && index >= 0");
+				// logger.debug("index + 1 < movableBlocks.size() && index >= 0");
 				
 				// FIXME BLock verschwindet nach links ??!?!?
 				double x_P1 = movableBlocks.get(index + 1).getLocation().getX() + mmt_X;
@@ -265,16 +268,21 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 				
 				movableBlocks.get(index + 1).width -= mmt_X;
 				movableBlocks.get(index + 1).getTimeBlock().setLen((int) (movableBlocks.get(index + 1).width / scaleRatio));
+				movableBlocks.get(index + 1).printMbTb(index + 1, "R");
+				
 			}
 			
 			// Checks wether the width of left and right Blocks are lower or equal then 0
 			if (index > 1 && movableBlocks.get(index - 1).width <= 0) {
-				logger.debug("index > 1 && movableBlocks.get(index - 1).width <= 0");
+				// logger.debug("index > 1 && movableBlocks.get(index - 1).width <= 0");
 				
 				movableBlocks.get(index - 1).width = widthLeft;
 				movableBlocks.get(index - 1).getTimeBlock().setLen((int) (widthLeft / scaleRatio));
+				movableBlocks.get(index - 1).printMbTb(index - 1, "L");
 				movableBlocks.get(index + 1).width = widthRight;
 				movableBlocks.get(index + 1).getTimeBlock().setLen((int) (widthRight / scaleRatio));
+				movableBlocks.get(index + 1).printMbTb(index + 1, "R");
+				
 				
 				movableBlocks.get(index - 1).setLocation(moveBlock.getLocation().getX() + moveBlock.width,
 						movableBlocks.get(index - 1).getLocation().getY());
@@ -284,15 +292,19 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 				
 				widthLeft = (newIndex >= 1) ? movableBlocks.get(newIndex - 1).width : -1;
 				widthRight = movableBlocks.get(newIndex + 1).width;
+				index = newIndex;
 				
-			}
-			if (index + 2 < movableBlocks.size() && movableBlocks.get(index + 1).width <= 0) {
-				logger.debug("index + 2 < movableBlocks.size() && movableBlocks.get(index + 1).width <= 0");
+			} else if (index + 2 < movableBlocks.size() && movableBlocks.get(index + 1).width <= 0) {
+				// logger.debug("index + 2 < movableBlocks.size() && movableBlocks.get(index + 1).width <= 0");
+				if (index > 0) {
+					movableBlocks.get(index - 1).width = widthLeft;
+					movableBlocks.get(index - 1).getTimeBlock().setLen((int) (widthLeft / scaleRatio));
+					movableBlocks.get(index - 1).printMbTb(index - 1, "L");
+				}
 				
-				movableBlocks.get(index - 1).width = widthLeft;
-				movableBlocks.get(index - 1).getTimeBlock().setLen((int) (widthLeft / scaleRatio));
 				movableBlocks.get(index + 1).width = widthRight;
 				movableBlocks.get(index + 1).getTimeBlock().setLen((int) (widthRight / scaleRatio));
+				movableBlocks.get(index + 1).printMbTb(index + 1, "R");
 				
 				
 				movableBlocks.get(index + 1).setLocation(moveBlock.getLocation().getX() + moveBlock.width,
@@ -303,11 +315,11 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 				
 				widthLeft = movableBlocks.get(newIndex - 1).width;
 				widthRight = (newIndex + 1 < movableBlocks.size()) ? movableBlocks.get(newIndex + 1).width : -1;
-				
+				index = newIndex;
 			}
 			
 			// movableBlocks.descendingIterator();
-			index = newIndex;
+			logger.trace("Dragged finished: index now:" + index);
 			this.repaint();
 		}
 	}
@@ -352,6 +364,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 			x = paWidth;
 		}
 		moveBlock.setLocation(x, p.getY());
+		moveBlock.printMbTb(index, "M");
 		return true;
 	}
 }
