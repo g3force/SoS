@@ -36,7 +36,8 @@ public class CourseManager {
 
 	private Course[] courses;
 	private Course curCourse;
-	private String savepath = System.getProperty("user.dir") + "//courses.xml";
+	private String datapath = System.getProperty("user.home") + "//.sos";
+	private String savepath = datapath + "//courses.xml";
 
 	public CourseManager() {
 		if (CourseManager.getInstance() != null) {
@@ -213,7 +214,7 @@ public class CourseManager {
 					if(courses[0].getInfluence()!=null && courses[0].getInfluence().getParameterMatrix()!=null) {
 						writer.writeStartElement("changematrix");
 						float[][] parMatrix = courses[0].getInfluence().getParameterMatrix();
-						writer.writeAttribute("rows_columns", String.valueOf(parMatrix));
+						writer.writeAttribute("rows_columns", String.valueOf(parMatrix.length));
 						
 						for(int row=0;row<parMatrix.length;row++) {
 							writer.writeStartElement("mat_row");
@@ -252,12 +253,12 @@ public void loadCourses() {
 		XMLStreamReader reader = factory.createXMLStreamReader(new FileReader(savepath));
 		reader.getEventType(); //START
 		
-		int cIdx = -1;					//CourseIDX
-		int aIdx = 0;					//AttributeIDX
+		int cIdx = -1;							//CourseIDX
+		int aIdx = 0;							//AttributeIDX
 		IPlace[][] students = null;
 		
-		int sRows = 0, sColumns = 0; 	//Student-attribute
-		int mRows = 0, mColumns = 0; 	//Matrix
+		int sRows = 0, sColumns = 0; 		//Student-attribute
+		int mRows = -1, mColumns = 0; 	//Matrix
 		
 		float[][] matVals = null;
 		
@@ -267,7 +268,8 @@ public void loadCourses() {
 			if(reader.hasName()) {
 				String tagname = reader.getName().toString();
 				try {
-					
+					if(reader.getEventType()==2)
+						continue;
 					if(tagname.contentEquals("courses")) {
 						courses = new Course[Integer.parseInt(reader.getAttributeValue(0))];
 						students = null;
@@ -275,9 +277,14 @@ public void loadCourses() {
 					} else if(tagname.contentEquals("course")) {
 						cIdx++;
 
-						courses[cIdx].setName( reader.getAttributeValue(0) );
+						String name = reader.getAttributeValue(0);
+						courses[cIdx] = new Course();
+						courses[cIdx].setName( name );
+						
+						int tmpRows = Integer.parseInt(reader.getAttributeValue(1));
+						int tmpCols = Integer.parseInt(reader.getAttributeValue(2));
 
-						students = allocStudents( Integer.parseInt(reader.getAttributeValue(1)), Integer.parseInt(reader.getAttributeValue(2)));
+						students = allocStudents( tmpRows, tmpCols );
 						
 					} else if(tagname.contentEquals("student")) {
 						//isEmpty="0"
@@ -286,20 +293,25 @@ public void loadCourses() {
 						} else { //isEmpty="1"
 							students[sRows][sColumns] = new EmptyPlace( Integer.parseInt(reader.getAttributeValue(1)) );
 						}
-						sColumns++;
-						if(sColumns>=students[0].length) { //
-							sColumns = 0;
-							sRows++;
-						}
 						aIdx=0;
 					} else if(tagname.contentEquals("sAttribute")) {
 						Student curStudent = (Student)students[sRows][sColumns];
-						curStudent.addValueToStateVector(aIdx, Float.parseFloat(reader.getAttributeValue(1)));
+						curStudent.addValueToStateVector(aIdx, Float.parseFloat(reader.getAttributeValue(0)));
 						aIdx++;
+						if(aIdx == curStudent.getActualState().size()) {
+							sColumns++;
+							if(sColumns>=students[0].length) { //
+								sColumns = 0;
+								sRows++;
+							}
+						}
 					} else if(tagname.contentEquals("changematrix")) {
 						
 						int size = Integer.parseInt(reader.getAttributeValue(0));
 						matVals = new float[size][size];
+						for(int i=0;i<size;i++)
+							for(int j=0;j<size;j++)
+								matVals[i][j]=0.00f;
 						
 					} else if(tagname.contentEquals("mat_row")) {
 						mRows++;
@@ -308,11 +320,9 @@ public void loadCourses() {
 					} else if(tagname.contentEquals("mAttribute")) {
 						matVals[mRows][mColumns] = Float.parseFloat(reader.getAttributeValue(0)); //Integer value
 						mColumns++;
-					} else if(tagname.contentEquals("influencevector")) {
-						
 					}
 				} catch( Exception ex ) {
-					//...Useless exceptions for every little thing.
+					ex.printStackTrace();
 				}
 			}
 		}

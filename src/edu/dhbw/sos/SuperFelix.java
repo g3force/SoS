@@ -51,6 +51,7 @@ public class SuperFelix {
 		data = new GUIData();
 		CourseManager courseManager = new CourseManager();
 		courseManager.loadCourses();
+		courseManager.saveCourses();
 		mainFrame = new MainFrame(data);
 		mainFrame.update();
 		
