@@ -240,6 +240,8 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 			int mmt_X = (int) Math.floor(e.getPoint().getX() + moveBlock.getRelMouseLocation().getX() - moveBlock.getX());
 			int mmt_Y = (int) Math.floor(e.getPoint().getY() + moveBlock.getRelMouseLocation().getY());
 			
+			
+			// Vertical Movement
 			if (mmt_Y >= 1 && mmt_Y < 40) {
 				mmt_Y = 10;
 				moveBlock.getTimeBlock().setType(BlockType.pause);
@@ -259,6 +261,9 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 			} else {
 				mmt_Y = (int) moveBlock.getY();
 			}
+			
+			
+			// Horizontal Movement
 			
 			double paWidth = this.getWidth();
 			

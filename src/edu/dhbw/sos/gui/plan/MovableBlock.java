@@ -102,10 +102,10 @@ public class MovableBlock extends Rectangle {
 	public void setLocation(Point p) {
 		int x = this.getLocation().x;
 		int y = this.getLocation().y;
-		if (moveVertical) {
+		if (moveHorizontal) {
 			x = p.x + relMouseLocation.x;
 		}
-		if (moveHorizontal) {
+		if (moveVertical) {
 			//y = p.y + relMouseLocation.y;
 			y = p.y;
 		}
