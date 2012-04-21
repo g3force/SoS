@@ -1,0 +1,118 @@
+/* 
+ * *********************************************************
+ * Copyright (c) 2012 - 2012, DHBW Mannheim
+ * Project: SoS
+ * Date: Apr 21, 2012
+ * Author(s): NicolaiO
+ *
+ * *********************************************************
+ */
+package edu.dhbw.sos.course.io;
+
+import java.io.FileWriter;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
+
+import edu.dhbw.sos.course.Courses;
+import edu.dhbw.sos.course.student.IPlace;
+import edu.dhbw.sos.course.student.Student;
+
+/**
+ * TODO NicolaiO, add comment!
+ * - What should this type do (in one sentence)?
+ * - If not intuitive: A simple example how to use this class
+ * 
+ * @author NicolaiO
+ * 
+ */
+public class CourseSaver {
+	public static void saveCourses(Courses courses, String savepath) {
+		XMLOutputFactory factory = XMLOutputFactory.newInstance();
+		try {
+			FileWriter fw = new FileWriter(savepath, false);
+			XMLStreamWriter writer = factory.createXMLStreamWriter(fw);
+			if (writer != null) {
+				writer.writeStartDocument();
+				writer.writeStartElement("savefile");
+				
+				if(courses!=null) {
+					writer.writeStartElement("courses");
+					writer.writeAttribute("count", String.valueOf(courses.length));
+					
+					for (int i = 0; i < courses.length; i++) {
+						// Write for each course --> <course name="NAME" students="COUNT">
+						writer.writeStartElement("course");	
+						writer.writeAttribute("name", courses[i].getName());
+		
+						IPlace[][] students = courses[i].getStudents();
+						writer.writeAttribute("x", String.valueOf(students[i].length));
+						writer.writeAttribute("y", String.valueOf(students.length));
+						
+						for(int j=0;j<students.length;j++) {
+							for(int k=0;k<students[j].length;k++) {
+								//For each student --> <student>
+								writer.writeStartElement("student");
+								
+								if(students[j][k].getClass().getName().contains("EmptyPlace")) {
+									writer.writeAttribute("isempty", "1"); //if it's empty --> no further information
+									writer.writeAttribute("paramcount", String.valueOf( students[j][k].getActualState().size() ) );
+								} else {
+									writer.writeAttribute("isempty", "0");
+									writer.writeAttribute("paramcount", String.valueOf( students[j][k].getActualState().size() ) );
+									Student currentStudent = (Student)students[j][k];
+									for(int m=0;m<currentStudent.getActualState().size();m++) {
+										//<attribute value="VALUE">
+										writer.writeStartElement("sAttribute");
+										/**
+										 * FIXME:	
+										 */
+										//writer.writeAttribute("name", courses[i].getInfluence(). );
+										writer.writeAttribute("value", String.valueOf( currentStudent.getActualState().getValueAt(m) ));
+										writer.writeEndElement();
+										//</attribute>
+									}
+								}
+								
+								writer.writeEndElement();
+								//</student>
+							}
+						}
+						writer.writeEndElement(); 
+						//</course>
+					}
+					writer.writeEndElement(); 
+					//</courses>
+					
+					if(courses[0].getInfluence()!=null && courses[0].getInfluence().getParameterMatrix()!=null) {
+						writer.writeStartElement("changematrix");
+						float[][] parMatrix = courses[0].getInfluence().getParameterMatrix();
+						writer.writeAttribute("rows_columns", String.valueOf(parMatrix));
+						
+						for(int row=0;row<parMatrix.length;row++) {
+							writer.writeStartElement("mat_row");
+							for(int col=0;col<parMatrix[row].length;col++) {
+								writer.writeStartElement("mAttribute");
+								writer.writeAttribute("value", String.valueOf(parMatrix[row][col]));
+								writer.writeEndElement();
+							}
+							writer.writeEndElement();
+						//</change>
+						}
+						writer.writeEndElement();
+						//</changevector>
+					}
+				}
+			}
+			writer.writeEndElement();
+			writer.writeEndDocument();
+				
+			writer.flush();
+			writer.close();
+			fw.close();
+			writer=null;
+		} catch( Exception ex ) {
+			ex.printStackTrace();
+		}
+	}
+}

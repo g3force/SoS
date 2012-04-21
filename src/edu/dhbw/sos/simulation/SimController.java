@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.SuperFelix;
 import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.course.ICurrentCourseOberserver;
 import edu.dhbw.sos.gui.MainFrame;
 
 
@@ -27,7 +28,7 @@ import edu.dhbw.sos.gui.MainFrame;
  * 
  */
 
-public class SimController {
+public class SimController implements ICurrentCourseOberserver {
 	
 	private Course	course;
 	private MainFrame mainFrame;
@@ -39,7 +40,7 @@ public class SimController {
 	private static final Logger	logger	= Logger.getLogger(SimController.class);
 	
 	
-	private SimController(Course course, MainFrame mf) {
+	public SimController(Course course) {
 		this.course = course;
 		this.mainFrame = mf;
 		currentTime = 0;
@@ -126,5 +127,10 @@ public class SimController {
 	
 	public void setSpeed(int speed) {
 		this.speed = speed;
+	}
+
+	@Override
+	public void updateCurrentCourse() {
+		course 
 	}
 }
