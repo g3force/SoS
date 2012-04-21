@@ -45,7 +45,6 @@ public class SuperFelix {
 		// create object for the data to be displayed in GUI
 		// the references will be used to update it afterwards
 		
-		
 		Courses courses = new Courses(savepath);
 		CourseController courseController = new CourseController(courses);
 		
