@@ -31,7 +31,8 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import edu.dhbw.sos.gui.GUIData;
+import edu.dhbw.sos.course.CourseController;
+import edu.dhbw.sos.course.Courses;
 import edu.dhbw.sos.gui.IUpdateable;
 import edu.dhbw.sos.gui.MainFrame;
 import edu.dhbw.sos.helper.Messages;
@@ -62,19 +63,19 @@ public class RightPanel extends JPanel implements IUpdateable, ActionListener {
 	private LinkedList<String>					suggestions;
 	
 	
-	public RightPanel(GUIData data) {
+	public RightPanel(CourseController courseController, Courses courses) {
 		this.profiles = data.getProfiles();
 		this.statistics = data.getStatistics();
 		this.suggestions = data.getSuggestions();
 		
-		this.setBorder(MainFrame.compoundBorder);
+		this.setBorder(MainFrame.COMPOUND_BORDER);
 		this.setPreferredSize(new Dimension(PREF_SIZE, 0));
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		
 		// #############################################################################
 		// drop down list
 		JPanel courseListPanel = new JPanel();
-		courseListPanel.setBorder(MainFrame.compoundBorder);
+		courseListPanel.setBorder(MainFrame.COMPOUND_BORDER);
 		courseListPanel.setLayout(new BorderLayout(5, 5));
 		courseListPanel.setMaximumSize(new Dimension(PREF_SIZE - MARGIN_LR * 2, 10));
 		this.add(courseListPanel);
@@ -100,7 +101,7 @@ public class RightPanel extends JPanel implements IUpdateable, ActionListener {
 		// #############################################################################
 		// statistics
 		statsPanel = new JPanel();
-		statsPanel.setBorder(MainFrame.compoundBorder);
+		statsPanel.setBorder(MainFrame.COMPOUND_BORDER);
 		statsPanel.setLayout(new GridLayout(0, 2, 5, 5));
 		statsPanel.setMaximumSize(new Dimension(PREF_SIZE - MARGIN_LR * 2, 200));
 		this.add(Box.createVerticalStrut(10));
@@ -110,7 +111,7 @@ public class RightPanel extends JPanel implements IUpdateable, ActionListener {
 		// #############################################################################
 		// suggestions
 		suggestionPanel = new JPanel();
-		suggestionPanel.setBorder(MainFrame.compoundBorder);
+		suggestionPanel.setBorder(MainFrame.COMPOUND_BORDER);
 		suggestionPanel.setLayout(new GridLayout(0, 1, 5, 5));
 		suggestionPanel.setMaximumSize(new Dimension(PREF_SIZE - MARGIN_LR * 2, 100));
 		this.add(Box.createVerticalStrut(10));

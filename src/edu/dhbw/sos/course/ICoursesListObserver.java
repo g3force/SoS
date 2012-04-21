@@ -17,6 +17,6 @@ package edu.dhbw.sos.course;
  * @author NicolaiO
  * 
  */
-public interface ICoursesListOberserver {
+public interface ICoursesListObserver {
 	void updateCoursesList();
 }

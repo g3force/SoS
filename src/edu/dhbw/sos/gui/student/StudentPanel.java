@@ -16,6 +16,8 @@ import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
+import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.course.CourseController;
 import edu.dhbw.sos.gui.GUIData;
 import edu.dhbw.sos.gui.IUpdateable;
 

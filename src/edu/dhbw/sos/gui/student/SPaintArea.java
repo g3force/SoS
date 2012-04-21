@@ -43,10 +43,10 @@ public class SPaintArea extends JPanel implements IUpdateable {
 	 * 
 	 * @author NicolaiO
 	 */
-	public SPaintArea(GUIData _data) {
+	public SPaintArea(GUIData data) {
 		diagram = new Diagram(new LinkedList<Float>());
 		diagram.setLocation(new Point(10, 10));
-		data = _data;
+		this.data = data;
 	}
 	
 	
