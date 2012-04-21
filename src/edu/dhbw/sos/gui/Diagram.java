@@ -69,8 +69,8 @@ public class Diagram {
 		if (data.size() == 0 || width <= 0 || height <= 0)
 			return;
 		
-		float scalex = (float) width / (float) getMaxX();
-		float scaley = (float) height / (float) getMaxY();
+		float scalex = (float) width / getMaxX();
+		float scaley = (float) height / getMaxY();
 		
 		float lastValue = data.get(0);
 		float value = 0;
