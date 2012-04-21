@@ -9,8 +9,7 @@
  */
 package edu.dhbw.sos.helper;
 
-import java.util.LinkedList;
-import java.util.Vector;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -20,72 +19,58 @@ import java.util.Vector;
  * 
  */
 public class CalcVector implements Cloneable {
-	private Vector<Parameter>	vector;
+	private float[]	vector;
+	private static final Logger	logger	= Logger.getLogger(CalcVector.class);
 			
 	
-												
 	/**
-	 * Creates a new CalcVector object with all the Parameters defined by the List of Strings.
-	 * The initial values of the Parameter objects are all set to 1.
+	 * Creates a new CalcVector with the size specified by initSize and all values set to 0.
 	 * 
-	 * @param arguments A List of all Parameters
-	 * @author bene
-	 */
-	public CalcVector(LinkedList<String> arguments) {
-		this.vector = new Vector<Parameter>(arguments.size());
-		for (int i = 0; i < arguments.size(); i++) {
-			this.vector.add(i, new Parameter(arguments.get(i), 1));
-		}
-	}
-	
-	/**
-	 * TODO Es ist etwas blöd, dass man immer die arguments liste braucht um ein Vektor anzulegen, da man bei Berechnungen auch mal einen Zwischenvektor anlegt.
-	 * Also es wäre cool, wenn diese Funktion dann noch den Vektor mit 0 initialisiert
-	 * @author dirk
+	 * @param initSize
+	 * @author dirk, bene
 	 */
 	public CalcVector(int initSize) {
-		this.vector = new Vector<Parameter>(initSize);
+		this.vector = new float[initSize];
 		for(int i=0; i<initSize; i++)
-			this.vector.add(i, new Parameter("something", 0));
+			this.vector[i] = 0;
 	}
 	/**
-	 * Appends the Parameter object p to the end of this vector.
+	 * Creates a new CalcVector with the values specified by values.
 	 * 
-	 * @param p
-	 * @return
+	 * @param values
 	 * @author bene
 	 */
-	public boolean addParamToVector(Parameter p) {
-		return this.vector.add(p);
+	public CalcVector(float[] values) {
+		this.vector = new float[values.length];
+		for(int i=0; i < this.vector.length; i++)
+			this.vector[i] = values[i];
 	}
-	
 	
 	/**
-	 * Returns the value of the Parameter object at the specified index.
-	 * 
-	 * @param index
-	 * @return The value of the Parameter object at index
-	 * @author bene
-	 */
-	public int getValueAt(int index) {
-		return this.vector.get(index).getValue();
-	}
-	public void setValueAt(int index, int value) {
-		this.vector.get(index).setValue(value);
-	}
-	
-	
-	/**
-	 * Returns the type of the Parameter object at the specified index.
+	 * Returns the value at the specified index. (First element at index 0, last at size()-1)
 	 * 
 	 * @param index
-	 * @return The type of the Parameter object at index
+	 * @return The value at index
 	 * @author bene
 	 */
-	public String getTypeAt(int index) {
-		return this.vector.get(index).getType();
+	public float getValueAt(int index) {
+		if (index >= this.vector.length) {
+			throw new IllegalArgumentException("Cannot access index outside of vector");
+		}
+		return this.vector[index];
 	}
-	
+	/**
+	 * Sets the value at the specified index. (First element at index 0, last at size()-1)
+	 * 
+	 * @param index
+	 * @author bene
+	 */
+	public void setValueAt(int index, float value) {
+		if (index >= this.vector.length) {
+			throw new IllegalArgumentException("Cannot access index outside of vector");
+		}
+		this.vector[index] = value;
+	}
 	
 	/**
 	 * Returns the size (number of items) of this CalcVector.
@@ -94,7 +79,7 @@ public class CalcVector implements Cloneable {
 	 * @author bene
 	 */
 	public int size() {
-		return this.vector.size();
+		return this.vector.length;
 	}
 	
 	
@@ -107,24 +92,35 @@ public class CalcVector implements Cloneable {
 	 */
 	public CalcVector multiplyWithInteger(int constant) {
 		for (int i = 0; i < this.size(); i++) {
-			this.vector.get(i).setValue(this.getValueAt(i) * constant);
+			this.vector[i] *= constant;
 		}
 		return this;
 	}
 	
 	
 	/**
+	 * Multiplies this CalcVector object with a constant of type float.
+	 * 
+	 * @param constant
+	 * @return
+	 * @author bene
+	 */
+	public CalcVector multiplyWithFloat(float constant) {
+		for (int i = 0; i < this.size(); i++) {
+			this.vector[i] *= constant;
+		}
+		return this;
+	}
+	/**
 	 * Multiplies this CalcVector object with a constant of type double.
+	 * NOTE: this allows only calling this function with double. Calculations and result are float.
 	 * 
 	 * @param constant
 	 * @return
 	 * @author bene
 	 */
 	public CalcVector multiplyWithDouble(double constant) {
-		for (int i = 0; i < this.size(); i++) {
-			this.vector.get(i).setValue((int) (this.getValueAt(i) * constant));
-		}
-		return this;
+		return this.multiplyWithFloat((float)constant);
 	}
 	/**
 	 * Multiplies this CalcVector object with another CalcVector.
@@ -138,7 +134,7 @@ public class CalcVector implements Cloneable {
 			throw new IllegalArgumentException("Cannot multiply vectors of different sizes.");
 		}
 		for (int i = 0; i < this.size(); i++) {
-			this.vector.get(i).setValue((int) (this.getValueAt(i) * v.getValueAt(i)));
+			this.vector[i] *= v.vector[i];
 		}
 		return this;
 	}
@@ -150,16 +146,16 @@ public class CalcVector implements Cloneable {
 	 * @return
 	 * @author bene
 	 */
-	public CalcVector multiplyWithMatrix(Matrix m) {
-		if (m.size() != this.size()) {
+	public CalcVector multiplyWithArray(float[][] a) {
+		if (a.length != this.size() || a[0].length != this.size()) {
 			throw new IllegalArgumentException("Cannot multiply vectors of different sizes.");
 		}
 		for (int i = 0; i < this.size(); i++) {
-			int value = 0;
+			float value = 0;
 			for (int j = 0; j < this.size(); j++) {
-				value += this.getValueAt(i) * m.getElementAt(i, j).getValue();
+				value += this.getValueAt(i) * a[i][j];
 			}
-			this.vector.get(i).setValue(value);
+			this.vector[i] = value;
 		}
 		return this;
 	}
@@ -177,7 +173,7 @@ public class CalcVector implements Cloneable {
 			throw new IllegalArgumentException("Can not add vectors with different sizes.");
 		}
 		for (int i = 0; i < this.size(); i++) {
-			this.vector.get(i).setValue(this.getValueAt(i) + v.getValueAt(i));
+			this.vector[i] += v.getValueAt(i);
 		}
 		return this;
 	}
@@ -187,9 +183,9 @@ public class CalcVector implements Cloneable {
 	 * Creates an exact clone of this CalcVector with the same values.
 	 */
 	public CalcVector clone() {
-		CalcVector result = new CalcVector(this.size());
+		CalcVector result = new CalcVector(vector.length);
 		for (int i = 0; i < this.size(); i++) {
-			result.vector.add(i, new Parameter(this.getTypeAt(i), this.getValueAt(i)));
+			result.vector[i] = this.vector[i];
 		}
 		return result;
 	}
@@ -197,8 +193,15 @@ public class CalcVector implements Cloneable {
 	
 	// debug method
 	public void printCalcVector() {
+		printCalcVector("");
+	}
+	
+// debug method
+	public void printCalcVector(String message) {
+		String out=message+": ";
 		for (int i = 0; i < this.size(); i++) {
-			System.out.println(this.vector.get(i).getType() + ": " + this.vector.get(i).getValue());
+			out+=this.vector[i]+" / ";
 		}
+		logger.info(out.subSequence(0, out.length()-3));
 	}
 }

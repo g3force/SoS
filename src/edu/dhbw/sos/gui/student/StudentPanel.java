@@ -9,6 +9,7 @@
  */
 package edu.dhbw.sos.gui.student;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 
@@ -19,31 +20,36 @@ import edu.dhbw.sos.gui.GUIData;
 import edu.dhbw.sos.gui.IUpdateable;
 
 
-
 /**
- * TODO NicolaiO, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
+ * The StudentPanel is the bottom left Panel.
+ * It displays statistics of the currently selected student and property.
+ * If no student is selected, an average is shown instead.
  * 
  * @author NicolaiO
  * 
  */
 public class StudentPanel extends JPanel implements IUpdateable {
-	
-	/**  */
 	private static final long	serialVersionUID	= 722304874911423036L;
+	private final SPaintArea		paintArea;
 	
-	
+	/**
+	 * Initialize StudentPanel with GUIData
+	 * 
+	 * @param data
+	 * @author NicolaiO
+	 */
 	public StudentPanel(GUIData data) {
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.setPreferredSize(new Dimension(200, 150));
+		this.setLayout(new BorderLayout());
+		paintArea = new SPaintArea(data);
+		this.add(paintArea, BorderLayout.CENTER);
 	}
-
-
+	
+	
 	@Override
 	public void update() {
-		// TODO NicolaiO Auto-generated method stub
-		
+		paintArea.update();
 	}
 	
 }

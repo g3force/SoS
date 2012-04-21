@@ -9,7 +9,6 @@
  */
 package edu.dhbw.sos.gui.plan;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -22,8 +21,11 @@ import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
+import org.apache.log4j.Logger;
+
 import edu.dhbw.sos.course.lecture.TimeBlock;
 import edu.dhbw.sos.course.lecture.TimeBlocks;
+import edu.dhbw.sos.gui.Diagram;
 
 
 /**
@@ -35,12 +37,23 @@ import edu.dhbw.sos.course.lecture.TimeBlocks;
  */
 public class PaintArea extends JPanel implements MouseListener, MouseMotionListener {
 	private static final long			serialVersionUID	= 5194596384018441495L;
+	private static final Logger		logger				= Logger.getLogger(PaintArea.class);
+	
 	// list of all movable blocks
 	private LinkedList<MovableBlock>	movableBlocks		= new LinkedList<MovableBlock>();
 	// this block is set, when a block is moved by dragging with the mouse.
 	// it is set to the reference to the moving block
 	// it should be null, if no block is moved
 	private MovableBlock					moveBlock			= null;
+	private int								index					= -1;
+	private int								widthLeft			= -1;
+	private int								widthRight			= -1;
+	private TimeBlocks					tbs;
+	
+	double									scaleRatio			= 1;
+	int										start;
+	
+	private Diagram						attDia;
 	
 	
 	/**
@@ -48,9 +61,14 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	 * 
 	 * @author NicolaiO
 	 */
-	public PaintArea() {
+	public PaintArea(TimeBlocks tbs) {
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
+		this.tbs = tbs;
+		this.initMovableBlocks();
+		
+		attDia = new Diagram(new LinkedList<Float>());
+		attDia.setLocation(new Point(20, 10));
 	}
 	
 	
@@ -63,10 +81,10 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	 * @param tbs TimeBlocks from which to initialize
 	 * @author NicolaiO
 	 */
-	public void initMovableBlocks(TimeBlocks tbs) {
+	public void initMovableBlocks() {
 		movableBlocks = new LinkedList<MovableBlock>();
-		int start = 20;
-		float scaleRatio = (this.getWidth() - start) / tbs.getTotalLength();
+		start = 20;
+		scaleRatio = (this.getWidth() - start) / (tbs.getTotalLength() != 0 ? tbs.getTotalLength() : 1);
 		for (TimeBlock tb : tbs) {
 			Point location;
 			Color color;
@@ -110,22 +128,57 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		ga.clearRect(0, 0, this.getWidth(), this.getHeight());
 		
 		// draw sinus
-		ga.setPaint(Color.green);
-		ga.setStroke(new BasicStroke(2F));
-		int x1 = 0, x2 = 50, y1 = 0, y2 = 100;
-		for (int i = 0; i < 200; i++) {
-			x1 = i * 2 + 50;
-			y1 = (int) (Math.sin((double) i) * 70 + 70);
-			ga.drawLine(x2, y2, x1, y1);
-			x2 = x1;
-			y2 = y1;
-		}
+		// ga.setPaint(Color.green);
+		// ga.setStroke(new BasicStroke(2F));
+		// int x1 = 0, x2 = 50, y1 = 0, y2 = 100;
+		// for (int i = 0; i < 200; i++) {
+		// x1 = i * 2 + 50;
+		// y1 = (int) (Math.sin((double) i) * 70 + 70);
+		// ga.drawLine(x2, y2, x1, y1);
+		// x2 = x1;
+		// y2 = y1;
+		// }
 		
 		// draw block
 		for (MovableBlock mb : movableBlocks) {
 			ga.setPaint(mb.getColor());
 			ga.fill(mb);
 		}
+		
+		// draw Timeline
+		ga.setPaint(Color.blue);
+		ga.drawLine(start, 140, this.getWidth() - start, 140);
+		
+		// Timemarkers for each 60 min
+		double mi = 60.0;
+		double timemarkers = scaleRatio * mi;
+		// logger.debug(timemarkers + "");
+		for (int i = start; i < this.getWidth(); i += (int) mi) {
+			ga.drawLine(i, 135, i, 145);
+		}
+
+		// draw diagram
+		updateDiagram();
+		ga.setColor(Color.black);
+		attDia.draw(ga);
+	}
+	
+	
+	private void updateDiagram() {
+		attDia.setHeight(this.getHeight() - 20);
+		attDia.setWidth(this.getWidth() - 20);
+		LinkedList<Float> newData = new LinkedList<Float>();
+		{
+			// dummy data
+			float last = 50;
+			for (int i = 0; i < 50; i++) {
+				last = last + (float)((Math.random() - 0.5) * 30.0);
+				if (last < 0)
+					last = 0;
+				newData.add(last);
+			}
+		}
+		attDia.setData(newData);
 	}
 	
 	
@@ -143,6 +196,10 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 				Point relML = new Point(mb.x - e.getPoint().x, mb.y - e.getPoint().y);
 				mb.setRelMouseLocation(relML);
 				moveBlock = mb;
+				// Any block must exist only one time in the list
+				index = movableBlocks.indexOf(moveBlock);
+				widthLeft = (index >= 0) ? movableBlocks.get(index - 1).width : -1;
+				widthRight = (index + 1 < movableBlocks.size()) ? movableBlocks.get(index + 1).width : -1;
 			}
 		}
 	}
@@ -151,6 +208,13 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		moveBlock = null;
+		index = widthLeft = widthRight = -1;
+		tbs.clear();
+		for (MovableBlock mb : movableBlocks) {
+			tbs.addTimeBlock(mb.getTimeBlock());
+			mb.setRelMouseLocation(new Point(0, 0));
+		}
+		return;
 	}
 	
 	
@@ -168,7 +232,92 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	public void mouseDragged(MouseEvent e) {
 		// while mouse is pressed and moving, this will move the button
 		if (moveBlock != null) {
-			moveBlock.setLocation(e.getPoint());
+			// Calculate the movement in x. Negative Value means to
+			// the left and positive to the right.
+			int mmt_X = (int) Math.floor(e.getPoint().getX() + moveBlock.getRelMouseLocation().getX() - moveBlock.getX());
+			
+			
+			// double x_P1 = moveBlock.getLocation().getX() + mmt_X;
+			
+			// calculate new position of moveBlock
+			Point movPos = new Point();
+			double x_mb = moveBlock.getLocation().getX();
+			double paWidth = this.getWidth();
+			if (x_mb < 0 && mmt_X < 0) {
+				// e.getPoint().setLocation(0, e.getPoint().getY());
+				return;
+			} else if ((x_mb + moveBlock.getWidth()) >= paWidth && mmt_X >= 0) {
+				// e.getPoint().setLocation(this.getWidth(), e.getPoint().getY());
+				return;
+			}
+			double x = e.getPoint().getX();
+			if (x < 0) {
+				// e.getPoint().setLocation(0, 0);
+				x = 0.0;
+			} else if (x > paWidth) {
+				// e.getPoint().setLocation(paWidth, 0);
+				x = paWidth;
+			}
+			
+			movPos.setLocation(x, e.getPoint().getY());
+			moveBlock.setLocation(movPos);
+			
+			// Calculate width of left block
+			if (index - 1 >= 0) {
+				movableBlocks.get(index - 1).width += mmt_X;
+			}
+			
+			// Calculate width of right block and new position
+			if (index + 1 < movableBlocks.size() && index >= 0) {
+				// FIXME BLock verschwindet nach links ??!?!?
+				Point movPos_P1 = new Point();
+				double x_P1 = movableBlocks.get(index + 1).getLocation().getX() + mmt_X;
+				if (x_P1 <= 0) {
+					x_P1 = 0;
+					mmt_X = 0;
+				} else if (x_P1 >= paWidth)
+					x_P1 = paWidth - movableBlocks.get(index + 1).getWidth();
+				// x_P1 = x + moveBlock.getWidth();
+				// movPos_P1.setLocation(x_P1, movableBlocks.get(index + 1).getLocation().getY());
+				movPos_P1.setLocation(x_P1, 0);
+				movableBlocks.get(index + 1).setLocation(movPos_P1);
+				
+				movableBlocks.get(index + 1).width -= mmt_X;
+			}
+			
+			// Checks wether the width of left and right Blocks are lower or equal then 0
+			// FIXME Exceptions IndexOutOfBounds
+			if (index > 1 && movableBlocks.get(index - 1).width <= 0) {
+				movableBlocks.get(index - 1).width = widthLeft;
+				movableBlocks.get(index + 1).width = widthRight;
+				
+				movableBlocks.get(index - 1).setLocation((int) moveBlock.getLocation().getX() + moveBlock.width,
+						(int) movableBlocks.get(index - 1).getLocation().getY());
+				swap(index, index - 1);
+				
+				index--;
+				
+				widthLeft = (index >= 1) ? movableBlocks.get(index - 1).width : -1;
+				widthRight = movableBlocks.get(index + 1).width;
+				
+			} else if (index + 2 < movableBlocks.size() && movableBlocks.get(index + 1).width <= 0) {
+				movableBlocks.get(index - 1).width = widthLeft;
+				movableBlocks.get(index + 1).width = widthRight;
+				
+				movableBlocks.get(index + 1).setLocation((int) moveBlock.getLocation().getX() + moveBlock.width,
+						(int) movableBlocks.get(index + 1).getLocation().getY());
+				swap(index, index + 1);
+				
+				
+				index++;
+				
+				widthLeft = movableBlocks.get(index - 1).width;
+				widthRight = (index + 1 < movableBlocks.size()) ? movableBlocks.get(index + 1).width : -1;
+				
+			}
+			
+			movableBlocks.descendingIterator();
+			
 			this.repaint();
 		}
 	}
@@ -176,5 +325,10 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	
 	@Override
 	public void mouseMoved(MouseEvent e) {
+	}
+	
+	
+	private void swap(int mb1, int mb2) {
+		movableBlocks.add(mb1, movableBlocks.remove(mb2));
 	}
 }

@@ -11,13 +11,11 @@ package edu.dhbw.sos.gui.course;
 
 import java.awt.Color;
 import java.awt.geom.Arc2D;
-import java.awt.geom.Rectangle2D;
 
 
 /**
- * TODO NicolaiO, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
+ * PizzaPiece is part of a circle in the form of a piece of pizza.
+ * It is used for splitting the student circle for each property.
  * 
  * @author NicolaiO
  * 
@@ -29,33 +27,30 @@ public class PizzaPiece extends Arc2D.Double {
 	
 	
 	/**
-	 * TODO NicolaiO, add comment!
+	 * Create a new Pizza Piece with given text and init the
+	 * Arc2D.Double with the rest of the args
 	 * 
-	 * @param arg0
-	 * @param arg1
-	 * @param arg2
-	 * @param arg3
-	 * @param arg4
-	 * @param arg5
-	 * @param arg6
+	 * @param _text Text of the property
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 * @param start
+	 * @param extent
+	 * @param type
 	 * @author NicolaiO
 	 */
-	public PizzaPiece(double arg0, double arg1, double arg2, double arg3, double arg4, double arg5, int arg6) {
-		super(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+	public PizzaPiece(String _text, double x, double y, double w, double h, double start, double extent, int type) {
+		super(x, y, w, h, start, extent, type);
+		text = _text;
 	}
 	
 	
-	/**
-	 * TODO NicolaiO, add comment!
-	 * 
-	 * @param arg0
-	 * @param arg1
-	 * @param arg2
-	 * @param arg3
-	 * @author NicolaiO
-	 */
-	public PizzaPiece(Rectangle2D arg0, double arg1, double arg2, int arg3) {
-		super(arg0, arg1, arg2, arg3);
+	public String getFirstLetter() {
+		if (text.isEmpty()) {
+			return "";
+		}
+		return text.substring(0, 1).toUpperCase();
 	}
 	
 	

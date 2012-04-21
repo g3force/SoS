@@ -12,6 +12,9 @@ package edu.dhbw.sos.simulation;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.log4j.Logger;
+
+import edu.dhbw.sos.SuperFelix;
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.gui.MainFrame;
 
@@ -26,16 +29,41 @@ import edu.dhbw.sos.gui.MainFrame;
 
 public class SimController {
 	
-	Course	course;
-	int		currentTime;			// in milliseconds from "begin"
-	int		speed;					// in milliseconds
-	Timer		pulse	= new Timer();
+	private Course	course;
+	private MainFrame mainFrame;
+	private int		currentTime;			// in milliseconds from "begin"
+	private int		speed;					// in milliseconds
+	private Timer		pulse	= new Timer();
+	private static SimController instance = null;
+	private boolean run = false;
+	private static final Logger	logger	= Logger.getLogger(SimController.class);
 	
 	
-	public SimController(Course course, MainFrame mf) {
+	private SimController(Course course, MainFrame mf) {
+		this.course = course;
+		this.mainFrame = mf;
 		currentTime = 0;
 		speed = 1000;
-		run();
+	}
+	
+	public static void init(Course course, MainFrame mf) {
+		instance = new SimController(course, mf);
+	}
+	
+	public static SimController getInstance() throws Exception {
+		if(instance == null) {
+			throw new NotInitializedException("Please call the init function first. Thank you.");
+		} else {
+			return instance;
+		}
+	}
+	
+	public void toggle() {
+		if(run)
+			stop();
+		else
+			run();
+		run = !run;
 	}
 	
 	
@@ -45,6 +73,7 @@ public class SimController {
 	
 	
 	public void run() {
+		pulse = new Timer();
 		TimerTask simulation = new TimerTask() {
 			public void run() {
 				simulationStep();
@@ -66,8 +95,9 @@ public class SimController {
 	 */
 	private void simulationStep() {
 		currentTime += speed;
-		
-		
+		logger.info("Simulation Step at "+currentTime);
+		course.simulationStep(currentTime, speed);
+		mainFrame.update();
 	}
 	
 	

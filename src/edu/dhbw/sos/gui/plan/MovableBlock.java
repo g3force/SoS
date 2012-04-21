@@ -38,6 +38,9 @@ public class MovableBlock extends Rectangle {
 	private boolean				moveHorizontal		= false;
 	private boolean				moveVertical		= true;
 	
+	// Position in LinkedList
+	private int						index;
+	
 	
 	/**
 	 * Initialize a new block with given size and color
@@ -133,6 +136,15 @@ public class MovableBlock extends Rectangle {
 	
 	public void setColor(Color color) {
 		this.color = color;
+	}
+	
+	public int getIndex() {
+		return index;
+	}
+	
+	
+	public void setIndex(int index) {
+		this.index = index;
 	}
 	
 	

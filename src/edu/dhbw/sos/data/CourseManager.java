@@ -1,25 +1,28 @@
-/* 
+/*
  * *********************************************************
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 15, 2012
  * Author(s): SebastianN
- *
+ * 
  * *********************************************************
  */
 package edu.dhbw.sos.data;
+
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.stream.*;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
-import edu.dhbw.sos.helper.Matrix;
 import edu.dhbw.sos.helper.Parameter;
 
 
@@ -28,11 +31,20 @@ import edu.dhbw.sos.helper.Parameter;
  * @author SebastianN
  * 
  */
-public class CourseManager {
+public class CourseManager {	
+	private static CourseManager	instance;
+
 	private Course[] courses;
 	private Course curCourse;
 	private String savepath = System.getProperty("user.dir") + "//courses.xml";
 
+	public CourseManager() {
+		if (CourseManager.getInstance() != null) {
+			// catch this case
+			// throw new Exception("Duplicate instances");
+		}
+		instance = this;
+	}
 	
 	public void addCourse( Course addthis ) {
 		Course[] newCourses = null;
@@ -116,12 +128,13 @@ public class CourseManager {
 		}
 		throw new IllegalStateException();
 	}
-	
-	/* File format
+																										
+	/*
+	 * File format
 	 * <savefile>
 	 * 	<courses count="X">
 	 * 		<course name="KURSNAME" students="X">
-	 * 			foreach<student isempty="0" ODER isempty="1">
+	 * 			foreach<student isempty="0" ODER isempty="1" paramcount="COUNT">
 	 * 				<sAttribute name="Tiredness" value="...">
 	 * 				<sAttribute name=" value="...">
 	 * 				<..........>
@@ -137,100 +150,101 @@ public class CourseManager {
 	 * 	<influencevector>
 	 * 		<iAttribute>
 	 * 	</influencevector>
-	 * 	
 	 * </savefile>
 	 */
-public void saveCourses() {
-	XMLOutputFactory factory = XMLOutputFactory.newInstance();
-	try {
-		FileWriter fw = new FileWriter(savepath,false);
-		XMLStreamWriter writer = factory.createXMLStreamWriter(fw);
-		if(writer!=null) {
-			writer.writeStartDocument();
-			writer.writeStartElement("savefile");
-			if(courses!=null) {
-			
-				writer.writeStartElement("courses");
-				writer.writeAttribute("count", String.valueOf(courses.length) );
+		
+	public void saveCourses() {
+		XMLOutputFactory factory = XMLOutputFactory.newInstance();
+		try {
+			FileWriter fw = new FileWriter(savepath, false);
+			XMLStreamWriter writer = factory.createXMLStreamWriter(fw);
+			if (writer != null) {
+				writer.writeStartDocument();
+				writer.writeStartElement("savefile");
 				
-				for(int i=0;i<courses.length;i++) {
-					//Write for each course --> <course name="NAME" students="COUNT">
+				if(courses!=null) {
+					writer.writeStartElement("courses");
+					writer.writeAttribute("count", String.valueOf(courses.length));
+					
+					for (int i = 0; i < courses.length; i++) {
+						// Write for each course --> <course name="NAME" students="COUNT">
+						writer.writeStartElement("course");	
+						writer.writeAttribute("name", courses[i].getName());
+		
+						IPlace[][] students = courses[i].getStudents();
+						writer.writeAttribute("x", String.valueOf(students[i].length));
+						writer.writeAttribute("y", String.valueOf(students.length));
 						
-					IPlace[][] students = courses[i].getStudents();
-					
-					writer.writeStartElement("course");	
-	/**
-	 * FIXME:	writer.writeAttribute("name", courses[i].getName());
-	 */
-					writer.writeAttribute("x", String.valueOf(students[0].length));
-					writer.writeAttribute("y", String.valueOf(students.length));
-					
-					for(int j=0;j<students.length;j++) {
-						for(int k=0;k<students[j].length;k++) {
-							//For each student --> <student>
-							writer.writeStartElement("student");
-							
-							if(students[j][k].getClass().getName().contains("EmptyPlace")) {
-								writer.writeAttribute("isempty", "1"); //if it's empty --> no further information
-							} else {
-								writer.writeAttribute("isempty", "0");
-								Student currentStudent = (Student)students[j][k];
-								for(int m=0;m<currentStudent.getActualState().size();m++) {
-									//<attribute value="VALUE">
-									writer.writeStartElement("sAttribute");
-									writer.writeAttribute("name", currentStudent.getActualState().getTypeAt(m) );
-									writer.writeAttribute("value", String.valueOf( currentStudent.getActualState().getValueAt(m) ));
-									writer.writeEndElement();
-									//</attribute>
+						for(int j=0;j<students.length;j++) {
+							for(int k=0;k<students[j].length;k++) {
+								//For each student --> <student>
+								writer.writeStartElement("student");
+								
+								if(students[j][k].getClass().getName().contains("EmptyPlace")) {
+									writer.writeAttribute("isempty", "1"); //if it's empty --> no further information
+									writer.writeAttribute("paramcount", String.valueOf( students[j][k].getActualState().size() ) );
+								} else {
+									writer.writeAttribute("isempty", "0");
+									writer.writeAttribute("paramcount", String.valueOf( students[j][k].getActualState().size() ) );
+									Student currentStudent = (Student)students[j][k];
+									for(int m=0;m<currentStudent.getActualState().size();m++) {
+										//<attribute value="VALUE">
+										writer.writeStartElement("sAttribute");
+										/**
+										 * FIXME:	
+										 */
+										//writer.writeAttribute("name", courses[i].getInfluence(). );
+										writer.writeAttribute("value", String.valueOf( currentStudent.getActualState().getValueAt(m) ));
+										writer.writeEndElement();
+										//</attribute>
+									}
 								}
+								
+								writer.writeEndElement();
+								//</student>
 							}
-							
-							writer.writeEndElement();
-							//</student>
 						}
+						writer.writeEndElement(); 
+						//</course>
 					}
 					writer.writeEndElement(); 
-					//</course>
-				}
-				writer.writeEndElement(); 
-				//</courses>
+					//</courses>
 					
-	
-				if(courses[0].getInfluence()!=null && courses[0].getInfluence().getParameterMatrix()!=null) {
-					writer.writeStartElement("changematrix");
-					Matrix parMatrix = courses[0].getInfluence().getParameterMatrix();
-					writer.writeAttribute("rows_columns", String.valueOf(parMatrix.size()));
-					
-					for(int row=0;row<parMatrix.size();row++) {
-						writer.writeStartElement("mat_row");
-						for(int col=0;col<parMatrix.size();col++) {
-							writer.writeStartElement("mAttribute");
-							writer.writeAttribute("mat_elem", parMatrix.getElementAt(col, row).getType());
-							writer.writeAttribute("value", "VALUE");
+					if(courses[0].getInfluence()!=null && courses[0].getInfluence().getParameterMatrix()!=null) {
+						writer.writeStartElement("changematrix");
+						float[][] parMatrix = courses[0].getInfluence().getParameterMatrix();
+						writer.writeAttribute("rows_columns", String.valueOf(parMatrix));
+						
+						for(int row=0;row<parMatrix.length;row++) {
+							writer.writeStartElement("mat_row");
+							for(int col=0;col<parMatrix[row].length;col++) {
+								writer.writeStartElement("mAttribute");
+								writer.writeAttribute("value", String.valueOf(parMatrix[row][col]));
+								writer.writeEndElement();
+							}
 							writer.writeEndElement();
+						//</change>
 						}
 						writer.writeEndElement();
-					//</change>
+						//</changevector>
 					}
-					writer.writeEndElement();
-					//</changevector>
 				}
 			}
 			writer.writeEndElement();
 			writer.writeEndDocument();
-			
+				
 			writer.flush();
 			writer.close();
+			fw.close();
 			writer=null;
+		} catch( Exception ex ) {
+			ex.printStackTrace();
 		}
-	} catch( Exception ex ) {
-		ex.printStackTrace();
 	}
-}
-
-private IPlace[][] allocStudents( int rows, int columns ) {
-	return new IPlace[rows][columns];
-}
+	
+	private IPlace[][] allocStudents( int rows, int columns ) {
+		return new IPlace[rows][columns];
+	}
 	
 public void loadCourses() {
 	XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -238,17 +252,14 @@ public void loadCourses() {
 		XMLStreamReader reader = factory.createXMLStreamReader(new FileReader(savepath));
 		reader.getEventType(); //START
 		
-		int courseIdx = -1;
+		int cIdx = -1;					//CourseIDX
+		int aIdx = 0;					//AttributeIDX
 		IPlace[][] students = null;
-		Matrix changeMat = null;
 		
-		int rows = 0, columns = 0;
+		int sRows = 0, sColumns = 0; 	//Student-attribute
+		int mRows = 0, mColumns = 0; 	//Matrix
 		
-		int matrix_row = -1;
-		int matrix_col = 0;
-		
-		LinkedList<String> paramname = new LinkedList<String>();
-		int[][] matVals = null;
+		float[][] matVals = null;
 		
 		while(reader.hasNext()) {
 			reader.next(); //Next element
@@ -262,98 +273,88 @@ public void loadCourses() {
 						students = null;
 						
 					} else if(tagname.contentEquals("course")) {
-						courseIdx++;
-/**
- * FIXME:			courses[courseIdx].setName( reader.getAttributeValue(0) );
- */
+						cIdx++;
+
+						courses[cIdx].setName( reader.getAttributeValue(0) );
+
 						students = allocStudents( Integer.parseInt(reader.getAttributeValue(1)), Integer.parseInt(reader.getAttributeValue(2)));
 						
 					} else if(tagname.contentEquals("student")) {
 						//isEmpty="0"
 						if(Integer.parseInt(reader.getAttributeValue(0))==0) {
-/**
- * FIXME:				students[y][x] = new Student();
- */
+							students[sRows][sColumns] = new Student( Integer.parseInt(reader.getAttributeValue(1)) );
 						} else { //isEmpty="1"
-/**
- * FIXME:				students[rows][columns] = new EmptyPlace();
- */
+							students[sRows][sColumns] = new EmptyPlace( Integer.parseInt(reader.getAttributeValue(1)) );
 						}
-						columns++;
-						if(columns>=students[0].length) { //
-							columns = 0;
-							rows++;
+						sColumns++;
+						if(sColumns>=students[0].length) { //
+							sColumns = 0;
+							sRows++;
 						}
+						aIdx=0;
 					} else if(tagname.contentEquals("sAttribute")) {
-						Student curStudent = (Student)students[rows][columns];
-						Parameter p = new Parameter( reader.getAttributeValue(0), Integer.parseInt( reader.getAttributeValue(1) ) );
-						curStudent.addParamToStudent(p);
+						Student curStudent = (Student)students[sRows][sColumns];
+						curStudent.addValueToStateVector(aIdx, Float.parseFloat(reader.getAttributeValue(1)));
+						aIdx++;
 					} else if(tagname.contentEquals("changematrix")) {
 						
 						int size = Integer.parseInt(reader.getAttributeValue(0));
-						matVals = new int[size][size];
+						matVals = new float[size][size];
 						
 					} else if(tagname.contentEquals("mat_row")) {
-						matrix_row++;
-						matrix_col=0;
+						mRows++;
+						mColumns=0;
 						
 					} else if(tagname.contentEquals("mAttribute")) {
-						matVals[matrix_row][matrix_col] = Integer.parseInt(reader.getAttributeValue(0)); //Integer value
-						paramname.add(reader.getAttributeValue(1));
-						matrix_col++;
-						
+						matVals[mRows][mColumns] = Float.parseFloat(reader.getAttributeValue(0)); //Integer value
+						mColumns++;
 					} else if(tagname.contentEquals("influencevector")) {
 						
 					}
 				} catch( Exception ex ) {
 					//...Useless exceptions for every little thing.
 				}
-			} else if(reader.hasText()) {
-				System.out.println("VALUE_FOUND: " + reader.getText());
 			}
 		}
+		reader.close();
 	} catch( Exception ex ) {
 		ex.printStackTrace();
 	}
-	return;
-}
-
-public Course getCurrentCourse() {
-	return curCourse;
-}
-
-public void setCurrentCourse( Course newCurrent ) {
-	curCourse = newCurrent;
-}
-
-public Course getCourseByName( String name ) {
-	for(int i=0;i<courses.length;i++) {
-		/**
-		 * FIXME: if(name.concat(courses[i].getName()) {
-			return courses[i];
-		}*/
-	}
-	return null;
 }
 	
-	public Course getCourseById( int id ) {
-		if(courses!=null && id>=0 && id<courses.length) {
-			return courses[id];
-		}
-		return null;
+	
+	
+	public Course getCurrentCourse() {
+		return curCourse;
 	}
 	
-	/*
-	public Course getCourseByName( String name ) {
+	
+	public void setCurrentCourse(Course newCurrent) {
+		curCourse = newCurrent;
+	}
+	
+	
+	public Course getCourseByName(String name) {
 		if(courses!=null) {
-			for(int i=0;i<courses.length;i++) {
-				if(strcmp(courses[i].getName(),name)==0) {
+			for (int i = 0; i < courses.length; i++) {
+				if(name.contentEquals(courses[i].getName())) {
 					return courses[i];
 				}
 			}
 		}
 		return null;
 	}
-	*/
+	
+	
+	public Course getCourseById(int id) {
+		if (courses != null && id >= 0 && id < courses.length) {
+			return courses[id];
+		}
+		return null;
+	}
+	
+	public static CourseManager getInstance() {
+		return instance;
+	}
 	
 }
