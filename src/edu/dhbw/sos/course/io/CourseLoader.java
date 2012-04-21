@@ -101,35 +101,37 @@ public class CourseLoader {
 		float[][] matVals = null;
 		try {
 			XMLStreamReader reader = factory.createXMLStreamReader(new FileReader(savepath));
-			reader.getEventType(); //START
-				
-			int mRows = -1, mColumns = 0; 	//Matrix
-
-			while(reader.hasNext()) {
-				reader.next(); //Next element
-				
-				if(reader.hasName()) {
-					String tagname = reader.getName().toString();
-					try {
-						if(reader.getEventType()==2)
-							continue;
-						 if(tagname.contentEquals("changematrix")) {
+			if(reader!=null) {
+				reader.getEventType(); //START
+					
+				int mRows = -1, mColumns = 0; 	//Matrix
+	
+				while(reader.hasNext()) {
+					reader.next(); //Next element
+					
+					if(reader.hasName()) {
+						String tagname = reader.getName().toString();
+						try {
+							if(reader.getEventType()==2)
+								continue;
+							if(tagname.contentEquals("changematrix")) {
 								int size = Integer.parseInt(reader.getAttributeValue(0));
 								matVals = new float[size][size];
 								for(int i=0;i<size;i++)
 									for(int j=0;j<size;j++)
 										matVals[i][j]=0.00f;
-								
-							} else if(tagname.contentEquals("mat_row")) {
-								mRows++;
-								mColumns=0;
 									
-							} else if(tagname.contentEquals("mAttribute")) {
-								matVals[mRows][mColumns] = Float.parseFloat(reader.getAttributeValue(0)); //Integer value
-								mColumns++;
-							}
-					} catch( Exception ex ) {
-						ex.printStackTrace();
+							 } else if(tagname.contentEquals("mat_row")) {
+									mRows++;
+									mColumns=0;
+										
+							 } else if(tagname.contentEquals("mAttribute")) {
+								 matVals[mRows][mColumns] = Float.parseFloat(reader.getAttributeValue(0)); //Integer value
+								 mColumns++;
+							 }
+						} catch( Exception ex ) {
+							ex.printStackTrace();
+						}
 					}
 				}
 			}
