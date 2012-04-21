@@ -14,10 +14,7 @@ import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 
-import edu.dhbw.sos.SuperFelix;
 import edu.dhbw.sos.course.Course;
-import edu.dhbw.sos.course.ICurrentCourseOberserver;
-import edu.dhbw.sos.gui.MainFrame;
 
 
 /**
