@@ -30,7 +30,7 @@ import edu.dhbw.sos.course.student.Student;
 public class CourseLoader {
 	public static LinkedList<Course> loadCourses(String savepath) {
 		XMLInputFactory factory = XMLInputFactory.newInstance();
-		LinkedList<Course> courses = null;
+		LinkedList<Course> courses = new LinkedList<Course>();
 		try {
 			XMLStreamReader reader = factory.createXMLStreamReader(new FileReader(savepath));
 			reader.getEventType(); //START
@@ -48,10 +48,7 @@ public class CourseLoader {
 					try {
 						if(reader.getEventType()==2)
 							continue;
-						if(tagname.contentEquals("courses")) {
-							courses = new LinkedList<Course>();
-								
-						} else if(tagname.contentEquals("course")) {
+						if(tagname.contentEquals("course")) {
 							
 							Course newCourse = new Course();
 							newCourse.setName( reader.getAttributeValue(0) ); 
