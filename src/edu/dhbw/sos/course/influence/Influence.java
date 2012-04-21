@@ -13,20 +13,48 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import edu.dhbw.sos.helper.CalcVector;
+import edu.dhbw.sos.course.io.*;
 
 /**
- * TODO dirk, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
+ * 
+ * this class is a data holder for all influence types
+ * this influences are used for the simulation
  * 
  * @author dirk
- * 
  */
 public class Influence {
 	
 	float[][] parameterInfl;
 	HashMap<EInfluenceType, CalcVector> environmentalInfl;
+
+	public Influence( float[][] paraInfl, float[][] envInfl ) {
+		parameterInfl = paraInfl.clone();
+		
+		LinkedList<String> l = new LinkedList<String>();
+		l.add("Tireness");
+		l.add("Loudness");
+		l.add("Attention");
+		l.add("Quality");
+		environmentalInfl = new HashMap<EInfluenceType, CalcVector>();
+		for(int i=0; i<envInfl.length; i++) {
+			CalcVector cv = new CalcVector(l.size());
+			for(int j=0;j<envInfl[i].length;j++) {
+				cv.setValueAt(i, envInfl[i][j]);
+			}				
+			environmentalInfl.put(getInfluenceTypeById(i), cv);
+		}	
+	}
 	
+	public static EInfluenceType getInfluenceTypeById( int i ) {
+		if(i==0)
+			return EInfluenceType.NEIGHBOR;
+		if(i==1)
+			return EInfluenceType.BREAK_REACTION;
+		return EInfluenceType.TIME_DEPENDING;
+	}
+	/**
+	 *	 	@deprecated
+	 */
 	public Influence() {
 		float[][] array = new float[4][4];
 		for (int i=0; i < array.length;i++) {
@@ -34,12 +62,13 @@ public class Influence {
 				array[i][j]=(float)(Math.random()*200)-100;
 			}
 		}
+		parameterInfl = array.clone();
+		
 		LinkedList<String> l = new LinkedList<String>();
 		l.add("Tireness");
 		l.add("Loudness");
 		l.add("Attention");
 		l.add("Quality");
-		parameterInfl = array.clone();
 		environmentalInfl = new HashMap<EInfluenceType, CalcVector>();
 		CalcVector cv1 = new CalcVector(l.size());
 		CalcVector cv2 = new CalcVector(l.size());
@@ -54,6 +83,12 @@ public class Influence {
 		environmentalInfl.put(EInfluenceType.TIME_DEPENDING , cv3);
 		
 	}
+	/**
+	 * 10 20 30
+	 * 10 20 30
+	 * 10 20 30
+	 * 10 20 30
+	 */
 	
 	public CalcVector getEnvironmentVector(EInfluenceType type, double times) {
 		return getEnvironmentVector(type).multiplyWithDouble(times);
