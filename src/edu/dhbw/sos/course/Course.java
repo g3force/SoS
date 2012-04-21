@@ -233,7 +233,6 @@ public class Course {
 		}
 		// give the reference from newState to real students array
 		students = newState;
-		
 	}
 	
 	
