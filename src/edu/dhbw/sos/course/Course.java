@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 14, 2012
- * Author(s): NicolaiO
+ * Author(s): DirkK
  * 
  * *********************************************************
  */

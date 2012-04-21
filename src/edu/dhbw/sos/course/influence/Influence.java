@@ -15,12 +15,11 @@ import java.util.LinkedList;
 import edu.dhbw.sos.helper.CalcVector;
 
 /**
- * TODO dirk, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
+ * 
+ * this class is a data holder for all influence types
+ * this influences are used for the simulation
  * 
  * @author dirk
- * 
  */
 public class Influence {
 	

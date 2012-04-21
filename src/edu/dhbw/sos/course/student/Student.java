@@ -21,11 +21,9 @@ import edu.dhbw.sos.helper.CalcVector;
 
 
 /**
- * TODO bene, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
+ * this class represents a student
  * 
- * @author bene
+ * @author bene, dirk
  * 
  */
 public class Student implements IPlace, Cloneable {
@@ -57,9 +55,9 @@ public class Student implements IPlace, Cloneable {
 	public void donInput(int index, float value, int time) {
 		CalcVector cv = new CalcVector(4);
 		cv.setValueAt(index, value);
-		this.addToStateVector(cv, 0, 0);
-		this.addToChangeVector(cv, 0, 0);
 		addHistoryDonInput(time);
+		addToChangeVector(cv);
+		addToStateVector(cv, 0, 0);
 	}
 	
 	/**
@@ -121,7 +119,15 @@ public class Student implements IPlace, Cloneable {
 		this.addToStateVector(changeVector, x, y);
 	}
 	
-	
+	/**
+	 * 
+	 * adds a change vector to the state vector of a student
+	 * 
+	 * @param addVector 
+	 * @param x TO DELETE, only for simulation debug
+	 * @param y TO DELETE, only for simulation debug
+	 * @author dirk
+	 */
 	public void addToStateVector(CalcVector addVector, int x, int y) {
 		if (y == 0 && x == 0)
 			addVector.printCalcVector("ADD Vector");
@@ -149,10 +155,19 @@ public class Student implements IPlace, Cloneable {
 		}
 	}
 	
-	
-	public void addToChangeVector(CalcVector addVector, int x, int y) {
-		// TODO check limits keep in normal values
+	/**
+	 * modify the change vector after a don input
+	 * @param addVector
+	 * @author dirk
+	 */
+	public void addToChangeVector(CalcVector addVector) {
 		changeVector.addCalcVector(addVector);
+		for(int i=0; i<changeVector.size(); i++) {
+			if(changeVector.getValueAt(i)<100)
+				changeVector.setValueAt(i, 100);
+			if(changeVector.getValueAt(i)>0)
+				changeVector.setValueAt(i, 0);
+		}
 	}
 	
 	
