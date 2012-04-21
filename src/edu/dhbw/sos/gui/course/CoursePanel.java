@@ -20,6 +20,7 @@ import edu.dhbw.sos.course.CourseController;
 import edu.dhbw.sos.gui.GUIData;
 import edu.dhbw.sos.gui.IUpdateable;
 import edu.dhbw.sos.gui.MainFrame;
+import edu.dhbw.sos.simulation.SimController;
 
 
 /**
@@ -43,13 +44,13 @@ public class CoursePanel extends JPanel implements IUpdateable, ComponentListene
 	 * @param courses
 	 * @author NicolaiO
 	 */
-	public CoursePanel(CourseController courseController, Course course, GUIData guiData) {
+	public CoursePanel(SimController simController, CourseController courseController, Course course, GUIData guiData) {
 		this.setBorder(MainFrame.COMPOUND_BORDER);
 		this.setLayout(new BorderLayout());
 		this.setLayout(new BorderLayout());
 		this.addComponentListener(this);
 		this.course = course;
-		paintArea = new CPaintArea(guiData);
+		paintArea = new CPaintArea(simController, guiData);
 		this.add(paintArea, BorderLayout.CENTER);
 	}
 	

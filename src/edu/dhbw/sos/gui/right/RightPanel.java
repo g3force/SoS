@@ -13,15 +13,10 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URL;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -31,6 +26,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.CourseController;
 import edu.dhbw.sos.course.Courses;
 import edu.dhbw.sos.gui.IUpdateable;
@@ -45,29 +41,22 @@ import edu.dhbw.sos.helper.Messages;
  * @author NicolaiO
  * 
  */
-public class RightPanel extends JPanel implements IUpdateable, ActionListener {
-	private static final long					serialVersionUID	= -6879799823225506209L;
+public class RightPanel extends JPanel implements IUpdateable {
+	private static final long	serialVersionUID	= -6879799823225506209L;
 	// width of panel
-	private static final int					PREF_SIZE			= 200;
+	private static final int	PREF_SIZE			= 200;
 	// margin left and right
-	private static final int					MARGIN_LR			= 5;
+	private static final int	MARGIN_LR			= 5;
 	
 	// child elements
-	private JPanel									statsPanel;
-	private JPanel									suggestionPanel;
-	private JComboBox								courseList;
+	private JPanel					statsPanel;
+	private JPanel					suggestionPanel;
+	private JComboBox<Course>	courseList;
 	
-	// some data - might be replaced by original data
-	private Vector<String>						profiles;
-	private LinkedHashMap<String, String>	statistics;
-	private LinkedList<String>					suggestions;
+	private Courses				courses;
 	
 	
 	public RightPanel(CourseController courseController, Courses courses) {
-		this.profiles = data.getProfiles();
-		this.statistics = data.getStatistics();
-		this.suggestions = data.getSuggestions();
-		
 		this.setBorder(MainFrame.COMPOUND_BORDER);
 		this.setPreferredSize(new Dimension(PREF_SIZE, 0));
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -80,7 +69,7 @@ public class RightPanel extends JPanel implements IUpdateable, ActionListener {
 		courseListPanel.setMaximumSize(new Dimension(PREF_SIZE - MARGIN_LR * 2, 10));
 		this.add(courseListPanel);
 		
-		courseList = new JComboBox();
+		courseList = new JComboBox<Course>();
 		courseListPanel.add(courseList, BorderLayout.CENTER);
 		
 		// #############################################################################
@@ -94,7 +83,7 @@ public class RightPanel extends JPanel implements IUpdateable, ActionListener {
 			ImageIcon newIcon = new ImageIcon(newimg);
 			editBtn = new JButton(newIcon);
 			editBtn.setBorderPainted(false);
-			editBtn.addActionListener(this);
+			editBtn.addActionListener(courseController);
 		}
 		courseListPanel.add(editBtn, BorderLayout.EAST);
 		
@@ -131,20 +120,20 @@ public class RightPanel extends JPanel implements IUpdateable, ActionListener {
 	
 	private void updateData() {
 		// course list
-		if (courseList.getItemCount() != profiles.size()) {
+		if (courseList.getItemCount() != courses.size()) {
 			courseList.removeAllItems();
-			for (String profile : profiles) {
-				courseList.addItem(profile);
+			for (Course course : courses) {
+				courseList.addItem(course);
 			}
 		}
 		
-		if (profiles.size() > 0)
+		if (courses.size() > 0)
 			courseList.setSelectedIndex(0);
 		
 		// statistics
-		if (statsPanel.getComponentCount() != statistics.size()) {
+		if (statsPanel.getComponentCount() != courses.getCurrentCourse().getStatistics().size()) {
 			statsPanel.removeAll();
-			for (Map.Entry<String, String> entry : statistics.entrySet()) {
+			for (Map.Entry<String, String> entry : courses.getCurrentCourse().getStatistics().entrySet()) {
 				JLabel lblKey = new JLabel(entry.getKey());
 				JLabel lblValue = new JLabel(entry.getValue(), JLabel.CENTER);
 				statsPanel.add(lblKey);
@@ -153,10 +142,10 @@ public class RightPanel extends JPanel implements IUpdateable, ActionListener {
 		}
 		
 		// suggestions
-		if (suggestionPanel.getComponentCount() != suggestions.size() + 1) {
+		if (suggestionPanel.getComponentCount() != courses.getCurrentCourse().getStatistics().size() + 1) {
 			suggestionPanel.removeAll();
 			suggestionPanel.add(new JLabel(Messages.getString("suggestions")));
-			for (String sugg : suggestions) {
+			for (String sugg : courses.getCurrentCourse().getSuggestions()) {
 				JLabel lblSug = new JLabel(sugg);
 				lblSug.addMouseListener(new MouseListener() {
 					@Override
@@ -183,7 +172,7 @@ public class RightPanel extends JPanel implements IUpdateable, ActionListener {
 					public void mouseClicked(MouseEvent e) {
 						JLabel me = (JLabel) e.getSource();
 						if (me != null) {
-							suggestions.remove(me.getText());
+							courses.getCurrentCourse().getSuggestions().remove(me.getText());
 							suggestionPanel.remove(me);
 							suggestionPanel.updateUI();
 						}
@@ -192,12 +181,5 @@ public class RightPanel extends JPanel implements IUpdateable, ActionListener {
 				suggestionPanel.add(lblSug);
 			}
 		}
-	}
-	
-	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		profiles.add("Profile" + profiles.size());
-		update();
 	}
 }

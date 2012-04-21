@@ -76,7 +76,8 @@ public class MainFrame extends JFrame implements IUpdateable, WindowListener {
 		// }
 		
 		GUIData guiData = new GUIData();
-		CoursePanel coursePanel = new CoursePanel(courseController, courses.getCurrentCourse(), guiData);
+		CoursePanel coursePanel = new CoursePanel(courses.getCurrentCourse().getSimController(), courseController,
+				courses.getCurrentCourse(), guiData);
 		components.add(coursePanel);
 		RightPanel rightPanel = new RightPanel(courseController, courses);
 		components.add(rightPanel);

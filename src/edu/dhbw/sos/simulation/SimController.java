@@ -9,12 +9,17 @@
  */
 package edu.dhbw.sos.simulation;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.gui.course.CPaintArea;
 
 
 /**
@@ -25,7 +30,7 @@ import edu.dhbw.sos.course.Course;
  * 
  */
 
-public class SimController {
+public class SimController implements ActionListener, MouseListener {
 	
 	private Course	course;
 	private int		currentTime;			// in milliseconds from "begin"
@@ -104,5 +109,45 @@ public class SimController {
 	
 	public void setSpeed(int speed) {
 		this.speed = speed;
+	}
+
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO NicolaiO Auto-generated method stub
+		
+	}
+	
+	
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		CPaintArea cpa = (CPaintArea) e.getSource();
+		int index = cpa.getData().getSelectedProperty();
+		int value = 100;
+		// right click
+		if (e.getButton() == MouseEvent.BUTTON3)
+			value *= -1;
+		cpa.getData().getSelectedStudent().donInput(index, value, currentTime);
+	}
+	
+	
+	@Override
+	public void mousePressed(MouseEvent e) {
+	}
+	
+	
+	@Override
+	public void mouseReleased(MouseEvent e) {
+	}
+
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		
 	}
 }

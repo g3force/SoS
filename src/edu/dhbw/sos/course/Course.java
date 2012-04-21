@@ -10,6 +10,7 @@
 package edu.dhbw.sos.course;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
@@ -41,6 +42,10 @@ public class Course {
 	private static final Logger				logger	= Logger.getLogger(Course.class);
 	private SimController						simController;
 	private LinkedList<IStudentsObserver>	studentsObserver	= new LinkedList<IStudentsObserver>();
+	
+	// place here? not implemented yet, so do not know...
+	private LinkedHashMap<String, String>	statistics;
+	private LinkedList<String>					suggestions;
 	
 	
 	public Course() {
@@ -382,5 +387,25 @@ public class Course {
 
 	public SimController getSimController() {
 		return simController;
+	}
+	
+	public String toString() {
+		return getName();
+	}
+
+	public LinkedHashMap<String, String> getStatistics() {
+		return statistics;
+	}
+
+	public void setStatistics(LinkedHashMap<String, String> statistics) {
+		this.statistics = statistics;
+	}
+
+	public LinkedList<String> getSuggestions() {
+		return suggestions;
+	}
+
+	public void setSuggestions(LinkedList<String> suggestions) {
+		this.suggestions = suggestions;
 	}
 }

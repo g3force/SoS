@@ -13,8 +13,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
@@ -27,8 +25,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.lecture.TimeBlocks;
-import edu.dhbw.sos.gui.GUIData;
 import edu.dhbw.sos.gui.IUpdateable;
 import edu.dhbw.sos.simulation.SimController;
 
@@ -58,9 +56,9 @@ public class PlanPanel extends JPanel implements IUpdateable, ComponentListener 
 	 * @param data general GUIData object with needed information for GUI
 	 * @author NicolaiO
 	 */
-	public PlanPanel(GUIData data) {
+	public PlanPanel(SimController simController, Course course) {
 		// get data
-		timeBlocks = new TimeBlocks(data.getLecture().getTimeBlocks());
+		timeBlocks = new TimeBlocks(course.getLecture().getTimeBlocks());
 		
 		// init this Panel
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -80,16 +78,7 @@ public class PlanPanel extends JPanel implements IUpdateable, ComponentListener 
 		// control panel (play, pause, etc.)
 		JPanel controlPanel = new JPanel();
 		JButton btnPlay = new JButton("Pl");
-		btnPlay.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				try {
-					SimController.getInstance().toggle();
-				} catch (Exception err) {
-					err.printStackTrace();
-				}
-			}
-		});
+		btnPlay.addActionListener(simController);
 		JButton btnLive = new JButton("L");
 		controlPanel.add(btnPlay);
 		controlPanel.add(btnLive);
@@ -128,24 +117,24 @@ public class PlanPanel extends JPanel implements IUpdateable, ComponentListener 
 		paintArea.initMovableBlocks();
 		paintArea.repaint();
 	}
-
-
+	
+	
 	@Override
 	public void componentResized(ComponentEvent e) {
 		update();
 	}
-
-
+	
+	
 	@Override
 	public void componentMoved(ComponentEvent e) {
 	}
-
-
+	
+	
 	@Override
 	public void componentShown(ComponentEvent e) {
 	}
-
-
+	
+	
 	@Override
 	public void componentHidden(ComponentEvent e) {
 	}
