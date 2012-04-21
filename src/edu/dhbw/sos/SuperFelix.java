@@ -49,7 +49,8 @@ public class SuperFelix {
 		// create object for the data to be displayed in GUI
 		// the references will be used to update it afterwards
 		data = new GUIData();
-		new CourseManager();
+		CourseManager courseManager = new CourseManager();
+		courseManager.loadCourses();
 		mainFrame = new MainFrame(data);
 		mainFrame.update();
 		
