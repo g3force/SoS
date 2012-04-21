@@ -39,7 +39,7 @@ public class MovableBlock extends Rectangle {
 	// color of the block
 	private Color						color;
 	// flags for enabling/disabling movement
-	private boolean					moveHorizontal		= false;
+	private boolean					moveHorizontal		= true;
 	private boolean					moveVertical		= true;
 	
 	// Position in LinkedList
@@ -106,7 +106,8 @@ public class MovableBlock extends Rectangle {
 			x = p.x + relMouseLocation.x;
 		}
 		if (moveHorizontal) {
-			y = p.y + relMouseLocation.y;
+			//y = p.y + relMouseLocation.y;
+			y = p.y;
 		}
 		Point abs = new Point(x, y);
 		super.setLocation(abs);

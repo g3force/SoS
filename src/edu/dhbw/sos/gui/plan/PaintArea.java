@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 
+import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.TimeBlock;
 import edu.dhbw.sos.course.lecture.TimeBlocks;
 import edu.dhbw.sos.gui.Diagram;
@@ -91,19 +92,19 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 			switch (tb.getType()) {
 				case pause:
 					location = new Point(start, 10);
-					color = Color.red;
+					color = BlockType.pause.getColor();
 					break;
 				case exercise:
 					location = new Point(start, 40);
-					color = Color.green;
+					color = BlockType.exercise.getColor();
 					break;
 				case group:
 					location = new Point(start, 70);
-					color = Color.blue;
+					color = BlockType.group.getColor();
 					break;
 				case theory:
 					location = new Point(start, 100);
-					color = Color.yellow;
+					color = BlockType.theory.getColor();
 					break;
 				default:
 					location = new Point(start, 130);
@@ -237,10 +238,32 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 			// Calculate the movement in x. Negative Value means to
 			// the left and positive to the right.
 			int mmt_X = (int) Math.floor(e.getPoint().getX() + moveBlock.getRelMouseLocation().getX() - moveBlock.getX());
+			int mmt_Y = (int) Math.floor(e.getPoint().getY() + moveBlock.getRelMouseLocation().getY());
+			
+			if (mmt_Y >= 1 && mmt_Y < 40) {
+				mmt_Y = 10;
+				moveBlock.getTimeBlock().setType(BlockType.pause);
+				moveBlock.setColor(BlockType.pause.getColor());
+			} else if (mmt_Y >= 41 && mmt_Y < 70) {
+				mmt_Y = 40;
+				moveBlock.getTimeBlock().setType(BlockType.exercise);
+				moveBlock.setColor(BlockType.exercise.getColor());
+			} else if (mmt_Y >= 71 && mmt_Y < 100) {
+				mmt_Y = 70;
+				moveBlock.getTimeBlock().setType(BlockType.group);
+				moveBlock.setColor(BlockType.group.getColor());
+			} else if (mmt_Y >= 101 && mmt_Y < 130) {
+				mmt_Y = 100;
+				moveBlock.getTimeBlock().setType(BlockType.theory);
+				moveBlock.setColor(BlockType.theory.getColor());
+			} else {
+				mmt_Y = (int) moveBlock.getY();
+			}
+			
 			double paWidth = this.getWidth();
 			int newIndex = 0;
 			
-			if (!calcMoveBlock(e.getPoint(), mmt_X)) {
+			if (!calcMoveBlock(e.getPoint(), mmt_X, mmt_Y)) {
 				return;
 			}
 			
@@ -263,13 +286,11 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 					mmt_X = 0;
 				} else if (x_P1 >= paWidth)
 					x_P1 = paWidth - movableBlocks.get(index + 1).getWidth();
-				movableBlocks.get(index + 1).setLocation(x_P1, 0);
+				movableBlocks.get(index + 1).setLocation(x_P1, movableBlocks.get(index + 1).getY());
 				
 				movableBlocks.get(index + 1).width -= mmt_X;
 				movableBlocks.get(index + 1).getTimeBlock().setLen((int) (movableBlocks.get(index + 1).width / scaleRatio));
 				movableBlocks.get(index + 1).printMbTb(index + 1, "R");
-				
-			}
 			
 			// Checks wether the width of left and right Blocks are lower or equal then 0
 			if (index > 0 && movableBlocks.get(index - 1).width <= 0) {
@@ -280,7 +301,6 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 					movableBlocks.get(index + 1).getTimeBlock().setLen((int) (widthRight / scaleRatio));
 					movableBlocks.get(index + 1).printMbTb(index + 1, "R");
 				}
-				// if (index > 0) {
 				movableBlocks.get(index - 1).width = widthLeft;
 				movableBlocks.get(index - 1).getTimeBlock().setLen((int) (widthLeft / scaleRatio));
 				movableBlocks.get(index - 1).printMbTb(index - 1, "L");
@@ -290,7 +310,6 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 				
 				swap(index, index - 1);
 				newIndex = index - 1;
-				// }
 				
 				widthRight = movableBlocks.get(newIndex + 1).width;
 				if (newIndex + 2 < movableBlocks.size()) {
@@ -312,19 +331,15 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 					movableBlocks.get(index - 1).printMbTb(index - 1, "L");
 				}
 				
-				// if (index + 1 < movableBlocks.size()) {
 				movableBlocks.get(index + 1).width = widthRight;
 				movableBlocks.get(index + 1).getTimeBlock().setLen((int) (widthRight / scaleRatio));
 				movableBlocks.get(index + 1).printMbTb(index + 1, "R");
 				
-				
 				movableBlocks.get(index + 1).setLocation(moveBlock.getLocation().getX() + moveBlock.width,
 						movableBlocks.get(index + 1).getLocation().getY());
 				
-				
 				swap(index, index + 1);
 				newIndex = index + 1;
-				// }
 				
 				widthLeft = movableBlocks.get(newIndex - 1).width;
 				
@@ -365,7 +380,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	}
 	
 	
-	private boolean calcMoveBlock(Point p, int moveX) {
+	private boolean calcMoveBlock(Point p, int moveX, int moveY) {
 		// calculate new position of moveBlock
 		double x_mb = moveBlock.getLocation().getX();
 		double paWidth = this.getWidth();
@@ -385,7 +400,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 			// e.getPoint().setLocation(paWidth, 0);
 			x = paWidth;
 		}
-		moveBlock.setLocation(x, p.getY());
+		moveBlock.setLocation(x, moveY);
 		moveBlock.printMbTb(index, "M");
 		return true;
 	}
