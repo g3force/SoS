@@ -9,15 +9,10 @@
  */
 package edu.dhbw.sos.gui;
 
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Vector;
 
-import edu.dhbw.sos.course.Course;
-import edu.dhbw.sos.course.lecture.BlockType;
-import edu.dhbw.sos.course.lecture.Lecture;
-import edu.dhbw.sos.course.lecture.TimeBlock;
 import edu.dhbw.sos.course.student.IPlace;
 
 
@@ -30,37 +25,28 @@ import edu.dhbw.sos.course.student.IPlace;
  * 
  */
 public class GUIData {
+	@Deprecated
 	private Vector<String>						profiles				= new Vector<String>();
+	@Deprecated
 	private LinkedHashMap<String, String>	statistics			= new LinkedHashMap<String, String>();
+	@Deprecated
 	private LinkedList<String>					suggestions			= new LinkedList<String>();
-	private Lecture								lecture;
-	private Course									course;
 	private IPlace									selectedStudent	= null;
 	private int										selectedProperty	= 0;
 	
 	
 	public GUIData() {
-		// dummy data
-		lecture = new Lecture(new Date());
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.theory));
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(20, BlockType.pause));
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.exercise));
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.pause));
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.group));
-		
-		setCourse(new Course());
-		
-		profiles.add("Profile0");
-		profiles.add("Profile1");
-		
-		for (int i = 0; i < 5; i++) {
-			statistics.put("Test" + i, "" + i * 42);
-		}
-		
-		suggestions.add("Sug1");
-		suggestions.add("Sug2");
-		suggestions.add("Sug3");
-		suggestions.add("Sug4");
+		// profiles.add("Profile0");
+		// profiles.add("Profile1");
+		//
+		// for (int i = 0; i < 5; i++) {
+		// statistics.put("Test" + i, "" + i * 42);
+		// }
+		//
+		// suggestions.add("Sug1");
+		// suggestions.add("Sug2");
+		// suggestions.add("Sug3");
+		// suggestions.add("Sug4");
 	}
 	
 	
@@ -91,32 +77,6 @@ public class GUIData {
 	
 	public void setSuggestions(LinkedList<String> suggestions) {
 		this.suggestions = suggestions;
-	}
-	
-	
-	public Lecture getLecture() {
-		return lecture;
-	}
-	
-	
-	public void setLecture(Lecture lecture) {
-		this.lecture = lecture;
-	}
-	
-	
-	/**
-	 * @return the course
-	 */
-	public Course getCourse() {
-		return course;
-	}
-	
-	
-	/**
-	 * @param course the course to set
-	 */
-	public void setCourse(Course course) {
-		this.course = course;
 	}
 	
 	
