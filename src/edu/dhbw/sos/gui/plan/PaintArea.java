@@ -261,7 +261,6 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 			}
 			
 			double paWidth = this.getWidth();
-			int newIndex = 0;
 			
 			if (!calcMoveBlock(e.getPoint(), mmt_X, mmt_Y)) {
 				return;
@@ -291,9 +290,13 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 				movableBlocks.get(index + 1).width -= mmt_X;
 				movableBlocks.get(index + 1).getTimeBlock().setLen((int) (movableBlocks.get(index + 1).width / scaleRatio));
 				movableBlocks.get(index + 1).printMbTb(index + 1, "R");
+				
+			}
 			
 			// Checks wether the width of left and right Blocks are lower or equal then 0
 			if (index > 0 && movableBlocks.get(index - 1).width <= 0) {
+				int newIndex = 0;
+				
 				// logger.debug("index > 1 && movableBlocks.get(index - 1).width <= 0");
 				
 				if (index + 1 < movableBlocks.size()) {
@@ -310,6 +313,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 				
 				swap(index, index - 1);
 				newIndex = index - 1;
+				// }
 				
 				widthRight = movableBlocks.get(newIndex + 1).width;
 				if (newIndex + 2 < movableBlocks.size()) {
@@ -324,6 +328,8 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 				index = newIndex;
 				
 			} else if (index + 1 < movableBlocks.size() && movableBlocks.get(index + 1).width <= 0) {
+				int newIndex = 0;
+				
 				// logger.debug("index + 2 < movableBlocks.size() && movableBlocks.get(index + 1).width <= 0");
 				if (index > 0) {
 					movableBlocks.get(index - 1).width = widthLeft;
@@ -331,15 +337,19 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 					movableBlocks.get(index - 1).printMbTb(index - 1, "L");
 				}
 				
+				// if (index + 1 < movableBlocks.size()) {
 				movableBlocks.get(index + 1).width = widthRight;
 				movableBlocks.get(index + 1).getTimeBlock().setLen((int) (widthRight / scaleRatio));
 				movableBlocks.get(index + 1).printMbTb(index + 1, "R");
 				
+				
 				movableBlocks.get(index + 1).setLocation(moveBlock.getLocation().getX() + moveBlock.width,
 						movableBlocks.get(index + 1).getLocation().getY());
 				
+				
 				swap(index, index + 1);
 				newIndex = index + 1;
+				// }
 				
 				widthLeft = movableBlocks.get(newIndex - 1).width;
 				
