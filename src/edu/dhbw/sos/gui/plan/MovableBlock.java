@@ -14,6 +14,8 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 
+import org.apache.log4j.Logger;
+
 import edu.dhbw.sos.course.lecture.TimeBlock;
 
 
@@ -27,19 +29,21 @@ import edu.dhbw.sos.course.lecture.TimeBlock;
  * 
  */
 public class MovableBlock extends Rectangle {
-	private static final long	serialVersionUID	= 4199245975719637289L;
+	private static final long		serialVersionUID	= 4199245975719637289L;
+	private static final Logger	logger				= Logger.getLogger(MovableBlock.class);
+	
 	// save the point, where the mouse holds the block, relative to the block itself
-	private Point					relMouseLocation	= new Point();
+	private Point						relMouseLocation	= new Point();
 	// corresponding timeblock object for this block
-	private TimeBlock				timeBlock;
+	private TimeBlock					timeBlock;
 	// color of the block
-	private Color					color;
+	private Color						color;
 	// flags for enabling/disabling movement
-	private boolean				moveHorizontal		= false;
-	private boolean				moveVertical		= true;
+	private boolean					moveHorizontal		= false;
+	private boolean					moveVertical		= true;
 	
 	// Position in LinkedList
-	private int						index;
+	private int							index;
 	
 	
 	/**
@@ -109,6 +113,13 @@ public class MovableBlock extends Rectangle {
 	}
 	
 	
+	public void setLocation(double x, double y) {
+		Point p = new Point();
+		p.setLocation(x, y);
+		setLocation(p);
+	}
+	
+	
 	public Point getRelMouseLocation() {
 		return relMouseLocation;
 	}
@@ -138,6 +149,7 @@ public class MovableBlock extends Rectangle {
 		this.color = color;
 	}
 	
+	
 	public int getIndex() {
 		return index;
 	}
@@ -165,6 +177,12 @@ public class MovableBlock extends Rectangle {
 	
 	public void setMoveVertical(boolean moveVertical) {
 		this.moveVertical = moveVertical;
+	}
+	
+	
+	public void printMbTb(int index, String pos) {
+		logger.trace(pos+"; MB.index=" + index + "; TB.len=" + timeBlock.getLen() + "; MB.width=" + this.width + "; MB.X="
+				+ this.x);
 	}
 	
 }
