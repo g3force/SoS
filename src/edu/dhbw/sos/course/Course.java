@@ -158,7 +158,8 @@ public class Course {
 						((Student)newState[y][x]).calcNextSimulationStep(preChangeVectorSpecial, influence, x,y);
 						if(y==0 && x==0)
 							((Student)newState[y][x]).printAcutalState();
-						((Student)students[y][x]).saveHistoryStates(currentTime);					}
+						((Student)students[y][x]).saveHistoryStates(currentTime);					
+					}
 				}
 			}
 			//give the reference from newState to real students array

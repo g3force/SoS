@@ -12,7 +12,6 @@ package edu.dhbw.sos.course.influence;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import quicktime.std.image.Matrix;
 import edu.dhbw.sos.helper.CalcVector;
 
 /**
