@@ -16,6 +16,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.course.influence.Influence;
 import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
@@ -37,6 +38,8 @@ public class CourseLoader {
 			int aIdx = 0;							//AttributeIDX
 			int sRows = 0, sColumns = 0; 		//Student-attribute
 			
+			Influence loadedInfl = new Influence( loadParameterMatrix( savepath ), loadEnvironmentMatrix( savepath ) );
+			
 			while(reader.hasNext()) {
 				reader.next(); //Next element
 				
@@ -57,6 +60,7 @@ public class CourseLoader {
 							int tmpCols = Integer.parseInt( reader.getAttributeValue(2) );
 							
 							newCourse.setStudents( new IPlace[tmpRows][tmpCols] );
+							newCourse.setInfluence(loadedInfl);
 							courses.add( newCourse );
 							
 						} else if(tagname.contentEquals("student")) {
@@ -96,7 +100,7 @@ public class CourseLoader {
 		return courses;
 	}
 	
-	public static float[][] loadInfluenceMatrix( String savepath ) {
+	public static float[][] loadParameterMatrix( String savepath ) {
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		float[][] matVals = null;
 		try {
@@ -114,18 +118,18 @@ public class CourseLoader {
 						try {
 							if(reader.getEventType()==2)
 								continue;
-							if(tagname.contentEquals("changematrix")) {
+							if(tagname.contentEquals("pMatrix")) {
 								int size = Integer.parseInt(reader.getAttributeValue(0));
 								matVals = new float[size][size];
 								for(int i=0;i<size;i++)
 									for(int j=0;j<size;j++)
 										matVals[i][j]=0.00f;
 									
-							 } else if(tagname.contentEquals("mat_row")) {
+							 } else if(tagname.contentEquals("pRow")) {
 									mRows++;
 									mColumns=0;
 										
-							 } else if(tagname.contentEquals("mAttribute")) {
+							 } else if(tagname.contentEquals("pAttribute")) {
 								 matVals[mRows][mColumns] = Float.parseFloat(reader.getAttributeValue(0)); //Integer value
 								 mColumns++;
 							 }
@@ -141,4 +145,51 @@ public class CourseLoader {
 		return matVals;
 	}
 	//End loadInfluenceMatrix()
+	
+	public static float[][] loadEnvironmentMatrix( String savepath ) {
+		XMLInputFactory factory = XMLInputFactory.newInstance();
+		float[][] matVals = null;
+		try {
+			XMLStreamReader reader = factory.createXMLStreamReader(new FileReader(savepath));
+			if(reader!=null) {
+				reader.getEventType(); //START
+					
+				int eRows = -1, eColumns = 0; 	//Matrix
+	
+				while(reader.hasNext()) {
+					reader.next(); //Next element
+					
+					if(reader.hasName()) {
+						String tagname = reader.getName().toString();
+						try {
+							if(reader.getEventType()==2)
+								continue;
+							 if(tagname.contentEquals("eMatrix")) {
+								int row_size = Integer.parseInt(reader.getAttributeValue(0));
+								int col_size =  Integer.parseInt(reader.getAttributeValue(1));
+								matVals = new float[row_size][col_size];
+								for(int i=0;i<row_size;i++)
+									for(int j=0;j<col_size;j++)
+										matVals[i][j]=0.00f;
+								 
+							 } else if(tagname.contentEquals("eRow")) {
+								 eRows++;
+								 eColumns=0;
+								 
+							 } else if(tagname.contentEquals("eAttribute")) {
+								 matVals[eRows][eColumns] = Float.parseFloat( reader.getAttributeValue(0) );
+								 eColumns++;
+								 
+							 }
+						} catch( Exception ex ) {
+							ex.printStackTrace();
+						}
+					}
+				}
+			}
+		} catch( Exception ex ) {
+			ex.printStackTrace();
+		}
+		return matVals;
+	}
 }
