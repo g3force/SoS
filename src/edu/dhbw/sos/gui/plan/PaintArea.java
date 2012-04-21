@@ -14,6 +14,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -144,6 +145,10 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		for (MovableBlock mb : movableBlocks) {
 			ga.setPaint(mb.getColor());
 			ga.fill(mb);
+		}
+		if(moveBlock != null){
+			ga.setPaint(Color.black);
+			ga.draw(moveBlock);
 		}
 		
 		// draw Timeline
