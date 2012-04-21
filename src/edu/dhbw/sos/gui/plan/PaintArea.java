@@ -172,7 +172,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 			// dummy data
 			float last = 50;
 			for (int i = 0; i < 50; i++) {
-				last = last + (float)((Math.random() - 0.5) * 30.0);
+				last = last + (float) ((Math.random() - 0.5) * 30.0);
 				if (last < 0)
 					last = 0;
 				newData.add(last);
@@ -238,20 +238,21 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 			double paWidth = this.getWidth();
 			int newIndex = -1;
 			
-			calcMoveBlock(e.getPoint(), mmt_X);
+			if(!calcMoveBlock(e.getPoint(), mmt_X)){
+				return;
+			}
 			
 			// Calculate width of left block
 			if (index - 1 >= 0) {
-				logger.debug("12345");
+				logger.debug("index - 1 >= 0");
 				logger.debug(movableBlocks.get(index - 1).width);
 				movableBlocks.get(index - 1).width += mmt_X;
-				logger.debug(movableBlocks.get(index - 1).width);
-				
+				movableBlocks.get(index - 1).getTimeBlock().setLen((int) (movableBlocks.get(index - 1).width / scaleRatio));
 			}
 			
 			// Calculate width of right block and new position
 			if (index + 1 < movableBlocks.size() && index >= 0) {
-				logger.debug("2345");
+				logger.debug("index + 1 < movableBlocks.size() && index >= 0");
 				
 				// FIXME BLock verschwindet nach links ??!?!?
 				double x_P1 = movableBlocks.get(index + 1).getLocation().getX() + mmt_X;
@@ -263,14 +264,17 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 				movableBlocks.get(index + 1).setLocation(x_P1, 0);
 				
 				movableBlocks.get(index + 1).width -= mmt_X;
+				movableBlocks.get(index + 1).getTimeBlock().setLen((int) (movableBlocks.get(index + 1).width / scaleRatio));
 			}
 			
 			// Checks wether the width of left and right Blocks are lower or equal then 0
-			if (index > 2 && movableBlocks.get(index - 1).width <= 0) {
-				logger.debug("345");
+			if (index > 1 && movableBlocks.get(index - 1).width <= 0) {
+				logger.debug("index > 1 && movableBlocks.get(index - 1).width <= 0");
 				
 				movableBlocks.get(index - 1).width = widthLeft;
+				movableBlocks.get(index - 1).getTimeBlock().setLen((int) (widthLeft / scaleRatio));
 				movableBlocks.get(index + 1).width = widthRight;
+				movableBlocks.get(index + 1).getTimeBlock().setLen((int) (widthRight / scaleRatio));
 				
 				movableBlocks.get(index - 1).setLocation(moveBlock.getLocation().getX() + moveBlock.width,
 						movableBlocks.get(index - 1).getLocation().getY());
@@ -283,10 +287,13 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 				
 			}
 			if (index + 2 < movableBlocks.size() && movableBlocks.get(index + 1).width <= 0) {
-				logger.debug("45");
+				logger.debug("index + 2 < movableBlocks.size() && movableBlocks.get(index + 1).width <= 0");
 				
 				movableBlocks.get(index - 1).width = widthLeft;
+				movableBlocks.get(index - 1).getTimeBlock().setLen((int) (widthLeft / scaleRatio));
 				movableBlocks.get(index + 1).width = widthRight;
+				movableBlocks.get(index + 1).getTimeBlock().setLen((int) (widthRight / scaleRatio));
+				
 				
 				movableBlocks.get(index + 1).setLocation(moveBlock.getLocation().getX() + moveBlock.width,
 						movableBlocks.get(index + 1).getLocation().getY());
@@ -324,16 +331,16 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	}
 	
 	
-	private void calcMoveBlock(Point p, int moveX) {
+	private boolean calcMoveBlock(Point p, int moveX) {
 		// calculate new position of moveBlock
 		double x_mb = moveBlock.getLocation().getX();
 		double paWidth = this.getWidth();
 		if (x_mb < 0 && moveX < 0) {
 			// e.getPoint().setLocation(0, e.getPoint().getY());
-			return;
+			return false;
 		} else if ((x_mb + moveBlock.getWidth()) >= paWidth && moveX >= 0) {
 			// e.getPoint().setLocation(this.getWidth(), e.getPoint().getY());
-			return;
+			return false;
 		}
 		
 		double x = p.getX();
@@ -345,5 +352,6 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 			x = paWidth;
 		}
 		moveBlock.setLocation(x, p.getY());
+		return true;
 	}
 }

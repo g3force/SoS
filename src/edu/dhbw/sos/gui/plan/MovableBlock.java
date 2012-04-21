@@ -108,6 +108,12 @@ public class MovableBlock extends Rectangle {
 		super.setLocation(abs);
 	}
 	
+	public void setLocation(double x, double y) {
+		Point p = new Point();
+		p.setLocation(x, y);
+		setLocation(p);
+	}
+	
 	
 	public Point getRelMouseLocation() {
 		return relMouseLocation;
