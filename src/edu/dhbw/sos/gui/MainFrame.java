@@ -23,6 +23,8 @@ import javax.swing.border.Border;
 
 import org.apache.log4j.Logger;
 
+import edu.dhbw.sos.course.CourseController;
+import edu.dhbw.sos.course.Courses;
 import edu.dhbw.sos.gui.course.CoursePanel;
 import edu.dhbw.sos.gui.plan.PlanPanel;
 import edu.dhbw.sos.gui.right.RightPanel;
@@ -56,7 +58,8 @@ public class MainFrame extends JFrame implements IUpdateable, WindowListener {
 	private PlanPanel						planPanel;
 	private LinkedList<IUpdateable>	components			= new LinkedList<IUpdateable>();
 	
-	private static MainFrame			instance;
+	private CourseController			courseController;
+	private Courses						courses;
 	
 	
 	/**
@@ -65,9 +68,10 @@ public class MainFrame extends JFrame implements IUpdateable, WindowListener {
 	 * @param data
 	 * @author NicolaiO
 	 */
-	public MainFrame(GUIData data) {
+	public MainFrame(CourseController courseController, Courses courses) {
 		logger.debug("Initializing...");
-		instance = this;
+		this.courseController = courseController;
+		this.courses = courses;
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLocationByPlatform(true);
 		this.setTitle(Messages.getString("MainFrame.1"));
