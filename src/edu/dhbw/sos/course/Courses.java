@@ -25,8 +25,8 @@ import edu.dhbw.sos.course.io.CourseLoader;
 public class Courses extends LinkedList<Course> {
 	private static final long							serialVersionUID				= 1L;
 	private Course											curCourse;
-	private LinkedList<ICurrentCourseOberserver>	currentCourseOberservers	= new LinkedList<ICurrentCourseOberserver>();
-	private LinkedList<ICoursesListOberserver>	coursesListOberserver		= new LinkedList<ICoursesListOberserver>();
+	private LinkedList<ICurrentCourseObserver>	currentCourseOberservers	= new LinkedList<ICurrentCourseObserver>();
+	private LinkedList<ICoursesListObserver>		coursesListOberservers		= new LinkedList<ICoursesListObserver>();
 	
 	
 	/**
@@ -41,16 +41,26 @@ public class Courses extends LinkedList<Course> {
 	
 	
 	private void notifyCoursesListObservers() {
-		for (ICoursesListOberserver clo : coursesListOberserver) {
+		for (ICoursesListObserver clo : coursesListOberservers) {
 			clo.updateCoursesList();
 		}
 	}
 	
 	
 	private void notifyCurrentCourseObservers() {
-		for (ICurrentCourseOberserver cco : currentCourseOberservers) {
-			cco.updateCurrentCourse();
+		for (ICurrentCourseObserver cco : currentCourseOberservers) {
+			cco.updateCurrentCourse(curCourse);
 		}
+	}
+	
+	
+	public void subscribeCurrentCourse(ICurrentCourseObserver cco) {
+		currentCourseOberservers.add(cco);
+	}
+	
+	
+	public void subscribeCoursesList(ICoursesListObserver clo) {
+		coursesListOberservers.add(clo);
 	}
 	
 	

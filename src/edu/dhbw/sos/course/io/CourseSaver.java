@@ -10,11 +10,12 @@
 package edu.dhbw.sos.course.io;
 
 import java.io.FileWriter;
+import java.util.LinkedList;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 
-import edu.dhbw.sos.course.Courses;
+import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
 
@@ -27,7 +28,7 @@ import edu.dhbw.sos.course.student.Student;
  * 
  */
 public class CourseSaver {
-	public static void saveCourses(Courses courses, String savepath) {
+	public static void saveCourses(LinkedList<Course> courses, String savepath) {
 		XMLOutputFactory factory = XMLOutputFactory.newInstance();
 		try {
 			FileWriter fw = new FileWriter(savepath, false);
@@ -38,14 +39,14 @@ public class CourseSaver {
 				
 				if(courses!=null) {
 					writer.writeStartElement("courses");
-					writer.writeAttribute("count", String.valueOf(courses.length));
+					writer.writeAttribute("count", String.valueOf(courses.size()));
 					
-					for (int i = 0; i < courses.length; i++) {
+					for (int i = 0; i < courses.size(); i++) {
 						// Write for each course --> <course name="NAME" students="COUNT">
 						writer.writeStartElement("course");	
-						writer.writeAttribute("name", courses[i].getName());
+						writer.writeAttribute("name", courses.get(i).getName());
 		
-						IPlace[][] students = courses[i].getStudents();
+						IPlace[][] students = courses.get(i).getStudents();
 						writer.writeAttribute("x", String.valueOf(students[i].length));
 						writer.writeAttribute("y", String.valueOf(students.length));
 						
@@ -84,9 +85,9 @@ public class CourseSaver {
 					writer.writeEndElement(); 
 					//</courses>
 					
-					if(courses[0].getInfluence()!=null && courses[0].getInfluence().getParameterMatrix()!=null) {
+					if(courses.get(0).getInfluence()!=null && courses.get(0).getInfluence().getParameterMatrix()!=null) {
 						writer.writeStartElement("changematrix");
-						float[][] parMatrix = courses[0].getInfluence().getParameterMatrix();
+						float[][] parMatrix = courses.get(0).getInfluence().getParameterMatrix();
 						writer.writeAttribute("rows_columns", String.valueOf(parMatrix));
 						
 						for(int row=0;row<parMatrix.length;row++) {
