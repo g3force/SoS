@@ -16,6 +16,9 @@ import java.util.LinkedList;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.log4j.Logger;
+
+import edu.dhbw.sos.SuperFelix;
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.influence.Influence;
 import edu.dhbw.sos.course.lecture.BlockType;
@@ -32,6 +35,9 @@ import edu.dhbw.sos.course.student.Student;
  * 
  */
 public class CourseLoader {
+	
+	private static final Logger	logger	= Logger.getLogger(SuperFelix.class);
+	
 	/**
 	 * 
 	 * Loads the entire course-structure and the vectors
@@ -103,13 +109,13 @@ public class CourseLoader {
 							}
 						}
 					} catch( Exception ex ) {
-						ex.printStackTrace();
+						logger.debug("XML-exception in loadCourses()");
 					}
 				}
 			}
 			reader.close();
 		} catch( Exception ex ) {
-			ex.printStackTrace();
+			logger.debug("File " + savepath + " not found. Loading dummy data.");
 			//load dummy data
 			
 			IPlace[][] students = new IPlace[5][7];
@@ -185,13 +191,13 @@ public class CourseLoader {
 							}
 						}
 					} catch( Exception ex ) {
-						ex.printStackTrace();
+						logger.debug("XML-exception in loadCurrentCourse()");
 					}
 				}
 			}
 			reader.close();
 		} catch( Exception ex ) {
-			ex.printStackTrace();
+			logger.debug("XML-Reader in loadCurrentCourse()");
 		}				
 		return null;	
 	}
@@ -238,13 +244,13 @@ public class CourseLoader {
 								 mColumns++;
 							 }
 						} catch( Exception ex ) {
-							ex.printStackTrace();
+							logger.debug("XML-exception in loadParameterMatrix()");
 						}
 					}
 				}
 			}
 		} catch( Exception ex ) {
-			ex.printStackTrace();
+			logger.debug("XML-Reader in loadParameterMatrix()");
 		}
 		return matVals;
 	}
@@ -294,13 +300,13 @@ public class CourseLoader {
 								 
 							 }
 						} catch( Exception ex ) {
-							ex.printStackTrace();
+							logger.debug("XML-exception in loadEnvironmentMatrix()");
 						}
 					}
 				}
 			}
 		} catch( Exception ex ) {
-			ex.printStackTrace();
+			logger.debug("XML-Reader in loadEnvironmentMatrix()");
 		}
 		return matVals;
 	}
