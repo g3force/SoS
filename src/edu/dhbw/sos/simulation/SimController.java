@@ -19,6 +19,7 @@ import java.util.TimerTask;
 import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.gui.IEditModeObserver;
 
 
 /**
@@ -29,7 +30,7 @@ import edu.dhbw.sos.course.Course;
  * 
  */
 
-public class SimController implements ActionListener, MouseListener {
+public class SimController implements ActionListener, MouseListener, IEditModeObserver {
 	
 	private Course						course;
 	private int							currentTime;													// in milliseconds from "begin"
@@ -146,6 +147,20 @@ public class SimController implements ActionListener, MouseListener {
 	
 	@Override
 	public void mouseExited(MouseEvent e) {
+		
+	}
+
+
+	@Override
+	public void enterEditMode() {
+		// TODO NicolaiO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void exitEditMode() {
+		// TODO NicolaiO Auto-generated method stub
 		
 	}
 }

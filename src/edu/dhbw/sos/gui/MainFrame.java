@@ -16,7 +16,6 @@ import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.net.URL;
-import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -44,17 +43,14 @@ import edu.dhbw.sos.simulation.SimController;
  * @author NicolaiO
  * 
  */
-public class MainFrame extends JFrame implements IUpdateable, WindowListener {
-	private static final long			serialVersionUID	= -1401997967192989464L;
-	private static final Logger		logger				= Logger.getLogger(MainFrame.class);
+public class MainFrame extends JFrame implements WindowListener {
+	private static final long		serialVersionUID	= -1401997967192989464L;
+	private static final Logger	logger				= Logger.getLogger(MainFrame.class);
 	
 	// standard borders
-	public static final Border			BLACK_BOARDER		= BorderFactory.createLineBorder(Color.black);
-	public static final Border			EMPTY_BORDER		= BorderFactory.createEmptyBorder(5, 5, 5, 5);
-	public static final Border			COMPOUND_BORDER	= BorderFactory.createCompoundBorder(BLACK_BOARDER, EMPTY_BORDER);
-	
-	// panels
-	private LinkedList<IUpdateable>	components			= new LinkedList<IUpdateable>();
+	public static final Border		BLACK_BOARDER		= BorderFactory.createLineBorder(Color.black);
+	public static final Border		EMPTY_BORDER		= BorderFactory.createEmptyBorder(5, 5, 5, 5);
+	public static final Border		COMPOUND_BORDER	= BorderFactory.createCompoundBorder(BLACK_BOARDER, EMPTY_BORDER);
 	
 	
 	/**
@@ -73,20 +69,22 @@ public class MainFrame extends JFrame implements IUpdateable, WindowListener {
 		this.setPreferredSize(new Dimension(900, 700));
 		
 		// load icon
-		 logger.debug("load icon now");
-		 URL iconUrl = getClass().getResource("/res/icons/sos_logo.png");
-		 if (iconUrl != null) {
-		 this.setIconImage(Toolkit.getDefaultToolkit().getImage(iconUrl));
-		 }
+		logger.debug("load icon now");
+		URL iconUrl = getClass().getResource("/res/icons/sos_logo.png");
+		if (iconUrl != null) {
+			this.setIconImage(Toolkit.getDefaultToolkit().getImage(iconUrl));
+		}
 		
 		SimController simController = courses.getCurrentCourse().getSimController();
 		CoursePanel coursePanel = new CoursePanel(simController, courseController, courses);
 		RightPanel rightPanel = new RightPanel(courseController, courses);
 		StatusBar statusBar = new StatusBar();
-		components.add(statusBar);
 		StudentPanel studentPanel = new StudentPanel(courses.getCurrentCourse());
 		PlanPanel planPanel = new PlanPanel(simController, courses.getCurrentCourse());
-		components.add(planPanel);
+		
+		// some subscriptions
+//		rightPanel.subscribeEditMode(simController);
+//		rightPanel.subscribeEditMode(coursePanel);
 		
 		// put BottomPanel and StatusBar in a new Panel
 		JPanel bsPanel = new JPanel();
@@ -109,15 +107,6 @@ public class MainFrame extends JFrame implements IUpdateable, WindowListener {
 		pack();
 		
 		logger.debug("Initialized.");
-	}
-	
-	
-	@Override
-	public void update() {
-		// update all known sub components
-		for (IUpdateable comp : components) {
-			comp.update();
-		}
 	}
 	
 	

@@ -30,6 +30,7 @@ import edu.dhbw.sos.course.ICurrentCourseObserver;
 import edu.dhbw.sos.course.IStudentsObserver;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
+import edu.dhbw.sos.gui.IEditModeObserver;
 import edu.dhbw.sos.gui.MainFrame;
 import edu.dhbw.sos.simulation.SimController;
 
@@ -41,7 +42,7 @@ import edu.dhbw.sos.simulation.SimController;
  * @author NicolaiO
  * 
  */
-public class CoursePanel extends JPanel implements ComponentListener, ICurrentCourseObserver, IStudentsObserver,
+public class CoursePanel extends JPanel implements ComponentListener, ICurrentCourseObserver, IStudentsObserver, IEditModeObserver,
 		MouseListener, MouseMotionListener {
 	private static final long		serialVersionUID	= 5542875796802944785L;
 	private static final Logger	logger				= Logger.getLogger(CoursePanel.class);
@@ -269,5 +270,19 @@ public class CoursePanel extends JPanel implements ComponentListener, ICurrentCo
 		course.setSelectedStudent(null);
 		paintArea.updateHoveredStudent(hoveredStudent);
 		paintArea.updateStudentCircles(studentCircles);
+	}
+
+
+	@Override
+	public void enterEditMode() {
+		// TODO NicolaiO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void exitEditMode() {
+		// TODO NicolaiO Auto-generated method stub
+		
 	}
 }

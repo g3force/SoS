@@ -71,6 +71,8 @@ public class Course {
 	
 	/**
 	 * notify all subscribers of the students array
+	 * 
+	 * @author NicolaiO
 	 */
 	public void notifyStudentsObservers() {
 		for (IStudentsObserver so : studentsObservers) {
@@ -80,7 +82,10 @@ public class Course {
 	
 	
 	/**
-	 * notify all subscribers of the students array
+	 * 
+	 * TODO NicolaiO, add comment!
+	 * 
+	 * @author NicolaiO
 	 */
 	public void notifySelectedCourseObservers() {
 		for (ISelectedCourseObserver so : selectedCourseObservers) {
@@ -102,6 +107,13 @@ public class Course {
 	}
 	
 	
+	/**
+	 * 
+	 * TODO NicolaiO, add comment!
+	 * 
+	 * @param so
+	 * @author NicolaiO
+	 */
 	public void subscribeSelectedCourse(ISelectedCourseObserver so) {
 		selectedCourseObservers.add(so);
 	}
