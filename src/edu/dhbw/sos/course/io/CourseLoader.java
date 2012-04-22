@@ -32,6 +32,14 @@ import edu.dhbw.sos.course.student.Student;
  * 
  */
 public class CourseLoader {
+	/**
+	 * 
+	 * Loads the entire course-structure and the vectors
+	 * 
+	 * @param savepath
+	 * @return
+	 * @author SebastianN
+	 */
 	public static LinkedList<Course> loadCourses(String savepath) {
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		LinkedList<Course> courses = new LinkedList<Course>();
@@ -52,6 +60,8 @@ public class CourseLoader {
 					try {
 						if(reader.getEventType()==2)
 							continue;
+						
+						//<course> was found.
 						if(tagname.contentEquals("course")) {
 							
 							Course newCourse = new Course();
@@ -64,6 +74,7 @@ public class CourseLoader {
 							newCourse.setInfluence(loadedInfl);
 							courses.add( newCourse );
 							
+						//<student> was found.
 						} else if(tagname.contentEquals("student")) {
 							@SuppressWarnings("unused")
 							//Isn't really unused, but whatever.
@@ -76,6 +87,8 @@ public class CourseLoader {
 								curStudent = new EmptyPlace( Integer.parseInt(reader.getAttributeValue(1)) );
 							}
 							aIdx=0;
+						
+						//<sAttribute> was found.
 						} else if(tagname.contentEquals("sAttribute")) {
 							Student curStudent = (Student)courses.getLast().getStudents()[sRows][sColumns];
 							curStudent.addValueToStateVector(aIdx, Float.parseFloat(reader.getAttributeValue(0)));
@@ -141,6 +154,57 @@ public class CourseLoader {
 		return courses;
 	}
 	
+	/**
+	 * 
+	 * loads the last used course. <strong>COURSES NEED TO BE LOADED FIRST!</strong>
+	 * 
+	 * @param courses
+	 * @param savepath
+	 * @return
+	 * @author SebastianN
+	 */
+	public static Course loadCurrentCourse( LinkedList<Course> courses, String savepath ) {
+		XMLInputFactory factory = XMLInputFactory.newInstance();
+	
+		try {
+			XMLStreamReader reader = factory.createXMLStreamReader(new FileReader(savepath));
+			reader.getEventType(); //START
+			
+			while(reader.hasNext()) {
+				reader.next(); //Next element
+				
+				if(reader.hasName()) {
+					String tagname = reader.getName().toString();
+					try {
+						if(reader.getEventType()==2)
+							continue;
+						if(tagname.contentEquals("current_course")) {
+							for(int x=0;x<courses.size();x++) {
+								if(courses.get(x).getName().contentEquals(reader.getAttributeValue(0))) {
+									return courses.get(x);
+								}
+							}
+						}
+					} catch( Exception ex ) {
+						ex.printStackTrace();
+					}
+				}
+			}
+			reader.close();
+		} catch( Exception ex ) {
+			ex.printStackTrace();
+		}				
+		return null;	
+	}
+	
+	/**
+	 * 
+	 * Loads the parameter matrix via the XML-sheet.
+	 * 
+	 * @param savepath
+	 * @return
+	 * @author SebastianN
+	 */
 	public static float[][] loadParameterMatrix( String savepath ) {
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		float[][] matVals = null;
@@ -187,6 +251,14 @@ public class CourseLoader {
 	}
 	//End loadInfluenceMatrix()
 	
+	/**
+	 * 
+	 * Loads the Environment matrix via XML-sheet.
+	 * 
+	 * @param savepath
+	 * @return
+	 * @author SebastianN
+	 */
 	public static float[][] loadEnvironmentMatrix( String savepath ) {
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		float[][] matVals = null;
