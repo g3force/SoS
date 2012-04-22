@@ -9,6 +9,9 @@
  */
 package edu.dhbw.sos.course.lecture;
 
+import java.awt.Color;
+
+
 /**
  * This enum provides different Block types for a lecture. <br>
  * For each type a vektor called simFormulaFactors is set. This is used for simulation formula.<br>
@@ -17,19 +20,38 @@ package edu.dhbw.sos.course.lecture;
  * 
  */
 public enum BlockType {
-	theory(0),
-	group(1),
-	exercise(1),
-	pause(2);
+	theory(0, Color.red),
+	group(1, Color.blue),
+	exercise(1, Color.yellow),
+	pause(2, Color.green);
 	
-	private int	simFormulaFactors; 
+	private int		simFormulaFactors;
+	private Color	color;
 	
 	
-	BlockType(int simFormulaFactors) {
+	BlockType(int simFormulaFactors, Color c) {
 		this.setSimFormulaFactors(simFormulaFactors);
+		this.setColor(c);
+		
 	}
 	
 	
+	/**
+	 * @return the color
+	 */
+	public Color getColor() {
+		return color;
+	}
+
+
+	/**
+	 * @param color the color to set
+	 */
+	private void setColor(Color color) {
+		this.color = color;
+	}
+
+
 	/**
 	 * @return the simFormulaFactors
 	 */
