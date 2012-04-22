@@ -14,6 +14,7 @@ import edu.dhbw.sos.gui.MainFrame;
 
 
 public class SuperFelix {
+	public static String				VERSION	= "0.5";
 	private static final Logger	logger	= Logger.getLogger(SuperFelix.class);
 	
 	

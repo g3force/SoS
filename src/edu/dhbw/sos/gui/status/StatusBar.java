@@ -18,6 +18,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import edu.dhbw.sos.gui.AboutDlg;
 import edu.dhbw.sos.gui.IUpdateable;
 
 
@@ -69,10 +70,11 @@ public class StatusBar extends JPanel implements IUpdateable {
 			public void mouseClicked(MouseEvent e) {
 				// new JDialog((Frame) StatusBar.this.getTopLevelAncestor(),"About");
 				// new JDialog(SwingUtilities.getWindowAncestor(StatusBar.this.getTopLevelAncestor()),"About");
+				new AboutDlg();
 			}
 		});
 	}
-
+	
 
 	@Override
 	public void update() {
