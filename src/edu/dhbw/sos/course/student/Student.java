@@ -97,7 +97,9 @@ public class Student implements IPlace, Cloneable {
 	 * @param influence
 	 * @author dirk
 	 */
-	public void calcNextSimulationStep(CalcVector changeVector, Influence influence, int x, int y) {
+	public void calcNextSimulationStep(CalcVector changeVector, Influence influence, int x, int y, int time) {
+		
+		saveHistoryStates(time);
 		
 		// - - parameter
 		double parameterInf = 0.001;

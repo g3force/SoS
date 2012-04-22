@@ -240,7 +240,7 @@ public class Course {
 					
 					// create a new student and let him calculate a new change vector
 					newState[y][x] = student.clone();
-					((Student) newState[y][x]).calcNextSimulationStep(preChangeVectorSpecial, influence, x, y);
+					((Student) newState[y][x]).calcNextSimulationStep(preChangeVectorSpecial, influence, x, y, currentTime);
 					if (y == 0 && x == 0)
 						((Student) newState[y][x]).printAcutalState();
 					((Student) newState[y][x]).saveHistoryStates(currentTime);
@@ -275,13 +275,13 @@ public class Course {
 		// x o x
 		// x x x
 		CalcVector changeVector = new CalcVector(student.getActualState().size());
-		double[][] neighborInf = { { 0.01, 0.01, 0.01 }, { 0.10, 0.00, 0.10 }, { 0.10, 0.10, 0.10 } };// new double[3][3];
+		double[][] neighborInf = { { 0.0001, 0.0001, 0.0001 }, { 0.0010, 0.00, 0.0010 }, { 0.000010, 0.000010, 0.000010 } };// new double[3][3];
 		// for (int i = 0; i < 3; i++) {
 		// for (int j = 0; j < 3; j++) {
 		// neighborInf[j][i] = 0.01;
 		// }
 		// }
-		
+		if(x==0 && y==0)
 		influence.getEnvironmentVector(EInfluenceType.NEIGHBOR, neighborInf[0][0])
 				.printCalcVector("Influence neighbor: ");
 		
