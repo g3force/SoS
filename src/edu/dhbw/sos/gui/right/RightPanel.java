@@ -51,7 +51,7 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 	// child elements
 	private JPanel					statsPanel;
 	private JPanel					suggestionPanel;
-	private JComboBox	courseList;
+	private JComboBox<Course>	courseList;
 	
 	private Courses				courses;
 	
