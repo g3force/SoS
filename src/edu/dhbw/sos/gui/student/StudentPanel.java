@@ -16,8 +16,8 @@ import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-import edu.dhbw.sos.gui.GUIData;
-import edu.dhbw.sos.gui.IUpdateable;
+import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.course.IStudentsObserver;
 
 
 /**
@@ -28,9 +28,11 @@ import edu.dhbw.sos.gui.IUpdateable;
  * @author NicolaiO
  * 
  */
-public class StudentPanel extends JPanel implements IUpdateable {
+public class StudentPanel extends JPanel implements IStudentsObserver {
 	private static final long	serialVersionUID	= 722304874911423036L;
-	private final SPaintArea		paintArea;
+	private final SPaintArea	paintArea;
+	private Course					course;
+	
 	
 	/**
 	 * Initialize StudentPanel with GUIData
@@ -38,18 +40,20 @@ public class StudentPanel extends JPanel implements IUpdateable {
 	 * @param data
 	 * @author NicolaiO
 	 */
-	public StudentPanel(GUIData data) {
+	public StudentPanel(Course course) {
+		paintArea = new SPaintArea();
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.setPreferredSize(new Dimension(200, 150));
 		this.setLayout(new BorderLayout());
-		paintArea = new SPaintArea(data);
+		this.course = course;
 		this.add(paintArea, BorderLayout.CENTER);
+		course.subscribeStudents(this);
 	}
 	
 	
 	@Override
-	public void update() {
-		paintArea.update();
+	public void updateStudents() {
+		paintArea.update(course.getSelectedStudent(), course.getSelectedProperty());
 	}
 	
 }

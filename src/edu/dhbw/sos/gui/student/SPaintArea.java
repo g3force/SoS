@@ -17,9 +17,8 @@ import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
+import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.gui.Diagram;
-import edu.dhbw.sos.gui.GUIData;
-import edu.dhbw.sos.gui.IUpdateable;
 
 
 /**
@@ -29,10 +28,9 @@ import edu.dhbw.sos.gui.IUpdateable;
  * @author NicolaiO
  * 
  */
-public class SPaintArea extends JPanel implements IUpdateable {
+public class SPaintArea extends JPanel {
 	private static final long	serialVersionUID	= 1L;
 	private Diagram				diagram;
-	private GUIData				data;
 	
 	
 	// private static final Logger logger = Logger.getLogger(PaintArea.class);
@@ -43,10 +41,9 @@ public class SPaintArea extends JPanel implements IUpdateable {
 	 * 
 	 * @author NicolaiO
 	 */
-	public SPaintArea(GUIData data) {
+	public SPaintArea() {
 		diagram = new Diagram(new LinkedList<Float>());
 		diagram.setLocation(new Point(10, 10));
-		this.data = data;
 	}
 	
 	
@@ -66,14 +63,13 @@ public class SPaintArea extends JPanel implements IUpdateable {
 	}
 	
 	
-	@Override
-	public void update() {
+	public void update(IPlace student, int parameterIndex) {
 		diagram.setHeight(this.getHeight() - 20);
 		diagram.setWidth(this.getWidth() - 20);
 		LinkedList<Float> newData = new LinkedList<Float>();
-		if (data.getSelectedStudent() != null) {
-			for (int key : data.getSelectedStudent().getHistoryStates().keySet()) {
-				newData.add(data.getSelectedStudent().getHistoryStates().get(key).getValueAt(data.getSelectedProperty()));
+		if (student != null) {
+			for (int key : student.getHistoryStates().keySet()) {
+				newData.add(student.getHistoryStates().get(key).getValueAt(parameterIndex));
 			}
 		} else {
 			// dummy data
@@ -82,7 +78,7 @@ public class SPaintArea extends JPanel implements IUpdateable {
 				last = last + ((Math.random() - 0.5) * 30.0);
 				if (last < 0)
 					last = 0;
-				newData.add((float)last);
+				newData.add((float) last);
 			}
 		}
 		diagram.setData(newData);

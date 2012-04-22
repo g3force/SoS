@@ -61,6 +61,8 @@ public class RightPanel extends JPanel implements IUpdateable, ICoursesListObser
 		this.setBorder(MainFrame.COMPOUND_BORDER);
 		this.setPreferredSize(new Dimension(PREF_SIZE, 0));
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+		this.courses = courses;
+		courses.subscribeCoursesList(this);
 		
 		// #############################################################################
 		// drop down list

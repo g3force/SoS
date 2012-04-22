@@ -31,6 +31,7 @@ import edu.dhbw.sos.gui.right.RightPanel;
 import edu.dhbw.sos.gui.status.StatusBar;
 import edu.dhbw.sos.gui.student.StudentPanel;
 import edu.dhbw.sos.helper.Messages;
+import edu.dhbw.sos.simulation.SimController;
 
 
 /**
@@ -75,17 +76,14 @@ public class MainFrame extends JFrame implements IUpdateable, WindowListener {
 		// this.setIconImage(Toolkit.getDefaultToolkit().getImage(iconUrl));
 		// }
 		
-		GUIData guiData = new GUIData();
-		CoursePanel coursePanel = new CoursePanel(courses.getCurrentCourse().getSimController(), courseController,
-				courses.getCurrentCourse(), guiData);
-		components.add(coursePanel);
+		SimController simController = courses.getCurrentCourse().getSimController();
+		CoursePanel coursePanel = new CoursePanel(simController, courseController, courses);
 		RightPanel rightPanel = new RightPanel(courseController, courses);
 		components.add(rightPanel);
 		StatusBar statusBar = new StatusBar();
 		components.add(statusBar);
-		StudentPanel studentPanel = new StudentPanel(guiData);
-		components.add(studentPanel);
-		PlanPanel planPanel = new PlanPanel(courses.getCurrentCourse().getSimController(), courses.getCurrentCourse());
+		StudentPanel studentPanel = new StudentPanel(courses.getCurrentCourse());
+		PlanPanel planPanel = new PlanPanel(simController, courses.getCurrentCourse());
 		components.add(planPanel);
 		
 		// put BottomPanel and StatusBar in a new Panel

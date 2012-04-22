@@ -18,7 +18,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import edu.dhbw.sos.gui.GUIData;
 import edu.dhbw.sos.gui.IUpdateable;
 
 

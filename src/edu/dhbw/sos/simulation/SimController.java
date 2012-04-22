@@ -19,7 +19,6 @@ import java.util.TimerTask;
 import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.Course;
-import edu.dhbw.sos.gui.course.CPaintArea;
 
 
 /**
@@ -32,11 +31,11 @@ import edu.dhbw.sos.gui.course.CPaintArea;
 
 public class SimController implements ActionListener, MouseListener {
 	
-	private Course	course;
-	private int		currentTime;			// in milliseconds from "begin"
-	private int		speed;					// in milliseconds
-	private Timer		pulse	= new Timer();
-	private boolean run = false;
+	private Course						course;
+	private int							currentTime;													// in milliseconds from "begin"
+	private int							speed;															// in milliseconds
+	private Timer						pulse		= new Timer();
+	private boolean					run		= false;
 	private static final Logger	logger	= Logger.getLogger(SimController.class);
 	
 	
@@ -48,7 +47,7 @@ public class SimController implements ActionListener, MouseListener {
 	
 	
 	public void toggle() {
-		if(run)
+		if (run)
 			stop();
 		else
 			run();
@@ -79,7 +78,7 @@ public class SimController implements ActionListener, MouseListener {
 	 */
 	private void simulationStep() {
 		currentTime += speed;
-		logger.info("Simulation Step at "+currentTime);
+		logger.info("Simulation Step at " + currentTime);
 		course.simulationStep(currentTime, speed);
 	}
 	
@@ -110,24 +109,21 @@ public class SimController implements ActionListener, MouseListener {
 	public void setSpeed(int speed) {
 		this.speed = speed;
 	}
-
-
+	
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO NicolaiO Auto-generated method stub
-		
 	}
 	
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		CPaintArea cpa = (CPaintArea) e.getSource();
-		int index = cpa.getData().getSelectedProperty();
+		int index = course.getSelectedProperty();
 		int value = 100;
 		// right click
 		if (e.getButton() == MouseEvent.BUTTON3)
 			value *= -1;
-		cpa.getData().getSelectedStudent().donInput(index, value, currentTime);
+		course.getSelectedStudent().donInput(index, value, currentTime);
 	}
 	
 	
@@ -139,13 +135,13 @@ public class SimController implements ActionListener, MouseListener {
 	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
-
-
+	
+	
 	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
-
-
+	
+	
 	@Override
 	public void mouseExited(MouseEvent e) {
 		

@@ -32,18 +32,22 @@ import edu.dhbw.sos.simulation.SimController;
  * @author DirkK
  */
 public class Course {
+	private static final Logger				logger				= Logger.getLogger(Course.class);
+	private LinkedList<IStudentsObserver>	studentsObserver	= new LinkedList<IStudentsObserver>();
 	private IPlace[][]							students;
 	private Influence								influence;
 	private Lecture								lecture;
 	private LinkedList<String>					properties;
 	private String									name;
-	private static final Logger				logger	= Logger.getLogger(Course.class);
 	private SimController						simController;
-	private LinkedList<IStudentsObserver>	studentsObserver	= new LinkedList<IStudentsObserver>();
 	
 	// place here? not implemented yet, so do not know...
-	private LinkedHashMap<String, String>	statistics = new LinkedHashMap<String, String>();
-	private LinkedList<String>					suggestions = new LinkedList<String>();
+	private LinkedHashMap<String, String>	statistics			= new LinkedHashMap<String, String>();
+	private LinkedList<String>					suggestions			= new LinkedList<String>();
+	
+	// the student and property that was selected in the GUI (by hovering over the student)
+	private IPlace									selectedStudent	= null;
+	private int										selectedProperty	= 0;
 	
 	
 	public Course() {
@@ -60,14 +64,16 @@ public class Course {
 		suggestions.add("Sug4");
 	}
 	
+	
 	/**
-	 *  notify all subscribers of the students array
+	 * notify all subscribers of the students array
 	 */
-	void notifyStudentsObservers() {
+	public void notifyStudentsObservers() {
 		for (IStudentsObserver so : studentsObserver) {
 			so.updateStudents();
 		}
 	}
+	
 	
 	/**
 	 * 
@@ -77,7 +83,7 @@ public class Course {
 	 * @param so the object which needs to be informed
 	 * @author dirk
 	 */
-	void subscribeStudents(IStudentsObserver so) {
+	public void subscribeStudents(IStudentsObserver so) {
 		studentsObserver.add(so);
 	}
 	
@@ -141,11 +147,6 @@ public class Course {
 	}
 	
 	
-	
-	
-	
-	
-	
 	/**
 	 * calculates the next step of the simulation
 	 * calculate for every student the next state
@@ -158,9 +159,9 @@ public class Course {
 		
 		students[0][0].printAcutalState();
 		
-		//-------------------------------------------------
-		//-------------- pre conditions -------------------
-		//-------------------------------------------------
+		// -------------------------------------------------
+		// -------------- pre conditions -------------------
+		// -------------------------------------------------
 		
 		// the new array for the calculated students, fill it with EmptyPalce
 		IPlace[][] newState = new IPlace[students.length][students[0].length];
@@ -170,9 +171,9 @@ public class Course {
 			}
 		}
 		
-		//-------------------------------------------------
-		//-------- student independent calculations -------
-		//-------------------------------------------------
+		// -------------------------------------------------
+		// -------- student independent calculations -------
+		// -------------------------------------------------
 		
 		CalcVector preChangeVector = new CalcVector(properties.size());
 		preChangeVector.printCalcVector("Init");
@@ -191,15 +192,16 @@ public class Course {
 		preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.TIME_DEPENDING, timeTimeInf));
 		preChangeVector.printCalcVector("after time depending");
 		
-		//-------------------------------------------------
-		//---------- iterate over all students ------------
-		//-------------------------------------------------
+		// -------------------------------------------------
+		// ---------- iterate over all students ------------
+		// -------------------------------------------------
 		for (int y = 0; y < students.length; y++) {
 			for (int x = 0; x < students[y].length; x++) {
 				if (students[y][x] instanceof Student) {
 					Student student = (Student) students[y][x];
 					// check if there was an interaction from the don
-					Entry<Integer, Student> donInteraction = student.historyDonInputInInterval(currentTime - speed, currentTime);
+					Entry<Integer, Student> donInteraction = student.historyDonInputInInterval(currentTime - speed,
+							currentTime);
 					if (donInteraction != null) {
 						student = donInteraction.getValue();
 					}
@@ -211,7 +213,8 @@ public class Course {
 						neighborInfl.printCalcVector("Neighbor");
 					
 					// create a new vector which contains the pre calculates vector and the neighbor vector
-					CalcVector preChangeVectorSpecial = neighborInfl.addCalcVector(preChangeVector).addCalcVector(neighborInfl);
+					CalcVector preChangeVectorSpecial = neighborInfl.addCalcVector(preChangeVector).addCalcVector(
+							neighborInfl);
 					// output for one student (0,0) -> only for analyzing the simulation behavior
 					if (y == 0 && x == 0)
 						neighborInfl.printCalcVector("preChangeVectorSpecial = Neighbor + preChangeVector");
@@ -226,9 +229,9 @@ public class Course {
 			}
 		}
 		
-		//-------------------------------------------------
-		//-------------- post simulation ------------------
-		//-------------------------------------------------
+		// -------------------------------------------------
+		// -------------- post simulation ------------------
+		// -------------------------------------------------
 		
 		// give the reference from newState to real students array
 		students = newState;
@@ -248,19 +251,17 @@ public class Course {
 	 */
 	private CalcVector getNeighborsInfluence(Student student, int x, int y) {
 		// neighbor ( inf(Neighbor) * state(studentLeft) * neighbor + inf(Neighbor) * state(studentRight) * ... )
-
-		// x  x  x factor for each relative position to the student
-		// x  o  x
-		// x  x  x
+		
+		// x x x factor for each relative position to the student
+		// x o x
+		// x x x
 		CalcVector changeVector = new CalcVector(student.getActualState().size());
-		double[][] neighborInf = {{0.01, 0.01, 0.01},
-										  {0.10, 0.00, 0.10},
-										  {0.10, 0.10 ,0.10}};//new double[3][3];
-//		for (int i = 0; i < 3; i++) {
-//			for (int j = 0; j < 3; j++) {
-//				neighborInf[j][i] = 0.01;
-//			}
-//		}
+		double[][] neighborInf = { { 0.01, 0.01, 0.01 }, { 0.10, 0.00, 0.10 }, { 0.10, 0.10, 0.10 } };// new double[3][3];
+		// for (int i = 0; i < 3; i++) {
+		// for (int j = 0; j < 3; j++) {
+		// neighborInf[j][i] = 0.01;
+		// }
+		// }
 		
 		influence.getEnvironmentVector(EInfluenceType.NEIGHBOR, neighborInf[0][0])
 				.printCalcVector("Influence neighbor: ");
@@ -283,6 +284,7 @@ public class Course {
 		}
 		return changeVector;
 	}
+	
 	
 	/**
 	 * print statistical information concerning the field
@@ -350,35 +352,63 @@ public class Course {
 		this.properties = properties;
 	}
 	
+	
 	public String getName() {
 		return name;
 	}
 	
+	
 	public void setName(String name) {
 		this.name = name;
 	}
-
+	
+	
 	public SimController getSimController() {
 		return simController;
 	}
 	
+	
 	public String toString() {
 		return getName();
 	}
-
+	
+	
 	public LinkedHashMap<String, String> getStatistics() {
 		return statistics;
 	}
-
+	
+	
 	public void setStatistics(LinkedHashMap<String, String> statistics) {
 		this.statistics = statistics;
 	}
-
+	
+	
 	public LinkedList<String> getSuggestions() {
 		return suggestions;
 	}
-
+	
+	
 	public void setSuggestions(LinkedList<String> suggestions) {
 		this.suggestions = suggestions;
+	}
+	
+	
+	public IPlace getSelectedStudent() {
+		return selectedStudent;
+	}
+	
+	
+	public void setSelectedStudent(IPlace selectedStudent) {
+		this.selectedStudent = selectedStudent;
+	}
+	
+	
+	public int getSelectedProperty() {
+		return selectedProperty;
+	}
+	
+	
+	public void setSelectedProperty(int selectedProperty) {
+		this.selectedProperty = selectedProperty;
 	}
 }
