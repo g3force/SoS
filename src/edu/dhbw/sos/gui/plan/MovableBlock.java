@@ -106,7 +106,7 @@ public class MovableBlock extends Rectangle {
 			x = p.x + relMouseLocation.x;
 		}
 		if (moveVertical) {
-			//y = p.y + relMouseLocation.y;
+			// y = p.y + relMouseLocation.y;
 			y = p.y;
 		}
 		Point abs = new Point(x, y);
@@ -182,8 +182,35 @@ public class MovableBlock extends Rectangle {
 	
 	
 	public void printMbTb(int index, String pos) {
-		logger.trace(pos+"; MB.index=" + index + "; TB.len=" + timeBlock.getLen() + "; MB.width=" + this.width + "; MB.X="
-				+ this.x);
+		logger.trace(pos + "; MB.index=" + index + "; TB.len=" + timeBlock.getLen() + "; MB.width=" + this.width
+				+ "; MB.X=" + this.x);
 	}
+	
+	
+	public Areas containsArea(Point p) {
+		Areas area = null;
+		if (p.getY() >= this.getY() && p.getY() < this.getY() + this.getHeight()) {
+			if (p.getX() >= this.getX()) {
+				if (p.getX() < this.getX() + 8)
+					area = Areas.BorderLeft;
+				else if (p.getX() < this.getX() + this.getWidth() - 8)
+					area = Areas.InArea;
+				else if (p.getX() < this.getX() + this.getWidth())
+					area = Areas.BorderRight;
+				else
+					area = Areas.NotInArea;
+			} else
+				area = Areas.NotInArea;
+		} else
+			area = Areas.NotInArea;
+		return area;
+	}
+	
+	static public enum Areas {
+		BorderLeft,
+		BorderRight,
+		NotInArea,
+		InArea
+	};
 	
 }
