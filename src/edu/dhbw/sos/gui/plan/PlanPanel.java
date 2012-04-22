@@ -65,6 +65,32 @@ public class PlanPanel extends JPanel implements IUpdateable, ComponentListener 
 		this.setLayout(new BorderLayout());
 		this.addComponentListener(this);
 		
+		// create Labels for pPaintArea
+		JPanel lPanel = new JPanel();
+		lPanel.setLayout(new BoxLayout(lPanel, BoxLayout.Y_AXIS));
+		JLabel lBreak = new JLabel("Pause");
+		JLabel lExercise = new JLabel("Übung");
+		JLabel lGroup = new JLabel("Gruppe");
+		JLabel lTheroy = new JLabel("Theorie");
+		// lPanel.setSize(40, 10);
+		lBreak.setPreferredSize(new Dimension(80,40));
+		lBreak.setVerticalTextPosition(JLabel.BOTTOM);
+		lExercise.setPreferredSize(new Dimension(80, 40));
+		lExercise.setVerticalTextPosition(JLabel.BOTTOM);
+		lGroup.setPreferredSize(new Dimension(80, 40));
+		lGroup.setVerticalTextPosition(JLabel.BOTTOM);
+		lTheroy.setPreferredSize(new Dimension(80, 60));
+		lTheroy.setVerticalTextPosition(JLabel.BOTTOM);
+
+		lPanel.add(Box.createVerticalGlue());
+		
+		lPanel.add(lBreak);
+		lPanel.add(lExercise);
+		lPanel.add(lGroup);
+		lPanel.add(lTheroy);
+		lPanel.setPreferredSize(new Dimension(60,120));
+		this.add(lPanel, BorderLayout.WEST);
+		
 		// init paintArea
 		paintArea = new PaintArea(timeBlocks);
 		this.add(paintArea, BorderLayout.CENTER);

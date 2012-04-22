@@ -74,7 +74,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		this.initMovableBlocks();
 		
 		attDia = new Diagram(new LinkedList<Float>());
-		attDia.setLocation(new Point(50, 10));
+		attDia.setLocation(new Point(5, 10));
 	}
 	
 	
@@ -89,7 +89,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	 */
 	public void initMovableBlocks() {
 		movableBlocks = new LinkedList<MovableBlock>();
-		start = 0;
+		start = 5;
 		scaleRatio = (this.getWidth() - start) / (tbs.getTotalLength() != 0 ? tbs.getTotalLength() : 1);
 		for (TimeBlock tb : tbs) {
 			Point location;
@@ -167,7 +167,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		double mi = 60.0;
 		double timemarkers = scaleRatio * mi;
 		// logger.debug(timemarkers + "");
-		for (int i = start; i < this.getWidth(); i += (int) mi) {
+		for (int i = start; i < this.getWidth(); i += (int) timemarkers) {
 			ga.drawLine(i, 135, i, 145);
 		}
 		
