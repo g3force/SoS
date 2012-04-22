@@ -133,10 +133,10 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		Graphics2D ga = (Graphics2D) g;
 		ga.clearRect(0, 0, this.getWidth(), this.getHeight());
 		
-//		ga.drawString("Pause", 5, 30);
-//		ga.drawString("Übung", 5, 60);
-//		ga.drawString("Gruppe", 5, 90);
-//		ga.drawString("Theorie", 5, 120);
+		// ga.drawString("Pause", 5, 30);
+		// ga.drawString("Übung", 5, 60);
+		// ga.drawString("Gruppe", 5, 90);
+		// ga.drawString("Theorie", 5, 120);
 		// draw sinus
 		// ga.setPaint(Color.green);
 		// ga.setStroke(new BasicStroke(2F));
@@ -159,6 +159,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 			ga.draw(moveBlock);
 		}
 		
+		
 		// draw Timeline
 		ga.setPaint(Color.blue);
 		ga.drawLine(start, 140, this.getWidth() - start, 140);
@@ -167,8 +168,10 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		double mi = 60.0;
 		double timemarkers = scaleRatio * mi;
 		// logger.debug(timemarkers + "");
-		for (int i = start; i < this.getWidth(); i += (int) timemarkers) {
-			ga.drawLine(i, 135, i, 145);
+		if (timemarkers > 0.0) {
+			for (int i = start; i < this.getWidth(); i += (int) timemarkers) {
+				ga.drawLine(i, 135, i, 145);
+			}
 		}
 		
 		// draw diagram
@@ -478,37 +481,95 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	
 	private void dAndDResize(Point e) {
 		if (moveBlock != null) {
-			// Calculate the movement in x. Negative Value means to
-			// the left and positive to the right.
-			int mmt_X = (int) Math.floor(e.getX() + moveBlock.getRelMouseLocation().getX() - moveBlock.getX());
+			// 4 Possibilites: left area with and without neighbour; right area with and without neighbour
 			
-			if (area == Areas.BorderLeft && index > 0) {
-				if (moveBlock.width > 20 && movableBlocks.get(index - 1).width > 20) {
-					movableBlocks.get(index - 1).width += mmt_X;
-					moveBlock.width -= mmt_X;
-				}
-				if (movableBlocks.get(index - 1).width <= 20) {
-					movableBlocks.get(index - 1).width = 20;
-				} else if (moveBlock.width <= 20) {
+			// left area without neighbour
+			if (area == Areas.BorderLeft && index == 0) {
+				// Calculate the movement in x. Negative Value means to
+				// the left and positive to the right.
+				int mmt_X = (int) Math.floor(e.getX() + moveBlock.getRelMouseLocation().getX() - moveBlock.getX());
+				if (moveBlock.width + mmt_X < 20) {
 					moveBlock.width = 20;
+					mmt_X = 0;
+					moveBlock.setLocation(moveBlock.getX(), moveBlock.getY());
+				} else {
+					moveBlock.width += mmt_X;
+					moveBlock.setLocation(moveBlock.getX() + mmt_X, moveBlock.getY());
 				}
-				movableBlocks.get(index - 1).getTimeBlock().setLen((int) (movableBlocks.get(index - 1).width / scaleRatio));
-				movableBlocks.get(index - 1).printMbTb(index - 1, "L");
 				
+			}
+			// left area with neighbour
+			else if (area == Areas.BorderLeft && index > 0) {
 				
-				moveBlock.getTimeBlock().setLen((int) (moveBlock.width / scaleRatio));
-				moveBlock.printMbTb(index, "M");
-				// TODO setLocation of moveBlock
 			}
-			if (area == Areas.BorderRight && index + 1 < movableBlocks.size()) {
-				movableBlocks.get(index + 1).width -= mmt_X;
-				if (movableBlocks.get(index + 1).width < 20)
-					movableBlocks.get(index + 1).width = 20;
-				movableBlocks.get(index + 1).getTimeBlock().setLen((int) (movableBlocks.get(index + 1).width / scaleRatio));
-				movableBlocks.get(index + 1).printMbTb(index - 1, "R");
-				// TODO setLocation of Block index+1
+			// right area without neighbour
+			else if (area == Areas.BorderRight && index + 1 == movableBlocks.size()) {
+				
 			}
+			// right area with neighbour
+			else if (area == Areas.BorderRight && index + 1 < movableBlocks.size()) {
+				
+			}
+			
+			
 		}
+		
+		
+		// if (moveBlock != null) {
+		// // Calculate the movement in x. Negative Value means to
+		// // the left and positive to the right.
+		// int mmt_X = (int) Math.floor(e.getX() + moveBlock.getRelMouseLocation().getX() - moveBlock.getX());
+		//
+		// if (area == Areas.BorderLeft) {
+		//
+		//
+		// if (index > 0) {
+		// // if (moveBlock.width > 20 && movableBlocks.get(index - 1).width > 20) {
+		// movableBlocks.get(index - 1).width += mmt_X;
+		// moveBlock.width -= mmt_X;
+		// // }
+		// if (movableBlocks.get(index - 1).width <= 20) {
+		// moveBlock.width -= 20 - movableBlocks.get(index - 1).width;
+		// movableBlocks.get(index - 1).width = 20;
+		// } else if (moveBlock.width <= 20) {
+		// movableBlocks.get(index - 1).width -= 20 - moveBlock.width;
+		// moveBlock.width = 20;
+		// }
+		// movableBlocks.get(index - 1).getTimeBlock()
+		// .setLen((int) (movableBlocks.get(index - 1).width / scaleRatio));
+		// movableBlocks.get(index - 1).printMbTb(index - 1, "L");
+		//
+		//
+		// moveBlock.getTimeBlock().setLen((int) (moveBlock.width / scaleRatio));
+		// moveBlock.printMbTb(index, "M");
+		// // TODO setLocation of moveBlock
+		// moveBlock.setLocation(moveBlock.getX() - mmt_X, moveBlock.getY());
+		// }
+		// }
+		// if (area == Areas.BorderRight) {
+		//
+		//
+		// if (index + 1 < movableBlocks.size()) {
+		// moveBlock.width += mmt_X;
+		// if (moveBlock.width < 20) {
+		// mmt_X -= moveBlock.width;
+		// moveBlock.width = 20;
+		// return;
+		// }
+		// moveBlock.getTimeBlock().setLen((int) (moveBlock.width / scaleRatio));
+		//
+		// movableBlocks.get(index + 1).width -= mmt_X;
+		// if (movableBlocks.get(index + 1).width < 20)
+		// movableBlocks.get(index + 1).width = 20;
+		// movableBlocks.get(index + 1).getTimeBlock()
+		// .setLen((int) (movableBlocks.get(index + 1).width / scaleRatio));
+		// movableBlocks.get(index + 1).printMbTb(index - 1, "R");
+		// // TODO setLocation of Block index+1
+		// movableBlocks.get(index + 1).setLocation(movableBlocks.get(index + 1).getX() + mmt_X,
+		// movableBlocks.get(index + 1).getY());
+		// }
+		// }
+		// }
 	}
 	
 	
