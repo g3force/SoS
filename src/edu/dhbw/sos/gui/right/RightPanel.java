@@ -52,7 +52,7 @@ public class RightPanel extends JPanel implements IUpdateable, ICoursesListObser
 	// child elements
 	private JPanel					statsPanel;
 	private JPanel					suggestionPanel;
-	private JComboBox<Course>	courseList;
+	private JComboBox	courseList;
 	
 	private Courses				courses;
 	
@@ -72,7 +72,7 @@ public class RightPanel extends JPanel implements IUpdateable, ICoursesListObser
 		courseListPanel.setMaximumSize(new Dimension(PREF_SIZE - MARGIN_LR * 2, 10));
 		this.add(courseListPanel);
 		
-		courseList = new JComboBox<Course>();
+		courseList = new JComboBox();
 		courseListPanel.add(courseList, BorderLayout.CENTER);
 		
 		// #############################################################################
