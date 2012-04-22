@@ -9,14 +9,17 @@
  */
 package edu.dhbw.sos.simulation;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 
-import edu.dhbw.sos.SuperFelix;
 import edu.dhbw.sos.course.Course;
-import edu.dhbw.sos.gui.MainFrame;
+import edu.dhbw.sos.gui.course.CPaintArea;
 
 
 /**
@@ -27,36 +30,22 @@ import edu.dhbw.sos.gui.MainFrame;
  * 
  */
 
-public class SimController {
+public class SimController implements ActionListener, MouseListener {
 	
 	private Course	course;
-	private MainFrame mainFrame;
 	private int		currentTime;			// in milliseconds from "begin"
 	private int		speed;					// in milliseconds
 	private Timer		pulse	= new Timer();
-	private static SimController instance = null;
 	private boolean run = false;
 	private static final Logger	logger	= Logger.getLogger(SimController.class);
 	
 	
-	private SimController(Course course, MainFrame mf) {
+	public SimController(Course course) {
 		this.course = course;
-		this.mainFrame = mf;
 		currentTime = 0;
 		speed = 1000;
 	}
 	
-	public static void init(Course course, MainFrame mf) {
-		instance = new SimController(course, mf);
-	}
-	
-	public static SimController getInstance() throws Exception {
-		if(instance == null) {
-			throw new NotInitializedException("Please call the init function first. Thank you.");
-		} else {
-			return instance;
-		}
-	}
 	
 	public void toggle() {
 		if(run)
@@ -65,11 +54,6 @@ public class SimController {
 			run();
 		run = !run;
 	}
-	
-	
-//	public static void main(String[] args) {
-//		new SimController(new Course(), new MainFrame(new GUIData()));
-//	}
 	
 	
 	public void run() {
@@ -97,7 +81,6 @@ public class SimController {
 		currentTime += speed;
 		logger.info("Simulation Step at "+currentTime);
 		course.simulationStep(currentTime, speed);
-		mainFrame.update();
 	}
 	
 	
@@ -126,5 +109,45 @@ public class SimController {
 	
 	public void setSpeed(int speed) {
 		this.speed = speed;
+	}
+
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO NicolaiO Auto-generated method stub
+		
+	}
+	
+	
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		CPaintArea cpa = (CPaintArea) e.getSource();
+		int index = cpa.getData().getSelectedProperty();
+		int value = 100;
+		// right click
+		if (e.getButton() == MouseEvent.BUTTON3)
+			value *= -1;
+		cpa.getData().getSelectedStudent().donInput(index, value, currentTime);
+	}
+	
+	
+	@Override
+	public void mousePressed(MouseEvent e) {
+	}
+	
+	
+	@Override
+	public void mouseReleased(MouseEvent e) {
+	}
+
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		
 	}
 }

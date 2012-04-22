@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
 import edu.dhbw.sos.gui.GUIData;
-import edu.dhbw.sos.gui.MainFrame;
+import edu.dhbw.sos.simulation.SimController;
 
 
 /**
@@ -70,9 +70,10 @@ public class CPaintArea extends JPanel implements MouseListener, MouseMotionList
 	 * 
 	 * @author NicolaiO
 	 */
-	public CPaintArea(GUIData _data) {
+	public CPaintArea(SimController simController, GUIData _data) {
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
+		this.addMouseListener(simController);
 		studentCircles = new StudentCircle[0][0];
 		data = _data;
 	}
@@ -247,20 +248,11 @@ public class CPaintArea extends JPanel implements MouseListener, MouseMotionList
 			}
 		}
 		this.repaint();
-		MainFrame.getInstance().update();
 	}
 	
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		int index = data.getSelectedProperty();
-		int value = 100;
-		// right click
-		if (e.getButton() == MouseEvent.BUTTON3)
-			value *= -1;
-		hoveredStudent.getStudent().donInput(index, value);
-		hoveredStudent.update();
-		this.repaint();
 	}
 	
 	
@@ -283,7 +275,16 @@ public class CPaintArea extends JPanel implements MouseListener, MouseMotionList
 	public void mouseExited(MouseEvent e) {
 		hoveredStudent = null;
 		data.setSelectedStudent(null);
-		MainFrame.getInstance().update();
-//		this.repaint();
+		this.repaint();
+	}
+	
+	
+	public GUIData getData() {
+		return data;
+	}
+	
+	
+	public void setData(GUIData data) {
+		this.data = data;
 	}
 }

@@ -35,7 +35,7 @@ public class StatusBar extends JPanel implements IUpdateable {
 	private static final long	serialVersionUID	= -781636966151974445L;
 	
 	
-	public StatusBar(GUIData data) {
+	public StatusBar() {
 		this.setLayout(new BorderLayout(5,0));
 		JLabel lblStatusText = new JLabel("This is the statusbar. It looks really ugly, but that`s Daniels problem :)");
 		lblStatusText.setBorder(BorderFactory.createLineBorder(Color.black));

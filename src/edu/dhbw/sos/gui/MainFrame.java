@@ -23,6 +23,8 @@ import javax.swing.border.Border;
 
 import org.apache.log4j.Logger;
 
+import edu.dhbw.sos.course.CourseController;
+import edu.dhbw.sos.course.Courses;
 import edu.dhbw.sos.gui.course.CoursePanel;
 import edu.dhbw.sos.gui.plan.PlanPanel;
 import edu.dhbw.sos.gui.right.RightPanel;
@@ -43,20 +45,12 @@ public class MainFrame extends JFrame implements IUpdateable, WindowListener {
 	private static final Logger		logger				= Logger.getLogger(MainFrame.class);
 	
 	// standard borders
-	public static final Border			blackBorder			= BorderFactory.createLineBorder(Color.black);
-	public static final Border			emptyBorder			= BorderFactory.createEmptyBorder(5, 5, 5, 5);
-	public static final Border			compoundBorder		= BorderFactory.createCompoundBorder(blackBorder, emptyBorder);
+	public static final Border			BLACK_BOARDER		= BorderFactory.createLineBorder(Color.black);
+	public static final Border			EMPTY_BORDER		= BorderFactory.createEmptyBorder(5, 5, 5, 5);
+	public static final Border			COMPOUND_BORDER	= BorderFactory.createCompoundBorder(BLACK_BOARDER, EMPTY_BORDER);
 	
 	// panels
-	private JPanel							contentPane;
-	private CoursePanel					coursePanel;
-	private RightPanel					rightPanel;
-	private StatusBar						statusBar;
-	private StudentPanel					studentPanel;
-	private PlanPanel						planPanel;
 	private LinkedList<IUpdateable>	components			= new LinkedList<IUpdateable>();
-	
-	private static MainFrame			instance;
 	
 	
 	/**
@@ -65,9 +59,8 @@ public class MainFrame extends JFrame implements IUpdateable, WindowListener {
 	 * @param data
 	 * @author NicolaiO
 	 */
-	public MainFrame(GUIData data) {
+	public MainFrame(CourseController courseController, Courses courses) {
 		logger.debug("Initializing...");
-		instance = this;
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLocationByPlatform(true);
 		this.setTitle(Messages.getString("MainFrame.1"));
@@ -82,15 +75,17 @@ public class MainFrame extends JFrame implements IUpdateable, WindowListener {
 		// this.setIconImage(Toolkit.getDefaultToolkit().getImage(iconUrl));
 		// }
 		
-		coursePanel = new CoursePanel(data);
+		GUIData guiData = new GUIData();
+		CoursePanel coursePanel = new CoursePanel(courses.getCurrentCourse().getSimController(), courseController,
+				courses.getCurrentCourse(), guiData);
 		components.add(coursePanel);
-		rightPanel = new RightPanel(data);
+		RightPanel rightPanel = new RightPanel(courseController, courses);
 		components.add(rightPanel);
-		statusBar = new StatusBar(data);
+		StatusBar statusBar = new StatusBar();
 		components.add(statusBar);
-		studentPanel = new StudentPanel(data);
+		StudentPanel studentPanel = new StudentPanel(guiData);
 		components.add(studentPanel);
-		planPanel = new PlanPanel(data);
+		PlanPanel planPanel = new PlanPanel(courses.getCurrentCourse().getSimController(), courses.getCurrentCourse());
 		components.add(planPanel);
 		
 		// put BottomPanel and StatusBar in a new Panel
@@ -102,7 +97,7 @@ public class MainFrame extends JFrame implements IUpdateable, WindowListener {
 		
 		// add everything to contentPane
 		logger.debug("add content now");
-		contentPane = (JPanel) getContentPane();
+		JPanel contentPane = (JPanel) getContentPane();
 		contentPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(5, 5));
 		contentPane.add(coursePanel, BorderLayout.CENTER);
@@ -110,7 +105,7 @@ public class MainFrame extends JFrame implements IUpdateable, WindowListener {
 		contentPane.add(bsPanel, BorderLayout.SOUTH);
 		
 		// build GUI
-		logger.debug("update() and pack() now");
+		logger.debug("pack() now");
 		pack();
 		
 		logger.debug("Initialized.");
@@ -159,10 +154,5 @@ public class MainFrame extends JFrame implements IUpdateable, WindowListener {
 	
 	@Override
 	public void windowDeactivated(WindowEvent e) {
-	}
-	
-	
-	public static MainFrame getInstance() {
-		return instance;
 	}
 }

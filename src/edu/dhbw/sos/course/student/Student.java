@@ -9,8 +9,10 @@
  */
 package edu.dhbw.sos.course.student;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
@@ -19,19 +21,17 @@ import edu.dhbw.sos.helper.CalcVector;
 
 
 /**
- * TODO bene, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
+ * this class represents a student
  * 
- * @author bene
+ * @author bene, dirk
  * 
  */
 public class Student implements IPlace, Cloneable {
 	private CalcVector									actualState;
-	private LinkedHashMap<Integer, CalcVector>	historyStates	= new LinkedHashMap<Integer, CalcVector>();
+	private LinkedHashMap<Integer, CalcVector>	historyStates		= new LinkedHashMap<Integer, CalcVector>();
+	private HashMap<Integer, Student>				historyDonInput	= new HashMap<Integer, Student>();
 	private CalcVector									changeVector;
-	private static final Logger						logger			= Logger.getLogger(Student.class);
-	
+	private static final Logger						logger				= Logger.getLogger(Student.class);
 	
 	
 	public Student(int vectorInitSize) {
@@ -39,8 +39,9 @@ public class Student implements IPlace, Cloneable {
 		this.changeVector = new CalcVector(vectorInitSize);
 	}
 	
-	private Student() {
-		
+	public Student(CalcVector actualState, CalcVector changeVector) {
+		this.actualState = actualState;
+		this.changeVector = changeVector;
 	}
 	
 	
@@ -51,11 +52,42 @@ public class Student implements IPlace, Cloneable {
 	 * @param value value to add (negative to sub)
 	 * @author NicolaiO
 	 */
-	public void donInput(int index, float value) {
+	public void donInput(int index, float value, int time) {
 		CalcVector cv = new CalcVector(4);
 		cv.setValueAt(index, value);
-		this.addToStateVector(cv, 0, 0);
-		this.addToChangeVector(cv, 0, 0);
+		addHistoryDonInput(time);
+		addToChangeVector(cv);
+		addToStateVector(cv, 0, 0);
+	}
+	
+	/**
+	 * adds a new state to the history states
+	 * @param time
+	 * @param currentState
+	 * @author dirk
+	 */
+	public void addHistoryDonInput(int time) {
+		historyDonInput.put(time, this.clone());
+	}
+	
+	/**
+	 * takes a start and end time
+	 * if there was an interaction from the don in this time period the latest interaction will be returned
+	 * otherwise null will be returned
+	 * @param start time in milliseconds
+	 * @param end time in milliseconds
+	 * @return
+	 * @author dirk
+	 */
+	public Entry<Integer, Student> historyDonInputInInterval(int start, int end) {
+		Entry<Integer, Student> latest = null;
+		for (Entry<Integer, Student> historyState : historyDonInput.entrySet()) {
+			if (historyState.getKey() > start && historyState.getKey() < end) {
+				if (latest == null || latest.getKey() < historyState.getKey())
+					latest = historyState;
+			}
+		}
+		return latest;
 	}
 	
 	
@@ -87,7 +119,15 @@ public class Student implements IPlace, Cloneable {
 		this.addToStateVector(changeVector, x, y);
 	}
 	
-	
+	/**
+	 * 
+	 * adds a change vector to the state vector of a student
+	 * 
+	 * @param addVector 
+	 * @param x TO DELETE, only for simulation debug
+	 * @param y TO DELETE, only for simulation debug
+	 * @author dirk
+	 */
 	public void addToStateVector(CalcVector addVector, int x, int y) {
 		if (y == 0 && x == 0)
 			addVector.printCalcVector("ADD Vector");
@@ -115,10 +155,19 @@ public class Student implements IPlace, Cloneable {
 		}
 	}
 	
-	
-	public void addToChangeVector(CalcVector addVector, int x, int y) {
-		// TODO check limits keep in normal values
+	/**
+	 * modify the change vector after a don input
+	 * @param addVector
+	 * @author dirk
+	 */
+	public void addToChangeVector(CalcVector addVector) {
 		changeVector.addCalcVector(addVector);
+		for(int i=0; i<changeVector.size(); i++) {
+			if(changeVector.getValueAt(i)<100)
+				changeVector.setValueAt(i, 100);
+			if(changeVector.getValueAt(i)>0)
+				changeVector.setValueAt(i, 0);
+		}
 	}
 	
 	
@@ -146,7 +195,6 @@ public class Student implements IPlace, Cloneable {
 			res /= actualState.size();
 		return res;
 	}
-	
 	
 	
 	/**
@@ -183,7 +231,6 @@ public class Student implements IPlace, Cloneable {
 		return this.changeVector;
 	}
 	
-
 	
 	/**
 	 * Adds value to the value of the parmeter at position index.
@@ -240,10 +287,7 @@ public class Student implements IPlace, Cloneable {
 	 * Creates an exact clone of this student object. All values are copied into a completely new object (no references!)
 	 */
 	public Student clone() {
-		Student ret = new Student();
-		ret.actualState = this.actualState.clone();
-		ret.changeVector = this.changeVector.clone();
-		return ret;
+		return new Student(this.actualState.clone(),this.changeVector.clone());
 	}
 	
 	
@@ -262,4 +306,5 @@ public class Student implements IPlace, Cloneable {
 	public LinkedHashMap<Integer, CalcVector> getHistoryStates() {
 		return historyStates;
 	}
+
 }

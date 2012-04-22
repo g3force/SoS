@@ -12,14 +12,16 @@ package edu.dhbw.sos.gui.course;
 import java.awt.BorderLayout;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
-import edu.dhbw.sos.course.student.IPlace;
+import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.course.CourseController;
+import edu.dhbw.sos.course.ICurrentCourseObserver;
 import edu.dhbw.sos.gui.GUIData;
 import edu.dhbw.sos.gui.IUpdateable;
 import edu.dhbw.sos.gui.MainFrame;
+import edu.dhbw.sos.simulation.SimController;
 
 
 /**
@@ -29,38 +31,35 @@ import edu.dhbw.sos.gui.MainFrame;
  * @author NicolaiO
  * 
  */
-public class CoursePanel extends JPanel implements IUpdateable, ComponentListener {
+public class CoursePanel extends JPanel implements IUpdateable, ComponentListener, ICurrentCourseObserver {
 	private static final long	serialVersionUID	= 5542875796802944785L;
 	// private static final Logger logger = Logger.getLogger(CoursePanel.class);
-	private final CPaintArea		paintArea;
-	private IPlace[][]			students;
-	private LinkedList<String>	properties;
-	GUIData data;
+	private final CPaintArea	paintArea;
+	private Course					course;
+	
 	
 	/**
 	 * @brief Initialize the CoursePanel
 	 * 
-	 * @param data GUIData
+	 * @param courseController
+	 * @param courses
 	 * @author NicolaiO
 	 */
-	public CoursePanel(GUIData data) {
-		this.data = data;
-		this.setBorder(MainFrame.compoundBorder);
+	public CoursePanel(SimController simController, CourseController courseController, Course course, GUIData guiData) {
+		this.setBorder(MainFrame.COMPOUND_BORDER);
 		this.setLayout(new BorderLayout());
 		this.setLayout(new BorderLayout());
 		this.addComponentListener(this);
-		students = data.getCourse().getStudents();
-		properties = data.getCourse().getProperties();
-		paintArea = new CPaintArea(data);
+		this.course = course;
+		paintArea = new CPaintArea(simController, guiData);
 		this.add(paintArea, BorderLayout.CENTER);
 	}
 	
 	
 	@Override
 	public void update() {
-		students = data.getCourse().getStudents();
-		paintArea.updateStudentCircles(students);
-		paintArea.updateProperties(properties);
+		paintArea.updateStudentCircles(course.getStudents());
+		paintArea.updateProperties(course.getProperties());
 	}
 	
 	
@@ -82,5 +81,12 @@ public class CoursePanel extends JPanel implements IUpdateable, ComponentListene
 	
 	@Override
 	public void componentHidden(ComponentEvent e) {
+	}
+
+
+	@Override
+	public void updateCurrentCourse(Course course) {
+		this.course = course;
+		update();
 	}
 }
