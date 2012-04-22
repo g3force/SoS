@@ -70,8 +70,7 @@ public class CourseLoader {
 						//<course> was found.
 						if(tagname.contentEquals("course")) {
 							
-							Course newCourse = new Course();
-							newCourse.setName( reader.getAttributeValue(0) ); 
+							Course newCourse = new Course(reader.getAttributeValue(0));
 
 							int tmpRows = Integer.parseInt( reader.getAttributeValue(1) );
 							int tmpCols = Integer.parseInt( reader.getAttributeValue(2) );
@@ -149,7 +148,7 @@ public class CourseLoader {
 			lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.pause));
 			lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.group));
 			
-			Course dummy = new Course();
+			Course dummy = new Course("Your first Course");
 			dummy.setLecture(lecture);
 			dummy.setInfluence(influence);
 			dummy.setStudents(students);

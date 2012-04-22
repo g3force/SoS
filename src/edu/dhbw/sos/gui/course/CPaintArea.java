@@ -59,6 +59,8 @@ public class CPaintArea extends JPanel {
 	
 	public void updateHoveredStudent(StudentCircle hoveredStudent) {
 		this.hoveredStudent = hoveredStudent;
+		if (this.hoveredStudent != null)
+			this.hoveredStudent.update();
 		this.repaint();
 	}
 	

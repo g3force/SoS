@@ -118,12 +118,13 @@ public class SimController implements ActionListener, MouseListener {
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		int index = course.getSelectedProperty();
-		int value = 100;
+		float value = 10;
 		// right click
 		if (e.getButton() == MouseEvent.BUTTON3)
 			value *= -1;
-		course.getSelectedStudent().donInput(index, value, currentTime);
+		if (course.getSelectedStudent() != null)
+			course.getSelectedStudent().donInput(course.getSelectedProperty(), value, currentTime);
+		course.notifyStudentsObservers();
 	}
 	
 	

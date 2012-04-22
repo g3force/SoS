@@ -12,16 +12,12 @@ package edu.dhbw.sos.gui.right;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.net.URL;
 import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -30,7 +26,9 @@ import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.CourseController;
 import edu.dhbw.sos.course.Courses;
 import edu.dhbw.sos.course.ICoursesListObserver;
-import edu.dhbw.sos.gui.IUpdateable;
+import edu.dhbw.sos.course.ICurrentCourseObserver;
+import edu.dhbw.sos.course.statistics.IStatisticsObserver;
+import edu.dhbw.sos.course.suggestions.ISuggestionsObserver;
 import edu.dhbw.sos.gui.MainFrame;
 import edu.dhbw.sos.helper.Messages;
 
@@ -42,7 +40,8 @@ import edu.dhbw.sos.helper.Messages;
  * @author NicolaiO
  * 
  */
-public class RightPanel extends JPanel implements IUpdateable, ICoursesListObserver {
+public class RightPanel extends JPanel implements ICurrentCourseObserver, ICoursesListObserver, IStatisticsObserver,
+		ISuggestionsObserver {
 	private static final long	serialVersionUID	= -6879799823225506209L;
 	// width of panel
 	private static final int	PREF_SIZE			= 200;
@@ -63,6 +62,7 @@ public class RightPanel extends JPanel implements IUpdateable, ICoursesListObser
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		this.courses = courses;
 		courses.subscribeCoursesList(this);
+		courses.subscribeCurrentCourse(this);
 		
 		// #############################################################################
 		// drop down list
@@ -73,22 +73,28 @@ public class RightPanel extends JPanel implements IUpdateable, ICoursesListObser
 		this.add(courseListPanel);
 		
 		courseList = new JComboBox<Course>();
-		courseListPanel.add(courseList, BorderLayout.CENTER);
+		courseList.setEditable(true);
+		courseList.addItemListener(courseController);
+		updateCoursesList();
+		courseListPanel.add(courseList, BorderLayout.NORTH);
 		
 		// #############################################################################
 		// edit button
-		JButton editBtn = new JButton("edit");
-		URL editIconUrl = getClass().getResource("/res/icons/pencil.png");
-		if (editIconUrl != null) {
-			ImageIcon icon = new ImageIcon(editIconUrl);
-			Image img = icon.getImage();
-			Image newimg = img.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
-			ImageIcon newIcon = new ImageIcon(newimg);
-			editBtn = new JButton(newIcon);
-			editBtn.setBorderPainted(false);
-			editBtn.addActionListener(courseController);
-		}
-		courseListPanel.add(editBtn, BorderLayout.EAST);
+		EditBtn editBtn = new EditBtn();
+		editBtn.addActionListener(courseController);
+		courseListPanel.add(editBtn, BorderLayout.WEST);
+		
+		// #############################################################################
+		// add button
+		AddBtn addBtn = new AddBtn();
+		addBtn.addActionListener(courseController);
+		courseListPanel.add(addBtn, BorderLayout.CENTER);
+		
+		// #############################################################################
+		// delete button
+		DelBtn delBtn = new DelBtn();
+		delBtn.addActionListener(courseController);
+		courseListPanel.add(delBtn, BorderLayout.EAST);
 		
 		// #############################################################################
 		// statistics
@@ -98,6 +104,7 @@ public class RightPanel extends JPanel implements IUpdateable, ICoursesListObser
 		statsPanel.setMaximumSize(new Dimension(PREF_SIZE - MARGIN_LR * 2, 200));
 		this.add(Box.createVerticalStrut(10));
 		this.add(statsPanel);
+		updateStatistics();
 		
 		
 		// #############################################################################
@@ -108,6 +115,7 @@ public class RightPanel extends JPanel implements IUpdateable, ICoursesListObser
 		suggestionPanel.setMaximumSize(new Dimension(PREF_SIZE - MARGIN_LR * 2, 100));
 		this.add(Box.createVerticalStrut(10));
 		this.add(suggestionPanel);
+		updateSuggestions();
 		
 		// #############################################################################
 		// fill the rest of the space
@@ -116,23 +124,26 @@ public class RightPanel extends JPanel implements IUpdateable, ICoursesListObser
 	
 	
 	@Override
-	public void update() {
-		updateData();
+	public void updateCoursesList() {
+		// course list
+		courseList.removeAllItems();
+		for (Course course : courses) {
+			courseList.addItem(course);
+		}
+		updateCurrentCourse(courses.getCurrentCourse());
 	}
 	
 	
-	private void updateData() {
-		// statistics
-		if (statsPanel.getComponentCount() != courses.getCurrentCourse().getStatistics().size()) {
-			statsPanel.removeAll();
-			for (Map.Entry<String, String> entry : courses.getCurrentCourse().getStatistics().entrySet()) {
-				JLabel lblKey = new JLabel(entry.getKey());
-				JLabel lblValue = new JLabel(entry.getValue(), JLabel.CENTER);
-				statsPanel.add(lblKey);
-				statsPanel.add(lblValue);
-			}
+	@Override
+	public void updateCurrentCourse(Course course) {
+		if (courses.size() > 0) {
+			courseList.setSelectedIndex(courses.indexOf(courses.getCurrentCourse()));
 		}
-		
+	}
+	
+	
+	@Override
+	public void updateSuggestions() {
 		// suggestions
 		if (suggestionPanel.getComponentCount() != courses.getCurrentCourse().getStatistics().size() + 1) {
 			suggestionPanel.removeAll();
@@ -177,14 +188,16 @@ public class RightPanel extends JPanel implements IUpdateable, ICoursesListObser
 	
 	
 	@Override
-	public void updateCoursesList() {
-		// course list
-		courseList.removeAllItems();
-		for (Course course : courses) {
-			courseList.addItem(course);
-		}
-		if (courses.size() > 0) {
-			courseList.setSelectedIndex(courses.indexOf(courses.getCurrentCourse()));
+	public void updateStatistics() {
+		// statistics
+		if (statsPanel.getComponentCount() != courses.getCurrentCourse().getStatistics().size()) {
+			statsPanel.removeAll();
+			for (Map.Entry<String, String> entry : courses.getCurrentCourse().getStatistics().entrySet()) {
+				JLabel lblKey = new JLabel(entry.getKey());
+				JLabel lblValue = new JLabel(entry.getValue(), JLabel.CENTER);
+				statsPanel.add(lblKey);
+				statsPanel.add(lblValue);
+			}
 		}
 	}
 }

@@ -11,21 +11,12 @@ package edu.dhbw.sos.course;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.util.LinkedList;
-import java.util.List;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-
-import edu.dhbw.sos.course.io.CourseLoader;
-import edu.dhbw.sos.course.student.EmptyPlace;
-import edu.dhbw.sos.course.student.IPlace;
-import edu.dhbw.sos.course.student.Student;
-import edu.dhbw.sos.helper.Parameter;
+import edu.dhbw.sos.gui.right.AddBtn;
+import edu.dhbw.sos.gui.right.DelBtn;
+import edu.dhbw.sos.gui.right.EditBtn;
 
 
 /**
@@ -33,7 +24,8 @@ import edu.dhbw.sos.helper.Parameter;
  * @author SebastianN
  * 
  */
-public class CourseController implements ActionListener {
+public class CourseController implements ActionListener, ItemListener {
+	// private static final Logger logger = Logger.getLogger(CourseController.class);
 	private Courses	courses;
 	
 	
@@ -45,5 +37,26 @@ public class CourseController implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// handle add, modify, delete course
+		if (e.getSource() instanceof AddBtn) {
+			Course newC = new Course("New Profile " + courses.size());
+			courses.add(newC);
+			courses.setCurrentCourse(newC);
+		} else if (e.getSource() instanceof EditBtn) {
+			// TODO trigger edit mode
+		} else if (e.getSource() instanceof DelBtn) {
+			courses.remove(courses.getCurrentCourse());
+		}
+	}
+	
+	
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		if (e.getStateChange() == ItemEvent.SELECTED) {
+			if (e.getItem() instanceof String) {
+				courses.getCurrentCourse().setName((String) e.getItem());
+				courses.notifyCoursesListObservers();
+			}
+			courses.setCurrentCourse(e.getItem());
+		}
 	}
 }
