@@ -58,6 +58,7 @@ public class Student implements IPlace, Cloneable {
 		addHistoryDonInput(time);
 		addToChangeVector(cv);
 		addToStateVector(cv, 0, 0);
+		
 	}
 	
 	/**
