@@ -18,7 +18,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import edu.dhbw.sos.gui.IUpdateable;
+import edu.dhbw.sos.gui.AboutDlg;
 
 
 
@@ -28,7 +28,7 @@ import edu.dhbw.sos.gui.IUpdateable;
  * @author NicolaiO
  * 
  */
-public class StatusBar extends JPanel implements IUpdateable {
+public class StatusBar extends JPanel {
 	
 	/**  */
 	private static final long	serialVersionUID	= -781636966151974445L;
@@ -69,14 +69,8 @@ public class StatusBar extends JPanel implements IUpdateable {
 			public void mouseClicked(MouseEvent e) {
 				// new JDialog((Frame) StatusBar.this.getTopLevelAncestor(),"About");
 				// new JDialog(SwingUtilities.getWindowAncestor(StatusBar.this.getTopLevelAncestor()),"About");
+				new AboutDlg();
 			}
 		});
 	}
-
-
-	@Override
-	public void update() {
-		
-	}
-	
 }

@@ -133,10 +133,10 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		Graphics2D ga = (Graphics2D) g;
 		ga.clearRect(0, 0, this.getWidth(), this.getHeight());
 		
-//		ga.drawString("Pause", 5, 30);
-//		ga.drawString("Übung", 5, 60);
-//		ga.drawString("Gruppe", 5, 90);
-//		ga.drawString("Theorie", 5, 120);
+		// ga.drawString("Pause", 5, 30);
+		// ga.drawString("Übung", 5, 60);
+		// ga.drawString("Gruppe", 5, 90);
+		// ga.drawString("Theorie", 5, 120);
 		// draw sinus
 		// ga.setPaint(Color.green);
 		// ga.setStroke(new BasicStroke(2F));
@@ -167,8 +167,10 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		double mi = 60.0;
 		double timemarkers = scaleRatio * mi;
 		// logger.debug(timemarkers + "");
-		for (int i = start; i < this.getWidth(); i += (int) timemarkers) {
-			ga.drawLine(i, 135, i, 145);
+		if (timemarkers > 0.0) {
+			for (int i = start; i < this.getWidth(); i += (int) timemarkers) {
+				ga.drawLine(i, 135, i, 145);
+			}
 		}
 		
 		// draw diagram

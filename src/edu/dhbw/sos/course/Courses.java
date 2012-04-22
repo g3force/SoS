@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.io.CourseLoader;
+import edu.dhbw.sos.course.io.CourseSaver;
 
 
 /**
@@ -30,7 +31,7 @@ public class Courses extends LinkedList<Course> {
 	private Course											curCourse;
 	private LinkedList<ICurrentCourseObserver>	currentCourseOberservers	= new LinkedList<ICurrentCourseObserver>();
 	private LinkedList<ICoursesListObserver>		coursesListOberservers		= new LinkedList<ICoursesListObserver>();
-	
+	private String savepath = "";
 	
 	/**
 	 * TODO NicolaiO, add comment!
@@ -39,7 +40,8 @@ public class Courses extends LinkedList<Course> {
 	 */
 	public Courses(String savepath) {
 		super();
-		this.addAll(CourseLoader.loadCourses(savepath));
+		this.savepath = savepath;
+		this.addAll(CourseLoader.loadCourses(this.savepath));
 		if (this.size() == 0) {
 			logger.fatal("There are no courses. This should not happened");
 		} else if (this.size() == 1) {
@@ -54,6 +56,7 @@ public class Courses extends LinkedList<Course> {
 	@Override
 	public boolean add(Course course) {
 		boolean res = super.add(course);
+		CourseSaver.saveCourses(this, savepath);
 		notifyCoursesListObservers();
 		return res;
 	}
@@ -68,10 +71,11 @@ public class Courses extends LinkedList<Course> {
 			changeCurCourse = true;
 		}
 		boolean res = super.remove(course);
-		notifyCoursesListObservers();
 		if(changeCurCourse) {
 			setCurrentCourse(this.get(0));
 		}
+		CourseSaver.saveCourses(this, savepath);
+		notifyCoursesListObservers();
 		return res;
 	}
 	
