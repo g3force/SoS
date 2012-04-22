@@ -12,8 +12,10 @@ package edu.dhbw.sos.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.net.URL;
 import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
@@ -70,11 +72,11 @@ public class MainFrame extends JFrame implements IUpdateable, WindowListener {
 		this.setPreferredSize(new Dimension(900, 700));
 		
 		// load icon
-		// logger.debug("load icon now");
-		// URL iconUrl = getClass().getResource("/res/icons/useacc_logo.png");
-		// if (iconUrl != null) {
-		// this.setIconImage(Toolkit.getDefaultToolkit().getImage(iconUrl));
-		// }
+		 logger.debug("load icon now");
+		 URL iconUrl = getClass().getResource("/res/icons/sos_logo.png");
+		 if (iconUrl != null) {
+		 this.setIconImage(Toolkit.getDefaultToolkit().getImage(iconUrl));
+		 }
 		
 		SimController simController = courses.getCurrentCourse().getSimController();
 		CoursePanel coursePanel = new CoursePanel(simController, courseController, courses);
