@@ -11,6 +11,8 @@ package edu.dhbw.sos.course;
 
 import java.util.LinkedList;
 
+import org.apache.log4j.Logger;
+
 import edu.dhbw.sos.course.io.CourseLoader;
 
 
@@ -24,6 +26,7 @@ import edu.dhbw.sos.course.io.CourseLoader;
  */
 public class Courses extends LinkedList<Course> {
 	private static final long							serialVersionUID				= 1L;
+	private static final Logger						logger							= Logger.getLogger(Courses.class);
 	private Course											curCourse;
 	private LinkedList<ICurrentCourseObserver>	currentCourseOberservers	= new LinkedList<ICurrentCourseObserver>();
 	private LinkedList<ICoursesListObserver>		coursesListOberservers		= new LinkedList<ICoursesListObserver>();
@@ -37,6 +40,14 @@ public class Courses extends LinkedList<Course> {
 	public Courses(String savepath) {
 		super();
 		this.addAll(CourseLoader.loadCourses(savepath));
+		if (this.size() == 0) {
+			logger.fatal("There are no courses. This should not happened");
+		} else if (this.size() == 1) {
+			curCourse = this.get(0);
+		} else {
+			// TODO has to be handled yet
+			curCourse = this.get(0);
+		}
 	}
 	
 	

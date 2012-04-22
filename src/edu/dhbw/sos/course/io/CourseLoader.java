@@ -134,6 +134,7 @@ public class CourseLoader {
 			dummy.setLecture(lecture);
 			dummy.setInfluence(influence);
 			dummy.setStudents(students);
+			dummy.setProperties(properties);
 		
 			courses.add(dummy);
 		}

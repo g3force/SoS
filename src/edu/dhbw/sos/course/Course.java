@@ -9,7 +9,6 @@
  */
 package edu.dhbw.sos.course;
 
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
@@ -20,7 +19,6 @@ import edu.dhbw.sos.course.influence.EInfluenceType;
 import edu.dhbw.sos.course.influence.Influence;
 import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.Lecture;
-import edu.dhbw.sos.course.lecture.TimeBlock;
 import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
@@ -44,12 +42,22 @@ public class Course {
 	private LinkedList<IStudentsObserver>	studentsObserver	= new LinkedList<IStudentsObserver>();
 	
 	// place here? not implemented yet, so do not know...
-	private LinkedHashMap<String, String>	statistics;
-	private LinkedList<String>					suggestions;
+	private LinkedHashMap<String, String>	statistics = new LinkedHashMap<String, String>();
+	private LinkedList<String>					suggestions = new LinkedList<String>();
 	
 	
 	public Course() {
 		simController = new SimController(this);
+		
+		// some dummy data
+		for (int i = 0; i < 5; i++) {
+			statistics.put("Test" + i, "" + i * 42);
+		}
+		
+		suggestions.add("Sug1");
+		suggestions.add("Sug2");
+		suggestions.add("Sug3");
+		suggestions.add("Sug4");
 	}
 	
 	/**
@@ -71,41 +79,6 @@ public class Course {
 	 */
 	void subscribeStudents(IStudentsObserver so) {
 		studentsObserver.add(so);
-	}
-	
-	
-	@Deprecated
-	private void dummyData() {
-		students = new IPlace[5][7];
-		properties = new LinkedList<String>();
-		properties.add("Tireness");
-		properties.add("Loudness");
-		properties.add("Attention");
-		properties.add("Quality");
-		for (int y = 0; y < 5; y++) {
-			for (int x = 0; x < 7; x++) {
-				if (y == 3) {
-					students[y][x] = new EmptyPlace(properties.size());
-				} else {
-					Student newStud = new Student(properties.size());
-					
-					for (int i = 0; i < 4; i++) {
-						newStud.addValueToChangeVector(i, (int) (Math.random() * 100));
-						newStud.addValueToStateVector(i, (int) (Math.random() * 100));
-					}
-					// ((Student)students[y][x]).
-					students[y][x] = newStud;
-				}
-			}
-		}
-		
-		influence = new Influence();
-		lecture = new Lecture(new Date());
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.theory));
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(20, BlockType.pause));
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.exercise));
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.pause));
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.group));
 	}
 	
 	
