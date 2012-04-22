@@ -113,6 +113,7 @@ public class SimController implements ActionListener, MouseListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		toggle();
 	}
 	
 	
