@@ -119,7 +119,7 @@ public class SimController implements ActionListener, MouseListener {
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		float value = 10;
+		float value = 100;
 		// right click
 		if (e.getButton() == MouseEvent.BUTTON3)
 			value *= -1;
