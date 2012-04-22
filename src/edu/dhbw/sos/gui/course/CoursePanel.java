@@ -60,7 +60,7 @@ public class CoursePanel extends JPanel implements ComponentListener, ICurrentCo
 	private float						border;
 	// student that should be highlighted at the moment
 	private StudentCircle			hoveredStudent		= null;
-	private StudentCircle[][]		studentCircles = new StudentCircle[0][0];;
+	private StudentCircle[][]		studentCircles		= new StudentCircle[0][0];					;
 	
 	
 	/**
@@ -92,18 +92,20 @@ public class CoursePanel extends JPanel implements ComponentListener, ICurrentCo
 	 * 
 	 * @author NicolaiO
 	 */
-	public StudentCircle[][] calcStudentCircles(IPlace[][] students) {
+	public void calcStudentCircles(IPlace[][] students) {
 		// get available size
 		Dimension p = this.getSize();
 		if (p.height == 0 || p.width == 0) {
-			logger.warn("Dimension has a zero value");
-			return studentCircles;
+			// nothing to do really because Panel not ready yet 
+			studentCircles = new StudentCircle[0][0];
+			return;
 		}
 		// get num of student rows and cols from students array
 		int numStudy = students.length;
 		if (numStudy == 0) {
-			logger.error("there are no students!");
-			return studentCircles;
+			logger.warn("there are no students!");
+			studentCircles = new StudentCircle[0][0];
+			return;
 		}
 		int numStudx = students[0].length;
 		// compare ratio of x/y from number of circles and from available size
@@ -141,18 +143,20 @@ public class CoursePanel extends JPanel implements ComponentListener, ICurrentCo
 				}
 			}
 		}
-		return studentCircles;
 	}
 	
 	
 	@Override
 	public void updateStudents() {
-		paintArea.updateStudentCircles(calcStudentCircles(course.getStudents()));
+		calcStudentCircles(course.getStudents());
+		paintArea.updateStudentCircles(studentCircles);
+		paintArea.updateHoveredStudent(hoveredStudent);
 	}
 	
 	
 	@Override
 	public void updateCurrentCourse(Course course) {
+		hoveredStudent = null;
 		this.course = course;
 		updateStudents();
 	}

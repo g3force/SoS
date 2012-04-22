@@ -9,6 +9,7 @@
  */
 package edu.dhbw.sos.course;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
@@ -32,26 +33,29 @@ import edu.dhbw.sos.simulation.SimController;
  * @author DirkK
  */
 public class Course {
-	private static final Logger				logger				= Logger.getLogger(Course.class);
-	private LinkedList<IStudentsObserver>	studentsObserver	= new LinkedList<IStudentsObserver>();
-	private IPlace[][]							students;
-	private Influence								influence;
-	private Lecture								lecture;
-	private LinkedList<String>					properties;
-	private String									name;
-	private SimController						simController;
+	private static final Logger						logger						= Logger.getLogger(Course.class);
+	private LinkedList<IStudentsObserver>			studentsObservers			= new LinkedList<IStudentsObserver>();
+	private LinkedList<ISelectedCourseObserver>	selectedCourseObservers	= new LinkedList<ISelectedCourseObserver>();
+	private IPlace[][]									students						= new IPlace[0][0];
+	private Influence										influence					= new Influence();
+	private String											name							= "";
+	private Lecture										lecture;
+	private SimController								simController;
 	
+	private LinkedList<String>							properties					= new LinkedList<String>();
 	// place here? not implemented yet, so do not know...
-	private LinkedHashMap<String, String>	statistics			= new LinkedHashMap<String, String>();
-	private LinkedList<String>					suggestions			= new LinkedList<String>();
+	private LinkedHashMap<String, String>			statistics					= new LinkedHashMap<String, String>();
+	private LinkedList<String>							suggestions					= new LinkedList<String>();
 	
 	// the student and property that was selected in the GUI (by hovering over the student)
-	private IPlace									selectedStudent	= null;
-	private int										selectedProperty	= 0;
+	private IPlace											selectedStudent			= null;
+	private int												selectedProperty			= 0;
 	
 	
-	public Course() {
+	public Course(String name) {
+		this.name = name;
 		simController = new SimController(this);
+		lecture = new Lecture(new Date());
 		
 		// some dummy data
 		for (int i = 0; i < 5; i++) {
@@ -69,8 +73,18 @@ public class Course {
 	 * notify all subscribers of the students array
 	 */
 	public void notifyStudentsObservers() {
-		for (IStudentsObserver so : studentsObserver) {
+		for (IStudentsObserver so : studentsObservers) {
 			so.updateStudents();
+		}
+	}
+	
+	
+	/**
+	 * notify all subscribers of the students array
+	 */
+	public void notifySelectedCourseObservers() {
+		for (ISelectedCourseObserver so : selectedCourseObservers) {
+			so.updateSelectedCourse();
 		}
 	}
 	
@@ -84,7 +98,12 @@ public class Course {
 	 * @author dirk
 	 */
 	public void subscribeStudents(IStudentsObserver so) {
-		studentsObserver.add(so);
+		studentsObservers.add(so);
+	}
+	
+	
+	public void subscribeSelectedCourse(ISelectedCourseObserver so) {
+		selectedCourseObservers.add(so);
 	}
 	
 	
@@ -400,6 +419,7 @@ public class Course {
 	
 	public void setSelectedStudent(IPlace selectedStudent) {
 		this.selectedStudent = selectedStudent;
+		notifySelectedCourseObservers();
 	}
 	
 	

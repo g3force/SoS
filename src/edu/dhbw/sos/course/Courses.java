@@ -51,14 +51,39 @@ public class Courses extends LinkedList<Course> {
 	}
 	
 	
-	private void notifyCoursesListObservers() {
+	@Override
+	public boolean add(Course course) {
+		boolean res = super.add(course);
+		notifyCoursesListObservers();
+		return res;
+	}
+	
+	
+	@Override
+	public boolean remove(Object course) {
+		if(this.size()<2)
+			return false;
+		boolean changeCurCourse = false;
+		if(curCourse.equals(course)) {
+			changeCurCourse = true;
+		}
+		boolean res = super.remove(course);
+		notifyCoursesListObservers();
+		if(changeCurCourse) {
+			setCurrentCourse(this.get(0));
+		}
+		return res;
+	}
+	
+	
+	public void notifyCoursesListObservers() {
 		for (ICoursesListObserver clo : coursesListOberservers) {
 			clo.updateCoursesList();
 		}
 	}
 	
 	
-	private void notifyCurrentCourseObservers() {
+	public void notifyCurrentCourseObservers() {
 		for (ICurrentCourseObserver cco : currentCourseOberservers) {
 			cco.updateCurrentCourse(curCourse);
 		}
@@ -80,20 +105,19 @@ public class Courses extends LinkedList<Course> {
 	}
 	
 	
-	public void setCurrentCourse(Course newCurrent) {
-		curCourse = newCurrent;
-		notifyCurrentCourseObservers();
-	}
-	
-	
-	public void addCourse(Course course) {
-		this.add(course);
-		notifyCoursesListObservers();
-	}
-	
-	
-	public void removeCourse(Course course) {
-		this.remove(course);
-		notifyCoursesListObservers();
+	public void setCurrentCourse(Object newCurrent) {
+		if (newCurrent instanceof Course) {
+			curCourse = (Course) newCurrent;
+			notifyCurrentCourseObservers();
+			return;
+		}
+		for (Course c : this) {
+			if (c.getName().equals((String) newCurrent)) {
+				curCourse = c;
+				notifyCurrentCourseObservers();
+				return;
+			}
+		}
+		logger.warn("Could not find course \"" + newCurrent + "\". Cannot set as current.");
 	}
 }

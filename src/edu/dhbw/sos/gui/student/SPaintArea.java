@@ -17,6 +17,7 @@ import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
+import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.gui.Diagram;
 
@@ -67,7 +68,7 @@ public class SPaintArea extends JPanel {
 		diagram.setHeight(this.getHeight() - 20);
 		diagram.setWidth(this.getWidth() - 20);
 		LinkedList<Float> newData = new LinkedList<Float>();
-		if (student != null) {
+		if (student != null || student instanceof EmptyPlace) {
 			for (int key : student.getHistoryStates().keySet()) {
 				newData.add(student.getHistoryStates().get(key).getValueAt(parameterIndex));
 			}
