@@ -399,6 +399,7 @@ public class Course {
 	 * @author andres
 	 */
 	private void calcStatistics() {
+	
 		statState.multiplyWithInteger(0);
 		int studentNum = 0;
 		// for (IPlace[] studentRow : students) {

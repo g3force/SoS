@@ -193,8 +193,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		LinkedList<Float> newData = new LinkedList<Float>();
 		
 		for (CalcVector stat : course.getHistStatState()) {
-			newData.add(stat.getValueAt(1));
-			logger.debug(stat.getValueAt(1)+"");
+			newData.add(stat.getValueAt(0));
 		}
 		attDia.setData(newData);
 		this.repaint();
