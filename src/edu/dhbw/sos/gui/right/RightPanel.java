@@ -50,8 +50,8 @@ import edu.dhbw.sos.helper.Messages;
 public class RightPanel extends JPanel implements ICurrentCourseObserver, ICoursesListObserver, IStatisticsObserver,
 		ISuggestionsObserver, IEditModeObserver {
 	private static final long					serialVersionUID	= -6879799823225506209L;
-	private static final Logger	logger				= Logger.getLogger(RightPanel.class);
-
+	private static final Logger				logger				= Logger.getLogger(RightPanel.class);
+	
 	private LinkedList<IEditModeObserver>	editModeObservers	= new LinkedList<IEditModeObserver>();
 	// width of panel
 	private static final int					PREF_SIZE			= 200;
@@ -225,10 +225,8 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 			JLabel lblValue = new JLabel(entry.getValue(), JLabel.CENTER);
 			statsPanel.add(lblKey);
 			statsPanel.add(lblValue);
-			logger.debug(entry.getKey());
-
 		}
-		this.updateUI();
+		this.validate();
 		// }
 	}
 	
