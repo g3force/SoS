@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.CourseController;
 import edu.dhbw.sos.course.Courses;
+import edu.dhbw.sos.course.ICoursesListObserver;
 import edu.dhbw.sos.gui.IUpdateable;
 import edu.dhbw.sos.gui.MainFrame;
 import edu.dhbw.sos.helper.Messages;
@@ -41,7 +42,7 @@ import edu.dhbw.sos.helper.Messages;
  * @author NicolaiO
  * 
  */
-public class RightPanel extends JPanel implements IUpdateable {
+public class RightPanel extends JPanel implements IUpdateable, ICoursesListObserver {
 	private static final long	serialVersionUID	= -6879799823225506209L;
 	// width of panel
 	private static final int	PREF_SIZE			= 200;
@@ -119,17 +120,6 @@ public class RightPanel extends JPanel implements IUpdateable {
 	
 	
 	private void updateData() {
-		// course list
-		if (courseList.getItemCount() != courses.size()) {
-			courseList.removeAllItems();
-			for (Course course : courses) {
-				courseList.addItem(course);
-			}
-		}
-		
-		if (courses.size() > 0)
-			courseList.setSelectedIndex(0);
-		
 		// statistics
 		if (statsPanel.getComponentCount() != courses.getCurrentCourse().getStatistics().size()) {
 			statsPanel.removeAll();
@@ -180,6 +170,19 @@ public class RightPanel extends JPanel implements IUpdateable {
 				});
 				suggestionPanel.add(lblSug);
 			}
+		}
+	}
+	
+	
+	@Override
+	public void updateCoursesList() {
+		// course list
+		courseList.removeAllItems();
+		for (Course course : courses) {
+			courseList.addItem(course);
+		}
+		if (courses.size() > 0) {
+			courseList.setSelectedIndex(courses.indexOf(courses.getCurrentCourse()));
 		}
 	}
 }

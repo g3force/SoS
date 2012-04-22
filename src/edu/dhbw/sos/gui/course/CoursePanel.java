@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.CourseController;
+import edu.dhbw.sos.course.ICurrentCourseObserver;
 import edu.dhbw.sos.gui.GUIData;
 import edu.dhbw.sos.gui.IUpdateable;
 import edu.dhbw.sos.gui.MainFrame;
@@ -30,7 +31,7 @@ import edu.dhbw.sos.simulation.SimController;
  * @author NicolaiO
  * 
  */
-public class CoursePanel extends JPanel implements IUpdateable, ComponentListener {
+public class CoursePanel extends JPanel implements IUpdateable, ComponentListener, ICurrentCourseObserver {
 	private static final long	serialVersionUID	= 5542875796802944785L;
 	// private static final Logger logger = Logger.getLogger(CoursePanel.class);
 	private final CPaintArea	paintArea;
@@ -80,5 +81,12 @@ public class CoursePanel extends JPanel implements IUpdateable, ComponentListene
 	
 	@Override
 	public void componentHidden(ComponentEvent e) {
+	}
+
+
+	@Override
+	public void updateCurrentCourse(Course course) {
+		this.course = course;
+		update();
 	}
 }
