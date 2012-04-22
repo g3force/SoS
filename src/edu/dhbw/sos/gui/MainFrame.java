@@ -66,7 +66,7 @@ public class MainFrame extends JFrame implements IUpdateable, WindowListener {
 		logger.debug("Initializing...");
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLocationByPlatform(true);
-		this.setTitle(Messages.getString("MainFrame.1"));
+		this.setTitle(Messages.getString("MainFrame.TITLE"));
 		this.setVisible(true);
 		this.addWindowListener(this);
 		this.setPreferredSize(new Dimension(900, 700));

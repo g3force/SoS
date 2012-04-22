@@ -28,6 +28,7 @@ import javax.swing.SwingConstants;
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.lecture.TimeBlocks;
 import edu.dhbw.sos.gui.IUpdateable;
+import edu.dhbw.sos.helper.Messages;
 import edu.dhbw.sos.simulation.SimController;
 
 
@@ -68,10 +69,10 @@ public class PlanPanel extends JPanel implements IUpdateable, ComponentListener 
 		// create Labels for pPaintArea
 		JPanel lPanel = new JPanel();
 		lPanel.setLayout(new BoxLayout(lPanel, BoxLayout.Y_AXIS));
-		JLabel lBreak = new JLabel("Pause");
-		JLabel lExercise = new JLabel("Übung");
-		JLabel lGroup = new JLabel("Gruppe");
-		JLabel lTheroy = new JLabel("Theorie");
+		JLabel lBreak = new JLabel(Messages.getString("BlockType.BREAK"));
+		JLabel lExercise = new JLabel(Messages.getString("BlockType.EXERCISE"));
+		JLabel lGroup = new JLabel(Messages.getString("BlockType.GROUP"));
+		JLabel lTheroy = new JLabel(Messages.getString("BlockType.THEORY"));
 		// lPanel.setSize(40, 10);
 		lBreak.setPreferredSize(new Dimension(80,40));
 		lBreak.setVerticalTextPosition(JLabel.BOTTOM);
@@ -124,7 +125,7 @@ public class PlanPanel extends JPanel implements IUpdateable, ComponentListener 
 		sidePanel.add(speedPanel);
 		
 		// time
-		JLabel lblFromTo = new JLabel("Von/Bis:", SwingConstants.LEFT);
+		JLabel lblFromTo = new JLabel(Messages.getString("Lecture.FROMTO"), SwingConstants.LEFT);
 		JTextField txtFrom = new JTextField("08:00", 5);
 		JTextField txtTo = new JTextField("11:00", 5);
 		lblFromTo.setAlignmentX(Component.LEFT_ALIGNMENT);
