@@ -19,9 +19,9 @@ import org.apache.log4j.Logger;
  * 
  */
 public class CalcVector implements Cloneable {
-	private float[]	vector;
+	private float[]					vector;
 	private static final Logger	logger	= Logger.getLogger(CalcVector.class);
-			
+	
 	
 	/**
 	 * Creates a new CalcVector with the size specified by initSize and all values set to 0.
@@ -31,9 +31,11 @@ public class CalcVector implements Cloneable {
 	 */
 	public CalcVector(int initSize) {
 		this.vector = new float[initSize];
-		for(int i=0; i<initSize; i++)
+		for (int i = 0; i < initSize; i++)
 			this.vector[i] = 0;
 	}
+	
+	
 	/**
 	 * Creates a new CalcVector with the values specified by values.
 	 * 
@@ -42,9 +44,10 @@ public class CalcVector implements Cloneable {
 	 */
 	public CalcVector(float[] values) {
 		this.vector = new float[values.length];
-		for(int i=0; i < this.vector.length; i++)
+		for (int i = 0; i < this.vector.length; i++)
 			this.vector[i] = values[i];
 	}
+	
 	
 	/**
 	 * Returns the value at the specified index. (First element at index 0, last at size()-1)
@@ -59,6 +62,8 @@ public class CalcVector implements Cloneable {
 		}
 		return this.vector[index];
 	}
+	
+	
 	/**
 	 * Sets the value at the specified index. (First element at index 0, last at size()-1)
 	 * 
@@ -71,6 +76,7 @@ public class CalcVector implements Cloneable {
 		}
 		this.vector[index] = value;
 	}
+	
 	
 	/**
 	 * Returns the size (number of items) of this CalcVector.
@@ -111,6 +117,8 @@ public class CalcVector implements Cloneable {
 		}
 		return this;
 	}
+	
+	
 	/**
 	 * Multiplies this CalcVector object with a constant of type double.
 	 * NOTE: this allows only calling this function with double. Calculations and result are float.
@@ -120,8 +128,10 @@ public class CalcVector implements Cloneable {
 	 * @author bene
 	 */
 	public CalcVector multiplyWithDouble(double constant) {
-		return this.multiplyWithFloat((float)constant);
+		return this.multiplyWithFloat((float) constant);
 	}
+	
+	
 	/**
 	 * Multiplies this CalcVector object with another CalcVector.
 	 * 
@@ -138,6 +148,7 @@ public class CalcVector implements Cloneable {
 		}
 		return this;
 	}
+	
 	
 	/**
 	 * Multiplies this CalcVector object with a Matrix object.
@@ -160,6 +171,22 @@ public class CalcVector implements Cloneable {
 		return this;
 	}
 	
+	/**
+	 * Divide the CalcVektor by an scalar.
+	 * 
+	 * @param scalar
+	 * @return
+	 * @author andres
+	 */
+	public CalcVector divide(double scalar) {
+		if (scalar == 0) {
+			throw new ArithmeticException("Division by zero not allowed");
+		}
+		for (int i = 0; i < this.size(); i++) {
+			vector[i] /= scalar;
+		}
+		return this;
+	}
 	
 	/**
 	 * Adds the CalcVector v to this CalcVector object.
@@ -196,12 +223,13 @@ public class CalcVector implements Cloneable {
 		printCalcVector("");
 	}
 	
-// debug method
+	
+	// debug method
 	public void printCalcVector(String message) {
-		String out=message+": ";
+		String out = message + ": ";
 		for (int i = 0; i < this.size(); i++) {
-			out+=this.vector[i]+" / ";
+			out += this.vector[i] + " / ";
 		}
-		logger.info(out.subSequence(0, out.length()-3));
+		logger.info(out.subSequence(0, out.length() - 3));
 	}
 }

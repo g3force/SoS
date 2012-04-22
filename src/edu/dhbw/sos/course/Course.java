@@ -20,6 +20,7 @@ import edu.dhbw.sos.course.influence.EInfluenceType;
 import edu.dhbw.sos.course.influence.Influence;
 import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.Lecture;
+import edu.dhbw.sos.course.statistics.IStatisticsObserver;
 import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
@@ -36,6 +37,7 @@ public class Course {
 	private static final Logger						logger						= Logger.getLogger(Course.class);
 	private LinkedList<IStudentsObserver>			studentsObservers			= new LinkedList<IStudentsObserver>();
 	private LinkedList<ISelectedCourseObserver>	selectedCourseObservers	= new LinkedList<ISelectedCourseObserver>();
+	private LinkedList<IStatisticsObserver>		statisticsObservers		= new LinkedList<IStatisticsObserver>();
 	private IPlace[][]									students						= new IPlace[0][0];
 	private Influence										influence					= new Influence();
 	private String											name							= "";
@@ -45,6 +47,7 @@ public class Course {
 	private LinkedList<String>							properties					= new LinkedList<String>();
 	// place here? not implemented yet, so do not know...
 	private LinkedHashMap<String, String>			statistics					= new LinkedHashMap<String, String>();
+	private CalcVector									statState					= new CalcVector(4);
 	private LinkedList<String>							suggestions					= new LinkedList<String>();
 	
 	// the student and property that was selected in the GUI (by hovering over the student)
@@ -57,15 +60,12 @@ public class Course {
 		simController = new SimController(this);
 		lecture = new Lecture(new Date());
 		
-		// some dummy data
-		for (int i = 0; i < 5; i++) {
-			statistics.put("Test" + i, "" + i * 42);
-		}
-		
 		suggestions.add("Sug1");
 		suggestions.add("Sug2");
 		suggestions.add("Sug3");
 		suggestions.add("Sug4");
+		// calculate state statistics for whole course
+		calcStatistics();
 	}
 	
 	
@@ -95,6 +95,18 @@ public class Course {
 	
 	
 	/**
+	 * notify all subscribers of the statistics
+	 * 
+	 * @author andres
+	 */
+	public void notifyStatisticsObservers() {
+		for (IStatisticsObserver so : statisticsObservers) {
+			so.updateStatistics();
+		}
+	}
+	
+	
+	/**
 	 * 
 	 * objects interested in the students field can subscribe here
 	 * the object will be notified if the field changes
@@ -116,6 +128,19 @@ public class Course {
 	 */
 	public void subscribeSelectedCourse(ISelectedCourseObserver so) {
 		selectedCourseObservers.add(so);
+	}
+	
+	
+	/**
+	 * 
+	 * objects interested in the statistics field can subscribe here
+	 * the object will be notified if the field changes
+	 * 
+	 * @param so the object which needs to be informed
+	 * @author andres
+	 */
+	public void subscribeStatistics(IStatisticsObserver so) {
+		statisticsObservers.add(so);
 	}
 	
 	
@@ -187,8 +212,8 @@ public class Course {
 	 * @author dirk
 	 */
 	public void simulationStep(int currentTime, int speed) {
-
-		synchronized(students) {
+		
+		synchronized (students) {
 			students[0][0].printAcutalState();
 			
 			// -------------------------------------------------
@@ -253,7 +278,8 @@ public class Course {
 						
 						// create a new student and let him calculate a new change vector
 						newState[y][x] = student.clone();
-						((Student) newState[y][x]).calcNextSimulationStep(preChangeVectorSpecial, influence, x, y, currentTime);
+						((Student) newState[y][x]).calcNextSimulationStep(preChangeVectorSpecial, influence, x, y,
+								currentTime);
 						if (y == 0 && x == 0)
 							((Student) newState[y][x]).printAcutalState();
 						((Student) newState[y][x]).saveHistoryStates(currentTime);
@@ -267,6 +293,9 @@ public class Course {
 			
 			// give the reference from newState to real students array
 			students = newState;
+			
+			// calculate state statistics for whole course
+			calcStatistics();
 			
 			// notify all subscribers of the students array
 			notifyStudentsObservers();
@@ -289,15 +318,16 @@ public class Course {
 		// x o x
 		// x x x
 		CalcVector changeVector = new CalcVector(student.getActualState().size());
-//		double[][] neighborInf = { { 0.0001, 0.0001, 0.0001 }, { 0.0010, 0.00, 0.0010 }, { 0.000010, 0.000010, 0.000010 } };// new double[3][3];
+		// double[][] neighborInf = { { 0.0001, 0.0001, 0.0001 }, { 0.0010, 0.00, 0.0010 }, { 0.000010, 0.000010, 0.000010
+		// } };// new double[3][3];
 		// for (int i = 0; i < 3; i++) {
 		// for (int j = 0; j < 3; j++) {
 		// neighborInf[j][i] = 0.01;
 		// }
 		// }
-//		if(x==0 && y==0)
-//		influence.getEnvironmentVector(EInfluenceType.NEIGHBOR, neighborInf[0][0])
-//				.printCalcVector("Influence neighbor: ");
+		// if(x==0 && y==0)
+		// influence.getEnvironmentVector(EInfluenceType.NEIGHBOR, neighborInf[0][0])
+		// .printCalcVector("Influence neighbor: ");
 		
 		// System.out.println("x: "+x+" / y: "+y);
 		CalcVector surronding = new CalcVector(student.getActualState().size());
@@ -309,9 +339,9 @@ public class Course {
 					if (newx < students[0].length && newx >= 0 && newy < students.length && newy >= 0) {
 						IPlace s = students[newy][newx];
 						surronding = surronding.addCalcVector(s.getActualState());
-//						CalcVector studentsState = s.getActualState();
-//						changeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR,
-//								neighborInf[j + 1][i + 1]).multiplyWithVector(studentsState));
+						// CalcVector studentsState = s.getActualState();
+						// changeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR,
+						// neighborInf[j + 1][i + 1]).multiplyWithVector(studentsState));
 						
 					}
 				}
@@ -320,17 +350,17 @@ public class Course {
 		
 		//
 		for (int i = 0; i < changeVector.size(); i++) {
-			float average = surronding.getValueAt(i)/surronding.size();
-			float studentMAverage = student.getActualState().getValueAt(i)-average;
-			if(studentMAverage<0)
+			float average = surronding.getValueAt(i) / surronding.size();
+			float studentMAverage = student.getActualState().getValueAt(i) - average;
+			if (studentMAverage < 0)
 				studentMAverage *= -1;
-			float reducer = (100-studentMAverage)/100;
-			changeVector.setValueAt(i, (average-student.getActualState().getValueAt(i)) * reducer);
-			//changeVector.multiplyWithVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR,0.01));
+			float reducer = (100 - studentMAverage) / 100;
+			changeVector.setValueAt(i, (average - student.getActualState().getValueAt(i)) * reducer);
+			// changeVector.multiplyWithVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR,0.01));
 		}
-		if(x==0 && y==0)
+		if (x == 0 && y == 0)
 			changeVector.printCalcVector("Change vector (neighbors): ");
-			
+		
 		
 		return changeVector;
 	}
@@ -358,6 +388,40 @@ public class Course {
 		System.out.println("null: " + isnull);
 		System.out.println("empty: " + empty);
 		System.out.println("studentsA: " + studentsA);
+	}
+	
+	
+	/**
+	 * 
+	 * Calculates the statistics for the whole course and save them in an histroy state.
+	 * 
+	 * @author andres
+	 */
+	private void calcStatistics() {
+		statState.multiplyWithInteger(0);
+		int studentNum = 0;
+		// for (IPlace[] studentRow : students) {
+		// for (IPlace student : studentRow) {
+		// if (student instanceof Student) {
+		for (int y = 0; y < students.length; y++) {
+			for (int x = 0; x < students[y].length; x++) {
+				if (students[y][x] instanceof Student) {
+					statState.addCalcVector(students[y][x].getActualState());
+					studentNum++;
+				}
+			}
+		}
+		if (studentNum != 0) {
+			statState.divide(studentNum);
+			statState.printCalcVector("Course statistics");
+			// TODO save history statistics.
+			statistics.clear();
+			statistics.put("Attention: ", statState.getValueAt(0) + "");
+			statistics.put("Tired: ", statState.getValueAt(1) + "");
+			statistics.put("Quality: ", statState.getValueAt(2) + "");
+			statistics.put("?: ", statState.getValueAt(3) + "");
+			notifyStatisticsObservers();
+		}
 	}
 	
 	
