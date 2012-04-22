@@ -13,7 +13,7 @@ import java.awt.Image;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
+import javax.swing.JToggleButton;
 
 
 /**
@@ -24,7 +24,7 @@ import javax.swing.JButton;
  * @author NicolaiO
  * 
  */
-public class EditBtn extends JButton {
+public class EditBtn extends JToggleButton {
 	private static final long	serialVersionUID	= 1L;
 	
 	

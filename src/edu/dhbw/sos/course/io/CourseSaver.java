@@ -9,17 +9,20 @@
  */
 package edu.dhbw.sos.course.io;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.util.LinkedList;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.log4j.Logger;
+
 import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.course.influence.Influence;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
 import edu.dhbw.sos.helper.CalcVector;
-import edu.dhbw.sos.course.influence.*;
 
 
 /**
@@ -31,9 +34,17 @@ import edu.dhbw.sos.course.influence.*;
  * 
  */
 public class CourseSaver {
+	private static final Logger	logger	= Logger.getLogger(CourseSaver.class);
 	public static void saveCourses(LinkedList<Course> courses, String savepath) {
 		XMLOutputFactory factory = XMLOutputFactory.newInstance();
 		try {
+			File path = new File(new File(savepath).getParent());
+			if (!path.isDirectory()) {
+				if(!path.mkdirs()) {
+					logger.error("Could not create " + path.getPath() + " for saving.");
+					return;
+				}
+			}
 			FileWriter fw = new FileWriter(savepath, false);
 			XMLStreamWriter writer = factory.createXMLStreamWriter(fw);
 			if (writer != null) {
@@ -50,8 +61,10 @@ public class CourseSaver {
 						writer.writeAttribute("name", courses.get(i).getName());
 						
 						IPlace[][] students = courses.get(i).getStudents();
-						writer.writeAttribute("x", String.valueOf(students[i].length));
-						writer.writeAttribute("y", String.valueOf(students.length));
+						if(students.length>0) {
+							writer.writeAttribute("y", String.valueOf(students.length));
+							writer.writeAttribute("x", String.valueOf(students[i].length));
+						}
 						
 						for (int j = 0; j < students.length; j++) {
 							for (int k = 0; k < students[j].length; k++) {
@@ -108,22 +121,26 @@ public class CourseSaver {
 						// </changevector>
 						
 						writer.writeStartElement("eMatrix");
-/**
- * FIXME: NON-HARDCODED CALCVECTOR-AMOUNT
- */
+						/**
+						 * FIXME: NON-HARDCODED CALCVECTOR-AMOUNT
+						 */
 						writer.writeAttribute("eRows", "3");
-						writer.writeAttribute("eCols", String.valueOf(courses.get(0).getInfluence().getEnvironmentVector( Influence.getInfluenceTypeById(0) ).size()) );
-						for(int x=0;x<3;x++) {
-							CalcVector envVector = courses.get(0).getInfluence().getEnvironmentVector( Influence.getInfluenceTypeById(x) );
+						writer.writeAttribute(
+								"eCols",
+								String.valueOf(courses.get(0).getInfluence()
+										.getEnvironmentVector(Influence.getInfluenceTypeById(0)).size()));
+						for (int x = 0; x < 3; x++) {
+							CalcVector envVector = courses.get(0).getInfluence()
+									.getEnvironmentVector(Influence.getInfluenceTypeById(x));
 							writer.writeStartElement("eRow");
-							for(int j=0;j<envVector.size();j++) {
+							for (int j = 0; j < envVector.size(); j++) {
 								writer.writeStartElement("eAttribute");
-								writer.writeAttribute("value", String.valueOf( envVector.getValueAt(j) ) );
-								writer.writeEndElement(); //</eAttribute>
+								writer.writeAttribute("value", String.valueOf(envVector.getValueAt(j)));
+								writer.writeEndElement(); // </eAttribute>
 							}
-							writer.writeEndElement(); //</eRow>
+							writer.writeEndElement(); // </eRow>
 						}
-						writer.writeEndElement(); //</eMatrix>
+						writer.writeEndElement(); // </eMatrix>
 					}
 				}
 			}

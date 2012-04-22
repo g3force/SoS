@@ -58,6 +58,7 @@ public class Student implements IPlace, Cloneable {
 		addHistoryDonInput(time);
 		addToChangeVector(cv);
 		addToStateVector(cv, 0, 0);
+		
 	}
 	
 	/**
@@ -97,7 +98,9 @@ public class Student implements IPlace, Cloneable {
 	 * @param influence
 	 * @author dirk
 	 */
-	public void calcNextSimulationStep(CalcVector changeVector, Influence influence, int x, int y) {
+	public void calcNextSimulationStep(CalcVector changeVector, Influence influence, int x, int y, int time) {
+		
+		saveHistoryStates(time);
 		
 		// - - parameter
 		double parameterInf = 0.001;

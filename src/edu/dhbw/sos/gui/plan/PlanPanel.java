@@ -27,7 +27,6 @@ import javax.swing.SwingConstants;
 
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.lecture.TimeBlocks;
-import edu.dhbw.sos.gui.IUpdateable;
 import edu.dhbw.sos.helper.Messages;
 import edu.dhbw.sos.simulation.SimController;
 
@@ -41,7 +40,7 @@ import edu.dhbw.sos.simulation.SimController;
  * @author NicolaiO
  * 
  */
-public class PlanPanel extends JPanel implements IUpdateable, ComponentListener {
+public class PlanPanel extends JPanel implements ComponentListener {
 	private static final long	serialVersionUID	= -1665784555881941508L;
 	// paintArea is the part of the Panel, where some drawings have to be done
 	private final PaintArea		paintArea;
@@ -74,7 +73,7 @@ public class PlanPanel extends JPanel implements IUpdateable, ComponentListener 
 		JLabel lGroup = new JLabel(Messages.getString("BlockType.GROUP"));
 		JLabel lTheroy = new JLabel(Messages.getString("BlockType.THEORY"));
 		// lPanel.setSize(40, 10);
-		lBreak.setPreferredSize(new Dimension(80,40));
+		lBreak.setPreferredSize(new Dimension(80, 40));
 		lBreak.setVerticalTextPosition(JLabel.BOTTOM);
 		lExercise.setPreferredSize(new Dimension(80, 40));
 		lExercise.setVerticalTextPosition(JLabel.BOTTOM);
@@ -82,19 +81,20 @@ public class PlanPanel extends JPanel implements IUpdateable, ComponentListener 
 		lGroup.setVerticalTextPosition(JLabel.BOTTOM);
 		lTheroy.setPreferredSize(new Dimension(80, 60));
 		lTheroy.setVerticalTextPosition(JLabel.BOTTOM);
-
+		
 		lPanel.add(Box.createVerticalGlue());
 		
 		lPanel.add(lBreak);
 		lPanel.add(lExercise);
 		lPanel.add(lGroup);
 		lPanel.add(lTheroy);
-		lPanel.setPreferredSize(new Dimension(60,120));
+		lPanel.setPreferredSize(new Dimension(60, 120));
 		this.add(lPanel, BorderLayout.WEST);
 		
 		// init paintArea
 		paintArea = new PaintArea(timeBlocks);
 		this.add(paintArea, BorderLayout.CENTER);
+		// paintArea.initMovableBlocks();
 		
 		// create sidePanel
 		JPanel sidePanel = new JPanel();
@@ -140,15 +140,9 @@ public class PlanPanel extends JPanel implements IUpdateable, ComponentListener 
 	
 	
 	@Override
-	public void update() {
+	public void componentResized(ComponentEvent e) {
 		paintArea.initMovableBlocks();
 		paintArea.repaint();
-	}
-	
-	
-	@Override
-	public void componentResized(ComponentEvent e) {
-		update();
 	}
 	
 	

@@ -17,7 +17,6 @@ import java.util.LinkedList;
 
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
-import edu.dhbw.sos.gui.IUpdateable;
 
 
 /**
@@ -27,7 +26,7 @@ import edu.dhbw.sos.gui.IUpdateable;
  * @author NicolaiO
  * 
  */
-public class StudentCircle extends Ellipse2D.Float implements IUpdateable {
+public class StudentCircle extends Ellipse2D.Float {
 	private static final long			serialVersionUID	= 6295891457962405015L;
 	private IPlace							student;
 	private Color							color;
@@ -88,6 +87,7 @@ public class StudentCircle extends Ellipse2D.Float implements IUpdateable {
 		}
 	}
 	
+	
 	/**
 	 * Update the color of the pizza
 	 * 
@@ -100,9 +100,8 @@ public class StudentCircle extends Ellipse2D.Float implements IUpdateable {
 	}
 	
 	
-	@Override
 	public void update() {
-		this.setColor(getColorFromValue(student.getAverageState(), 100)); 
+		this.setColor(getColorFromValue(student.getAverageState(), 100));
 		this.updatePizza();
 	}
 	
@@ -125,7 +124,7 @@ public class StudentCircle extends Ellipse2D.Float implements IUpdateable {
 		int UPPER_GREEN = 240;
 		int UPPER_RED = 255;
 		int red = LOWER_RED;
-		red += ((510-(LOWER_RED+255-UPPER_RED)-(LOWER_GREEN+255-UPPER_GREEN)) / max) * value;
+		red += ((510 - (LOWER_RED + 255 - UPPER_RED) - (LOWER_GREEN + 255 - UPPER_GREEN)) / max) * value;
 		if (red < LOWER_RED)
 			red = LOWER_RED;
 		int green = UPPER_GREEN;

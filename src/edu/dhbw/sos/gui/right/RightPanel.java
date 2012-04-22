@@ -12,8 +12,11 @@ package edu.dhbw.sos.gui.right;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.LinkedList;
 import java.util.Map;
 
 import javax.swing.Box;
@@ -29,6 +32,7 @@ import edu.dhbw.sos.course.ICoursesListObserver;
 import edu.dhbw.sos.course.ICurrentCourseObserver;
 import edu.dhbw.sos.course.statistics.IStatisticsObserver;
 import edu.dhbw.sos.course.suggestions.ISuggestionsObserver;
+import edu.dhbw.sos.gui.IEditModeObserver;
 import edu.dhbw.sos.gui.MainFrame;
 import edu.dhbw.sos.helper.Messages;
 
@@ -41,19 +45,20 @@ import edu.dhbw.sos.helper.Messages;
  * 
  */
 public class RightPanel extends JPanel implements ICurrentCourseObserver, ICoursesListObserver, IStatisticsObserver,
-		ISuggestionsObserver {
-	private static final long	serialVersionUID	= -6879799823225506209L;
+		ISuggestionsObserver, IEditModeObserver {
+	private static final long					serialVersionUID	= -6879799823225506209L;
+	private LinkedList<IEditModeObserver>	editModeObservers	= new LinkedList<IEditModeObserver>();
 	// width of panel
-	private static final int	PREF_SIZE			= 200;
+	private static final int					PREF_SIZE			= 200;
 	// margin left and right
-	private static final int	MARGIN_LR			= 5;
+	private static final int					MARGIN_LR			= 5;
 	
 	// child elements
-	private JPanel					statsPanel;
-	private JPanel					suggestionPanel;
-	private JComboBox<Course>	courseList;
+	private JPanel									statsPanel;
+	private JPanel									suggestionPanel;
+	private JComboBox<Course>					courseList;
 	
-	private Courses				courses;
+	private Courses								courses;
 	
 	
 	public RightPanel(CourseController courseController, Courses courses) {
@@ -81,7 +86,17 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 		// #############################################################################
 		// edit button
 		EditBtn editBtn = new EditBtn();
-		editBtn.addActionListener(courseController);
+		editBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (IEditModeObserver so : editModeObservers) {
+					if (((EditBtn)e.getSource()).getModel().isPressed())
+						so.exitEditMode();
+					else
+						so.enterEditMode();
+				}
+			}
+		});
 		courseListPanel.add(editBtn, BorderLayout.WEST);
 		
 		// #############################################################################
@@ -120,6 +135,11 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 		// #############################################################################
 		// fill the rest of the space
 		this.add(Box.createVerticalGlue());
+	}
+	
+	
+	public void subscribeEditMode(IEditModeObserver so) {
+		editModeObservers.add(so);
 	}
 	
 	
@@ -199,5 +219,18 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 				statsPanel.add(lblValue);
 			}
 		}
+	}
+
+
+	@Override
+	public void enterEditMode() {
+		
+	}
+
+
+	@Override
+	public void exitEditMode() {
+		// TODO NicolaiO Auto-generated method stub
+		
 	}
 }
