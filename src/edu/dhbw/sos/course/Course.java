@@ -48,6 +48,7 @@ public class Course {
 	// place here? not implemented yet, so do not know...
 	private LinkedHashMap<String, String>			statistics					= new LinkedHashMap<String, String>();
 	private CalcVector									statState					= new CalcVector(4);
+	private LinkedList<CalcVector>					histStatStates				= new LinkedList<CalcVector>();
 	private LinkedList<String>							suggestions					= new LinkedList<String>();
 	
 	// the student and property that was selected in the GUI (by hovering over the student)
@@ -420,6 +421,7 @@ public class Course {
 			statistics.put("Tired: ", statState.getValueAt(1) + "");
 			statistics.put("Quality: ", statState.getValueAt(2) + "");
 			statistics.put("?: ", statState.getValueAt(3) + "");
+			histStatStates.add(statState.clone());
 			notifyStatisticsObservers();
 		}
 	}
@@ -525,5 +527,9 @@ public class Course {
 	
 	public void setSelectedProperty(int selectedProperty) {
 		this.selectedProperty = selectedProperty;
+	}
+	
+	public LinkedList<CalcVector> getHistStatState() {
+		return histStatStates;
 	}
 }

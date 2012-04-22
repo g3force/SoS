@@ -28,8 +28,10 @@ import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.TimeBlock;
 import edu.dhbw.sos.course.lecture.TimeBlocks;
+import edu.dhbw.sos.course.statistics.IStatisticsObserver;
 import edu.dhbw.sos.gui.Diagram;
 import edu.dhbw.sos.gui.plan.MovableBlock.Areas;
+import edu.dhbw.sos.helper.CalcVector;
 
 
 /**
@@ -39,7 +41,7 @@ import edu.dhbw.sos.gui.plan.MovableBlock.Areas;
  * @author NicolaiO
  * 
  */
-public class PaintArea extends JPanel implements MouseListener, MouseMotionListener {
+public class PaintArea extends JPanel implements MouseListener, MouseMotionListener, IStatisticsObserver {
 	private static final long			serialVersionUID	= 5194596384018441495L;
 	private static final Logger		logger				= Logger.getLogger(PaintArea.class);
 	
@@ -72,6 +74,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	public PaintArea(Course course) {
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
+		course.subscribeStatistics(this);
 		this.tbs = course.getLecture().getTimeBlocks();
 		this.course = course;
 		this.initMovableBlocks();
@@ -178,7 +181,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		}
 		
 		// draw diagram
-		updateDiagram();
+		// updateDiagram();
 		ga.setColor(Color.black);
 		attDia.draw(ga);
 	}
@@ -189,9 +192,12 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		attDia.setWidth(this.getWidth() - 20);
 		LinkedList<Float> newData = new LinkedList<Float>();
 		
-		//course.get
-		
+		for (CalcVector stat : course.getHistStatState()) {
+			newData.add(stat.getValueAt(1));
+			logger.debug(stat.getValueAt(1)+"");
+		}
 		attDia.setData(newData);
+		this.repaint();
 	}
 	
 	
@@ -592,5 +598,11 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		moveBlock.setLocation(x, moveY);
 		moveBlock.printMbTb(index, "M");
 		return true;
+	}
+	
+	
+	@Override
+	public void updateStatistics() {
+		updateDiagram();
 	}
 }
