@@ -25,6 +25,7 @@ import javax.swing.border.Border;
 
 import org.apache.log4j.Logger;
 
+import edu.dhbw.sos.SuperFelix;
 import edu.dhbw.sos.course.CourseController;
 import edu.dhbw.sos.course.Courses;
 import edu.dhbw.sos.gui.course.CoursePanel;
@@ -132,7 +133,7 @@ public class MainFrame extends JFrame implements IUpdateable, WindowListener {
 	
 	@Override
 	public void windowClosed(WindowEvent e) {
-		System.exit(0);
+		SuperFelix.close();
 	}
 	
 	

@@ -10,13 +10,15 @@ import org.apache.log4j.PropertyConfigurator;
 
 import edu.dhbw.sos.course.CourseController;
 import edu.dhbw.sos.course.Courses;
+import edu.dhbw.sos.course.io.CourseSaver;
 import edu.dhbw.sos.gui.MainFrame;
 
 
 public class SuperFelix {
 	public static String				VERSION	= "0.5";
 	private static final Logger	logger	= Logger.getLogger(SuperFelix.class);
-	
+	private static Courses	courses;
+	private static String savepath;
 	
 	public SuperFelix() {
 		/*
@@ -40,13 +42,13 @@ public class SuperFelix {
 		
 		// load datapath
 		// works for Windows and Linux... so the data is stored in the systems userdata folder...
-		String savepath = System.getProperty("user.home") + "/.sos/courses.xml";
+		savepath = System.getProperty("user.home") + "/.sos/courses.xml";
 		
 		
 		// create object for the data to be displayed in GUI
 		// the references will be used to update it afterwards
 		
-		Courses courses = new Courses(savepath);
+		courses = new Courses(savepath);
 		CourseController courseController = new CourseController(courses);
 		
 		
@@ -54,6 +56,12 @@ public class SuperFelix {
 		mainFrame.update();
 		
 		logger.info("Sim of Students started.");
+	}
+	
+	
+	public static void close() {
+		CourseSaver.saveCourses(courses, savepath);
+		System.exit(0);
 	}
 	
 	
