@@ -9,11 +9,15 @@
  */
 package edu.dhbw.sos.course.io;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Date;
 import java.util.LinkedList;
 
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.log4j.Logger;
@@ -45,77 +49,100 @@ public class CourseLoader {
 	 * @author SebastianN
 	 */
 	public static LinkedList<Course> loadCourses(String savepath) {
+		
 		XMLInputFactory factory = XMLInputFactory.newInstance();
+		File file = new File(savepath);
+		XMLStreamReader reader = null;
 		LinkedList<Course> courses = new LinkedList<Course>();
 		try {
-			XMLStreamReader reader = factory.createXMLStreamReader(new FileReader(savepath));
-			reader.getEventType(); //START
+			try {
+				reader = factory.createXMLStreamReader(new FileReader(file));
+			} catch( FileNotFoundException FnF ) {
+				logger.debug("Savefile couldn't be found!");
+				throw new XMLStreamException();
+			}
+			if(file.length()==0) {
+				throw new XMLStreamException("Savefile is empty");
+			}
+			if(reader!=null && file.length()>0) {
 			
-			int aIdx = 0;							//AttributeIDX
-			int sRows = 0, sColumns = 0; 	//Student-attribute
-			
-			Influence loadedInfl = new Influence( loadParameterMatrix( savepath ), loadEnvironmentMatrix( savepath ) );
-			
-			while(reader.hasNext()) {
-				reader.next(); //Next element
+				reader.getEventType(); //START
 				
-				if(reader.hasName()) {
-					String tagname = reader.getName().toString();
-					try {
-						if(reader.getEventType()==2)
-							continue;
+				int aIdx = 0;							//AttributeIDX 
+				int sRows = 0, sColumns = 0; 	//Student-attribute
+				
+				
+				while(reader.hasNext()) {
+					reader.next(); //Next element
+					
+					if(reader.hasName()) {
+						String tagname = reader.getName().toString();
+						int event_type = reader.getEventType();
 						
 						//<course> was found.
-						if(tagname.contentEquals("course")) {
+						if(event_type==1) {
+							if(tagname.contentEquals("course")) {
+									
+								Course newCourse = new Course(reader.getAttributeValue(0));
+								
+								int tmpRows = Integer.parseInt( reader.getAttributeValue(1) );
+								int tmpCols = Integer.parseInt( reader.getAttributeValue(2) );
+								
+								newCourse.setStudents( new IPlace[tmpRows][tmpCols] );
+								courses.add( newCourse );
+								
+							//<student> was found.
+							} else if(tagname.contentEquals("student")) {
+								//Isn't really unused, but whatever.
+								if(sColumns>=courses.getLast().getStudents()[0].length) { //
+									sColumns = 0;
+									sRows++;
+								}								
+								IPlace curStudent = courses.getLast().getStudents()[sRows][sColumns];
+								
+								int isEmpty = Integer.parseInt(reader.getAttributeValue(0));
+								
+								//isEmpty="0"
+								if(isEmpty==0) {
+									curStudent = new Student( Integer.parseInt(reader.getAttributeValue(1)) );
+								} else { //isEmpty="1"
+									curStudent = new EmptyPlace( Integer.parseInt(reader.getAttributeValue(1)) );
+								}
+								courses.getLast().setPlace(sRows, sColumns, curStudent);
+								if(isEmpty==1) { //Empty places don't have attributes. -> Skip.
+									sColumns++;
+								}
+								aIdx=0;
 							
-							Course newCourse = new Course(reader.getAttributeValue(0));
-
-							int tmpRows = Integer.parseInt( reader.getAttributeValue(1) );
-							int tmpCols = Integer.parseInt( reader.getAttributeValue(2) );
-							
-							newCourse.setStudents( new IPlace[tmpRows][tmpCols] );
-							newCourse.setInfluence(loadedInfl);
-							courses.add( newCourse );
-							
-						//<student> was found.
-						} else if(tagname.contentEquals("student")) {
-							//Isn't really unused, but whatever.
-							if(sColumns>=courses.getLast().getStudents()[0].length) { //
-								sColumns = 0;
-								sRows++;
+							//<sAttribute> was found.
+							} else if(tagname.contentEquals("sAttribute")) {
+								Student curStudent = (Student)courses.getLast().getStudents()[sRows][sColumns];
+								curStudent.addValueToStateVector(aIdx, Float.parseFloat(reader.getAttributeValue(0)));
+								aIdx++;
+								//if counted columns >= MAX_COLUMNS
+								if(aIdx>=curStudent.getActualState().size()) { //
+									sColumns++;
+								}
 							}
-							IPlace curStudent = courses.getLast().getStudents()[sRows][sColumns];
-
-							//isEmpty="0"
-							if(Integer.parseInt(reader.getAttributeValue(0))==0) {
-								curStudent = new Student( Integer.parseInt(reader.getAttributeValue(1)) );
-							} else { //isEmpty="1"
-								curStudent = new EmptyPlace( Integer.parseInt(reader.getAttributeValue(1)) );
-							}
-							courses.getLast().setPlace(sRows, sColumns, curStudent);
-							//logger.debug("Student StateVector.size(): " + curStudent.getActualState().size());
-							aIdx=0;
-						
-						//<sAttribute> was found.
-						} else if(tagname.contentEquals("sAttribute")) {
-							Student curStudent = (Student)courses.getLast().getStudents()[sRows][sColumns];
-							if(curStudent==null) {
-								logger.error("CURSTUDENT=NULL; row: " + sRows + ", cols: " + sColumns);
-							}
-							curStudent.addValueToStateVector(aIdx, Float.parseFloat(reader.getAttributeValue(0)));
-							aIdx++;
-							//if counted columns >= MAX_COLUMNS
-							if(aIdx>=curStudent.getActualState().size()) { //
-								sColumns++;
+						} else { //closeTag
+							if(tagname.contentEquals("course")) {
+								//Load ParameterMatrix after </course>
+								float[][] paramMatrix = loadParameterMatrix(reader);
+								
+								//load EnvironmentMatrix after </pMatrix>
+								float[][] envMatrix = loadEnvironmentMatrix(reader);
+								Influence infl = new Influence( paramMatrix, envMatrix );
+								for(int y=0;y<courses.size();y++) {
+									courses.get(y).setInfluence(infl);
+								}
+								break;
 							}
 						}
-					} catch( Exception ex ) {
-						logger.debug("XML-exception in loadCourses()");
 					}
 				}
+				reader.close();
 			}
-			reader.close();
-		} catch( Exception ex ) {
+		} catch( XMLStreamException ex ) {
 			logger.debug("File " + savepath + " not found. Loading dummy data.");
 			//load dummy data
 			
@@ -127,7 +154,7 @@ public class CourseLoader {
 			properties.add("Quality");
 			for (int y = 0; y < 5; y++) {
 				for (int x = 0; x < 7; x++) {
-					if (y == 3) {
+					if (y == 3 &&  x==4) {
 						students[y][x] = new EmptyPlace(properties.size());
 					} else {
 						Student newStud = new Student(properties.size());
@@ -173,17 +200,22 @@ public class CourseLoader {
 	 */
 	public static Course loadCurrentCourse( LinkedList<Course> courses, String savepath ) {
 		XMLInputFactory factory = XMLInputFactory.newInstance();
-	
+		XMLStreamReader reader = null;
 		try {
-			XMLStreamReader reader = factory.createXMLStreamReader(new FileReader(savepath));
-			reader.getEventType(); //START
-			
-			while(reader.hasNext()) {
-				reader.next(); //Next element
+			try {
+				reader = factory.createXMLStreamReader(new FileReader(savepath));
+			} catch( FileNotFoundException FnF ) {
+				FnF.printStackTrace();
+				//return null;
+			}
+			if(reader!=null) {
+				reader.getEventType(); //START
 				
-				if(reader.hasName()) {
-					String tagname = reader.getName().toString();
-					try {
+				while(reader.hasNext()) {
+					reader.next(); //Next element
+					
+					if(reader.hasName()) {
+						String tagname = reader.getName().toString();
 						if(reader.getEventType()==2)
 							continue;
 						if(tagname.contentEquals("current_course")) {
@@ -193,14 +225,13 @@ public class CourseLoader {
 								}
 							}
 						}
-					} catch( Exception ex ) {
-						logger.debug("XML-exception in loadCurrentCourse()");
 					}
 				}
+				reader.close();
 			}
-			reader.close();
-		} catch( Exception ex ) {
+		} catch( XMLStreamException ex ) {
 			logger.debug("XML-Reader in loadCurrentCourse()");
+			ex.printStackTrace();
 		}				
 		return null;	
 	}
@@ -213,48 +244,49 @@ public class CourseLoader {
 	 * @return
 	 * @author SebastianN
 	 */
-	public static float[][] loadParameterMatrix( String savepath ) {
-		XMLInputFactory factory = XMLInputFactory.newInstance();
+	public static float[][] loadParameterMatrix( XMLStreamReader reader ) throws XMLStreamException {
 		float[][] matVals = null;
 		try {
-			XMLStreamReader reader = factory.createXMLStreamReader(new FileReader(savepath));
 			if(reader!=null) {
-				reader.getEventType(); //START
-					
 				int mRows = -1, mColumns = 0; 	//Matrix
+				int size = 0;
 	
 				while(reader.hasNext()) {
 					reader.next(); //Next element
 					
+					int eventtype = reader.getEventType();
+					
 					if(reader.hasName()) {
 						String tagname = reader.getName().toString();
-						try {
-							if(reader.getEventType()==2)
-								continue;
+
+						if(eventtype == 1) {
 							if(tagname.contentEquals("pMatrix")) {
-								int size = Integer.parseInt(reader.getAttributeValue(0));
+								size = Integer.parseInt(reader.getAttributeValue(0));
 								matVals = new float[size][size];
 								for(int i=0;i<size;i++)
 									for(int j=0;j<size;j++)
 										matVals[i][j]=0.00f;
-									
+										
 							 } else if(tagname.contentEquals("pRow")) {
 									mRows++;
 									mColumns=0;
 										
 							 } else if(tagname.contentEquals("pAttribute")) {
 								 matVals[mRows][mColumns] = Float.parseFloat(reader.getAttributeValue(0)); //Integer value
-								 mColumns++;
+								 mColumns++;						
 							 }
-						} catch( Exception ex ) {
-							logger.debug("XML-exception in loadParameterMatrix()");
-							ex.printStackTrace();
+						} else if(eventtype == 2) {
+							//end tag
+							if(tagname.contentEquals("pMatrix")) {
+								break;
+							}
 						}
 					}
 				}
 			}
-		} catch( Exception ex ) {
+		} catch( XMLStreamException ex ) {
 			logger.debug("XML-Reader in loadParameterMatrix()");
+			ex.printStackTrace();
 		}
 		return matVals;
 	}
@@ -268,11 +300,9 @@ public class CourseLoader {
 	 * @return
 	 * @author SebastianN
 	 */
-	public static float[][] loadEnvironmentMatrix( String savepath ) {
-		XMLInputFactory factory = XMLInputFactory.newInstance();
+	public static float[][] loadEnvironmentMatrix( XMLStreamReader reader ) {
 		float[][] matVals = null;
 		try {
-			XMLStreamReader reader = factory.createXMLStreamReader(new FileReader(savepath));
 			if(reader!=null) {
 				reader.getEventType(); //START
 					
@@ -283,34 +313,35 @@ public class CourseLoader {
 					
 					if(reader.hasName()) {
 						String tagname = reader.getName().toString();
-						try {
-							if(reader.getEventType()==2)
-								continue;
-							 if(tagname.contentEquals("eMatrix")) {
+						if(reader.getEventType()==1) {
+							if(tagname.contentEquals("eMatrix")) {
 								int row_size = Integer.parseInt(reader.getAttributeValue(0));
 								int col_size =  Integer.parseInt(reader.getAttributeValue(1));
 								matVals = new float[row_size][col_size];
 								for(int i=0;i<row_size;i++)
 									for(int j=0;j<col_size;j++)
 										matVals[i][j]=0.00f;
-								 
-							 } else if(tagname.contentEquals("eRow")) {
-								 eRows++;
-								 eColumns=0;
-								 
-							 } else if(tagname.contentEquals("eAttribute")) {
-								 matVals[eRows][eColumns] = Float.parseFloat( reader.getAttributeValue(0) );
-								 eColumns++;
-								 
-							 }
-						} catch( Exception ex ) {
-							logger.debug("XML-exception in loadEnvironmentMatrix()");
+									 
+							} else if(tagname.contentEquals("eRow")) {
+								eRows++;
+								eColumns=0;
+									 
+							} else if(tagname.contentEquals("eAttribute")) {
+								matVals[eRows][eColumns] = Float.parseFloat( reader.getAttributeValue(0) );
+								eColumns++;
+									 
+							}
+						} else {
+							if(tagname.contentEquals("eMatrix")) {
+								break;
+							}
 						}
 					}
 				}
 			}
-		} catch( Exception ex ) {
+		} catch( XMLStreamException ex ) {
 			logger.debug("XML-Reader in loadEnvironmentMatrix()");
+			ex.printStackTrace();
 		}
 		return matVals;
 	}
