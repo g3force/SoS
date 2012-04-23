@@ -292,7 +292,10 @@ public class Student implements IPlace, Cloneable {
 	 * Creates an exact clone of this student object. All values are copied into a completely new object (no references!)
 	 */
 	public Student clone() {
-		return new Student(this.actualState.clone(), this.changeVector.clone());
+		Student student = new Student(this.actualState.clone(), this.changeVector.clone());
+		student.setHistoryStates(this.historyStates);
+		student.setHistoryDonInput(this.historyDonInput);
+		return student;
 	}
 	
 	
@@ -311,5 +314,21 @@ public class Student implements IPlace, Cloneable {
 	public LinkedHashMap<Integer, CalcVector> getHistoryStates() {
 		return historyStates;
 	}
+
+
+	public HashMap<Integer, Student> getHistoryDonInput() {
+		return historyDonInput;
+	}
+
+
+	public void setHistoryDonInput(HashMap<Integer, Student> historyDonInput) {
+		this.historyDonInput = historyDonInput;
+	}
+
+
+	public void setHistoryStates(LinkedHashMap<Integer, CalcVector> historyStates) {
+		this.historyStates = historyStates;
+	}
+	
 	
 }

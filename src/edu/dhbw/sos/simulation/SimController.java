@@ -80,9 +80,8 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	private void simulationStep() {
 		currentTime += speed;
 		logger.info("Simulation Step at " + currentTime);
-		synchronized (course) {
-			course.simulationStep(currentTime, speed);
-		}
+		course.simulationStep(currentTime, speed);
+		logger.info("History states: " + course.getPlace(0, 0).getHistoryStates().size());
 	}
 	
 	
@@ -127,9 +126,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		if (e.getButton() == MouseEvent.BUTTON3)
 			value *= -1;
 		if (course.getSelectedStudent() != null) {
-			synchronized (course) {
-				course.donInput(course.getSelectedProperty(), value, currentTime);
-			}
+			course.donInput(course.getSelectedProperty(), value, currentTime);
 		}
 		course.notifyStudentsObservers();
 	}
@@ -154,15 +151,15 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	public void mouseExited(MouseEvent e) {
 		
 	}
-
-
+	
+	
 	@Override
 	public void enterEditMode() {
 		// TODO NicolaiO Auto-generated method stub
 		
 	}
-
-
+	
+	
 	@Override
 	public void exitEditMode() {
 		// TODO NicolaiO Auto-generated method stub

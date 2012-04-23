@@ -290,23 +290,23 @@ public class Course {
 					newStudent.calcNextSimulationStep(preChangeVectorSpecial, influence, x, y, currentTime);
 					if (y == 0 && x == 0)
 						newStudent.printAcutalState();
-					
 				}
 			}
-			
-			// -------------------------------------------------
-			// -------------- post simulation ------------------
-			// -------------------------------------------------
-			
-			// give the reference from newState to real students array
-			students = newState;
-			
-			// calculate state statistics for whole course
-			calcStatistics();
-			
-			// notify all subscribers of the students array
-			notifyStudentsObservers();
 		}
+		
+		// -------------------------------------------------
+		// -------------- post simulation ------------------
+		// -------------------------------------------------
+		
+		// give the reference from newState to real students array
+		students = newState;
+		
+		// calculate state statistics for whole course
+		calcStatistics();
+		
+		// notify all subscribers of the students array
+		notifyStudentsObservers();
+		
 	}
 	
 	
