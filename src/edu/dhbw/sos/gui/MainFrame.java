@@ -83,8 +83,9 @@ public class MainFrame extends JFrame implements WindowListener {
 		PlanPanel planPanel = new PlanPanel(simController, courses.getCurrentCourse());
 		
 		// some subscriptions
-//		rightPanel.subscribeEditMode(simController);
-//		rightPanel.subscribeEditMode(coursePanel);
+		rightPanel.subscribeEditMode(simController);
+		rightPanel.subscribeEditMode(coursePanel);
+		simController.subscribeSpeed(planPanel);
 		
 		// put BottomPanel and StatusBar in a new Panel
 		JPanel bsPanel = new JPanel();

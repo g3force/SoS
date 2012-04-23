@@ -33,6 +33,7 @@ import javax.swing.SwingConstants;
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.lecture.TimeBlocks;
 import edu.dhbw.sos.helper.Messages;
+import edu.dhbw.sos.simulation.ISpeedObserver;
 import edu.dhbw.sos.simulation.SimController;
 
 
@@ -45,7 +46,7 @@ import edu.dhbw.sos.simulation.SimController;
  * @author NicolaiO
  * 
  */
-public class PlanPanel extends JPanel implements ComponentListener {
+public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserver {
 	private static final long	serialVersionUID	= -1665784555881941508L;
 	// paintArea is the part of the Panel, where some drawings have to be done
 	private final PaintArea		paintArea;
@@ -169,5 +170,11 @@ public class PlanPanel extends JPanel implements ComponentListener {
 	
 	@Override
 	public void componentHidden(ComponentEvent e) {
+	}
+
+
+	@Override
+	public void speedChanged(int speed) {
+		lblSpeed.setText(speed+"x");
 	}
 }
