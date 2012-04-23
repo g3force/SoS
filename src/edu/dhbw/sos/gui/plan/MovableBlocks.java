@@ -9,8 +9,15 @@
  */
 package edu.dhbw.sos.gui.plan;
 
-import java.util.Collection;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Point;
 import java.util.LinkedList;
+
+import edu.dhbw.sos.course.lecture.BlockType;
+import edu.dhbw.sos.course.lecture.TimeBlock;
+import edu.dhbw.sos.course.lecture.TimeBlocks;
+
 
 /**
  * TODO andres, add comment!
@@ -24,34 +31,77 @@ public class MovableBlocks extends LinkedList<MovableBlock> {
 	
 	/**  */
 	private static final long	serialVersionUID	= -2058135588292238015L;
+	
+	
 	/**
 	 * TODO andres, add comment!
 	 * 
 	 * @author andres
 	 */
 	public MovableBlocks() {
-		// TODO andres Auto-generated constructor stub
+		super();
 	}
-	
-	
-	/**
-	 * TODO andres, add comment!
-	 * 
-	 * @param c
-	 * @author andres
-	 */
-	public MovableBlocks(Collection<? extends MovableBlock> c) {
-		super(c);
-		// TODO andres Auto-generated constructor stub
-	}
-	
+
+
+	@Override
 	public boolean add(MovableBlock mb){
 		mb.setIndex(this.size()-1);
 		return super.add(mb);
 	} 
+	
+	
+	public double init(TimeBlocks tbs, int start, int width) {
+		double scaleRatio = (width - start) / (tbs.getTotalLength() != 0 ? tbs.getTotalLength() : 1);
+		for (TimeBlock tb : tbs) {
+			Point location;
+			Color color;
+			switch (tb.getType()) {
+				case pause:
+					location = new Point(start, 10);
+					color = BlockType.pause.getColor();
+					break;
+				case exercise:
+					location = new Point(start, 40);
+					color = BlockType.exercise.getColor();
+					break;
+				case group:
+					location = new Point(start, 70);
+					color = BlockType.group.getColor();
+					break;
+				case theory:
+					location = new Point(start, 100);
+					color = BlockType.theory.getColor();
+					break;
+				default:
+					location = new Point(start, 130);
+					color = Color.gray;
+			}
+			MovableBlock mb = new MovableBlock(location, new Dimension((int) (tb.getLen() * scaleRatio), 30), color, tb);
+			this.add(mb);
+			// System.out.println("start:" + start + " location:" + location + " type:" + tb.getType());
+			start += tb.getLen() * scaleRatio;
+		}
+		return scaleRatio;
+	}
+
+
+	@Override
 	public void add(int index, MovableBlock mb){
 		mb.setIndex(index);
 		super.add(index,mb);
 	}
 	
+	
+	/**
+	 * 
+	 * Swaps the position of indicies mb1 and mb2.
+	 * 
+	 * @param mb1
+	 * @param mb2
+	 * @author andres
+	 */
+	protected void swap(int mb1, int mb2) {
+		this.add(mb1, this.remove(mb2));
+	}
+
 }
