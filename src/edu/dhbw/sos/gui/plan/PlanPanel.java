@@ -49,7 +49,7 @@ import edu.dhbw.sos.simulation.SimController;
 public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserver {
 	private static final long	serialVersionUID	= -1665784555881941508L;
 	// paintArea is the part of the Panel, where some drawings have to be done
-	private final PaintArea		paintArea;
+	private final PPaintArea		paintArea;
 	// label where speed of playback is shown
 	private JLabel					lblSpeed;
 	// reference to the timeblocks to display
@@ -98,7 +98,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		this.add(lPanel, BorderLayout.WEST);
 		
 		// init paintArea
-		paintArea = new PaintArea(course);
+		paintArea = new PPaintArea(course);
 		this.add(paintArea, BorderLayout.CENTER);
 		// paintArea.initMovableBlocks();
 		

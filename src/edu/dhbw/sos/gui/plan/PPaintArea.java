@@ -41,9 +41,9 @@ import edu.dhbw.sos.helper.CalcVector;
  * @author NicolaiO
  * 
  */
-public class PaintArea extends JPanel implements MouseListener, MouseMotionListener, IStatisticsObserver {
+public class PPaintArea extends JPanel implements MouseListener, MouseMotionListener, IStatisticsObserver {
 	private static final long			serialVersionUID	= 5194596384018441495L;
-	private static final Logger		logger				= Logger.getLogger(PaintArea.class);
+	private static final Logger		logger				= Logger.getLogger(PPaintArea.class);
 	
 	// list of all movable blocks
 	private LinkedList<MovableBlock>	movableBlocks		= new LinkedList<MovableBlock>();
@@ -71,7 +71,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	 * 
 	 * @author NicolaiO
 	 */
-	public PaintArea(Course course) {
+	public PPaintArea(Course course) {
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		course.subscribeStatistics(this);
