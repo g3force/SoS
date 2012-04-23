@@ -61,8 +61,8 @@ public class Influence {
 	 * @deprecated
 	 */
 	public Influence() {
-		float[][] array = { { 0f, -10f, -20f, -20f }, { -20f, 0f, -20f, -20f }, { 20f, -10f, 0f, 20f },
-				{ -20f, -10f, 20f, 0f } }; // new float[4][4];
+		float[][] array = { { 0f, 10f, -20f, -20f }, { 20f, 0f, -20f, -20f }, { -20f, 10f, 0f, 20f },
+				{ 20f, 10f, 20f, 0f } }; // new float[4][4];
 		for (int i = 0; i < array.length; i++) {
 			for (int j = 0; j < array[i].length; j++) {
 				array[i][j] = (float) (Math.random() * 200) - 100;
@@ -82,19 +82,19 @@ public class Influence {
 		}
 		environmentalInfl.put(EInfluenceType.NEIGHBOR, cv1); // not used atm
 		
-		float[] breakReaction = { -20.0f, 10.0f, 30.0f, 20.0f };
+		float[] breakReaction = { 20.0f, -10.0f, 30.0f, 20.0f };
 		environmentalInfl.put(EInfluenceType.BREAK_REACTION, new CalcVector(breakReaction));
 		
-		float[] timeReaction = { 20.0f, 10.0f, -10.0f, -20.0f };
+		float[] timeReaction = { -20.0f, -10.0f, -10.0f, -20.0f };
 		environmentalInfl.put(EInfluenceType.TIME_DEPENDING, new CalcVector(timeReaction));
 		
-		float[] exerciseReaction = { 10.0f, -20.0f, -10.0f, 20.0f };
+		float[] exerciseReaction = { -10.0f, 20.0f, -10.0f, 20.0f };
 		environmentalInfl.put(EInfluenceType.EXERCISE_REACTION, new CalcVector(exerciseReaction));
 		
-		float[] groupReaction = { -40.0f, 20.0f, 30.0f, 20.0f };
+		float[] groupReaction = { 40.0f, -20.0f, 30.0f, 20.0f };
 		environmentalInfl.put(EInfluenceType.GROUP_REACTION, new CalcVector(groupReaction));
 		
-		float[] theoryReaction = { 40.0f, 10.0f, -30.0f, -20.0f };
+		float[] theoryReaction = { -40.0f, -10.0f, -30.0f, -20.0f };
 		environmentalInfl.put(EInfluenceType.THEORY_REACTION, new CalcVector(theoryReaction));
 	}
 	

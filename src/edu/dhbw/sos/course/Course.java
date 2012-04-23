@@ -254,7 +254,7 @@ public class Course {
 		preChangeVector.printCalcVector("Sim: after timeblock (" + bt.toString() + ")");
 		
 		// timeDending ( inf(Time) * currentTime/1000 * timeInf )
-		double timeInf = 0.001;
+		double timeInf = 0.000001;
 		double timeTimeInf = timeInf * currentTime / 1000;
 		preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.TIME_DEPENDING, timeTimeInf));
 		preChangeVector.printCalcVector("Sim: after time depending");
@@ -378,7 +378,7 @@ public class Course {
 				logger.info("Sim(1,1): average: " + average + " / actualState: " + student.getActualState().getValueAt(i)
 						+ " / reducer: " + reducer + " / value: " + (average - student.getActualState().getValueAt(i))
 						* reducer * 0.1f);
-			changeVector.setValueAt(i, (average - student.getActualState().getValueAt(i)) * reducer * 0.1f);
+			changeVector.setValueAt(i, (average - student.getActualState().getValueAt(i)) * reducer*0.1f);
 			// changeVector.multiplyWithVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR,0.01));
 		}
 		if (x == 1 && y == 1)
