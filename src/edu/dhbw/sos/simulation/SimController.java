@@ -117,8 +117,15 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		//if(e.getSource() instanceof )
-			toggle();
+//		if(e.getSource() instanceof LiveBtn) {
+//			
+//		} else if(e.getSource() instanceof PlayBtn) {
+//			toggle();
+//		} else if(e.getSource() instanceof ForwardBtn) {
+//			toggle();
+//		} else if(e.getSource() instanceof RewindBtn) {
+//			toggle();
+//		}
 		
 	}
 	

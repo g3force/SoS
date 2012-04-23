@@ -27,6 +27,10 @@ import edu.dhbw.sos.helper.CalcVector;
  * 
  */
 public class Student implements IPlace, Cloneable {
+	/**
+	 * Consider to add new attributes to the clone() method
+	 * if you want to store them persistent!
+	 */
 	private CalcVector									actualState;
 	private LinkedHashMap<Integer, CalcVector>	historyStates		= new LinkedHashMap<Integer, CalcVector>();
 	private HashMap<Integer, Student>				historyDonInput	= new HashMap<Integer, Student>();

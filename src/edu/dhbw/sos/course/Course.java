@@ -44,7 +44,7 @@ public class Course {
 	private Lecture										lecture;
 	private SimController								simController;
 	
-	private LinkedList<String>							properties					= new LinkedList<String>();
+	private LinkedList<String>							parameters					= new LinkedList<String>();
 	// place here? not implemented yet, so do not know...
 	private LinkedHashMap<String, String>			statistics					= new LinkedHashMap<String, String>();
 	private CalcVector									statState					= new CalcVector(4);
@@ -231,7 +231,7 @@ public class Course {
 		IPlace[][] newState = new IPlace[students.length][students[0].length];
 		for (int y = 0; y < 5; y++) {
 			for (int x = 0; x < 7; x++) {
-				newState[y][x] = new EmptyPlace(properties.size());
+				newState[y][x] = new EmptyPlace(parameters.size());
 			}
 		}
 		
@@ -239,7 +239,7 @@ public class Course {
 		// -------- student independent calculations -------
 		// -------------------------------------------------
 		
-		CalcVector preChangeVector = new CalcVector(properties.size());
+		CalcVector preChangeVector = new CalcVector(parameters.size());
 		preChangeVector.printCalcVector("Init");
 		
 		// time block depending ( inf(Break) * breakInf )
@@ -480,12 +480,12 @@ public class Course {
 	
 	
 	public LinkedList<String> getProperties() {
-		return properties;
+		return parameters;
 	}
 	
 	
 	public void setProperties(LinkedList<String> properties) {
-		this.properties = properties;
+		this.parameters = properties;
 	}
 	
 	

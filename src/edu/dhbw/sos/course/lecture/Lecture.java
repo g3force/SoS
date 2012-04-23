@@ -10,7 +10,6 @@
 package edu.dhbw.sos.course.lecture;
 
 import java.util.Date;
-import java.util.LinkedList;
 
 
 /**
@@ -29,6 +28,7 @@ public class Lecture {
 	public Lecture(Date start) {
 		this.start = start;
 		this.timeBlocks = new TimeBlocks();
+		timeBlocks.add(new TimeBlock(200, BlockType.theory));
 	}
 	
 	
@@ -74,13 +74,11 @@ public class Lecture {
 	 * @param timeBlocks the timeBlocks to set
 	 */
 	public void setTimeBlocks(TimeBlocks timeBlocks) {
-		 this.timeBlocks = timeBlocks;
-//		for (TimeBlock timeBlock : timeBlocks) {
-//			addTimeBlock(timeBlock);
-//		}
+		this.timeBlocks = timeBlocks;
+		// for (TimeBlock timeBlock : timeBlocks) {
+		// addTimeBlock(timeBlock);
+		// }
 	}
 	
-	
-
 	
 }
