@@ -41,6 +41,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	private int									currentTime;															// in milliseconds from
 																																// "begin"
 	private int									speed;																	// in milliseconds
+	private int									interval;
 	private Timer								pulse				= new Timer();
 	private boolean							run				= false;
 	private static final Logger			logger			= Logger.getLogger(SimController.class);
@@ -51,7 +52,8 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	public SimController(Course course) {
 		this.course = course;
 		currentTime = 0;
-		speed = 1000;
+		speed = 1;
+		interval = 1000;
 	}
 	
 	
@@ -84,7 +86,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 				simulationStep();
 			}
 		};
-		pulse.scheduleAtFixedRate(simulation, 0, speed);
+		pulse.scheduleAtFixedRate(simulation, 0, interval);
 	}
 	
 	
@@ -99,10 +101,10 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	 * @author dirk
 	 */
 	private void simulationStep() {
-		currentTime += speed;
+		currentTime += interval;
 		logger.info("Simulation Step at " + currentTime);
 		synchronized (getClass()) {
-			course.simulationStep(currentTime, speed);
+			course.simulationStep(currentTime, interval);
 		}
 		logger.info("History states: " + course.getPlace(0, 0).getHistoryStates().size());
 	}
@@ -132,11 +134,14 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	
 	public void setSpeed(int speed) {
-		if (speed > 64000)
-			speed = 64000;
-		if (speed < 1000)
-			speed = 1000;
+		if (speed > 64)
+			speed = 64;
+		if (speed < 1)
+			speed = 1;
 		this.speed = speed;
+		this.interval = 1000/speed;
+		stop();
+		run();
 	}
 	
 	
@@ -146,7 +151,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 			// FIXME Not implemented
 		} else if (e.getSource() instanceof PlayBtn) {
 			if (toggle()) {
-				((PlayBtn)e.getSource()).toggle();
+				((PlayBtn) e.getSource()).toggle();
 			}
 		} else if (e.getSource() instanceof ForwardBtn) {
 			setSpeed(getSpeed() * 2);

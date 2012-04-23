@@ -103,29 +103,32 @@ public class Student implements IPlace, Cloneable {
 	
 	/**
 	 * calculates the next state for the actual state vector
-	 * @param changeVector
+	 * @param addVector
 	 * @param influence
 	 * @author dirk
 	 */
-	public void calcNextSimulationStep(CalcVector changeVector, Influence influence, int time, int x, int y) {
+	public void calcNextSimulationStep(CalcVector addVector, Influence influence, int time, int x, int y) {
 		
 		saveHistoryStates(time);
 		
 		// parameter matrix * actual state
-		double parameterInf = 0.001;
-		changeVector.addCalcVector(influence.getInfluencedParameterVector(this.getActualState().clone(), parameterInf));
+		double parameterInf = 0.0001;
+		addVector.addCalcVector(influence.getInfluencedParameterVector(this.getActualState().clone(), parameterInf));
 		if (y == 1 && x == 1)
-			changeVector.printCalcVector("Sim(1,1): matrix influenced");
+			addVector.printCalcVector("Sim(1,1): matrix influenced");
 		
 		// usual behavior of the student ( usualBehav * behaviorInf )
-		changeVector.multiply(this.getChangeVector());
+		
 		if (y == 1 && x == 1)
-			changeVector.printCalcVector("Sim(1,1): student influenced");
+			changeVector.printCalcVector("Sim(1,1): Change vector");
+		addVector.multiply(this.getChangeVector());
+		if (y == 1 && x == 1)
+			addVector.printCalcVector("Sim(1,1): student influenced");
 		
 		// time depending
 		// TODO: bring all values to an average value by time
 		
-		this.addToStateVector(changeVector, x, y);
+		this.addToStateVector(addVector, x, y);
 	}
 	
 	

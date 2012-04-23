@@ -374,11 +374,15 @@ public class Course {
 			if (studentMAverage < 0)
 				studentMAverage *= -1;
 			float reducer = (100 - studentMAverage) / 100;
-			changeVector.setValueAt(i, (average - student.getActualState().getValueAt(i)) * reducer * 0.01f);
+			if (x == 1 && y == 1)
+				logger.info("Sim(1,1): average: " + average + " / actualState: " + student.getActualState().getValueAt(i)
+						+ " / reducer: " + reducer + " / value: " + (average - student.getActualState().getValueAt(i))
+						* reducer * 0.1f);
+			changeVector.setValueAt(i, (average - student.getActualState().getValueAt(i)) * reducer * 0.1f);
 			// changeVector.multiplyWithVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR,0.01));
 		}
-		if (x == 0 && y == 0)
-			changeVector.printCalcVector("Change vector (neighbors): ");
+		if (x == 1 && y == 1)
+			changeVector.printCalcVector("Sim(1,1): Change vector (neighbors): ");
 		
 		return changeVector;
 	}

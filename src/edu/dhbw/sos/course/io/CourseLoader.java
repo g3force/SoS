@@ -162,7 +162,7 @@ public class CourseLoader {
 						Student newStud = new Student(properties.size());
 						
 						for (int i = 0; i < 4; i++) {
-							newStud.addValueToChangeVector(i, (int) (Math.random() * 100));
+							newStud.addValueToChangeVector(i, (float) (Math.random() - 0.5));
 							newStud.addValueToStateVector(i, (int) (Math.random() * 100));
 						}
 						// ((Student)students[y][x]).
