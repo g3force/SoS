@@ -25,8 +25,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.apache.log4j.Logger;
-
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.CourseController;
 import edu.dhbw.sos.course.Courses;
@@ -34,9 +32,7 @@ import edu.dhbw.sos.course.ICoursesListObserver;
 import edu.dhbw.sos.course.ICurrentCourseObserver;
 import edu.dhbw.sos.course.statistics.IStatisticsObserver;
 import edu.dhbw.sos.course.suggestions.ISuggestionsObserver;
-import edu.dhbw.sos.gui.IEditModeObserver;
 import edu.dhbw.sos.gui.MainFrame;
-import edu.dhbw.sos.gui.course.CoursePanel;
 import edu.dhbw.sos.helper.Messages;
 
 
@@ -50,7 +46,7 @@ import edu.dhbw.sos.helper.Messages;
 public class RightPanel extends JPanel implements ICurrentCourseObserver, ICoursesListObserver, IStatisticsObserver,
 		ISuggestionsObserver, IEditModeObserver {
 	private static final long					serialVersionUID	= -6879799823225506209L;
-	private static final Logger				logger				= Logger.getLogger(RightPanel.class);
+	// private static final Logger logger = Logger.getLogger(RightPanel.class);
 	
 	private LinkedList<IEditModeObserver>	editModeObservers	= new LinkedList<IEditModeObserver>();
 	// width of panel
@@ -217,23 +213,33 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 	@Override
 	public void updateStatistics() {
 		// statistics
-		// if (statsPanel.getComponentCount() != courses.getCurrentCourse().getStatistics().size()) {
-		
-		statsPanel.removeAll();
-		for (Map.Entry<String, String> entry : courses.getCurrentCourse().getStatistics().entrySet()) {
-			JLabel lblKey = new JLabel(entry.getKey());
-			JLabel lblValue = new JLabel(entry.getValue(), JLabel.CENTER);
-			statsPanel.add(lblKey);
-			statsPanel.add(lblValue);
+		if (statsPanel.getComponentCount() == 0 || statsPanel.getComponentCount() == courses.getCurrentCourse().getStatistics().size()) {
+			statsPanel.removeAll();
+			for (Map.Entry<String, String> entry : courses.getCurrentCourse().getStatistics().entrySet()) {
+				JLabel lblKey = new JLabel(entry.getKey());
+				JLabel lblValue = new JLabel(entry.getValue(), JLabel.CENTER);
+				statsPanel.add(lblKey);
+				statsPanel.add(lblValue);
+			}
+		} else {
+			int i = 0;
+			for (Map.Entry<String, String> entry : courses.getCurrentCourse().getStatistics().entrySet()) {
+				synchronized (statsPanel.getTreeLock()) {
+					((JLabel) statsPanel.getComponent(i)).setText(entry.getKey());
+					((JLabel) statsPanel.getComponent(i+1)).setText(entry.getValue());
+					i+=2;
+				}
+			}
 		}
+		
+		
 		this.validate();
-		// }
 	}
 	
 	
 	@Override
 	public void enterEditMode() {
-		
+		// TODO NicolaiO Auto-generated method stub
 	}
 	
 	

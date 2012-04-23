@@ -14,8 +14,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
-
 import edu.dhbw.sos.course.influence.EInfluenceType;
 import edu.dhbw.sos.course.influence.Influence;
 import edu.dhbw.sos.course.lecture.BlockType;
@@ -34,9 +32,9 @@ import edu.dhbw.sos.simulation.SimController;
  * @author DirkK
  */
 public class Course {
-	private static final Logger						logger						= Logger.getLogger(Course.class);
+//	private static final Logger						logger						= Logger.getLogger(Course.class);
 	private LinkedList<IStudentsObserver>			studentsObservers			= new LinkedList<IStudentsObserver>();
-	private LinkedList<ISelectedCourseObserver>	selectedCourseObservers	= new LinkedList<ISelectedCourseObserver>();
+	private LinkedList<ISelectedStudentObserver>	selectedCourseObservers	= new LinkedList<ISelectedStudentObserver>();
 	private LinkedList<IStatisticsObserver>		statisticsObservers		= new LinkedList<IStatisticsObserver>();
 	private IPlace[][]									students						= new IPlace[0][0];
 	private Influence										influence					= new Influence();
@@ -88,9 +86,9 @@ public class Course {
 	 * 
 	 * @author NicolaiO
 	 */
-	public void notifySelectedCourseObservers() {
-		for (ISelectedCourseObserver so : selectedCourseObservers) {
-			so.updateSelectedCourse();
+	public void notifySelectedStudentObservers() {
+		for (ISelectedStudentObserver so : selectedCourseObservers) {
+			so.updateSelectedStudent();
 		}
 	}
 	
@@ -127,7 +125,7 @@ public class Course {
 	 * @param so
 	 * @author NicolaiO
 	 */
-	public void subscribeSelectedCourse(ISelectedCourseObserver so) {
+	public void subscribeSelectedStudent(ISelectedStudentObserver so) {
 		selectedCourseObservers.add(so);
 	}
 	
@@ -309,7 +307,7 @@ public class Course {
 		
 		// notify all subscribers of the students array
 		notifyStudentsObservers();
-		
+		notifySelectedStudentObservers();
 	}
 	
 	
@@ -536,7 +534,7 @@ public class Course {
 	
 	public void setSelectedStudent(IPlace selectedStudent) {
 		this.selectedStudent = selectedStudent;
-		notifySelectedCourseObservers();
+		notifySelectedStudentObservers();
 	}
 	
 	
@@ -547,6 +545,7 @@ public class Course {
 	
 	public void setSelectedProperty(int selectedProperty) {
 		this.selectedProperty = selectedProperty;
+		notifySelectedStudentObservers();
 	}
 	
 	

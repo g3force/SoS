@@ -17,7 +17,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import edu.dhbw.sos.course.Course;
-import edu.dhbw.sos.course.ISelectedCourseObserver;
+import edu.dhbw.sos.course.ISelectedStudentObserver;
 
 
 /**
@@ -28,7 +28,7 @@ import edu.dhbw.sos.course.ISelectedCourseObserver;
  * @author NicolaiO
  * 
  */
-public class StudentPanel extends JPanel implements ISelectedCourseObserver {
+public class StudentPanel extends JPanel implements ISelectedStudentObserver {
 	private static final long	serialVersionUID	= 722304874911423036L;
 	private final SPaintArea	paintArea;
 	private Course					course;
@@ -47,13 +47,17 @@ public class StudentPanel extends JPanel implements ISelectedCourseObserver {
 		this.setLayout(new BorderLayout());
 		this.course = course;
 		this.add(paintArea, BorderLayout.CENTER);
-		this.course.subscribeSelectedCourse(this);
+		this.course.subscribeSelectedStudent(this);
 	}
 	
 	
 	@Override
-	public void updateSelectedCourse() {
-		paintArea.update(course.getSelectedStudent(), course.getSelectedProperty());
+	public void updateSelectedStudent() {
+		if(course.getSelectedStudent() != null) {
+			paintArea.update(course.getSelectedStudent(), course.getSelectedProperty());
+		} else {
+			paintArea.update(course);
+		}
 	}
 	
 }
