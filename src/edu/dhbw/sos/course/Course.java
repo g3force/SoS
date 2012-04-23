@@ -205,9 +205,9 @@ public class Course {
 	
 	
 	public void donInput(int index, float value, int currentTime) {
-		selectedStudent.getActualState().printCalcVector("preDonInput");
+		selectedStudent.getActualState().printCalcVector("Don Input: preActualState: ");
 		selectedStudent.donInput(index, value, currentTime);
-		selectedStudent.getActualState().printCalcVector("postDonInput");
+		selectedStudent.getActualState().printCalcVector("Don Input: postActualState: ");
 	}
 	
 	
@@ -240,7 +240,7 @@ public class Course {
 		// -------------------------------------------------
 		
 		CalcVector preChangeVector = new CalcVector(parameters.size());
-		preChangeVector.printCalcVector("Init");
+		preChangeVector.printCalcVector("Sim: Init");
 		
 		// time block depending ( inf(Break) * breakInf )
 		double timeBlockInf = 0.01;
@@ -251,13 +251,13 @@ public class Course {
 		// logger.info("Influenced by break");
 		// preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.BREAK_REACTION, breakInf));
 		// }
-		preChangeVector.printCalcVector("after timeblock ("+bt.toString()+")");
+		preChangeVector.printCalcVector("Sim: after timeblock (" + bt.toString() + ")");
 		
 		// timeDending ( inf(Time) * currentTime/1000 * timeInf )
 		double timeInf = 0.001;
 		double timeTimeInf = timeInf * currentTime / 1000;
 		preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.TIME_DEPENDING, timeTimeInf));
-		preChangeVector.printCalcVector("after time depending");
+		preChangeVector.printCalcVector("Sim: after time depending");
 		
 		// -------------------------------------------------
 		// ---------- iterate over all students ------------
@@ -276,23 +276,23 @@ public class Course {
 					
 					// influence of the surrounding students
 					CalcVector neighborInfl = getNeighborsInfluence(student, x, y);
-					// output for one student (0,0) -> only for analyzing the simulation behavior
-					if (y == 0 && x == 0)
-						neighborInfl.printCalcVector("Neighbor");
+					// output for one student (1,1) -> only for analyzing the simulation behavior
+					if (y == 1 && x == 1)
+						neighborInfl.printCalcVector("Sim(1,1): Neighbor");
 					
 					// create a new vector which contains the pre calculates vector and the neighbor vector
 					CalcVector preChangeVectorSpecial = neighborInfl.addCalcVector(preChangeVector).addCalcVector(
 							neighborInfl);
-					// output for one student (0,0) -> only for analyzing the simulation behavior
-					if (y == 0 && x == 0)
-						neighborInfl.printCalcVector("preChangeVectorSpecial = Neighbor + preChangeVector");
+					// output for one student (1,1) -> only for analyzing the simulation behavior
+					if (y == 1 && x == 1)
+						neighborInfl.printCalcVector("Sim(1,1): preChangeVectorSpecial = Neighbor + preChangeVector");
 					
 					// create a new student and let him calculate a new change vector
 					Student newStudent = student.clone();
 					newState[y][x] = newStudent;
-					newStudent.calcNextSimulationStep(preChangeVectorSpecial, influence, x, y, currentTime);
-					if (y == 0 && x == 0)
-						newStudent.printAcutalState();
+					newStudent.calcNextSimulationStep(preChangeVectorSpecial, influence, currentTime, x, y);
+					if (y == 1 && x == 1)
+						newStudent.getActualState().printCalcVector("Sim(1,1): actualStateEnd");
 				}
 			}
 		}
