@@ -20,5 +20,9 @@ package edu.dhbw.sos.course.influence;
 public enum EInfluenceType {
 	NEIGHBOR,
 	BREAK_REACTION,
-	TIME_DEPENDING;
+	EXERCISE_REACTION,
+	GROUP_REACTION,
+	THEORY_REACTION,
+	TIME_DEPENDING,
+	UNKNOWN;
 }

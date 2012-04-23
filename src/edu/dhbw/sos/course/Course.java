@@ -242,13 +242,16 @@ public class Course {
 		CalcVector preChangeVector = new CalcVector(properties.size());
 		preChangeVector.printCalcVector("Init");
 		
-		// breakReaction ( inf(Break) * breakInf )
-		double breakInf = 0.01;
-		if (lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType() == BlockType.pause) {
-			logger.info("Influenced by break");
-			preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.BREAK_REACTION, breakInf));
-		}
-		preChangeVector.printCalcVector("after break");
+		// time block depending ( inf(Break) * breakInf )
+		double timeBlockInf = 0.01;
+		
+		BlockType bt = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType();
+		preChangeVector.addCalcVector(influence.getEnvironmentVector(bt.getEinfluenceType(), timeBlockInf));
+		// if (lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType() == BlockType.pause) {
+		// logger.info("Influenced by break");
+		// preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.BREAK_REACTION, breakInf));
+		// }
+		preChangeVector.printCalcVector("after timeblock ("+bt.toString()+")");
 		
 		// timeDending ( inf(Time) * currentTime/1000 * timeInf )
 		double timeInf = 0.001;
@@ -371,7 +374,7 @@ public class Course {
 			if (studentMAverage < 0)
 				studentMAverage *= -1;
 			float reducer = (100 - studentMAverage) / 100;
-			changeVector.setValueAt(i, (average - student.getActualState().getValueAt(i)) * reducer* 0.01f);
+			changeVector.setValueAt(i, (average - student.getActualState().getValueAt(i)) * reducer * 0.01f);
 			// changeVector.multiplyWithVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR,0.01));
 		}
 		if (x == 0 && y == 0)
@@ -413,7 +416,7 @@ public class Course {
 	 * @author andres
 	 */
 	private void calcStatistics() {
-	
+		
 		statState.multiply(0);
 		
 		statState.multiply(0);

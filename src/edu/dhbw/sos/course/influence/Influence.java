@@ -56,7 +56,10 @@ public class Influence {
 	 *	 	@deprecated
 	 */
 	public Influence() {
-		float[][] array = new float[4][4];
+		float[][] array = {{0f, -10f, -20f, -20f},
+								{-20f, 0f, -20f, -20f},
+								{20f, -10f, 0f, 20f},
+								{-20f, -10f, 20f, 0f}}; //new float[4][4];
 		for (int i=0; i < array.length;i++) {
 			for (int j = 0; j < array[i].length;j++) {
 				array[i][j]=(float)(Math.random()*200)-100;
@@ -71,17 +74,25 @@ public class Influence {
 		l.add("Quality");
 		environmentalInfl = new HashMap<EInfluenceType, CalcVector>();
 		CalcVector cv1 = new CalcVector(l.size());
-		CalcVector cv2 = new CalcVector(l.size());
-		CalcVector cv3 = new CalcVector(l.size());
 		for(int i=0; i<4; i++) {
 			cv1.setValueAt(i, (float)(Math.random()*200)-100);
-			cv2.setValueAt(i, (float)(Math.random()*200)-100);
-			cv3.setValueAt(i, (float)(Math.random()*200)-100);
 		}
-		environmentalInfl.put(EInfluenceType.NEIGHBOR , cv1);
-		environmentalInfl.put(EInfluenceType.BREAK_REACTION , cv2);
-		environmentalInfl.put(EInfluenceType.TIME_DEPENDING , cv3);
+		environmentalInfl.put(EInfluenceType.NEIGHBOR , cv1); // not used atm
 		
+		float[] breakReaction = {-20.0f, 10.0f, 30.0f, 20.0f};
+		environmentalInfl.put(EInfluenceType.BREAK_REACTION , new CalcVector(breakReaction));
+		
+		float[] timeReaction = {20.0f, 10.0f, -10.0f, -20.0f};
+		environmentalInfl.put(EInfluenceType.TIME_DEPENDING , new CalcVector(timeReaction));
+		
+		float[] exerciseReaction = {10.0f, -20.0f, -10.0f, 20.0f};
+		environmentalInfl.put(EInfluenceType.EXERCISE_REACTION , new CalcVector(exerciseReaction));
+		
+		float[] groupReaction = {-40.0f, 20.0f, 30.0f, 20.0f};
+		environmentalInfl.put(EInfluenceType.GROUP_REACTION , new CalcVector(groupReaction));
+		
+		float[] theoryReaction = {40.0f, 10.0f, -30.0f, -20.0f};
+		environmentalInfl.put(EInfluenceType.THEORY_REACTION , new CalcVector(theoryReaction));
 	}
 	/**
 	 * 10 20 30
