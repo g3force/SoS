@@ -371,7 +371,7 @@ public class Course {
 			if (studentMAverage < 0)
 				studentMAverage *= -1;
 			float reducer = (100 - studentMAverage) / 100;
-			changeVector.setValueAt(i, (average - student.getActualState().getValueAt(i)) * reducer);
+			changeVector.setValueAt(i, (average - student.getActualState().getValueAt(i)) * reducer* 0.01f);
 			// changeVector.multiplyWithVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR,0.01));
 		}
 		if (x == 0 && y == 0)
