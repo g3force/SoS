@@ -72,7 +72,7 @@ public class Course {
 	/**
 	 * notify all subscribers of the students array
 	 * 
-	 * @author NicolaiO
+	 * @author dirk
 	 */
 	public void notifyStudentsObservers() {
 		for (IStudentsObserver so : studentsObservers) {
@@ -178,6 +178,13 @@ public class Course {
 	}
 	
 	
+	public void donInput(int index, float value, int currentTime) {
+		selectedStudent.getActualState().printCalcVector("preDonInput");
+		selectedStudent.donInput(index, value, currentTime);
+		selectedStudent.getActualState().printCalcVector("postDonInput");
+	}
+	
+	
 	/**
 	 * calculates the next step of the simulation
 	 * calculate for every student the next state
@@ -187,77 +194,77 @@ public class Course {
 	 * @author dirk
 	 */
 	public void simulationStep(int currentTime, int speed) {
-
-		synchronized(students) {
-			students[0][0].printAcutalState();
-			
-			// -------------------------------------------------
-			// -------------- pre conditions -------------------
-			// -------------------------------------------------
-			
-			// the new array for the calculated students, fill it with EmptyPalce
-			IPlace[][] newState = new IPlace[students.length][students[0].length];
-			for (int y = 0; y < 5; y++) {
-				for (int x = 0; x < 7; x++) {
-					newState[y][x] = new EmptyPlace(properties.size());
-				}
+		
+		students[0][0].printAcutalState();
+		
+		// -------------------------------------------------
+		// -------------- pre conditions -------------------
+		// -------------------------------------------------
+		
+		// the new array for the calculated students, fill it with EmptyPalce
+		IPlace[][] newState = new IPlace[students.length][students[0].length];
+		for (int y = 0; y < 5; y++) {
+			for (int x = 0; x < 7; x++) {
+				newState[y][x] = new EmptyPlace(properties.size());
 			}
-			
-			// -------------------------------------------------
-			// -------- student independent calculations -------
-			// -------------------------------------------------
-			
-			CalcVector preChangeVector = new CalcVector(properties.size());
-			preChangeVector.printCalcVector("Init");
-			
-			// breakReaction ( inf(Break) * breakInf )
-			double breakInf = 0.01;
-			if (lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType() == BlockType.pause) {
-				logger.info("Influenced by break");
-				preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.BREAK_REACTION, breakInf));
-			}
-			preChangeVector.printCalcVector("after break");
-			
-			// timeDending ( inf(Time) * currentTime/1000 * timeInf )
-			double timeInf = 0.001;
-			double timeTimeInf = timeInf * currentTime / 1000;
-			preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.TIME_DEPENDING, timeTimeInf));
-			preChangeVector.printCalcVector("after time depending");
-			
-			// -------------------------------------------------
-			// ---------- iterate over all students ------------
-			// -------------------------------------------------
-			for (int y = 0; y < students.length; y++) {
-				for (int x = 0; x < students[y].length; x++) {
-					if (students[y][x] instanceof Student) {
-						Student student = (Student) students[y][x];
-						// check if there was an interaction from the don
-						Entry<Integer, Student> donInteraction = student.historyDonInputInInterval(currentTime - speed,
-								currentTime);
-						if (donInteraction != null) {
-							student = donInteraction.getValue();
-						}
-						
-						// influence of the surrounding students
-						CalcVector neighborInfl = getNeighborsInfluence(student, x, y);
-						// output for one student (0,0) -> only for analyzing the simulation behavior
-						if (y == 0 && x == 0)
-							neighborInfl.printCalcVector("Neighbor");
-						
-						// create a new vector which contains the pre calculates vector and the neighbor vector
-						CalcVector preChangeVectorSpecial = neighborInfl.addCalcVector(preChangeVector).addCalcVector(
-								neighborInfl);
-						// output for one student (0,0) -> only for analyzing the simulation behavior
-						if (y == 0 && x == 0)
-							neighborInfl.printCalcVector("preChangeVectorSpecial = Neighbor + preChangeVector");
-						
-						// create a new student and let him calculate a new change vector
-						newState[y][x] = student.clone();
-						((Student) newState[y][x]).calcNextSimulationStep(preChangeVectorSpecial, influence, x, y, currentTime);
-						if (y == 0 && x == 0)
-							((Student) newState[y][x]).printAcutalState();
-						((Student) newState[y][x]).saveHistoryStates(currentTime);
+		}
+		
+		// -------------------------------------------------
+		// -------- student independent calculations -------
+		// -------------------------------------------------
+		
+		CalcVector preChangeVector = new CalcVector(properties.size());
+		preChangeVector.printCalcVector("Init");
+		
+		// breakReaction ( inf(Break) * breakInf )
+		double breakInf = 0.01;
+		if (lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType() == BlockType.pause) {
+			logger.info("Influenced by break");
+			preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.BREAK_REACTION, breakInf));
+		}
+		preChangeVector.printCalcVector("after break");
+		
+		// timeDending ( inf(Time) * currentTime/1000 * timeInf )
+		double timeInf = 0.001;
+		double timeTimeInf = timeInf * currentTime / 1000;
+		preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.TIME_DEPENDING, timeTimeInf));
+		preChangeVector.printCalcVector("after time depending");
+		
+		// -------------------------------------------------
+		// ---------- iterate over all students ------------
+		// -------------------------------------------------
+		for (int y = 0; y < students.length; y++) {
+			for (int x = 0; x < students[y].length; x++) {
+				if (students[y][x] instanceof Student) {
+					Student student = (Student) students[y][x];
+					
+					// check if there was an interaction from the don
+					Entry<Integer, Student> donInteraction = student.historyDonInputInInterval(currentTime - speed,
+							currentTime);
+					if (donInteraction != null) {
+						student = donInteraction.getValue();
 					}
+					
+					// influence of the surrounding students
+					CalcVector neighborInfl = getNeighborsInfluence(student, x, y);
+					// output for one student (0,0) -> only for analyzing the simulation behavior
+					if (y == 0 && x == 0)
+						neighborInfl.printCalcVector("Neighbor");
+					
+					// create a new vector which contains the pre calculates vector and the neighbor vector
+					CalcVector preChangeVectorSpecial = neighborInfl.addCalcVector(preChangeVector).addCalcVector(
+							neighborInfl);
+					// output for one student (0,0) -> only for analyzing the simulation behavior
+					if (y == 0 && x == 0)
+						neighborInfl.printCalcVector("preChangeVectorSpecial = Neighbor + preChangeVector");
+					
+					// create a new student and let him calculate a new change vector
+					Student newStudent = student.clone();
+					newState[y][x] = newStudent;
+					newStudent.calcNextSimulationStep(preChangeVectorSpecial, influence, x, y, currentTime);
+					if (y == 0 && x == 0)
+						newStudent.printAcutalState();
+					
 				}
 			}
 			
@@ -289,18 +296,20 @@ public class Course {
 		// x o x
 		// x x x
 		CalcVector changeVector = new CalcVector(student.getActualState().size());
-//		double[][] neighborInf = { { 0.0001, 0.0001, 0.0001 }, { 0.0010, 0.00, 0.0010 }, { 0.000010, 0.000010, 0.000010 } };// new double[3][3];
+		// double[][] neighborInf = { { 0.0001, 0.0001, 0.0001 }, { 0.0010, 0.00, 0.0010 }, { 0.000010, 0.000010, 0.000010
+		// } };// new double[3][3];
 		// for (int i = 0; i < 3; i++) {
 		// for (int j = 0; j < 3; j++) {
 		// neighborInf[j][i] = 0.01;
 		// }
 		// }
-//		if(x==0 && y==0)
-//		influence.getEnvironmentVector(EInfluenceType.NEIGHBOR, neighborInf[0][0])
-//				.printCalcVector("Influence neighbor: ");
+		// if(x==0 && y==0)
+		// influence.getEnvironmentVector(EInfluenceType.NEIGHBOR, neighborInf[0][0])
+		// .printCalcVector("Influence neighbor: ");
 		
 		// System.out.println("x: "+x+" / y: "+y);
 		CalcVector surronding = new CalcVector(student.getActualState().size());
+		int neighbourAmount = 0;
 		for (int i = -1; i <= 1; i++) {
 			for (int j = -1; j <= 1; j++) {
 				if (i != 0 || j != 0) {
@@ -309,28 +318,36 @@ public class Course {
 					if (newx < students[0].length && newx >= 0 && newy < students.length && newy >= 0) {
 						IPlace s = students[newy][newx];
 						surronding = surronding.addCalcVector(s.getActualState());
-//						CalcVector studentsState = s.getActualState();
-//						changeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR,
-//								neighborInf[j + 1][i + 1]).multiplyWithVector(studentsState));
+						if (s instanceof Student)
+							neighbourAmount++;
+						
+						// add small percentage of surrounding students to every student
+						// problem: will increase until infinity
+						// CalcVector studentsState = s.getActualState();
+						// changeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR,
+						// neighborInf[j + 1][i + 1]).multiplyWithVector(studentsState));
 						
 					}
 				}
 			}
 		}
 		
-		//
+		// Game of life
+		// 1. calculate average of surrounding students
+		// 2. calculate difference of students value and average
+		// 3. changeVector = difference of students value and average
 		for (int i = 0; i < changeVector.size(); i++) {
-			float average = surronding.getValueAt(i)/surronding.size();
-			float studentMAverage = student.getActualState().getValueAt(i)-average;
-			if(studentMAverage<0)
+			float average = surronding.getValueAt(i) / neighbourAmount;
+			float studentMAverage = student.getActualState().getValueAt(i) - average;
+			if (studentMAverage < 0)
 				studentMAverage *= -1;
-			float reducer = (100-studentMAverage)/100;
-			changeVector.setValueAt(i, (average-student.getActualState().getValueAt(i)) * reducer);
-			//changeVector.multiplyWithVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR,0.01));
+			float reducer = (100 - studentMAverage) / 100;
+			changeVector.setValueAt(i, (average - student.getActualState().getValueAt(i)) * reducer);
+			// changeVector.multiplyWithVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR,0.01));
 		}
-		if(x==0 && y==0)
+		
+		if (x == 0 && y == 0)
 			changeVector.printCalcVector("Change vector (neighbors): ");
-			
 		
 		return changeVector;
 	}

@@ -80,7 +80,9 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	private void simulationStep() {
 		currentTime += speed;
 		logger.info("Simulation Step at " + currentTime);
-		course.simulationStep(currentTime, speed);
+		synchronized (course) {
+			course.simulationStep(currentTime, speed);
+		}
 	}
 	
 	
@@ -124,8 +126,11 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		// right click
 		if (e.getButton() == MouseEvent.BUTTON3)
 			value *= -1;
-		if (course.getSelectedStudent() != null)
-			course.getSelectedStudent().donInput(course.getSelectedProperty(), value, currentTime);
+		if (course.getSelectedStudent() != null) {
+			synchronized (course) {
+				course.donInput(course.getSelectedProperty(), value, currentTime);
+			}
+		}
 		course.notifyStudentsObservers();
 	}
 	

@@ -39,6 +39,7 @@ public class Student implements IPlace, Cloneable {
 		this.changeVector = new CalcVector(vectorInitSize);
 	}
 	
+	
 	public Student(CalcVector actualState, CalcVector changeVector) {
 		this.actualState = actualState;
 		this.changeVector = changeVector;
@@ -53,13 +54,13 @@ public class Student implements IPlace, Cloneable {
 	 * @author NicolaiO
 	 */
 	public void donInput(int index, float value, int time) {
-		CalcVector cv = new CalcVector(4);
-		cv.setValueAt(index, value);
-		addHistoryDonInput(time);
-		addToChangeVector(cv);
-		addToStateVector(cv, 0, 0);
-		
+			CalcVector cv = new CalcVector(4);
+			cv.setValueAt(index, value);
+			addHistoryDonInput(time);
+			addToChangeVector(cv);
+			addToStateVector(cv, 0, 0);
 	}
+	
 	
 	/**
 	 * adds a new state to the history states
@@ -70,6 +71,7 @@ public class Student implements IPlace, Cloneable {
 	public void addHistoryDonInput(int time) {
 		historyDonInput.put(time, this.clone());
 	}
+	
 	
 	/**
 	 * takes a start and end time
@@ -102,17 +104,15 @@ public class Student implements IPlace, Cloneable {
 		
 		saveHistoryStates(time);
 		
-		// - - parameter
+		// parameter matrix * actual state
 		double parameterInf = 0.001;
 		changeVector.addCalcVector(influence.getInfluencedParameterVector(this.getActualState().clone(), parameterInf));
-		
 		if (y == 0 && x == 0)
 			changeVector.printCalcVector("matrix influenced");
 		
-		// - usual behavior of the student -> usualBehav * timeInf
+		// usual behavior of the student ( usualBehav * behaviorInf )
 		double behaviorInf = 0.001;
 		changeVector.addCalcVector(this.getChangeVector().clone().multiplyWithDouble(behaviorInf));
-		
 		if (y == 0 && x == 0)
 			changeVector.printCalcVector("student influenced");
 		
@@ -122,11 +122,12 @@ public class Student implements IPlace, Cloneable {
 		this.addToStateVector(changeVector, x, y);
 	}
 	
+	
 	/**
 	 * 
 	 * adds a change vector to the state vector of a student
 	 * 
-	 * @param addVector 
+	 * @param addVector
 	 * @param x TO DELETE, only for simulation debug
 	 * @param y TO DELETE, only for simulation debug
 	 * @author dirk
@@ -158,6 +159,7 @@ public class Student implements IPlace, Cloneable {
 		}
 	}
 	
+	
 	/**
 	 * modify the change vector after a don input
 	 * @param addVector
@@ -165,10 +167,10 @@ public class Student implements IPlace, Cloneable {
 	 */
 	public void addToChangeVector(CalcVector addVector) {
 		changeVector.addCalcVector(addVector);
-		for(int i=0; i<changeVector.size(); i++) {
-			if(changeVector.getValueAt(i)<100)
+		for (int i = 0; i < changeVector.size(); i++) {
+			if (changeVector.getValueAt(i) < 100)
 				changeVector.setValueAt(i, 100);
-			if(changeVector.getValueAt(i)>0)
+			if (changeVector.getValueAt(i) > 0)
 				changeVector.setValueAt(i, 0);
 		}
 	}
@@ -290,7 +292,7 @@ public class Student implements IPlace, Cloneable {
 	 * Creates an exact clone of this student object. All values are copied into a completely new object (no references!)
 	 */
 	public Student clone() {
-		return new Student(this.actualState.clone(),this.changeVector.clone());
+		return new Student(this.actualState.clone(), this.changeVector.clone());
 	}
 	
 	
@@ -309,5 +311,5 @@ public class Student implements IPlace, Cloneable {
 	public LinkedHashMap<Integer, CalcVector> getHistoryStates() {
 		return historyStates;
 	}
-
+	
 }
