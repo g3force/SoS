@@ -111,6 +111,9 @@ public class PlanPanel extends JPanel implements ComponentListener {
 		JPanel controlPanel = new JPanel();
 		PlayBtn btnPlay = new PlayBtn();
 		LiveBtn btnLive = new LiveBtn();
+		btnPlay.addActionListener(simController);
+		btnLive.addActionListener(simController);
+		
 		
 		controlPanel.add(btnPlay);
 		controlPanel.add(btnLive);
@@ -128,6 +131,9 @@ public class PlanPanel extends JPanel implements ComponentListener {
 		speedPanel.add(lblSpeed);
 		speedPanel.add(btnPlus);
 		sidePanel.add(speedPanel);
+		btnPlus.addActionListener(simController);
+		btnMinus.addActionListener(simController);
+
 		
 		// time
 		JLabel lblFromTo = new JLabel(Messages.getString("Lecture.FROMTO"), SwingConstants.LEFT);
