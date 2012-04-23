@@ -40,7 +40,8 @@ public class Student implements IPlace, Cloneable {
 	
 	public Student(int vectorInitSize) {
 		this.actualState = new CalcVector(vectorInitSize);
-		this.changeVector = new CalcVector(vectorInitSize);
+		float[] changeVectorF = {1f, 1f, 1f, 1f};
+		this.changeVector = new CalcVector(changeVectorF);
 	}
 	
 	
@@ -61,8 +62,10 @@ public class Student implements IPlace, Cloneable {
 			CalcVector cv = new CalcVector(4);
 			cv.setValueAt(index, value);
 			addHistoryDonInput(time);
-			addToChangeVector(cv);
+			changeVector.printCalcVector("Don Input: preChangeVector: ");
+			addToChangeVector(index, value);
 			addToStateVector(cv, 0, 0);
+			changeVector.printCalcVector("Don Input: postChangeVector: ");
 	}
 	
 	
@@ -104,22 +107,20 @@ public class Student implements IPlace, Cloneable {
 	 * @param influence
 	 * @author dirk
 	 */
-	public void calcNextSimulationStep(CalcVector changeVector, Influence influence, int x, int y, int time) {
+	public void calcNextSimulationStep(CalcVector changeVector, Influence influence, int time, int x, int y) {
 		
 		saveHistoryStates(time);
 		
 		// parameter matrix * actual state
 		double parameterInf = 0.001;
 		changeVector.addCalcVector(influence.getInfluencedParameterVector(this.getActualState().clone(), parameterInf));
-		if (y == 0 && x == 0)
-			changeVector.printCalcVector("matrix influenced");
+		if (y == 1 && x == 1)
+			changeVector.printCalcVector("Sim(1,1): matrix influenced");
 		
 		// usual behavior of the student ( usualBehav * behaviorInf )
-		double behaviorInf = 0.001;
-		changeVector.addCalcVector(this.getChangeVector().clone().multiply(behaviorInf));
-		changeVector.addCalcVector(this.getChangeVector().clone().multiply(behaviorInf));
-		if (y == 0 && x == 0)
-			changeVector.printCalcVector("student influenced");
+		changeVector.multiply(this.getChangeVector());
+		if (y == 1 && x == 1)
+			changeVector.printCalcVector("Sim(1,1): student influenced");
 		
 		// time depending
 		// TODO: bring all values to an average value by time
@@ -138,10 +139,10 @@ public class Student implements IPlace, Cloneable {
 	 * @author dirk
 	 */
 	public void addToStateVector(CalcVector addVector, int x, int y) {
-		if (y == 0 && x == 0)
-			addVector.printCalcVector("ADD Vector");
-		if (y == 0 && x == 0)
-			actualState.printCalcVector("Actual State");
+		if (y == 1 && x == 1)
+			addVector.printCalcVector("Add(1,1): addVector");
+		if (y == 1 && x == 1)
+			actualState.printCalcVector("Add(1,1): preActualState");
 		for (int i = 0; i < addVector.size(); i++) {
 			double sValue = actualState.getValueAt(i);
 			double vValue = addVector.getValueAt(i);
@@ -170,14 +171,15 @@ public class Student implements IPlace, Cloneable {
 	 * @param addVector
 	 * @author dirk
 	 */
-	public void addToChangeVector(CalcVector addVector) {
-		changeVector.addCalcVector(addVector);
-		for (int i = 0; i < changeVector.size(); i++) {
-			if (changeVector.getValueAt(i) < 100)
-				changeVector.setValueAt(i, 100);
-			if (changeVector.getValueAt(i) > 0)
-				changeVector.setValueAt(i, 0);
-		}
+	public void addToChangeVector(int index, float value) {
+		changeVector.setValueAt(index, changeVector.getValueAt(index) + value/100);
+//		changeVector.addCalcVector(addVector);
+//		for (int i = 0; i < changeVector.size(); i++) {
+//			if (changeVector.getValueAt(i) < 100)
+//				changeVector.setValueAt(i, 100);
+//			if (changeVector.getValueAt(i) > 0)
+//				changeVector.setValueAt(i, 0);
+//		}
 	}
 	
 	
