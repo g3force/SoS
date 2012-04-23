@@ -35,7 +35,7 @@ public class DelBtn extends JButton {
 	 */
 	public DelBtn() {
 		super("del");
-		URL editIconUrl = getClass().getResource("/res/icons/del.png");
+		URL editIconUrl = getClass().getResource("/res/icons/delete.png");
 		if (editIconUrl != null) {
 			ImageIcon icon = new ImageIcon(editIconUrl);
 			Image img = icon.getImage();
