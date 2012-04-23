@@ -11,6 +11,8 @@ package edu.dhbw.sos.course.lecture;
 
 import java.util.LinkedList;
 
+import org.apache.log4j.Logger;
+
 
 /**
  * This class holds is a LinkedListof type TimeBlock wich hold as all TimeBlocks of a lecture and gives methods for
@@ -19,7 +21,8 @@ import java.util.LinkedList;
  * 
  */
 public class TimeBlocks extends LinkedList<TimeBlock> {
-	private static final long	serialVersionUID	= -5463421486049533791L;
+	private static final long		serialVersionUID	= -5463421486049533791L;
+	private static final Logger	logger				= Logger.getLogger(TimeBlocks.class);
 	
 	
 	/**
@@ -139,6 +142,14 @@ public class TimeBlocks extends LinkedList<TimeBlock> {
 	 * @author andres
 	 */
 	public TimeBlock getTimeBlockAtTime(int pos) {
-		return this.get(getIndexAtPos(pos));
+		TimeBlock result;
+		try {
+			result = this.get(getIndexAtPos(pos));
+		} catch (IndexOutOfBoundsException e) {
+			logger.warn("No TimeBlock. Create Theory Block of length 1");
+			result = new TimeBlock(1, BlockType.theory);
+		}
+		
+		return result;
 	}
 }

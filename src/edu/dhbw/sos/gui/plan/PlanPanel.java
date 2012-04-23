@@ -13,12 +13,17 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -104,9 +109,9 @@ public class PlanPanel extends JPanel implements ComponentListener {
 		
 		// control panel (play, pause, etc.)
 		JPanel controlPanel = new JPanel();
-		JButton btnPlay = new JButton("Pl");
-		btnPlay.addActionListener(simController);
-		JButton btnLive = new JButton("L");
+		PlayBtn btnPlay = new PlayBtn();
+		LiveBtn btnLive = new LiveBtn();
+		
 		controlPanel.add(btnPlay);
 		controlPanel.add(btnLive);
 		sidePanel.add(controlPanel);
@@ -116,12 +121,12 @@ public class PlanPanel extends JPanel implements ComponentListener {
 		
 		// speed controls
 		lblSpeed = new JLabel("1x");
-		JButton btnPlus = new JButton("+");
-		JButton btnMinus = new JButton("-");
+		ForwardBtn btnPlus = new ForwardBtn();
+		RewindBtn btnMinus = new RewindBtn();
 		JPanel speedPanel = new JPanel();
+		speedPanel.add(btnMinus);
 		speedPanel.add(lblSpeed);
 		speedPanel.add(btnPlus);
-		speedPanel.add(btnMinus);
 		sidePanel.add(speedPanel);
 		
 		// time
