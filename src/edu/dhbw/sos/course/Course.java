@@ -400,7 +400,7 @@ public class Course {
 	 */
 	private void calcStatistics() {
 	
-		statState.multiplyWithInteger(0);
+		statState.multiply(0);
 		int studentNum = 0;
 		// for (IPlace[] studentRow : students) {
 		// for (IPlace student : studentRow) {

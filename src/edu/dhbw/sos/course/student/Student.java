@@ -111,7 +111,7 @@ public class Student implements IPlace, Cloneable {
 		
 		// - usual behavior of the student -> usualBehav * timeInf
 		double behaviorInf = 0.001;
-		changeVector.addCalcVector(this.getChangeVector().clone().multiplyWithDouble(behaviorInf));
+		changeVector.addCalcVector(this.getChangeVector().clone().multiply(behaviorInf));
 		
 		if (y == 0 && x == 0)
 			changeVector.printCalcVector("student influenced");
