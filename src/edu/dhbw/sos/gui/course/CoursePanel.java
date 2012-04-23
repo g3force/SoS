@@ -30,8 +30,8 @@ import edu.dhbw.sos.course.ICurrentCourseObserver;
 import edu.dhbw.sos.course.IStudentsObserver;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
-import edu.dhbw.sos.gui.IEditModeObserver;
 import edu.dhbw.sos.gui.MainFrame;
+import edu.dhbw.sos.gui.right.IEditModeObserver;
 import edu.dhbw.sos.simulation.SimController;
 
 

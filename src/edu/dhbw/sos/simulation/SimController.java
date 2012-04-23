@@ -20,11 +20,11 @@ import java.util.TimerTask;
 import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.Course;
-import edu.dhbw.sos.gui.IEditModeObserver;
 import edu.dhbw.sos.gui.plan.ForwardBtn;
 import edu.dhbw.sos.gui.plan.LiveBtn;
 import edu.dhbw.sos.gui.plan.PlayBtn;
 import edu.dhbw.sos.gui.plan.RewindBtn;
+import edu.dhbw.sos.gui.right.IEditModeObserver;
 
 
 /**
