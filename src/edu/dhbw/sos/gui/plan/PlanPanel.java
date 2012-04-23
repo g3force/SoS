@@ -92,7 +92,7 @@ public class PlanPanel extends JPanel implements ComponentListener {
 		this.add(lPanel, BorderLayout.WEST);
 		
 		// init paintArea
-		paintArea = new PaintArea(timeBlocks);
+		paintArea = new PaintArea(course);
 		this.add(paintArea, BorderLayout.CENTER);
 		// paintArea.initMovableBlocks();
 		

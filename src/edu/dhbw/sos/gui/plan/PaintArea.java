@@ -24,11 +24,14 @@ import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 
+import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.TimeBlock;
 import edu.dhbw.sos.course.lecture.TimeBlocks;
+import edu.dhbw.sos.course.statistics.IStatisticsObserver;
 import edu.dhbw.sos.gui.Diagram;
 import edu.dhbw.sos.gui.plan.MovableBlock.Areas;
+import edu.dhbw.sos.helper.CalcVector;
 
 
 /**
@@ -38,7 +41,7 @@ import edu.dhbw.sos.gui.plan.MovableBlock.Areas;
  * @author NicolaiO
  * 
  */
-public class PaintArea extends JPanel implements MouseListener, MouseMotionListener {
+public class PaintArea extends JPanel implements MouseListener, MouseMotionListener, IStatisticsObserver {
 	private static final long			serialVersionUID	= 5194596384018441495L;
 	private static final Logger		logger				= Logger.getLogger(PaintArea.class);
 	
@@ -52,6 +55,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	private int								widthLeft			= -1;
 	private int								widthRight			= -1;
 	private TimeBlocks					tbs;
+	private Course							course;
 	
 	double									scaleRatio			= 1;
 	int										start;
@@ -67,10 +71,12 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 	 * 
 	 * @author NicolaiO
 	 */
-	public PaintArea(TimeBlocks tbs) {
+	public PaintArea(Course course) {
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
-		this.tbs = tbs;
+		course.subscribeStatistics(this);
+		this.tbs = course.getLecture().getTimeBlocks();
+		this.course = course;
 		this.initMovableBlocks();
 		
 		attDia = new Diagram(new LinkedList<Float>());
@@ -175,7 +181,7 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		}
 		
 		// draw diagram
-		updateDiagram();
+		// updateDiagram();
 		ga.setColor(Color.black);
 		attDia.draw(ga);
 	}
@@ -185,17 +191,12 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		attDia.setHeight(this.getHeight() - 20);
 		attDia.setWidth(this.getWidth() - 20);
 		LinkedList<Float> newData = new LinkedList<Float>();
-		{
-			// dummy data
-			float last = 50;
-			for (int i = 0; i < 50; i++) {
-				last = last + (float) ((Math.random() - 0.5) * 30.0);
-				if (last < 0)
-					last = 0;
-				newData.add(last);
-			}
+		
+		for (CalcVector stat : course.getHistStatState()) {
+			newData.add(stat.getValueAt(0));
 		}
 		attDia.setData(newData);
+		this.repaint();
 	}
 	
 	
@@ -596,5 +597,11 @@ public class PaintArea extends JPanel implements MouseListener, MouseMotionListe
 		moveBlock.setLocation(x, moveY);
 		moveBlock.printMbTb(index, "M");
 		return true;
+	}
+	
+	
+	@Override
+	public void updateStatistics() {
+		updateDiagram();
 	}
 }

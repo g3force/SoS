@@ -25,6 +25,8 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.apache.log4j.Logger;
+
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.CourseController;
 import edu.dhbw.sos.course.Courses;
@@ -34,6 +36,7 @@ import edu.dhbw.sos.course.statistics.IStatisticsObserver;
 import edu.dhbw.sos.course.suggestions.ISuggestionsObserver;
 import edu.dhbw.sos.gui.IEditModeObserver;
 import edu.dhbw.sos.gui.MainFrame;
+import edu.dhbw.sos.gui.course.CoursePanel;
 import edu.dhbw.sos.helper.Messages;
 
 
@@ -47,6 +50,8 @@ import edu.dhbw.sos.helper.Messages;
 public class RightPanel extends JPanel implements ICurrentCourseObserver, ICoursesListObserver, IStatisticsObserver,
 		ISuggestionsObserver, IEditModeObserver {
 	private static final long					serialVersionUID	= -6879799823225506209L;
+	private static final Logger				logger				= Logger.getLogger(RightPanel.class);
+	
 	private LinkedList<IEditModeObserver>	editModeObservers	= new LinkedList<IEditModeObserver>();
 	// width of panel
 	private static final int					PREF_SIZE			= 200;
@@ -68,6 +73,7 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 		this.courses = courses;
 		courses.subscribeCoursesList(this);
 		courses.subscribeCurrentCourse(this);
+		courses.getCurrentCourse().subscribeStatistics(this);
 		
 		// #############################################################################
 		// drop down list
@@ -90,7 +96,7 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				for (IEditModeObserver so : editModeObservers) {
-					if (((EditBtn)e.getSource()).getModel().isPressed())
+					if (((EditBtn) e.getSource()).getModel().isPressed())
 						so.exitEditMode();
 					else
 						so.enterEditMode();
@@ -158,6 +164,7 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 	public void updateCurrentCourse(Course course) {
 		if (courses.size() > 0) {
 			courseList.setSelectedIndex(courses.indexOf(courses.getCurrentCourse()));
+			course.subscribeStatistics(this);
 		}
 	}
 	
@@ -210,24 +217,26 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 	@Override
 	public void updateStatistics() {
 		// statistics
-		if (statsPanel.getComponentCount() != courses.getCurrentCourse().getStatistics().size()) {
-			statsPanel.removeAll();
-			for (Map.Entry<String, String> entry : courses.getCurrentCourse().getStatistics().entrySet()) {
-				JLabel lblKey = new JLabel(entry.getKey());
-				JLabel lblValue = new JLabel(entry.getValue(), JLabel.CENTER);
-				statsPanel.add(lblKey);
-				statsPanel.add(lblValue);
-			}
+		// if (statsPanel.getComponentCount() != courses.getCurrentCourse().getStatistics().size()) {
+		
+		statsPanel.removeAll();
+		for (Map.Entry<String, String> entry : courses.getCurrentCourse().getStatistics().entrySet()) {
+			JLabel lblKey = new JLabel(entry.getKey());
+			JLabel lblValue = new JLabel(entry.getValue(), JLabel.CENTER);
+			statsPanel.add(lblKey);
+			statsPanel.add(lblValue);
 		}
+		this.validate();
+		// }
 	}
-
-
+	
+	
 	@Override
 	public void enterEditMode() {
 		
 	}
-
-
+	
+	
 	@Override
 	public void exitEditMode() {
 		// TODO NicolaiO Auto-generated method stub

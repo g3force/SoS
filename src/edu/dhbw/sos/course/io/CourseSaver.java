@@ -105,7 +105,7 @@ public class CourseSaver {
 					if (courses.get(0).getInfluence() != null && courses.get(0).getInfluence().getParameterMatrix() != null) {
 						writer.writeStartElement("pMatrix");
 						float[][] parMatrix = courses.get(0).getInfluence().getParameterMatrix();
-						writer.writeAttribute("rows_columns", String.valueOf(parMatrix));
+						writer.writeAttribute("rows_columns", String.valueOf(parMatrix.length));
 						
 						for (int row = 0; row < parMatrix.length; row++) {
 							writer.writeStartElement("pRow");

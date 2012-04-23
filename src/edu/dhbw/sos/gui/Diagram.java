@@ -11,7 +11,7 @@ package edu.dhbw.sos.gui;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.geom.Line2D;
+import java.awt.RenderingHints;
 import java.util.LinkedList;
 
 
@@ -68,23 +68,30 @@ public class Diagram {
 	public void draw(Graphics2D ga) {
 		if (data.size() == 0 || width <= 0 || height <= 0)
 			return;
-		
+		ga.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		ga.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		float scalex = (float) width / getMaxX();
 		float scaley = (float) height / getMaxY();
 		
 		float lastValue = data.get(0);
 		float value = 0;
+		int[] xPoints = new int[data.size() - 1];
+		int[] yPoints = new int[data.size() - 1];
 		for (int i = 1; i < data.size(); i++) {
 			value = data.get(i);
 			float x1 = location.x + (i - 1) * scalex;
-			float x2 = location.x + (i) * scalex;
+			// float x2 = location.x + (i) * scalex;
 			float y1 = (height + location.y) - lastValue * scaley;
-			float y2 = (height + location.y) - value * scaley;
+			// float y2 = (height + location.y) - value * scaley;
 			// System.out.printf("%f %f %f %f\n", x1, y1, x2, y2);
-			Line2D.Float l = new Line2D.Float(x1, y1, x2, y2);
-			ga.draw(l);
+			// Line2D.Float l = new Line2D.Float(x1, y1, x2, y2);
+			// ga.draw(l);
 			lastValue = value;
+			xPoints[i - 1] = (int) x1;
+			yPoints[i - 1] = (int) y1;
+			
 		}
+		ga.drawPolyline(xPoints, yPoints, data.size() - 1);
 	}
 	
 	
