@@ -44,7 +44,7 @@ public class Course {
 	private Lecture										lecture;
 	private SimController								simController;
 	
-	private LinkedList<String>							properties					= new LinkedList<String>();
+	private LinkedList<String>							parameters					= new LinkedList<String>();
 	// place here? not implemented yet, so do not know...
 	private LinkedHashMap<String, String>			statistics					= new LinkedHashMap<String, String>();
 	private CalcVector									statState					= new CalcVector(4);
@@ -231,7 +231,7 @@ public class Course {
 		IPlace[][] newState = new IPlace[students.length][students[0].length];
 		for (int y = 0; y < 5; y++) {
 			for (int x = 0; x < 7; x++) {
-				newState[y][x] = new EmptyPlace(properties.size());
+				newState[y][x] = new EmptyPlace(parameters.size());
 			}
 		}
 		
@@ -239,16 +239,19 @@ public class Course {
 		// -------- student independent calculations -------
 		// -------------------------------------------------
 		
-		CalcVector preChangeVector = new CalcVector(properties.size());
+		CalcVector preChangeVector = new CalcVector(parameters.size());
 		preChangeVector.printCalcVector("Init");
 		
-		// breakReaction ( inf(Break) * breakInf )
-		double breakInf = 0.01;
-		if (lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType() == BlockType.pause) {
-			logger.info("Influenced by break");
-			preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.BREAK_REACTION, breakInf));
-		}
-		preChangeVector.printCalcVector("after break");
+		// time block depending ( inf(Break) * breakInf )
+		double timeBlockInf = 0.01;
+		
+		BlockType bt = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType();
+		preChangeVector.addCalcVector(influence.getEnvironmentVector(bt.getEinfluenceType(), timeBlockInf));
+		// if (lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType() == BlockType.pause) {
+		// logger.info("Influenced by break");
+		// preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.BREAK_REACTION, breakInf));
+		// }
+		preChangeVector.printCalcVector("after timeblock ("+bt.toString()+")");
 		
 		// timeDending ( inf(Time) * currentTime/1000 * timeInf )
 		double timeInf = 0.001;
@@ -371,7 +374,7 @@ public class Course {
 			if (studentMAverage < 0)
 				studentMAverage *= -1;
 			float reducer = (100 - studentMAverage) / 100;
-			changeVector.setValueAt(i, (average - student.getActualState().getValueAt(i)) * reducer* 0.01f);
+			changeVector.setValueAt(i, (average - student.getActualState().getValueAt(i)) * reducer * 0.01f);
 			// changeVector.multiplyWithVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR,0.01));
 		}
 		if (x == 0 && y == 0)
@@ -413,7 +416,7 @@ public class Course {
 	 * @author andres
 	 */
 	private void calcStatistics() {
-	
+		
 		statState.multiply(0);
 		
 		statState.multiply(0);
@@ -477,12 +480,12 @@ public class Course {
 	
 	
 	public LinkedList<String> getProperties() {
-		return properties;
+		return parameters;
 	}
 	
 	
 	public void setProperties(LinkedList<String> properties) {
-		this.properties = properties;
+		this.parameters = properties;
 	}
 	
 	

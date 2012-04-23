@@ -9,6 +9,8 @@
  */
 package edu.dhbw.sos.course.lecture;
 
+import edu.dhbw.sos.course.influence.EInfluenceType;
+
 
 /**
  * The TiomeBlock class is a single Block in a Lecture. It provides Information about the length and the type
@@ -55,6 +57,9 @@ public class TimeBlock {
 	public BlockType getType() {
 		return type;
 	}
+	
+	
+	
 	
 	
 	/**

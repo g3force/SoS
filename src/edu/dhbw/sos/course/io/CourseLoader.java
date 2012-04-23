@@ -55,6 +55,8 @@ public class CourseLoader {
 		XMLStreamReader reader = null;
 		LinkedList<Course> courses = new LinkedList<Course>();
 		try {
+			if(true)
+			throw new XMLStreamException();
 			try {
 				reader = factory.createXMLStreamReader(new FileReader(file));
 			} catch( FileNotFoundException FnF ) {
