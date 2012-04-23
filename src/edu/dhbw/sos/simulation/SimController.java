@@ -80,7 +80,9 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	private void simulationStep() {
 		currentTime += speed;
 		logger.info("Simulation Step at " + currentTime);
-		course.simulationStep(currentTime, speed);
+		synchronized(course) {
+			course.simulationStep(currentTime, speed);
+		}
 	}
 	
 	

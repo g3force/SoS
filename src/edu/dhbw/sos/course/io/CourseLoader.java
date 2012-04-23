@@ -18,7 +18,6 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.log4j.Logger;
 
-import edu.dhbw.sos.SuperFelix;
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.influence.Influence;
 import edu.dhbw.sos.course.lecture.BlockType;
@@ -35,8 +34,7 @@ import edu.dhbw.sos.course.student.Student;
  * 
  */
 public class CourseLoader {
-	
-	private static final Logger	logger	= Logger.getLogger(SuperFelix.class);
+	private static final Logger	logger	= Logger.getLogger(CourseLoader.class);
 	
 	/**
 	 * 
