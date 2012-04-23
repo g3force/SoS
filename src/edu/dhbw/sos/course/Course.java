@@ -52,6 +52,8 @@ public class Course {
 	// the student and property that was selected in the GUI (by hovering over the student)
 	private IPlace											selectedStudent			= null;
 	private int												selectedProperty			= 0;
+	private boolean										simulating					= false;
+	private LinkedList<DonInput>						donInputQueue				= new LinkedList<DonInput>();
 	
 	
 	public Course(String name) {
@@ -203,9 +205,13 @@ public class Course {
 	
 	
 	public void donInput(int index, float value, int currentTime) {
-		selectedStudent.getActualState().printCalcVector("Don Input: preActualState: ");
-		selectedStudent.donInput(index, value, currentTime);
-		selectedStudent.getActualState().printCalcVector("Don Input: postActualState: ");
+		if (simulating) {
+			donInputQueue.add(new DonInput(index, value, currentTime));
+		} else {
+			selectedStudent.getActualState().printCalcVector("Don Input: preActualState: ");
+			selectedStudent.donInput(index, value, currentTime);
+			selectedStudent.getActualState().printCalcVector("Don Input: postActualState: ");
+		}
 	}
 	
 	
@@ -218,7 +224,7 @@ public class Course {
 	 * @author dirk
 	 */
 	public void simulationStep(int currentTime, int speed) {
-		
+		simulating = true;
 		students[0][0].printAcutalState();
 		
 		// -------------------------------------------------
@@ -301,6 +307,13 @@ public class Course {
 		
 		// give the reference from newState to real students array
 		students = newState;
+		
+		// handle any donInputs, that had accord during simulation
+		simulating = false;
+		for (DonInput di : donInputQueue) {
+			donInput(di.index, di.value, di.currentTime);
+		}
+		donInputQueue.clear();
 		
 		// calculate state statistics for whole course
 		calcStatistics();
@@ -422,10 +435,10 @@ public class Course {
 		// for (IPlace[] studentRow : students) {
 		// for (IPlace student : studentRow) {
 		// if (student instanceof Student) {
-		for (int y = 0; y < students.length; y++) {
-			for (int x = 0; x < students[y].length; x++) {
-				if (students[y][x] instanceof Student) {
-					statState.addCalcVector(students[y][x].getActualState());
+		for (IPlace[] student : students) {
+			for (IPlace element : student) {
+				if (element instanceof Student) {
+					statState.addCalcVector(element.getActualState());
 					studentNum++;
 				}
 			}
@@ -502,6 +515,7 @@ public class Course {
 	}
 	
 	
+	@Override
 	public String toString() {
 		return getName();
 	}
@@ -551,5 +565,25 @@ public class Course {
 	
 	public LinkedList<CalcVector> getHistStatState() {
 		return histStatStates;
+	}
+	
+	private class DonInput {
+		public int		index;
+		public float	value;
+		public int		currentTime;
+		
+		
+
+		/**
+		 * TODO NicolaiO, add comment!
+		 * 
+		 * @author NicolaiO
+		 */
+		public DonInput(int index, float value, int currentTime) {
+			this.index = index;
+			this.value = value;
+			this.currentTime = currentTime;
+		}
+
 	}
 }

@@ -36,6 +36,7 @@ import edu.dhbw.sos.gui.right.IEditModeObserver;
  */
 
 public class SimController implements ActionListener, MouseListener, IEditModeObserver {
+	private static final Logger			logger			= Logger.getLogger(SimController.class);
 	
 	private Course								course;
 	private int									currentTime;															// in milliseconds from
@@ -43,7 +44,6 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	private int									speed;																	// in milliseconds
 	private transient Timer					pulse				= new Timer();
 	private boolean							run				= false;
-	private static final Logger			logger			= Logger.getLogger(SimController.class);
 	
 	private LinkedList<ISpeedObserver>	speedObservers	= new LinkedList<ISpeedObserver>();
 	
@@ -102,9 +102,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	private void simulationStep() {
 		currentTime += speed;
 		logger.info("Simulation Step at " + currentTime);
-		synchronized (getClass()) {
-			course.simulationStep(currentTime, speed);
-		}
+		course.simulationStep(currentTime, speed);
 		logger.info("History states: " + course.getPlace(0, 0).getHistoryStates().size());
 	}
 	
@@ -141,13 +139,15 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	}
 	
 	
+	// --- action listeners ---
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof LiveBtn) {
 			// FIXME Not implemented
 		} else if (e.getSource() instanceof PlayBtn) {
 			if (toggle()) {
-				((PlayBtn)e.getSource()).toggle();
+				((PlayBtn) e.getSource()).toggle();
 				
 			}
 		} else if (e.getSource() instanceof ForwardBtn) {
