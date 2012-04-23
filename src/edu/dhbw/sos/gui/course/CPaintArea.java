@@ -14,6 +14,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
 import javax.swing.JPanel;
 
@@ -75,6 +76,8 @@ public class CPaintArea extends JPanel {
 	public void paint(Graphics g) {
 		// get a 2D graphics object for better drawing
 		Graphics2D ga = (Graphics2D) g;
+		ga.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		ga.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		
 		// Initialize
 		ga.clearRect(0, 0, this.getWidth(), this.getHeight());

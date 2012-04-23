@@ -155,8 +155,10 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 			}
 		} else if (e.getSource() instanceof ForwardBtn) {
 			setSpeed(getSpeed() * 2);
+			notifySpeedObservers();
 		} else if (e.getSource() instanceof RewindBtn) {
 			setSpeed(getSpeed() / 2);
+			notifySpeedObservers();
 		}
 	}
 	

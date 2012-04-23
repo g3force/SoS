@@ -44,24 +44,19 @@ public class PlayBtn extends JButton {
 	
 	
 	private void setPlay() {
-		URL iconUrlLive = getClass().getResource("/res/icons/play.png");
-		if (iconUrlLive != null) {
-			ImageIcon icon = new ImageIcon(iconUrlLive);
-			Image img = icon.getImage();
-			Image newimg = img.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
-			ImageIcon newIcon = new ImageIcon(newimg);
-			this.setIcon(newIcon);
-			this.setText("");
-			this.setBorderPainted(false);
-		} else {
-			this.setText("PL");
-		}
-		mode = Mode.PAUSE;
+		setIconAndText("/res/icons/play.png", "PL");
+		mode = Mode.PLAY;
 	}
 	
 	
 	private void setPause() {
-		URL iconUrlLive = getClass().getResource("/res/icons/pause.png");
+		setIconAndText("/res/icons/pause.png", "PA");
+		mode = Mode.PAUSE;
+	}
+	
+	
+	private void setIconAndText(String url, String text) {
+		URL iconUrlLive = getClass().getResource(url);
 		if (iconUrlLive != null) {
 			ImageIcon icon = new ImageIcon(iconUrlLive);
 			Image img = icon.getImage();
@@ -71,9 +66,8 @@ public class PlayBtn extends JButton {
 			this.setText("");
 			this.setBorderPainted(false);
 		} else {
-			this.setText("PA");
+			this.setText(text);
 		}
-		mode = Mode.PLAY;
 	}
 	
 	
