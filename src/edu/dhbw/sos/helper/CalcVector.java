@@ -13,7 +13,9 @@ import org.apache.log4j.Logger;
 
 
 /**
- * This Vector object contains the influencing factors needed during the simulation.
+ * The CalcVector class is a representation of the mathematical vector and therefore contains functionality to run calculations on objects of this class.
+ * 
+ * NOTE: This class has nothing in common with the Java Vector because this one is an implementation of the List interface and has nothing in common with the mathematical vector.
  * 
  * @author bene
  * 
@@ -96,7 +98,7 @@ public class CalcVector implements Cloneable {
 	 * @return
 	 * @author bene
 	 */
-	public CalcVector multiplyWithInteger(int constant) {
+	public CalcVector multiply(int constant) {
 		for (int i = 0; i < this.size(); i++) {
 			this.vector[i] *= constant;
 		}
@@ -111,7 +113,7 @@ public class CalcVector implements Cloneable {
 	 * @return
 	 * @author bene
 	 */
-	public CalcVector multiplyWithFloat(float constant) {
+	public CalcVector multiply(float constant) {
 		for (int i = 0; i < this.size(); i++) {
 			this.vector[i] *= constant;
 		}
@@ -127,8 +129,8 @@ public class CalcVector implements Cloneable {
 	 * @return
 	 * @author bene
 	 */
-	public CalcVector multiplyWithDouble(double constant) {
-		return this.multiplyWithFloat((float) constant);
+	public CalcVector multiply(double constant) {
+		return this.multiply((float) constant);
 	}
 	
 	
@@ -139,7 +141,7 @@ public class CalcVector implements Cloneable {
 	 * @return
 	 * @author bene
 	 */
-	public CalcVector multiplyWithVector(CalcVector v) {
+	public CalcVector multiply(CalcVector v) {
 		if (v.size() != this.size()) {
 			throw new IllegalArgumentException("Cannot multiply vectors of different sizes.");
 		}
@@ -157,7 +159,7 @@ public class CalcVector implements Cloneable {
 	 * @return
 	 * @author bene
 	 */
-	public CalcVector multiplyWithArray(float[][] a) {
+	public CalcVector multiply(float[][] a) {
 		if (a.length != this.size() || a[0].length != this.size()) {
 			throw new IllegalArgumentException("Cannot multiply vectors of different sizes.");
 		}

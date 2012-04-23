@@ -91,7 +91,7 @@ public class Influence {
 	 */
 	
 	public CalcVector getEnvironmentVector(EInfluenceType type, double times) {
-		return getEnvironmentVector(type).multiplyWithDouble(times);
+		return getEnvironmentVector(type).multiply(times);
 	}
 	
 	public CalcVector getEnvironmentVector(EInfluenceType type) {
@@ -100,11 +100,11 @@ public class Influence {
 	}
 	
 	public CalcVector getInfluencedParameterVector(CalcVector toInfluence, double times) {
-		return getInfluencedParameterVector(toInfluence).multiplyWithDouble(times);
+		return getInfluencedParameterVector(toInfluence).multiply(times);
 	}
 	
 	public CalcVector getInfluencedParameterVector(CalcVector toInfluence) {
-		return toInfluence.multiplyWithArray(parameterInfl);
+		return toInfluence.multiply(parameterInfl);
 	}
 	
 	public float[][] getParameterMatrix() {

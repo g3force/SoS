@@ -156,7 +156,7 @@ public class CourseLoader {
 			properties.add("Quality");
 			for (int y = 0; y < 5; y++) {
 				for (int x = 0; x < 7; x++) {
-					if (y == 3) {
+					if (y == 3 &&  x==4) {
 						students[y][x] = new EmptyPlace(properties.size());
 					} else {
 						Student newStud = new Student(properties.size());
