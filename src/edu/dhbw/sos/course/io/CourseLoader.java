@@ -54,7 +54,7 @@ public class CourseLoader {
 			reader.getEventType(); //START
 			
 			int aIdx = 0;							//AttributeIDX
-			int sRows = 0, sColumns = 0; 		//Student-attribute
+			int sRows = 0, sColumns = 0; 	//Student-attribute
 			
 			Influence loadedInfl = new Influence( loadParameterMatrix( savepath ), loadEnvironmentMatrix( savepath ) );
 			
@@ -81,8 +81,11 @@ public class CourseLoader {
 							
 						//<student> was found.
 						} else if(tagname.contentEquals("student")) {
-							@SuppressWarnings("unused")
 							//Isn't really unused, but whatever.
+							if(sColumns>=courses.getLast().getStudents()[0].length) { //
+								sColumns = 0;
+								sRows++;
+							}
 							IPlace curStudent = courses.getLast().getStudents()[sRows][sColumns];
 
 							//isEmpty="0"
@@ -91,20 +94,21 @@ public class CourseLoader {
 							} else { //isEmpty="1"
 								curStudent = new EmptyPlace( Integer.parseInt(reader.getAttributeValue(1)) );
 							}
+							courses.getLast().setPlace(sRows, sColumns, curStudent);
+							//logger.debug("Student StateVector.size(): " + curStudent.getActualState().size());
 							aIdx=0;
 						
 						//<sAttribute> was found.
 						} else if(tagname.contentEquals("sAttribute")) {
 							Student curStudent = (Student)courses.getLast().getStudents()[sRows][sColumns];
+							if(curStudent==null) {
+								logger.error("CURSTUDENT=NULL; row: " + sRows + ", cols: " + sColumns);
+							}
 							curStudent.addValueToStateVector(aIdx, Float.parseFloat(reader.getAttributeValue(0)));
 							aIdx++;
-							if(aIdx == curStudent.getActualState().size()) {
+							//if counted columns >= MAX_COLUMNS
+							if(aIdx>=curStudent.getActualState().size()) { //
 								sColumns++;
-								//if counted columns >= MAX_COLUMNS
-								if(sColumns>=courses.getLast().getStudents()[0].length) { //
-									sColumns = 0;
-									sRows++;
-								}
 							}
 						}
 					} catch( Exception ex ) {
@@ -140,6 +144,7 @@ public class CourseLoader {
 				}
 			}
 			
+			@SuppressWarnings("deprecation")
 			Influence influence = new Influence();
 			Lecture lecture = new Lecture(new Date());
 			lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.theory));
@@ -245,6 +250,7 @@ public class CourseLoader {
 							 }
 						} catch( Exception ex ) {
 							logger.debug("XML-exception in loadParameterMatrix()");
+							ex.printStackTrace();
 						}
 					}
 				}
