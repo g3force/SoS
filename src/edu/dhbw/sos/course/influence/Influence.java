@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import edu.dhbw.sos.helper.CalcVector;
-import edu.dhbw.sos.course.io.*;
 
 /**
  * 
@@ -53,7 +52,8 @@ public class Influence {
 		return EInfluenceType.TIME_DEPENDING;
 	}
 	/**
-	 *	 	@deprecated
+	 * 	maybe not deprecated?... We need default data, if nothing could be loaded...
+	 *	 	deprecated
 	 */
 	public Influence() {
 		float[][] array = {{0f, -10f, -20f, -20f},

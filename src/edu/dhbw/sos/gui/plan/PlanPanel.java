@@ -49,7 +49,7 @@ import edu.dhbw.sos.simulation.SimController;
 public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserver {
 	private static final long	serialVersionUID	= -1665784555881941508L;
 	// paintArea is the part of the Panel, where some drawings have to be done
-	private final PPaintArea		paintArea;
+	private final PPaintArea	paintArea;
 	// label where speed of playback is shown
 	private JLabel					lblSpeed;
 	// reference to the timeblocks to display
@@ -134,7 +134,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		sidePanel.add(speedPanel);
 		btnPlus.addActionListener(simController);
 		btnMinus.addActionListener(simController);
-
+		
 		
 		// time
 		JLabel lblFromTo = new JLabel(Messages.getString("Lecture.FROMTO"), SwingConstants.LEFT);
@@ -171,10 +171,10 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	@Override
 	public void componentHidden(ComponentEvent e) {
 	}
-
-
+	
+	
 	@Override
 	public void speedChanged(int speed) {
-		lblSpeed.setText(speed+"x");
+		lblSpeed.setText(speed + "x");
 	}
 }

@@ -12,6 +12,7 @@ package edu.dhbw.sos.gui;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.util.AbstractList;
 import java.util.LinkedList;
 
 
@@ -24,7 +25,7 @@ import java.util.LinkedList;
  * 
  */
 public class Diagram {
-	private LinkedList<Float>	data;
+	private AbstractList<Float>	data;
 	private int						height	= 0;
 	private int						width		= 0;
 	private Point					location	= new Point();
@@ -131,11 +132,11 @@ public class Diagram {
 	
 	
 	public LinkedList<Float> getData() {
-		return data;
+		return (LinkedList<Float>)data;
 	}
 	
 	
-	public void setData(LinkedList<Float> data) {
+	public void setData(AbstractList<Float> data) {
 		this.data = data;
 	}
 	
