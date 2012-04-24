@@ -55,6 +55,8 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	private TimeBlocks				tbs;
 	private Course						course;
 	
+	private TimeMarkerBlock			tbb;
+
 	double								scaleRatio			= 1;
 	int									start;
 	
@@ -77,6 +79,8 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		this.course = course;
 		this.initMovableBlocks();
 		
+		tbb = new TimeMarkerBlock(tbs.getTotalLength());
+		course.getSimController().subscribeTime(tbb);
 		attDia = new Diagram(new LinkedList<Float>());
 		attDia.setLocation(new Point(5, 10));
 	}
@@ -92,7 +96,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	 * @author NicolaiO
 	 */
 	public void initMovableBlocks() {
-		start = 5;
+		start = 0;
 		movableBlocks = new MovableBlocks();
 		scaleRatio = movableBlocks.init(tbs, start, this.getWidth());
 	}
@@ -145,11 +149,18 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		double timemarkers = scaleRatio * mi;
 		// logger.debug(timemarkers + "");
 		if (timemarkers > 0.0) {
+			int time = 8;
 			for (int i = start; i < this.getWidth(); i += (int) timemarkers) {
 				ga.drawLine(i, 135, i, 145);
+				if (time % 2 == 0)
+					ga.drawString(time + ":00", i + 2, 139);
+				time++;
 			}
 		}
 		
+		// TimeMarkerBlock
+		tbb.draw(ga);
+
 		// draw diagram
 		// updateDiagram();
 		ga.setColor(Color.black);
