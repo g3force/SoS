@@ -51,7 +51,6 @@ public class Suggestion implements Comparable<Suggestion> {
 	
 	/**
 	 * Returns the message text of this Suggestion.
-	 * TODO bene, add comment!
 	 * 
 	 * @return Message text of this Suggestion.
 	 * @author bene
@@ -134,6 +133,7 @@ public class Suggestion implements Comparable<Suggestion> {
 	 * if this Suggestions priority is lower than that of s and a positive value if this Suggestions priority is higher
 	 * than that of s.
 	 */
+	@Override
 	public int compareTo(Suggestion s) {
 		return this.priority - s.priority;
 	}
