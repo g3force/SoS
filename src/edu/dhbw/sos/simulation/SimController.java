@@ -39,16 +39,20 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	private static final Logger			logger			= Logger.getLogger(SimController.class);
 	
 	private Course								course;
-	private int									currentTime;															// in milliseconds from
+	private int									currentTime;															// in
+																																// milliseconds
+																																// from
 																																// "begin"
-	private int									speed;																	// in milliseconds
+	private int									speed;																	// in
+																																// milliseconds
 	private int									interval;
 	private transient Timer					pulse				= new Timer();
 	private boolean							run				= false;
 	
 	private LinkedList<ISpeedObserver>	speedObservers	= new LinkedList<ISpeedObserver>();
+	private LinkedList<ITimeObserver>	timeObservers	= new LinkedList<ITimeObserver>();
 	
-	
+
 	public SimController(Course course) {
 		this.course = course;
 		currentTime = 0;
@@ -66,6 +70,19 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	public void subscribeSpeed(ISpeedObserver so) {
 		speedObservers.add(so);
+	}
+	
+	
+	public void notifyTimeObservers() {
+		int timeInMin = currentTime / 60000;
+		for (ITimeObserver to : timeObservers) {
+			to.timeChanged(timeInMin);
+		}
+	}
+	
+	
+	public void subscribeTime(ITimeObserver to) {
+		timeObservers.add(to);
 	}
 	
 	
@@ -102,7 +119,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	 * @author dirk
 	 */
 	private void simulationStep() {
-		currentTime += 1000;
+		setCurrentTime(currentTime + 1000);
 		logger.info("Simulation Step at " + currentTime);
 		synchronized (getClass()) {
 			course.simulationStep(currentTime, interval);
@@ -126,6 +143,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	public void setCurrentTime(int currentTime) {
 		this.currentTime = currentTime;
+		notifyTimeObservers();
 	}
 	
 	
@@ -140,9 +158,11 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		if (speed < 1)
 			speed = 1;
 		this.speed = speed;
-		this.interval = 1000/speed;
-		stop();
-		run();
+		this.interval = 1000 / speed;
+		if (run) {
+			stop();
+			run();
+		}
 	}
 	
 	
