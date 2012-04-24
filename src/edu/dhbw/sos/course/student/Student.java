@@ -58,6 +58,7 @@ public class Student implements IPlace, Cloneable {
 	 * @param value value to add (negative to sub)
 	 * @author NicolaiO
 	 */
+	@Override
 	public void donInput(int index, float value, int time) {
 			CalcVector cv = new CalcVector(4);
 			cv.setValueAt(index, value);
@@ -186,6 +187,7 @@ public class Student implements IPlace, Cloneable {
 	}
 	
 	
+	@Override
 	public void printAcutalState() {
 		String out = "Students state: ";
 		for (int i = 0; i < actualState.size(); i++)
@@ -201,6 +203,7 @@ public class Student implements IPlace, Cloneable {
 	 * @return
 	 * @author NicolaiO
 	 */
+	@Override
 	public int getAverageState() {
 		int res = 0;
 		for (int i = 0; i < actualState.size(); i++) {
@@ -218,6 +221,7 @@ public class Student implements IPlace, Cloneable {
 	 * @return
 	 * @author bene
 	 */
+	@Override
 	public CalcVector getActualState() {
 		return this.actualState;
 	}
@@ -229,6 +233,7 @@ public class Student implements IPlace, Cloneable {
 	 * @return
 	 * @author dirk
 	 */
+	@Override
 	public void setActualState(CalcVector cv) {
 		this.actualState = cv;
 	}
@@ -301,6 +306,7 @@ public class Student implements IPlace, Cloneable {
 	/**
 	 * Creates an exact clone of this student object. All values are copied into a completely new object (no references!)
 	 */
+	@Override
 	public Student clone() {
 		Student student = new Student(this.actualState.clone(), this.changeVector.clone());
 		student.setHistoryStates(this.historyStates);
@@ -316,7 +322,7 @@ public class Student implements IPlace, Cloneable {
 	 * @author dirk
 	 */
 	public void saveHistoryStates(int time) {
-		historyStates.put(time, actualState);
+		historyStates.put(time, actualState.clone());
 	}
 	
 	

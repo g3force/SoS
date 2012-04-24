@@ -323,8 +323,10 @@ public class Course {
 		calcStatistics();
 		
 		// notify all subscribers of the students array
-		notifyStudentsObservers();
-		notifySelectedStudentObservers();
+		if (currentTime % 1000 == 0) {
+			notifyStudentsObservers();
+			notifySelectedStudentObservers();
+		}
 	}
 	
 	
@@ -393,7 +395,7 @@ public class Course {
 				logger.info("Sim(1,1): average: " + average + " / actualState: " + student.getActualState().getValueAt(i)
 						+ " / reducer: " + reducer + " / value: " + (average - student.getActualState().getValueAt(i))
 						* reducer * 0.1f);
-			changeVector.setValueAt(i, (average - student.getActualState().getValueAt(i)) * reducer*0.1f);
+			changeVector.setValueAt(i, (average - student.getActualState().getValueAt(i)) * reducer * 0.1f);
 			// changeVector.multiplyWithVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR,0.01));
 		}
 		if (x == 1 && y == 1)
@@ -581,7 +583,6 @@ public class Course {
 		public int		currentTime;
 		
 		
-
 		/**
 		 * TODO NicolaiO, add comment!
 		 * 
