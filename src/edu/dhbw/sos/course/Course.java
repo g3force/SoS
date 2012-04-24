@@ -208,8 +208,10 @@ public class Course {
 	
 	public void donInput(int index, float value, int currentTime) {
 		if (simulating) {
+			logger.trace("donInput1: " + index + " " + value + " " + currentTime);
 			donInputQueue.add(new DonInput(index, value, currentTime));
 		} else {
+			logger.trace("donInput2: " + index + " " + value + " " + currentTime);
 			selectedStudent.getActualState().printCalcVector("Don Input: preActualState: ");
 			selectedStudent.donInput(index, value, currentTime);
 			selectedStudent.getActualState().printCalcVector("Don Input: postActualState: ");

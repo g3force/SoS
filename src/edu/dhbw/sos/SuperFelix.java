@@ -8,8 +8,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import com.thoughtworks.xstream.XStream;
-
 import edu.dhbw.sos.course.CourseController;
 import edu.dhbw.sos.course.Courses;
 import edu.dhbw.sos.course.io.CourseSaver;
@@ -52,10 +50,6 @@ public class SuperFelix {
 		
 		courses = new Courses(savepath);
 		CourseController courseController = new CourseController(courses);
-		
-		// it works!!!
-		XStream xstream = new XStream();
-		Courses c = (Courses) xstream.fromXML(xstream.toXML(courses));
 
 		MainFrame mainFrame = new MainFrame(courseController, courses);
 		mainFrame.pack();

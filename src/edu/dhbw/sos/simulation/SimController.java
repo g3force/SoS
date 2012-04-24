@@ -140,7 +140,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		if (speed < 1)
 			speed = 1;
 		this.speed = speed;
-		this.interval = 1000/speed;
+		this.interval = 1000 / speed;
 		stop();
 		run();
 	}
@@ -173,9 +173,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		if (e.getButton() == MouseEvent.BUTTON3)
 			value *= -1;
 		if (course.getSelectedStudent() != null) {
-			synchronized (getClass()) {
-				course.donInput(course.getSelectedProperty(), value, currentTime);
-			}
+			course.donInput(course.getSelectedProperty(), value, currentTime);
 		}
 		course.notifyStudentsObservers();
 	}
