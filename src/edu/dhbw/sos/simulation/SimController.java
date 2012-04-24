@@ -20,11 +20,11 @@ import java.util.TimerTask;
 import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.Course;
-import edu.dhbw.sos.gui.IEditModeObserver;
 import edu.dhbw.sos.gui.plan.ForwardBtn;
 import edu.dhbw.sos.gui.plan.LiveBtn;
 import edu.dhbw.sos.gui.plan.PlayBtn;
 import edu.dhbw.sos.gui.plan.RewindBtn;
+import edu.dhbw.sos.gui.right.IEditModeObserver;
 
 
 /**
@@ -36,15 +36,15 @@ import edu.dhbw.sos.gui.plan.RewindBtn;
  */
 
 public class SimController implements ActionListener, MouseListener, IEditModeObserver {
+	private static final Logger			logger			= Logger.getLogger(SimController.class);
 	
 	private Course								course;
 	private int									currentTime;															// in milliseconds from
 																																// "begin"
 	private int									speed;																	// in milliseconds
 	private int									interval;
-	private Timer								pulse				= new Timer();
+	private transient Timer					pulse				= new Timer();
 	private boolean							run				= false;
-	private static final Logger			logger			= Logger.getLogger(SimController.class);
 	
 	private LinkedList<ISpeedObserver>	speedObservers	= new LinkedList<ISpeedObserver>();
 	
@@ -82,6 +82,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	public void run() {
 		pulse = new Timer();
 		TimerTask simulation = new TimerTask() {
+			@Override
 			public void run() {
 				simulationStep();
 			}
@@ -144,6 +145,8 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		run();
 	}
 	
+	
+	// --- action listeners ---
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {

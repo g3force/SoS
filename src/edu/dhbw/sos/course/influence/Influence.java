@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import edu.dhbw.sos.helper.CalcVector;
-import edu.dhbw.sos.course.io.*;
 
 
 /**
@@ -59,7 +58,10 @@ public class Influence {
 	
 	/**
 	 * @deprecated
+	 * 	maybe not deprecated?... We need default data, if nothing could be loaded...
+	 *	 	deprecated
 	 */
+	@Deprecated
 	public Influence() {
 		float[][] array = { { 0f, 10f, -20f, -20f }, { 20f, 0f, -20f, -20f }, { -20f, 10f, 0f, 20f },
 				{ 20f, 10f, 20f, 0f } }; // new float[4][4];

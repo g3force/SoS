@@ -1,13 +1,13 @@
-/* 
+/*
  * *********************************************************
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 22, 2012
  * Author(s): NicolaiO
- *
+ * 
  * *********************************************************
  */
-package edu.dhbw.sos.gui;
+package edu.dhbw.sos.course;
 
 /**
  * TODO NicolaiO, add comment!
@@ -17,7 +17,6 @@ package edu.dhbw.sos.gui;
  * @author NicolaiO
  * 
  */
-public interface IEditModeObserver {
-	void enterEditMode();
-	void exitEditMode();
+public interface ISelectedStudentObserver {
+	void updateSelectedStudent();
 }
