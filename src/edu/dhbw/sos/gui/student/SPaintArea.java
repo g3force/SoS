@@ -33,7 +33,9 @@ import edu.dhbw.sos.helper.CalcVector;
 public class SPaintArea extends JPanel {
 	private static final long		serialVersionUID	= 1L;
 	private LinkedList<Diagram>	diagrams				= new LinkedList<Diagram>();
-	private static final Color COLORS[] = {Color.black, Color.blue, Color.green, Color.yellow, Color.red, Color.cyan, Color.magenta };
+	private static final Color		COLORS[]				= { Color.black, Color.blue, Color.green, Color.yellow, Color.red,
+			Color.cyan, Color.magenta						};
+
 	
 	// private static final Logger logger = Logger.getLogger(PaintArea.class);
 	
@@ -54,6 +56,7 @@ public class SPaintArea extends JPanel {
 	 * Will do all the drawing.
 	 * Is called frequently, e.g. by repaint or if JPanel resizes, etc.
 	 */
+	@Override
 	public void paint(Graphics g) {
 		// initialize
 		Graphics2D ga = (Graphics2D) g;
@@ -61,14 +64,16 @@ public class SPaintArea extends JPanel {
 		
 		// draw diagram
 		int i = 0;
-		for (Diagram diagram : diagrams) {
-			if(i< COLORS.length) {
-				ga.setColor(COLORS[i]);
-			} else {
-				ga.setColor(Color.black);
+		synchronized (diagrams) {
+			for (Diagram diagram : diagrams) {
+				if (i < COLORS.length) {
+					ga.setColor(COLORS[i]);
+				} else {
+					ga.setColor(Color.black);
+				}
+				diagram.draw(ga);
+				i++;
 			}
-			diagram.draw(ga);
-			i++;
 		}
 	}
 	
@@ -76,14 +81,16 @@ public class SPaintArea extends JPanel {
 	public void update(IPlace student, int parameterIndex) {
 		if (student != null) {
 			Diagram diagram;
-			if(diagrams.size()>=1) {
-				diagram = diagrams.getFirst();
-			} else {
-				diagram = new Diagram(new LinkedList<Float>());
-			}
-			if(diagrams.size()>1) {
-				diagrams.clear();
-				diagrams.add(diagram);
+			synchronized (diagrams) {
+				if (diagrams.size() >= 1) {
+					diagram = diagrams.getFirst();
+				} else {
+					diagram = new Diagram(new LinkedList<Float>());
+				}
+				if (diagrams.size() > 1) {
+					diagrams.clear();
+					diagrams.add(diagram);
+				}
 			}
 			diagram.setHeight(this.getHeight() - 20);
 			diagram.setWidth(this.getWidth() - 20);
@@ -94,38 +101,41 @@ public class SPaintArea extends JPanel {
 			diagram.setData(newData);
 		} else {
 			// dummy data
-//			double last = 50;
-//			for (int i = 0; i < 50; i++) {
-//				last = last + ((Math.random() - 0.5) * 30.0);
-//				if (last < 0)
-//					last = 0;
-//				newData.add((float) last);
-//			}
+			// double last = 50;
+			// for (int i = 0; i < 50; i++) {
+			// last = last + ((Math.random() - 0.5) * 30.0);
+			// if (last < 0)
+			// last = 0;
+			// newData.add((float) last);
+			// }
 		}
 		repaint();
 	}
 	
+
 	public void update(Course course) {
-		diagrams.clear();
-		try {
-			int size = course.getHistStatState().get(0).size();
-			LinkedList<LinkedList<Float>> newData = new LinkedList<LinkedList<Float>>();
-			for(int i=0;i<size;i++) {
-				newData.add(new LinkedList<Float>());
-				Diagram diagram = new Diagram(new LinkedList<Float>());
-				diagram.setHeight(this.getHeight() - 20);
-				diagram.setWidth(this.getWidth() - 20);
-				diagram.setData(newData.get(i));
-				diagrams.add(diagram);
-			}
-			for(CalcVector cv : course.getHistStatState()) {
-				for(int i=0;i<cv.size();i++) {
-					newData.get(i).add(cv.getValueAt(i));
+		synchronized (diagrams) {
+			diagrams.clear();
+			try {
+				int size = course.getHistStatState().get(0).size();
+				LinkedList<LinkedList<Float>> newData = new LinkedList<LinkedList<Float>>();
+				for (int i = 0; i < size; i++) {
+					newData.add(new LinkedList<Float>());
+					Diagram diagram = new Diagram(new LinkedList<Float>());
+					diagram.setHeight(this.getHeight() - 20);
+					diagram.setWidth(this.getWidth() - 20);
+					diagram.setData(newData.get(i));
+					diagrams.add(diagram);
 				}
+				for (CalcVector cv : course.getHistStatState()) {
+					for (int i = 0; i < cv.size(); i++) {
+						newData.get(i).add(cv.getValueAt(i));
+					}
+				}
+			} catch (IndexOutOfBoundsException e) {
+				// well, then no diagrams...
 			}
-		} catch(IndexOutOfBoundsException e) {
-			// well, then no diagrams...
+			repaint();
 		}
-		repaint();
 	}
 }
