@@ -35,7 +35,7 @@ import edu.dhbw.sos.gui.right.IEditModeObserver;
  * 
  */
 
-public class SimController implements ActionListener, MouseListener, IEditModeObserver {
+public class SimController implements ActionListener, MouseListener, IEditModeObserver, ITimeObserver {
 	private static final Logger			logger			= Logger.getLogger(SimController.class);
 	
 	private Course								course;
@@ -231,5 +231,11 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	public void exitEditMode() {
 		// TODO NicolaiO Auto-generated method stub
 		
+	}
+	
+	
+	@Override
+	public void timeChanged(int time) {
+		setCurrentTime(time);
 	}
 }
