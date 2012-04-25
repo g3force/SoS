@@ -18,6 +18,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.apache.log4j.Logger;
+
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.ISelectedStudentObserver;
 import edu.dhbw.sos.helper.Messages;
@@ -32,10 +34,11 @@ import edu.dhbw.sos.helper.Messages;
  * 
  */
 public class StudentPanel extends JPanel implements ISelectedStudentObserver {
-	private static final long	serialVersionUID	= 722304874911423036L;
-	private final SPaintArea	paintArea;
-	private Course					course;
-	private JLabel					lblParameterName;
+	private static final Logger	logger				= Logger.getLogger(StudentPanel.class);
+	private static final long		serialVersionUID	= 722304874911423036L;
+	private final SPaintArea		paintArea;
+	private Course						course;
+	private JLabel						lblParameterName;
 	
 	
 	/**
@@ -61,8 +64,13 @@ public class StudentPanel extends JPanel implements ISelectedStudentObserver {
 	
 	@Override
 	public void updateSelectedStudent() {
-		if(course.getSelectedStudent() != null) {
-			lblParameterName.setText(course.getProperties().get(course.getSelectedProperty()));
+		if (course.getSelectedStudent() != null) {
+			if (course.getProperties().size() == 0) {
+				logger.warn("There are no parameters!!");
+				lblParameterName.setText("");
+			} else {
+				lblParameterName.setText(course.getProperties().get(course.getSelectedProperty()));
+			}
 			paintArea.update(course.getSelectedStudent(), course.getSelectedProperty());
 		} else {
 			lblParameterName.setText(Messages.getString("StudentPanel.AVG"));
