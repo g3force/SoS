@@ -9,9 +9,13 @@
  */
 package edu.dhbw.sos.gui;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
 import java.util.AbstractList;
 import java.util.LinkedList;
 
@@ -26,18 +30,21 @@ import java.util.LinkedList;
  */
 public class Diagram {
 	private AbstractList<Float>	data;
-	private int						height	= 0;
-	private int						width		= 0;
-	private Point					location	= new Point();
+	private int							height	= 0;
+	private int							width		= 0;
+	private Point						location	= new Point();
 	/*
 	 * If rescale is true, the diagram will always take the whole
 	 * available space.
 	 * If false, it will use maxY and maxX. This should not be zero then ;)
 	 */
-	private boolean				rescaleY	= true;
-	private boolean				rescaleX	= true;
-	private float					maxY		= 0;
-	private float					maxX		= 0;
+	private boolean					rescaleY	= true;
+	private boolean					rescaleX	= true;
+	private float						maxY		= 0;
+	private float						maxX		= 0;
+	private boolean					drawAxis	= false;
+	private Polygon					arrowHead;
+	private AffineTransform			aTransf	= new AffineTransform();	;
 	
 	
 	/**
@@ -54,6 +61,11 @@ public class Diagram {
 		data = _data;
 		rescaleY = true;
 		rescaleX = true;
+		
+		arrowHead = new Polygon();
+		arrowHead.addPoint(0, 5);
+		arrowHead.addPoint(-5, -5);
+		arrowHead.addPoint(5, -5);
 	}
 	
 	
@@ -71,8 +83,8 @@ public class Diagram {
 			return;
 		ga.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		ga.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		float scalex = (float) width / getMaxX();
-		float scaley = (float) height / getMaxY();
+		float scalex = (float) (width - 10) / getMaxX();
+		float scaley = (float) (height - 10) / getMaxY();
 		
 		float lastValue = data.get(0);
 		float value = 0;
@@ -92,9 +104,36 @@ public class Diagram {
 			yPoints[i - 1] = (int) y1;
 			
 		}
+		
+		if (drawAxis) {
+			Color oldColor = ga.getColor();
+			ga.setColor(Color.black);
+			Line2D.Double xAxis = new Line2D.Double(location.x, height + location.y, width + location.x, height
+					+ location.y);
+			ga.draw(xAxis);
+			drawArrowHead(ga, xAxis);
+			Line2D.Double yAxis = new Line2D.Double(location.x, height + location.y, location.x, location.y);
+			ga.draw(yAxis);
+			drawArrowHead(ga, yAxis);
+			ga.setColor(oldColor);
+		}
+
 		ga.drawPolyline(xPoints, yPoints, data.size() - 1);
 	}
 	
+	
+	private void drawArrowHead(Graphics2D g2d, Line2D.Double line) {
+		aTransf.setToIdentity();
+		double angle = Math.atan2(line.y2 - line.y1, line.x2 - line.x1);
+		aTransf.translate(line.x2, line.y2);
+		aTransf.rotate((angle - Math.PI / 2d));
+		
+		Graphics2D g = (Graphics2D) g2d.create();
+		g.setTransform(aTransf);
+		g.fill(arrowHead);
+		g.dispose();
+	}
+
 	
 	/**
 	 * Return the maximum Y depending on rescaleY
@@ -132,7 +171,7 @@ public class Diagram {
 	
 	
 	public LinkedList<Float> getData() {
-		return (LinkedList<Float>)data;
+		return (LinkedList<Float>) data;
 	}
 	
 	
@@ -191,12 +230,28 @@ public class Diagram {
 	}
 	
 	
-	public void setMaxY(int maxY) {
+	public void setMaxY(float maxY) {
 		this.maxY = maxY;
 	}
 	
 	
-	public void setMaxX(int maxX) {
+	public void setMaxX(float maxX) {
 		this.maxX = maxX;
+	}
+
+
+	/**
+	 * @return the drawAxis
+	 */
+	public boolean isDrawAxis() {
+		return drawAxis;
+	}
+
+
+	/**
+	 * @param drawAxis the drawAxis to set
+	 */
+	public void setDrawAxis(boolean drawAxis) {
+		this.drawAxis = drawAxis;
 	}
 }
