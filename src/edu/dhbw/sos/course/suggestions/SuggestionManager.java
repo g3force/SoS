@@ -40,13 +40,13 @@ public class SuggestionManager implements ISuggestionsObserver {
 
 	private LinkedList<Suggestion>	availableSuggestions;
 	private LinkedList<Suggestion>	currentSuggestions;
-	private LinkedList<String>			params;
+	private LinkedList<String>			courseParams;
 	private int								paramCount;
 	private XStream						xs;
 	
 	
 	public SuggestionManager(LinkedList<String> params) {
-		this.params = params;
+		this.courseParams = params;
 		this.paramCount = params.size();
 		availableSuggestions = new LinkedList<Suggestion>();
 		currentSuggestions = new LinkedList<Suggestion>();
@@ -57,16 +57,27 @@ public class SuggestionManager implements ISuggestionsObserver {
 		xs.alias("param", XMLParam.class);
 		xs.alias("suggestion", Suggestion.class);
 		
-		if (!loadSuggestionsFromFile()) {
-			writeDummySuggestions();
-			if (!loadSuggestionsFromFile()) {
-				logger.error("Cannot create a suggestions.xml file. Please check the permission of \"" + SUGGESTION_FILE
-						+ "\".");
+		// try loading the suggestions from file
+		int retCode = loadSuggestionsFromFile();
+		// no file was found => create file with dummy data and try loading again
+		if (retCode == 0) {
+			if (writeDummySuggestions()) {
+				if (loadSuggestionsFromFile() != 1) {
+					logger.error("Cannot create a suggestions.xml file. Please check the permission of \"" + SUGGESTION_FILE
+							+ "\".");
+				}
 			}
 		}
 	}
 	
 	
+	/**
+	 * Removes the Suggestion object s from the list of displayed suggestions.
+	 * 
+	 * @param s Suggestion object to be removed from displayed list.
+	 * @return true if the Suggestion could be removed or false if not.
+	 * @author bene
+	 */
 	public boolean removeSuggestion(Suggestion s) {
 		return true;
 	}
@@ -79,36 +90,45 @@ public class SuggestionManager implements ISuggestionsObserver {
 	}
 	
 	
-	private boolean loadSuggestionsFromFile() {
+	/**
+	 * Loads the suggestions from the .xml file and add the ones that are needed to the availableSuggestions list.
+	 * 
+	 * @return 0 if the suggestions.xml file was not found, -1 if there was an error with the suggestions.xml file and 1
+	 *         if everything worked as it should.
+	 * @author bene
+	 */
+	private int loadSuggestionsFromFile() {
 		try {
 			ObjectInputStream in = xs.createObjectInputStream(new FileReader(System.getProperty("user.home")
 					+ "/.SoS/suggestions.xml"));
 			while (true) {
 				Suggestion s = (Suggestion) in.readObject();
-				// TODO add only fitting suggestions to list therefore check if all current course parameters are included
-				// in the suggestion, if so load and remove unused parameters
+				if (haveToAddSuggestion(s)) {
+					s.removeUnusedParameters((String[]) courseParams.toArray());
+					availableSuggestions.add(s);
+				}
 			}
 		} catch (FileNotFoundException err) {
 			logger.info("The suggestion file could not be found");
-			return false;
+			return 0;
 		} catch (ClassNotFoundException err) {
 			logger.error("There are errors in the suggestions.xml file.");
-			return false;
+			return -1;
 		} catch (IOException err) {
 			if (err.getClass().equals(EOFException.class)) {
-				return true;
+				return 1;
 			} else {
 				logger.error("There are errors in the suggestions.xml file.");
-				return false;
+				return -1;
 			}
 		}
 	}
 	
 	
-	private void writeDummySuggestions() {
+	private boolean writeDummySuggestions() {
 		float[][] range = { { 10, 30 }, { 5, 10 }, { 15, 20 }, { 25, 30 } };
 		float[] influence = { 20, 10, 25, 5 };
-		Suggestion sug1 = new Suggestion(range, "hello world", 5, influence, params);
+		Suggestion sug1 = new Suggestion(range, "hello world", 5, influence, courseParams);
 		try {
 			ObjectOutputStream out = xs.createObjectOutputStream(new FileWriter(SUGGESTION_FILE));
 			
@@ -118,8 +138,32 @@ public class SuggestionManager implements ISuggestionsObserver {
 			out.writeInt(12345);
 			
 			out.close();
+			return true;
 		} catch (IOException err) {
 			logger.error("IO Error on writing dummy suggestions.xml file.");
+			return false;
 		}
+	}
+	
+	
+	private boolean haveToAddSuggestion(Suggestion s) {
+		String[] suggestionParamNames = s.getParamNames();
+		// suggestion contains less parameters than the course and can therefore not be used
+		if (suggestionParamNames.length < courseParams.size()) {
+			return false;
+		}
+		boolean result = true;
+		for (int i = 0; i < courseParams.size(); i++) {
+			String currentParamName = courseParams.get(i);
+			boolean isInSuggestion = false;
+			for (String suggestionParamName : suggestionParamNames) {
+				if (currentParamName.compareTo(suggestionParamName) == 0) {
+					isInSuggestion = true;
+					break;
+				}
+			}
+			result = result && isInSuggestion;
+		}
+		return result;
 	}
 }

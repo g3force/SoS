@@ -20,6 +20,7 @@ import edu.dhbw.sos.course.influence.EInfluenceType;
 import edu.dhbw.sos.course.influence.Influence;
 import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.Lecture;
+import edu.dhbw.sos.course.lecture.TimeBlock;
 import edu.dhbw.sos.course.statistics.IStatisticsObserver;
 import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
@@ -69,6 +70,38 @@ public class Course {
 		suggestions.add("Sug4");
 		// calculate state statistics for whole course
 		// calcStatistics();
+		
+		students = new IPlace[5][7];
+		LinkedList<String> properties = new LinkedList<String>();
+		properties.add("Tireness");
+		properties.add("Loudness");
+		properties.add("Attention");
+		properties.add("Quality");
+		for (int y = 0; y < 5; y++) {
+			for (int x = 0; x < 7; x++) {
+				if (y == 3 && x == 4) {
+					students[y][x] = new EmptyPlace(properties.size());
+				} else {
+					Student newStud = new Student(properties.size());
+					
+					for (int i = 0; i < 4; i++) {
+						newStud.addValueToChangeVector(i, (int) (Math.random() * 100));
+						newStud.addValueToStateVector(i, (int) (Math.random() * 100));
+					}
+					// ((Student)students[y][x]).
+					students[y][x] = newStud;
+				}
+			}
+		}
+		
+		influence = new Influence();
+		lecture = new Lecture(new Date());
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.theory));
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(20, BlockType.pause));
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.exercise));
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.pause));
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.group));
+
 	}
 	
 	
