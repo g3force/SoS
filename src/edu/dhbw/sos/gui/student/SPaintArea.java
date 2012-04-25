@@ -17,9 +17,10 @@ import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
-import edu.dhbw.sos.course.student.EmptyPlace;
+import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.gui.Diagram;
+import edu.dhbw.sos.helper.CalcVector;
 
 
 /**
@@ -30,9 +31,11 @@ import edu.dhbw.sos.gui.Diagram;
  * 
  */
 public class SPaintArea extends JPanel {
-	private static final long	serialVersionUID	= 1L;
-	private Diagram				diagram;
-	
+	private static final long		serialVersionUID	= 1L;
+	private LinkedList<Diagram>	diagrams				= new LinkedList<Diagram>();
+	private static final Color		COLORS[]				= { Color.black, Color.blue, Color.green, Color.yellow, Color.red,
+			Color.cyan, Color.magenta						};
+
 	
 	// private static final Logger logger = Logger.getLogger(PaintArea.class);
 	
@@ -43,7 +46,7 @@ public class SPaintArea extends JPanel {
 	 * @author NicolaiO
 	 */
 	public SPaintArea() {
-		diagram = new Diagram(new LinkedList<Float>());
+		Diagram diagram = new Diagram(new LinkedList<Float>());
 		diagram.setLocation(new Point(10, 10));
 	}
 	
@@ -53,36 +56,86 @@ public class SPaintArea extends JPanel {
 	 * Will do all the drawing.
 	 * Is called frequently, e.g. by repaint or if JPanel resizes, etc.
 	 */
+	@Override
 	public void paint(Graphics g) {
 		// initialize
 		Graphics2D ga = (Graphics2D) g;
 		ga.clearRect(0, 0, this.getWidth(), this.getHeight());
 		
 		// draw diagram
-		ga.setColor(Color.black);
-		diagram.draw(ga);
+		int i = 0;
+		synchronized (diagrams) {
+			for (Diagram diagram : diagrams) {
+				if (i < COLORS.length) {
+					ga.setColor(COLORS[i]);
+				} else {
+					ga.setColor(Color.black);
+				}
+				diagram.draw(ga);
+				i++;
+			}
+		}
 	}
 	
 	
 	public void update(IPlace student, int parameterIndex) {
-		diagram.setHeight(this.getHeight() - 20);
-		diagram.setWidth(this.getWidth() - 20);
-		LinkedList<Float> newData = new LinkedList<Float>();
-		if (student != null || student instanceof EmptyPlace) {
+		if (student != null) {
+			Diagram diagram;
+			synchronized (diagrams) {
+				if (diagrams.size() >= 1) {
+					diagram = diagrams.getFirst();
+				} else {
+					diagram = new Diagram(new LinkedList<Float>());
+				}
+				if (diagrams.size() > 1) {
+					diagrams.clear();
+					diagrams.add(diagram);
+				}
+			}
+			diagram.setHeight(this.getHeight() - 20);
+			diagram.setWidth(this.getWidth() - 20);
+			LinkedList<Float> newData = new LinkedList<Float>();
 			for (int key : student.getHistoryStates().keySet()) {
 				newData.add(student.getHistoryStates().get(key).getValueAt(parameterIndex));
 			}
+			diagram.setData(newData);
 		} else {
 			// dummy data
-			double last = 50;
-			for (int i = 0; i < 50; i++) {
-				last = last + ((Math.random() - 0.5) * 30.0);
-				if (last < 0)
-					last = 0;
-				newData.add((float) last);
-			}
+			// double last = 50;
+			// for (int i = 0; i < 50; i++) {
+			// last = last + ((Math.random() - 0.5) * 30.0);
+			// if (last < 0)
+			// last = 0;
+			// newData.add((float) last);
+			// }
 		}
-		diagram.setData(newData);
 		repaint();
+	}
+	
+
+	public void update(Course course) {
+		synchronized (diagrams) {
+			diagrams.clear();
+			try {
+				int size = course.getHistStatState().get(0).size();
+				LinkedList<LinkedList<Float>> newData = new LinkedList<LinkedList<Float>>();
+				for (int i = 0; i < size; i++) {
+					newData.add(new LinkedList<Float>());
+					Diagram diagram = new Diagram(new LinkedList<Float>());
+					diagram.setHeight(this.getHeight() - 20);
+					diagram.setWidth(this.getWidth() - 20);
+					diagram.setData(newData.get(i));
+					diagrams.add(diagram);
+				}
+				for (CalcVector cv : course.getHistStatState()) {
+					for (int i = 0; i < cv.size(); i++) {
+						newData.get(i).add(cv.getValueAt(i));
+					}
+				}
+			} catch (IndexOutOfBoundsException e) {
+				// well, then no diagrams...
+			}
+			repaint();
+		}
 	}
 }

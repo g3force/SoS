@@ -2,12 +2,12 @@
  * *********************************************************
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
- * Date: Apr 22, 2012
- * Author(s): NicolaiO
+ * Date: Apr 23, 2012
+ * Author(s): andres
  * 
  * *********************************************************
  */
-package edu.dhbw.sos.gui.right;
+package edu.dhbw.sos.gui.plan;
 
 import java.awt.Image;
 import java.net.URL;
@@ -17,27 +17,24 @@ import javax.swing.JButton;
 
 
 /**
- * TODO NicolaiO, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
+ * Live Button
  * 
- * @author NicolaiO
+ * @author andres
  * 
  */
-public class DelBtn extends JButton {
-	private static final long	serialVersionUID	= 1L;
+public class ForwardBtn extends JButton {
+	private static final long	serialVersionUID	= -7859117948085381042L;
 	
 	
 	/**
-	 * TODO NicolaiO, add comment!
-	 * 
-	 * @author NicolaiO
+	 * Live Button Constructor with icon.
+	 * @author andres
 	 */
-	public DelBtn() {
-		super("del");
-		URL editIconUrl = getClass().getResource("/res/icons/delete.png");
-		if (editIconUrl != null) {
-			ImageIcon icon = new ImageIcon(editIconUrl);
+	public ForwardBtn() {
+		super(">>");
+		URL iconUrlLive = getClass().getResource("/res/icons/forward.png");
+		if (iconUrlLive != null) {
+			ImageIcon icon = new ImageIcon(iconUrlLive);
 			Image img = icon.getImage();
 			Image newimg = img.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
 			ImageIcon newIcon = new ImageIcon(newimg);

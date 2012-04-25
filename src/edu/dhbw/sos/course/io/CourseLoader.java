@@ -10,37 +10,14 @@
 package edu.dhbw.sos.course.io;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
 
-import edu.dhbw.sos.SuperFelix;
-import edu.dhbw.sos.course.Course;
-import edu.dhbw.sos.course.influence.Influence;
-import edu.dhbw.sos.course.lecture.BlockType;
-import edu.dhbw.sos.course.lecture.Lecture;
-import edu.dhbw.sos.course.lecture.TimeBlock;
-import edu.dhbw.sos.course.lecture.TimeBlocks;
-import edu.dhbw.sos.course.student.EmptyPlace;
-import edu.dhbw.sos.course.student.IPlace;
-import edu.dhbw.sos.course.student.Student;
-import edu.dhbw.sos.helper.CalcVector;
+import com.thoughtworks.xstream.XStream;
 
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.course.Courses;
+
 
 
 /**
@@ -50,54 +27,85 @@ import org.xml.sax.SAXException;
  * 
  */
 public class CourseLoader {
-	
-	private static final Logger	logger	= Logger.getLogger(SuperFelix.class);
-	private static Document			doc;
+	private static final Logger	logger	= Logger.getLogger(CourseLoader.class);
 	
 	
-	private static Course createDummyCourse() {
-		IPlace[][] students = new IPlace[5][7];
-		LinkedList<String> properties = new LinkedList<String>();
-		properties.add("Tireness");
-		properties.add("Loudness");
-		properties.add("Attention");
-		properties.add("Quality");
-		for (int y = 0; y < 5; y++) {
-			for (int x = 0; x < 7; x++) {
-				if (y == 3 && x == 4) {
-					students[y][x] = new EmptyPlace(properties.size());
-				} else {
-					Student newStud = new Student(properties.size());
-					
-					for (int i = 0; i < 4; i++) {
-						newStud.addValueToChangeVector(i, (int) (Math.random() * 100));
-						newStud.addValueToStateVector(i, (int) (Math.random() * 100));
+	// private static Document doc;
+	
+	
+	/**
+	 * 
+	 * Loads the entire course-structure and the vectors
+	 * 
+	 * @param savepath
+	 * @return
+	 * @author SebastianN
+	 */
+	
+	public static Courses loadCourses(String savepath) {
+		/*
+		 * DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		 * DocumentBuilder dBuilder;
+		 */
+		XStream xstream = new XStream();
+		File dir = new File(savepath);
+		Courses allCourses = new Courses(savepath);
+		
+		System.out.println("Savepath: " + savepath);
+		
+		if (dir.list() != null) {
+			for (int i = 0; i < dir.list().length; i++) {
+				String curFile = dir.list()[i];
+				String ext = curFile.substring(curFile.lastIndexOf(".") + 1, curFile.length());
+				if (ext.contentEquals("xml")) {
+					File xmlfile = new File(savepath + dir.list()[i]);
+					if (xmlfile.length() > 0) {
+						allCourses.add((Course) xstream.fromXML(xmlfile));
 					}
-					// ((Student)students[y][x]).
-					students[y][x] = newStud;
 				}
 			}
 		}
-		
-		@SuppressWarnings("deprecation")
-		Influence influence = new Influence();
-		Lecture lecture = new Lecture(new Date());
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.theory));
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(20, BlockType.pause));
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.exercise));
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.pause));
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.group));
-		
-		Course dummy = new Course("Your first Course");
-		dummy.setLecture(lecture);
-		dummy.setInfluence(influence);
-		dummy.setStudents(students);
-		dummy.setProperties(properties);
-		
-		return dummy;
+		if (allCourses.size() == 0) {
+			allCourses.add(new Course("Dummy course"));
+		}
+		allCourses.setCurrentCourse(allCourses.get(0));
+		System.out.println("CoursesSize: " + allCourses.size() + ", setCourse: " + allCourses.getCurrentCourse());
+		return allCourses;
+		/*
+		 * try {
+		 * dBuilder = dbFactory.newDocumentBuilder();
+		 * doc = dBuilder.parse(savepath);
+		 * doc.getDocumentElement().normalize();
+		 * } catch (ParserConfigurationException err) {
+		 * logger.error("Could not initialize dBuilder");
+		 * err.printStackTrace();
+		 * courses.add(createDummyCourse());
+		 * return courses;
+		 * } catch (SAXException err) {
+		 * logger.error("(SAX:)Could not parse document");
+		 * err.printStackTrace();
+		 * courses.add(createDummyCourse());
+		 * return courses;
+		 * } catch (IOException err) {
+		 * logger.error("(IO:)Could not parse document");
+		 * err.printStackTrace();
+		 * courses.add(createDummyCourse());
+		 * return courses;
+		 * }
+		 * 
+		 * courses = loadCoursesFromXML();
+		 * float[][] pMatrix = loadMatrixFromXML("p"); // pMatrix, pRow
+		 * float[][] eMatrix = loadMatrixFromXML("e"); // eMatrix, eRow
+		 * Influence infl = new Influence(pMatrix, eMatrix);
+		 * 
+		 * for (int i = 0; i < courses.size(); i++) {
+		 * courses.get(i).setInfluence(infl);
+		 * }
+		 */
 	}
-	
-	
+
+
+	/*
 	private static int getIntFromTag(String tagname, int idx) {
 		NodeList nList = doc.getElementsByTagName(tagname);
 		try {
@@ -161,7 +169,6 @@ public class CourseLoader {
 					//Data
 					System.out.println("REALDATE: "+nLecture.item(0).getAttributes().item(0).getTextContent());
 					System.out.println("OTHERDATE: " + new Date());
-					@SuppressWarnings("deprecation")
 					SimpleDateFormat x = new SimpleDateFormat( "dd.MM.yyyy, hh:mm");
 					Date newDate = new Date();
 					try {
@@ -233,59 +240,5 @@ public class CourseLoader {
 		}
 		return result;
 	}
-	
-	
-	/**
-	 * 
-	 * Loads the entire course-structure and the vectors
-	 * 
-	 * @param savepath
-	 * @return
-	 * @author SebastianN
-	 */
-	
-	public static LinkedList<Course> loadCourses(String savepath) {
-		
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder;
-		LinkedList<Course> courses = new LinkedList<Course>();
-		File file = new File(savepath);
-		if (!file.exists() || file.length() == 0) {// file is empty or not-existent
-			Course dummy = createDummyCourse();
-			courses.add(dummy);
-			return courses;
-		}
-		try {
-			dBuilder = dbFactory.newDocumentBuilder();
-			doc = dBuilder.parse(savepath);
-			doc.getDocumentElement().normalize();
-		} catch (ParserConfigurationException err) {
-			logger.error("Could not initialize dBuilder");
-			err.printStackTrace();
-			courses.add(createDummyCourse());
-			return courses;
-		} catch (SAXException err) {
-			logger.error("(SAX:)Could not parse document");
-			err.printStackTrace();
-			courses.add(createDummyCourse());
-			return courses;
-		} catch (IOException err) {
-			logger.error("(IO:)Could not parse document");
-			err.printStackTrace();
-			courses.add(createDummyCourse());
-			return courses;
-		}
-		
-		courses = loadCoursesFromXML();
-		float[][] pMatrix = loadMatrixFromXML("p"); // pMatrix, pRow
-		float[][] eMatrix = loadMatrixFromXML("e"); // eMatrix, eRow
-		Influence infl = new Influence(pMatrix, eMatrix);
-		
-		for (int i = 0; i < courses.size(); i++) {
-			courses.get(i).setInfluence(infl);
-		}
-		return courses;
-	}
-	
-	
+	*/
 }

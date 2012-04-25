@@ -2,22 +2,22 @@
  * *********************************************************
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
- * Date: Apr 22, 2012
- * Author(s): NicolaiO
+ * Date: Apr 24, 2012
+ * Author(s): andres
  *
  * *********************************************************
  */
-package edu.dhbw.sos.gui;
+package edu.dhbw.sos.simulation;
+
 
 /**
- * TODO NicolaiO, add comment!
+ * TODO andres, add comment!
  * - What should this type do (in one sentence)?
  * - If not intuitive: A simple example how to use this class
  * 
- * @author NicolaiO
+ * @author andres
  * 
  */
-public interface IEditModeObserver {
-	void enterEditMode();
-	void exitEditMode();
+public interface ITimeObserver {
+	void timeChanged(int time);
 }

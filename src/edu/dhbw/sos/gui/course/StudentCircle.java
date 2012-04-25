@@ -118,23 +118,26 @@ public class StudentCircle extends Ellipse2D.Float {
 	 * @return Color between Green and Red
 	 * @author NicolaiO
 	 */
-	public static Color getColorFromValue(float value, int max) {
-		int LOWER_GREEN = 0;
-		int LOWER_RED = 100;
-		int UPPER_GREEN = 240;
-		int UPPER_RED = 255;
-		int red = LOWER_RED;
-		red += ((510 - (LOWER_RED + 255 - UPPER_RED) - (LOWER_GREEN + 255 - UPPER_GREEN)) / max) * value;
+	public static Color getColorFromValue(float value, float max) {
+		float LOWER_GREEN = 0;
+		float LOWER_RED = 80;
+		float UPPER_GREEN = 245;
+		float UPPER_RED = 255;
+		float red = LOWER_RED;
+		
+		float fullSpecturum = (510 - LOWER_RED - (255 - UPPER_RED) - LOWER_GREEN - (255 - UPPER_GREEN));
+		red += ((max-value)/max) * fullSpecturum;
+		
 		if (red < LOWER_RED)
 			red = LOWER_RED;
-		int green = UPPER_GREEN;
+		float green = UPPER_GREEN;
 		if (red > UPPER_RED) {
 			green -= red - UPPER_GREEN;
 			red = UPPER_RED;
 		}
 		if (green < LOWER_GREEN)
 			green = LOWER_GREEN;
-		return new Color(red, green, 0);
+		return new Color((int) red, (int) green, 0);
 	}
 	
 	

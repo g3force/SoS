@@ -13,12 +13,17 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -28,6 +33,7 @@ import javax.swing.SwingConstants;
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.lecture.TimeBlocks;
 import edu.dhbw.sos.helper.Messages;
+import edu.dhbw.sos.simulation.ISpeedObserver;
 import edu.dhbw.sos.simulation.SimController;
 
 
@@ -40,10 +46,10 @@ import edu.dhbw.sos.simulation.SimController;
  * @author NicolaiO
  * 
  */
-public class PlanPanel extends JPanel implements ComponentListener {
+public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserver {
 	private static final long	serialVersionUID	= -1665784555881941508L;
 	// paintArea is the part of the Panel, where some drawings have to be done
-	private final PaintArea		paintArea;
+	private final PPaintArea	paintArea;
 	// label where speed of playback is shown
 	private JLabel					lblSpeed;
 	// reference to the timeblocks to display
@@ -92,7 +98,7 @@ public class PlanPanel extends JPanel implements ComponentListener {
 		this.add(lPanel, BorderLayout.WEST);
 		
 		// init paintArea
-		paintArea = new PaintArea(course);
+		paintArea = new PPaintArea(course);
 		this.add(paintArea, BorderLayout.CENTER);
 		// paintArea.initMovableBlocks();
 		
@@ -104,9 +110,12 @@ public class PlanPanel extends JPanel implements ComponentListener {
 		
 		// control panel (play, pause, etc.)
 		JPanel controlPanel = new JPanel();
-		JButton btnPlay = new JButton("Pl");
+		PlayBtn btnPlay = new PlayBtn();
+		LiveBtn btnLive = new LiveBtn();
 		btnPlay.addActionListener(simController);
-		JButton btnLive = new JButton("L");
+		btnLive.addActionListener(simController);
+		
+		
 		controlPanel.add(btnPlay);
 		controlPanel.add(btnLive);
 		sidePanel.add(controlPanel);
@@ -116,13 +125,16 @@ public class PlanPanel extends JPanel implements ComponentListener {
 		
 		// speed controls
 		lblSpeed = new JLabel("1x");
-		JButton btnPlus = new JButton("+");
-		JButton btnMinus = new JButton("-");
+		ForwardBtn btnPlus = new ForwardBtn();
+		RewindBtn btnMinus = new RewindBtn();
 		JPanel speedPanel = new JPanel();
+		speedPanel.add(btnMinus);
 		speedPanel.add(lblSpeed);
 		speedPanel.add(btnPlus);
-		speedPanel.add(btnMinus);
 		sidePanel.add(speedPanel);
+		btnPlus.addActionListener(simController);
+		btnMinus.addActionListener(simController);
+		
 		
 		// time
 		JLabel lblFromTo = new JLabel(Messages.getString("Lecture.FROMTO"), SwingConstants.LEFT);
@@ -158,5 +170,11 @@ public class PlanPanel extends JPanel implements ComponentListener {
 	
 	@Override
 	public void componentHidden(ComponentEvent e) {
+	}
+	
+	
+	@Override
+	public void speedChanged(int speed) {
+		lblSpeed.setText(speed + "x");
 	}
 }

@@ -17,6 +17,6 @@ package edu.dhbw.sos.course;
  * @author NicolaiO
  * 
  */
-public interface ISelectedCourseObserver {
-	void updateSelectedCourse();
+public interface ISelectedStudentObserver {
+	void updateSelectedStudent();
 }

@@ -20,6 +20,7 @@ import edu.dhbw.sos.course.influence.EInfluenceType;
 import edu.dhbw.sos.course.influence.Influence;
 import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.Lecture;
+import edu.dhbw.sos.course.lecture.TimeBlock;
 import edu.dhbw.sos.course.statistics.IStatisticsObserver;
 import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
@@ -36,7 +37,7 @@ import edu.dhbw.sos.simulation.SimController;
 public class Course {
 	private static final Logger						logger						= Logger.getLogger(Course.class);
 	private LinkedList<IStudentsObserver>			studentsObservers			= new LinkedList<IStudentsObserver>();
-	private LinkedList<ISelectedCourseObserver>	selectedCourseObservers	= new LinkedList<ISelectedCourseObserver>();
+	private LinkedList<ISelectedStudentObserver>	selectedCourseObservers	= new LinkedList<ISelectedStudentObserver>();
 	private LinkedList<IStatisticsObserver>		statisticsObservers		= new LinkedList<IStatisticsObserver>();
 	private IPlace[][]									students						= new IPlace[0][0];
 	private Influence										influence					= new Influence();
@@ -44,7 +45,7 @@ public class Course {
 	private Lecture										lecture;
 	private SimController								simController;
 	
-	private LinkedList<String>							properties					= new LinkedList<String>();
+	private LinkedList<String>							parameters					= new LinkedList<String>();
 	// place here? not implemented yet, so do not know...
 	private LinkedHashMap<String, String>			statistics					= new LinkedHashMap<String, String>();
 	private CalcVector									statState					= new CalcVector(4);
@@ -54,6 +55,8 @@ public class Course {
 	// the student and property that was selected in the GUI (by hovering over the student)
 	private IPlace											selectedStudent			= null;
 	private int												selectedProperty			= 0;
+	private boolean										simulating					= false;
+	private LinkedList<DonInput>						donInputQueue				= new LinkedList<DonInput>();
 	
 	
 	public Course(String name) {
@@ -67,6 +70,38 @@ public class Course {
 		suggestions.add("Sug4");
 		// calculate state statistics for whole course
 		calcStatistics();
+		
+		students = new IPlace[5][7];
+		LinkedList<String> properties = new LinkedList<String>();
+		properties.add("Tireness");
+		properties.add("Loudness");
+		properties.add("Attention");
+		properties.add("Quality");
+		for (int y = 0; y < 5; y++) {
+			for (int x = 0; x < 7; x++) {
+				if (y == 3 && x == 4) {
+					students[y][x] = new EmptyPlace(properties.size());
+				} else {
+					Student newStud = new Student(properties.size());
+					
+					for (int i = 0; i < 4; i++) {
+						newStud.addValueToChangeVector(i, (int) (Math.random() * 100));
+						newStud.addValueToStateVector(i, (int) (Math.random() * 100));
+					}
+					// ((Student)students[y][x]).
+					students[y][x] = newStud;
+				}
+			}
+		}
+		
+		influence = new Influence();
+		lecture = new Lecture(new Date());
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.theory));
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(20, BlockType.pause));
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.exercise));
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.pause));
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.group));
+
 	}
 	
 	
@@ -88,9 +123,9 @@ public class Course {
 	 * 
 	 * @author NicolaiO
 	 */
-	public void notifySelectedCourseObservers() {
-		for (ISelectedCourseObserver so : selectedCourseObservers) {
-			so.updateSelectedCourse();
+	public void notifySelectedStudentObservers() {
+		for (ISelectedStudentObserver so : selectedCourseObservers) {
+			so.updateSelectedStudent();
 		}
 	}
 	
@@ -127,7 +162,7 @@ public class Course {
 	 * @param so
 	 * @author NicolaiO
 	 */
-	public void subscribeSelectedCourse(ISelectedCourseObserver so) {
+	public void subscribeSelectedStudent(ISelectedStudentObserver so) {
 		selectedCourseObservers.add(so);
 	}
 	
@@ -205,9 +240,15 @@ public class Course {
 	
 	
 	public void donInput(int index, float value, int currentTime) {
-		selectedStudent.getActualState().printCalcVector("preDonInput");
-		selectedStudent.donInput(index, value, currentTime);
-		selectedStudent.getActualState().printCalcVector("postDonInput");
+		if (simulating) {
+			logger.trace("donInput1: " + index + " " + value + " " + currentTime);
+			donInputQueue.add(new DonInput(index, value, currentTime));
+		} else {
+			logger.trace("donInput2: " + index + " " + value + " " + currentTime);
+			selectedStudent.getActualState().printCalcVector("Don Input: preActualState: ");
+			selectedStudent.donInput(index, value, currentTime);
+			selectedStudent.getActualState().printCalcVector("Don Input: postActualState: ");
+		}
 	}
 	
 	
@@ -220,7 +261,7 @@ public class Course {
 	 * @author dirk
 	 */
 	public void simulationStep(int currentTime, int speed) {
-		
+		simulating = true;
 		students[0][0].printAcutalState();
 		
 		// -------------------------------------------------
@@ -231,7 +272,7 @@ public class Course {
 		IPlace[][] newState = new IPlace[students.length][students[0].length];
 		for (int y = 0; y < 5; y++) {
 			for (int x = 0; x < 7; x++) {
-				newState[y][x] = new EmptyPlace(properties.size());
+				newState[y][x] = new EmptyPlace(parameters.size());
 			}
 		}
 		
@@ -239,22 +280,25 @@ public class Course {
 		// -------- student independent calculations -------
 		// -------------------------------------------------
 		
-		CalcVector preChangeVector = new CalcVector(properties.size());
-		preChangeVector.printCalcVector("Init");
+		CalcVector preChangeVector = new CalcVector(parameters.size());
+		preChangeVector.printCalcVector("Sim: Init");
 		
-		// breakReaction ( inf(Break) * breakInf )
-		double breakInf = 0.01;
-		if (lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType() == BlockType.pause) {
-			logger.info("Influenced by break");
-			preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.BREAK_REACTION, breakInf));
-		}
-		preChangeVector.printCalcVector("after break");
+		// time block depending ( inf(Break) * breakInf )
+		double timeBlockInf = 0.01;
+		
+		BlockType bt = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType();
+		preChangeVector.addCalcVector(influence.getEnvironmentVector(bt.getEinfluenceType(), timeBlockInf));
+		// if (lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType() == BlockType.pause) {
+		// logger.info("Influenced by break");
+		// preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.BREAK_REACTION, breakInf));
+		// }
+		preChangeVector.printCalcVector("Sim: after timeblock (" + bt.toString() + ")");
 		
 		// timeDending ( inf(Time) * currentTime/1000 * timeInf )
-		double timeInf = 0.001;
+		double timeInf = 0.000001;
 		double timeTimeInf = timeInf * currentTime / 1000;
 		preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.TIME_DEPENDING, timeTimeInf));
-		preChangeVector.printCalcVector("after time depending");
+		preChangeVector.printCalcVector("Sim: after time depending");
 		
 		// -------------------------------------------------
 		// ---------- iterate over all students ------------
@@ -273,23 +317,23 @@ public class Course {
 					
 					// influence of the surrounding students
 					CalcVector neighborInfl = getNeighborsInfluence(student, x, y);
-					// output for one student (0,0) -> only for analyzing the simulation behavior
-					if (y == 0 && x == 0)
-						neighborInfl.printCalcVector("Neighbor");
+					// output for one student (1,1) -> only for analyzing the simulation behavior
+					if (y == 1 && x == 1)
+						neighborInfl.printCalcVector("Sim(1,1): Neighbor");
 					
 					// create a new vector which contains the pre calculates vector and the neighbor vector
 					CalcVector preChangeVectorSpecial = neighborInfl.addCalcVector(preChangeVector).addCalcVector(
 							neighborInfl);
-					// output for one student (0,0) -> only for analyzing the simulation behavior
-					if (y == 0 && x == 0)
-						neighborInfl.printCalcVector("preChangeVectorSpecial = Neighbor + preChangeVector");
+					// output for one student (1,1) -> only for analyzing the simulation behavior
+					if (y == 1 && x == 1)
+						neighborInfl.printCalcVector("Sim(1,1): preChangeVectorSpecial = Neighbor + preChangeVector");
 					
 					// create a new student and let him calculate a new change vector
 					Student newStudent = student.clone();
 					newState[y][x] = newStudent;
-					newStudent.calcNextSimulationStep(preChangeVectorSpecial, influence, x, y, currentTime);
-					if (y == 0 && x == 0)
-						newStudent.printAcutalState();
+					newStudent.calcNextSimulationStep(preChangeVectorSpecial, influence, currentTime, x, y);
+					if (y == 1 && x == 1)
+						newStudent.getActualState().printCalcVector("Sim(1,1): actualStateEnd");
 				}
 			}
 		}
@@ -301,12 +345,21 @@ public class Course {
 		// give the reference from newState to real students array
 		students = newState;
 		
+		// handle any donInputs, that had accord during simulation
+		simulating = false;
+		for (DonInput di : donInputQueue) {
+			donInput(di.index, di.value, di.currentTime);
+		}
+		donInputQueue.clear();
+		
 		// calculate state statistics for whole course
 		calcStatistics();
 		
 		// notify all subscribers of the students array
-		notifyStudentsObservers();
-		
+		if (currentTime % 1000 == 0) {
+			notifyStudentsObservers();
+			notifySelectedStudentObservers();
+		}
 	}
 	
 	
@@ -371,11 +424,15 @@ public class Course {
 			if (studentMAverage < 0)
 				studentMAverage *= -1;
 			float reducer = (100 - studentMAverage) / 100;
-			changeVector.setValueAt(i, (average - student.getActualState().getValueAt(i)) * reducer);
+			if (x == 1 && y == 1)
+				logger.info("Sim(1,1): average: " + average + " / actualState: " + student.getActualState().getValueAt(i)
+						+ " / reducer: " + reducer + " / value: " + (average - student.getActualState().getValueAt(i))
+						* reducer * 0.1f);
+			changeVector.setValueAt(i, (average - student.getActualState().getValueAt(i)) * reducer * 0.1f);
 			// changeVector.multiplyWithVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR,0.01));
 		}
-		if (x == 0 && y == 0)
-			changeVector.printCalcVector("Change vector (neighbors): ");
+		if (x == 1 && y == 1)
+			changeVector.printCalcVector("Sim(1,1): Change vector (neighbors): ");
 		
 		return changeVector;
 	}
@@ -413,7 +470,7 @@ public class Course {
 	 * @author andres
 	 */
 	private void calcStatistics() {
-	
+		
 		statState.multiply(0);
 		
 		statState.multiply(0);
@@ -421,10 +478,10 @@ public class Course {
 		// for (IPlace[] studentRow : students) {
 		// for (IPlace student : studentRow) {
 		// if (student instanceof Student) {
-		for (int y = 0; y < students.length; y++) {
-			for (int x = 0; x < students[y].length; x++) {
-				if (students[y][x] instanceof Student) {
-					statState.addCalcVector(students[y][x].getActualState());
+		for (IPlace[] student : students) {
+			for (IPlace element : student) {
+				if (element instanceof Student) {
+					statState.addCalcVector(element.getActualState());
 					studentNum++;
 				}
 			}
@@ -477,12 +534,12 @@ public class Course {
 	
 	
 	public LinkedList<String> getProperties() {
-		return properties;
+		return parameters;
 	}
 	
 	
 	public void setProperties(LinkedList<String> properties) {
-		this.properties = properties;
+		this.parameters = properties;
 	}
 	
 	
@@ -501,6 +558,7 @@ public class Course {
 	}
 	
 	
+	@Override
 	public String toString() {
 		return getName();
 	}
@@ -533,7 +591,7 @@ public class Course {
 	
 	public void setSelectedStudent(IPlace selectedStudent) {
 		this.selectedStudent = selectedStudent;
-		notifySelectedCourseObservers();
+		notifySelectedStudentObservers();
 	}
 	
 	
@@ -544,10 +602,30 @@ public class Course {
 	
 	public void setSelectedProperty(int selectedProperty) {
 		this.selectedProperty = selectedProperty;
+		notifySelectedStudentObservers();
 	}
 	
 	
 	public LinkedList<CalcVector> getHistStatState() {
 		return histStatStates;
+	}
+	
+	private class DonInput {
+		public int		index;
+		public float	value;
+		public int		currentTime;
+		
+		
+		/**
+		 * TODO NicolaiO, add comment!
+		 * 
+		 * @author NicolaiO
+		 */
+		public DonInput(int index, float value, int currentTime) {
+			this.index = index;
+			this.value = value;
+			this.currentTime = currentTime;
+		}
+
 	}
 }

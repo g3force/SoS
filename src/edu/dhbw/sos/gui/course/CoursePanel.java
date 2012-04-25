@@ -30,8 +30,8 @@ import edu.dhbw.sos.course.ICurrentCourseObserver;
 import edu.dhbw.sos.course.IStudentsObserver;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
-import edu.dhbw.sos.gui.IEditModeObserver;
 import edu.dhbw.sos.gui.MainFrame;
+import edu.dhbw.sos.gui.right.IEditModeObserver;
 import edu.dhbw.sos.simulation.SimController;
 
 
@@ -42,8 +42,8 @@ import edu.dhbw.sos.simulation.SimController;
  * @author NicolaiO
  * 
  */
-public class CoursePanel extends JPanel implements ComponentListener, ICurrentCourseObserver, IStudentsObserver, IEditModeObserver,
-		MouseListener, MouseMotionListener {
+public class CoursePanel extends JPanel implements ComponentListener, ICurrentCourseObserver, IStudentsObserver,
+		IEditModeObserver, MouseListener, MouseMotionListener {
 	private static final long		serialVersionUID	= 5542875796802944785L;
 	private static final Logger	logger				= Logger.getLogger(CoursePanel.class);
 	// private static final Logger logger = Logger.getLogger(CoursePanel.class);
@@ -98,7 +98,7 @@ public class CoursePanel extends JPanel implements ComponentListener, ICurrentCo
 		// get available size
 		Dimension p = paintArea.getSize();
 		if (p.height == 0 || p.width == 0) {
-			// nothing to do really because Panel not ready yet 
+			// nothing to do really because Panel not ready yet
 			studentCircles = new StudentCircle[0][0];
 			return;
 		}
@@ -205,12 +205,13 @@ public class CoursePanel extends JPanel implements ComponentListener, ICurrentCo
 			hoveredStudent = null;
 			course.setSelectedStudent(null);
 		} else {
-			if(hoveredStudent != null && isInHoveredStudent(e.getPoint())) {
+			if (hoveredStudent != null && isInHoveredStudent(e.getPoint())) {
 				// mouse is in hovered Student yet
 			} else {
 				// calculate position so that the correct student can be selected
 				float ratiox = ((float) p.x - offset_x - spacing) / ((float) this.getSize().width - 2 * offset_x - spacing);
-				float ratioy = ((float) p.y - offset_y - spacing) / ((float) this.getSize().height - 2 * offset_y - spacing);
+				float ratioy = ((float) p.y - offset_y - spacing)
+						/ ((float) this.getSize().height - 2 * offset_y - spacing);
 				int x = (int) (ratiox * (float) studentCircles[0].length);
 				int y = (int) (ratioy * (float) studentCircles.length);
 				hoveredStudent = studentCircles[y][x];
@@ -232,13 +233,14 @@ public class CoursePanel extends JPanel implements ComponentListener, ICurrentCo
 		paintArea.updateHoveredStudent(hoveredStudent);
 	}
 	
+	
 	private boolean isInHoveredStudent(Point p) {
 		int offset = (int) ((hoveredStudent.getHeight() * (CPaintArea.SCALE_HOVER - 1)) / 2 - spacing);
 		int height = (int) (hoveredStudent.getHeight() * CPaintArea.SCALE_HOVER);
 		int width = (int) (hoveredStudent.getWidth() * CPaintArea.SCALE_HOVER);
 		Rectangle pizza = new Rectangle((int) hoveredStudent.x - offset, (int) hoveredStudent.y - offset, height, width);
-		if(pizza.contains(p)) {
-			return true;					
+		if (pizza.contains(p)) {
+			return true;
 		}
 		return false;
 	}
@@ -271,15 +273,15 @@ public class CoursePanel extends JPanel implements ComponentListener, ICurrentCo
 		paintArea.updateHoveredStudent(hoveredStudent);
 		paintArea.updateStudentCircles(studentCircles);
 	}
-
-
+	
+	
 	@Override
 	public void enterEditMode() {
 		// TODO NicolaiO Auto-generated method stub
 		
 	}
-
-
+	
+	
 	@Override
 	public void exitEditMode() {
 		// TODO NicolaiO Auto-generated method stub
