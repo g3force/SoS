@@ -66,7 +66,6 @@ public class Course {
 	
 	public Course(String name) {
 		this.name = name;
-		parameters = new LinkedList<String>();
 		init();
 		
 		suggestions.add("Sug1");
@@ -77,17 +76,17 @@ public class Course {
 		// calcStatistics();
 		
 		students = new IPlace[5][7];
-		LinkedList<String> properties = new LinkedList<String>();
-		properties.add("Tireness");
-		properties.add("Loudness");
-		properties.add("Attention");
-		properties.add("Quality");
+		parameters = new LinkedList<String>();
+		parameters.add("Tireness");
+		parameters.add("Loudness");
+		parameters.add("Attention");
+		parameters.add("Quality");
 		for (int y = 0; y < 5; y++) {
 			for (int x = 0; x < 7; x++) {
 				if (y == 3 && x == 4) {
-					students[y][x] = new EmptyPlace(properties.size());
+					students[y][x] = new EmptyPlace(parameters.size());
 				} else {
-					Student newStud = new Student(properties.size());
+					Student newStud = new Student(parameters.size());
 					
 					for (int i = 0; i < 4; i++) {
 						newStud.addValueToChangeVector(i, (int) (Math.random() * 100));
