@@ -47,7 +47,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 																																// milliseconds
 	private int									notifyStep		= 1;
 	private int									realInterval	= 1000;
-	private int									interval;
+	private int									interval			= 1000;
 	private transient Timer					pulse				= new Timer();
 	private boolean							run				= false;
 	
@@ -127,7 +127,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		logger.debug("History states: " + course.getPlace(0, 0).getHistoryStates().size());
 		
 		// calculate state statistics for whole course
-		course.calcStatistics();
+		course.calcStatistics(currentTime);
 		
 		// notify GUI after simulation
 		notifyStep--;
@@ -165,12 +165,14 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	
 	public void setSpeed(int speed) {
-		if (speed > 64)
-			speed = 64;
+		if (speed > 1024)
+			speed = 1024;
 		if (speed < 1)
 			speed = 1;
 		this.speed = speed;
 		this.interval = realInterval / speed;
+		if (interval == 0)
+			interval = 1;
 		if (run) {
 			stop();
 			run();

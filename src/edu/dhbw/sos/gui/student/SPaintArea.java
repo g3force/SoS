@@ -14,6 +14,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.LinkedList;
+import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 
 import javax.swing.JPanel;
 
@@ -117,7 +119,7 @@ public class SPaintArea extends JPanel {
 		synchronized (diagrams) {
 			diagrams.clear();
 			try {
-				int size = course.getHistStatState().get(0).size();
+				int size = course.getHistStatState().values().iterator().next().size();
 				LinkedList<LinkedList<Float>> newData = new LinkedList<LinkedList<Float>>();
 				for (int i = 0; i < size; i++) {
 					newData.add(new LinkedList<Float>());
@@ -127,12 +129,12 @@ public class SPaintArea extends JPanel {
 					diagram.setData(newData.get(i));
 					diagrams.add(diagram);
 				}
-				for (CalcVector cv : course.getHistStatState()) {
-					for (int i = 0; i < cv.size(); i++) {
-						newData.get(i).add(cv.getValueAt(i));
+				for (Entry<Integer, CalcVector> cv : course.getHistStatState().entrySet()) {
+					for (int i = 0; i < cv.getValue().size(); i++) {
+						newData.get(i).add(cv.getValue().getValueAt(i));
 					}
 				}
-			} catch (IndexOutOfBoundsException e) {
+			} catch (NoSuchElementException e) {
 				// well, then no diagrams...
 			}
 			repaint();

@@ -12,6 +12,7 @@ package edu.dhbw.sos.course;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
@@ -47,7 +48,7 @@ public class Course {
 	// place here? not implemented yet, so do not know...
 	private LinkedHashMap<String, String>			statistics					= new LinkedHashMap<String, String>();
 	private CalcVector									statState					= new CalcVector(4);
-	private LinkedList<CalcVector>					histStatStates				= new LinkedList<CalcVector>();
+	private LinkedHashMap<Integer, CalcVector>	histStatStates				= new LinkedHashMap<Integer, CalcVector>();
 	private LinkedList<String>							suggestions					= new LinkedList<String>();
 	
 	// the student and property that was selected in the GUI (by hovering over the student)
@@ -67,7 +68,7 @@ public class Course {
 		suggestions.add("Sug3");
 		suggestions.add("Sug4");
 		// calculate state statistics for whole course
-		calcStatistics();
+		// calcStatistics();
 	}
 	
 	
@@ -411,13 +412,33 @@ public class Course {
 	}
 	
 	
+	private void simulateUntil(int time) {
+		
+	}
+	
+	
+	public void setTime(int time) {
+		for (int y = 0; y < students.length; y++) {
+			for (int x = 0; x < students[y].length; x++) {
+				if (students[y][x] instanceof Student) {
+					Student student = (Student) students[y][x];
+					Entry<Integer, CalcVector> historyState = student.nearestHistoryState(time);
+					student.setActualState(historyState.getValue().clone());
+					student.deleteHistoryStateFrom(historyState.getKey());
+				}
+			}
+		}
+		simulateUntil(time);
+	}
+
+
 	/**
 	 * 
 	 * Calculates the statistics for the whole course and save them in an histroy state.
 	 * 
 	 * @author andres
 	 */
-	public void calcStatistics() {
+	public void calcStatistics(int time) {
 		
 		statState.multiply(0);
 		
@@ -443,11 +464,24 @@ public class Course {
 			statistics.put("Tired: ", statState.getValueAt(1) + "");
 			statistics.put("Quality: ", statState.getValueAt(2) + "");
 			statistics.put("?: ", statState.getValueAt(3) + "");
-			histStatStates.add(statState.clone());
+			histStatStates.put(time, statState.clone());
 
 		}
 	}
 	
+	
+	public void deleteHistoryStatStateFrom(int time) {
+		LinkedList<Integer> toDelete = new LinkedList<Integer>();
+		for (Entry<Integer, CalcVector> historyStatState : histStatStates.entrySet()) {
+			if (historyStatState.getKey() > time) {
+				toDelete.add(historyStatState.getKey());
+			}
+		}
+		for (Integer state : toDelete) {
+			histStatStates.remove(state);
+		}
+	}
+
 	
 	// --- GETTERS and SETTERS ---
 	
@@ -554,7 +588,7 @@ public class Course {
 	}
 	
 	
-	public LinkedList<CalcVector> getHistStatState() {
+	public LinkedHashMap<Integer, CalcVector> getHistStatState() {
 		return histStatStates;
 	}
 	
