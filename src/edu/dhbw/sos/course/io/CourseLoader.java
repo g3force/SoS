@@ -1,24 +1,24 @@
-/* 
+/*
  * *********************************************************
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 21, 2012
  * Author(s): NicolaiO
- *
+ * 
  * *********************************************************
  */
 package edu.dhbw.sos.course.io;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
 
@@ -28,9 +28,20 @@ import edu.dhbw.sos.course.influence.Influence;
 import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.Lecture;
 import edu.dhbw.sos.course.lecture.TimeBlock;
+import edu.dhbw.sos.course.lecture.TimeBlocks;
 import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
+import edu.dhbw.sos.helper.CalcVector;
+
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 
 /**
  * This static class loads the course informations
@@ -41,6 +52,188 @@ import edu.dhbw.sos.course.student.Student;
 public class CourseLoader {
 	
 	private static final Logger	logger	= Logger.getLogger(SuperFelix.class);
+	private static Document			doc;
+	
+	
+	private static Course createDummyCourse() {
+		IPlace[][] students = new IPlace[5][7];
+		LinkedList<String> properties = new LinkedList<String>();
+		properties.add("Tireness");
+		properties.add("Loudness");
+		properties.add("Attention");
+		properties.add("Quality");
+		for (int y = 0; y < 5; y++) {
+			for (int x = 0; x < 7; x++) {
+				if (y == 3 && x == 4) {
+					students[y][x] = new EmptyPlace(properties.size());
+				} else {
+					Student newStud = new Student(properties.size());
+					
+					for (int i = 0; i < 4; i++) {
+						newStud.addValueToChangeVector(i, (int) (Math.random() * 100));
+						newStud.addValueToStateVector(i, (int) (Math.random() * 100));
+					}
+					// ((Student)students[y][x]).
+					students[y][x] = newStud;
+				}
+			}
+		}
+		
+		@SuppressWarnings("deprecation")
+		Influence influence = new Influence();
+		Lecture lecture = new Lecture(new Date());
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.theory));
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(20, BlockType.pause));
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.exercise));
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.pause));
+		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.group));
+		
+		Course dummy = new Course("Your first Course");
+		dummy.setLecture(lecture);
+		dummy.setInfluence(influence);
+		dummy.setStudents(students);
+		dummy.setProperties(properties);
+		
+		return dummy;
+	}
+	
+	
+	private static int getIntFromTag(String tagname, int idx) {
+		NodeList nList = doc.getElementsByTagName(tagname);
+		try {
+			if (nList.getLength() > 0) {
+				for(int i=0;i<nList.getLength();i++) {
+					for(int j=0;j<nList.item(i).getAttributes().getLength();j++)
+						logger.debug("Elements("+j+") from " + tagname + ": " + nList.item(i).getAttributes().item(j).getTextContent());
+				}
+				return Integer.parseInt(nList.item(0).getAttributes().item(idx).getTextContent());
+			}
+		} catch (NullPointerException ne) {
+			ne.printStackTrace();
+		}
+		return 0;
+	}
+	
+	
+	private static String getStringFromTag(String tagname, int idx) {
+		NodeList nList = doc.getElementsByTagName(tagname);
+		try {
+			if (nList.getLength() > 0) {
+				return nList.item(0).getAttributes().item(idx).getTextContent();
+			}
+		} catch (NullPointerException ne) {
+			ne.printStackTrace();
+		}
+		return "";
+	}
+	
+	private static BlockType getBlockTypeById( int id ) {
+		switch(id) {
+			case 0:
+				return BlockType.theory;
+			case 1:
+				return BlockType.group;
+			case 2:
+				return BlockType.exercise;
+			case 3:
+				return BlockType.pause;
+		}
+		return BlockType.theory;
+	}
+	
+	
+	private static LinkedList<Course> loadCoursesFromXML() {
+		LinkedList<Course> courses = new LinkedList<Course>();
+		for (int i = 0; i < getIntFromTag("courses", 0); i++) {
+			// <course>
+			Course newCourse = new Course(getStringFromTag("course", 0));
+			int rows = getIntFromTag("course", 1);
+			int cols = getIntFromTag("course", 2);
+			logger.debug("Rows: " + rows + ", cols: " + cols);
+			newCourse.setStudents(new IPlace[rows][cols]);
+			
+			NodeList students = doc.getElementsByTagName("course");
+			students = students.item(0).getChildNodes(); // <student>....</student>
+			for (int j = 0; j < students.getLength(); j++) {
+				if(students.item(j).getNodeName().contentEquals("lecture")) {
+					//lecture stuff
+					NodeList nLecture = students.item(j).getChildNodes();
+					//Data
+					System.out.println("REALDATE: "+nLecture.item(0).getAttributes().item(0).getTextContent());
+					System.out.println("OTHERDATE: " + new Date());
+					@SuppressWarnings("deprecation")
+					SimpleDateFormat x = new SimpleDateFormat( "dd.MM.yyyy, hh:mm");
+					Date newDate = new Date();
+					try {
+						newDate = x.parse( nLecture.item(0).getAttributes().item(0).getTextContent() );
+					} catch (DOMException err) {
+						err.printStackTrace();
+					} catch (ParseException err) {
+						err.printStackTrace();
+					}
+					TimeBlocks tbs = new TimeBlocks();
+					
+					for(int k=1;k<nLecture.getLength();k++) {
+						int length = Integer.parseInt(nLecture.item(k).getAttributes().item(0).getTextContent());
+						int blockType = Integer.parseInt(nLecture.item(k).getAttributes().item(1).getTextContent());
+						TimeBlock tb = new TimeBlock(length, getBlockTypeById(blockType));
+						tbs.add(tb);
+					}
+					
+					Lecture newLecture = new Lecture( newDate, tbs );
+					
+					newCourse.setLecture( newLecture );
+					
+				} else {
+					int isEmpty = Integer.parseInt(students.item(j).getAttributes().item(0).getTextContent());
+					IPlace curStudent = newCourse.getStudents()[j / cols][j % cols];
+					if (isEmpty == 1) {
+						curStudent = new EmptyPlace(Integer.parseInt(students.item(j).getAttributes().item(1).getTextContent()));
+					} else { // not empty
+						curStudent = new Student(Integer.parseInt(students.item(j).getAttributes().item(1).getTextContent()));
+						NodeList attributes = students.item(j).getChildNodes();
+						if (attributes.getLength() > 0) {
+							
+							float[] vector = new float[attributes.getLength()];
+							for (int k = 0; k < attributes.getLength(); k++) {
+								vector[k] = Float.parseFloat(attributes.item(k).getAttributes().item(0).getTextContent());
+							}
+							CalcVector cv = new CalcVector(vector);
+							curStudent.setActualState(cv);
+						}
+					}
+					newCourse.setPlace(j/cols, j%cols, curStudent);
+					System.out.println("Student("+j+")=" + isEmpty);
+				}
+				
+			}
+			courses.add(newCourse);
+		}
+		return courses;
+	}
+	
+	
+	private static float[][] loadMatrixFromXML(String letter) {
+		float[][] result = new float[1][1]; // ...?
+		System.out.println("Matrixname: " + letter + "Matrix");
+		try {
+			NodeList pMat = doc.getElementsByTagName(letter + "Matrix");
+			NodeList pRows = pMat.item(0).getChildNodes();
+			result = new float[pRows.getLength()][pRows.item(0).getChildNodes().getLength()];
+			
+			for (int i = 0; i < pRows.getLength(); i++) {
+				NodeList pAttributes = pRows.item(i).getChildNodes();
+				for (int j = 0; j < pAttributes.getLength(); j++) {
+					result[i][j] = Float.parseFloat(pAttributes.item(j).getAttributes().item(0).getTextContent());
+					System.out.println("result["+i+"]["+j+"]=" + result[i][j]);
+				}
+			}
+		} catch (NullPointerException ne) {
+			ne.printStackTrace();
+		}
+		return result;
+	}
+	
 	
 	/**
 	 * 
@@ -50,301 +243,49 @@ public class CourseLoader {
 	 * @return
 	 * @author SebastianN
 	 */
+	
 	public static LinkedList<Course> loadCourses(String savepath) {
 		
-		XMLInputFactory factory = XMLInputFactory.newInstance();
-		File file = new File(savepath);
-		XMLStreamReader reader = null;
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder;
 		LinkedList<Course> courses = new LinkedList<Course>();
-		try {
-			try {
-				reader = factory.createXMLStreamReader(new FileReader(file));
-			} catch( FileNotFoundException FnF ) {
-				logger.debug("Savefile couldn't be found!");
-				throw new XMLStreamException();
-			}
-			if(file.length()==0) {
-				throw new XMLStreamException("Savefile is empty");
-			}
-			if(reader!=null && file.length()>0) {
-			
-				reader.getEventType(); //START
-				
-				int aIdx = 0;							//AttributeIDX 
-				int sRows = 0, sColumns = 0; 	//Student-attribute
-				
-				
-				while(reader.hasNext()) {
-					reader.next(); //Next element
-					
-					if(reader.hasName()) {
-						String tagname = reader.getName().toString();
-						int event_type = reader.getEventType();
-						
-						//<course> was found.
-						if(event_type==1) {
-							if(tagname.contentEquals("course")) {
-									
-								Course newCourse = new Course(reader.getAttributeValue(0));
-								
-								int tmpRows = Integer.parseInt( reader.getAttributeValue(1) );
-								int tmpCols = Integer.parseInt( reader.getAttributeValue(2) );
-								
-								newCourse.setStudents( new IPlace[tmpRows][tmpCols] );
-								courses.add( newCourse );
-								
-							//<student> was found.
-							} else if(tagname.contentEquals("student")) {
-								//Isn't really unused, but whatever.
-								if(sColumns>=courses.getLast().getStudents()[0].length) { //
-									sColumns = 0;
-									sRows++;
-								}								
-								IPlace curStudent = courses.getLast().getStudents()[sRows][sColumns];
-								
-								int isEmpty = Integer.parseInt(reader.getAttributeValue(0));
-								
-								//isEmpty="0"
-								if(isEmpty==0) {
-									curStudent = new Student( Integer.parseInt(reader.getAttributeValue(1)) );
-								} else { //isEmpty="1"
-									curStudent = new EmptyPlace( Integer.parseInt(reader.getAttributeValue(1)) );
-								}
-								courses.getLast().setPlace(sRows, sColumns, curStudent);
-								if(isEmpty==1) { //Empty places don't have attributes. -> Skip.
-									sColumns++;
-								}
-								aIdx=0;
-							
-							//<sAttribute> was found.
-							} else if(tagname.contentEquals("sAttribute")) {
-								Student curStudent = (Student)courses.getLast().getStudents()[sRows][sColumns];
-								curStudent.addValueToStateVector(aIdx, Float.parseFloat(reader.getAttributeValue(0)));
-								aIdx++;
-								//if counted columns >= MAX_COLUMNS
-								if(aIdx>=curStudent.getActualState().size()) { //
-									sColumns++;
-								}
-							}
-						} else { //closeTag
-							if(tagname.contentEquals("course")) {
-								//Load ParameterMatrix after </course>
-								float[][] paramMatrix = loadParameterMatrix(reader);
-								
-								//load EnvironmentMatrix after </pMatrix>
-								float[][] envMatrix = loadEnvironmentMatrix(reader);
-								Influence infl = new Influence( paramMatrix, envMatrix );
-								for(int y=0;y<courses.size();y++) {
-									courses.get(y).setInfluence(infl);
-								}
-								break;
-							}
-						}
-					}
-				}
-				reader.close();
-			}
-		} catch( XMLStreamException ex ) {
-			logger.debug("File " + savepath + " not found. Loading dummy data.");
-			//load dummy data
-			
-			IPlace[][] students = new IPlace[5][7];
-			LinkedList<String> properties = new LinkedList<String>();
-			properties.add("Tireness");
-			properties.add("Loudness");
-			properties.add("Attention");
-			properties.add("Quality");
-			for (int y = 0; y < 5; y++) {
-				for (int x = 0; x < 7; x++) {
-					if (y == 3 &&  x==4) {
-						students[y][x] = new EmptyPlace(properties.size());
-					} else {
-						Student newStud = new Student(properties.size());
-						
-						for (int i = 0; i < 4; i++) {
-							newStud.addValueToChangeVector(i, (int) (Math.random() * 100));
-							newStud.addValueToStateVector(i, (int) (Math.random() * 100));
-						}
-						// ((Student)students[y][x]).
-						students[y][x] = newStud;
-					}
-				}
-			}
-			
-			@SuppressWarnings("deprecation")
-			Influence influence = new Influence();
-			Lecture lecture = new Lecture(new Date());
-			lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.theory));
-			lecture.getTimeBlocks().addTimeBlock(new TimeBlock(20, BlockType.pause));
-			lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.exercise));
-			lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.pause));
-			lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.group));
-			
-			Course dummy = new Course("Your first Course");
-			dummy.setLecture(lecture);
-			dummy.setInfluence(influence);
-			dummy.setStudents(students);
-			dummy.setProperties(properties);
-		
+		File file = new File(savepath);
+		if (!file.exists() || file.length() == 0) {// file is empty or not-existent
+			Course dummy = createDummyCourse();
 			courses.add(dummy);
+			return courses;
+		}
+		try {
+			dBuilder = dbFactory.newDocumentBuilder();
+			doc = dBuilder.parse(savepath);
+			doc.getDocumentElement().normalize();
+		} catch (ParserConfigurationException err) {
+			logger.error("Could not initialize dBuilder");
+			err.printStackTrace();
+			courses.add(createDummyCourse());
+			return courses;
+		} catch (SAXException err) {
+			logger.error("(SAX:)Could not parse document");
+			err.printStackTrace();
+			courses.add(createDummyCourse());
+			return courses;
+		} catch (IOException err) {
+			logger.error("(IO:)Could not parse document");
+			err.printStackTrace();
+			courses.add(createDummyCourse());
+			return courses;
+		}
+		
+		courses = loadCoursesFromXML();
+		float[][] pMatrix = loadMatrixFromXML("p"); // pMatrix, pRow
+		float[][] eMatrix = loadMatrixFromXML("e"); // eMatrix, eRow
+		Influence infl = new Influence(pMatrix, eMatrix);
+		
+		for (int i = 0; i < courses.size(); i++) {
+			courses.get(i).setInfluence(infl);
 		}
 		return courses;
 	}
 	
-	/**
-	 * 
-	 * loads the last used course. <strong>COURSES NEED TO BE LOADED FIRST!</strong>
-	 * 
-	 * @param courses
-	 * @param savepath
-	 * @return
-	 * @author SebastianN
-	 */
-	public static Course loadCurrentCourse( LinkedList<Course> courses, String savepath ) {
-		XMLInputFactory factory = XMLInputFactory.newInstance();
-		XMLStreamReader reader = null;
-		try {
-			try {
-				reader = factory.createXMLStreamReader(new FileReader(savepath));
-			} catch( FileNotFoundException FnF ) {
-				FnF.printStackTrace();
-				//return null;
-			}
-			if(reader!=null) {
-				reader.getEventType(); //START
-				
-				while(reader.hasNext()) {
-					reader.next(); //Next element
-					
-					if(reader.hasName()) {
-						String tagname = reader.getName().toString();
-						if(reader.getEventType()==2)
-							continue;
-						if(tagname.contentEquals("current_course")) {
-							for(int x=0;x<courses.size();x++) {
-								if(courses.get(x).getName().contentEquals(reader.getAttributeValue(0))) {
-									return courses.get(x);
-								}
-							}
-						}
-					}
-				}
-				reader.close();
-			}
-		} catch( XMLStreamException ex ) {
-			logger.debug("XML-Reader in loadCurrentCourse()");
-			ex.printStackTrace();
-		}				
-		return null;	
-	}
 	
-	/**
-	 * 
-	 * Loads the parameter matrix via the XML-sheet.
-	 * 
-	 * @param savepath
-	 * @return
-	 * @author SebastianN
-	 */
-	public static float[][] loadParameterMatrix( XMLStreamReader reader ) throws XMLStreamException {
-		float[][] matVals = null;
-		try {
-			if(reader!=null) {
-				int mRows = -1, mColumns = 0; 	//Matrix
-				int size = 0;
-	
-				while(reader.hasNext()) {
-					reader.next(); //Next element
-					
-					int eventtype = reader.getEventType();
-					
-					if(reader.hasName()) {
-						String tagname = reader.getName().toString();
-
-						if(eventtype == 1) {
-							if(tagname.contentEquals("pMatrix")) {
-								size = Integer.parseInt(reader.getAttributeValue(0));
-								matVals = new float[size][size];
-								for(int i=0;i<size;i++)
-									for(int j=0;j<size;j++)
-										matVals[i][j]=0.00f;
-										
-							 } else if(tagname.contentEquals("pRow")) {
-									mRows++;
-									mColumns=0;
-										
-							 } else if(tagname.contentEquals("pAttribute")) {
-								 matVals[mRows][mColumns] = Float.parseFloat(reader.getAttributeValue(0)); //Integer value
-								 mColumns++;						
-							 }
-						} else if(eventtype == 2) {
-							//end tag
-							if(tagname.contentEquals("pMatrix")) {
-								break;
-							}
-						}
-					}
-				}
-			}
-		} catch( XMLStreamException ex ) {
-			logger.debug("XML-Reader in loadParameterMatrix()");
-			ex.printStackTrace();
-		}
-		return matVals;
-	}
-	//End loadInfluenceMatrix()
-	
-	/**
-	 * 
-	 * Loads the Environment matrix via XML-sheet.
-	 * 
-	 * @param savepath
-	 * @return
-	 * @author SebastianN
-	 */
-	public static float[][] loadEnvironmentMatrix( XMLStreamReader reader ) {
-		float[][] matVals = null;
-		try {
-			if(reader!=null) {
-				reader.getEventType(); //START
-					
-				int eRows = -1, eColumns = 0; 	//Matrix
-	
-				while(reader.hasNext()) {
-					reader.next(); //Next element
-					
-					if(reader.hasName()) {
-						String tagname = reader.getName().toString();
-						if(reader.getEventType()==1) {
-							if(tagname.contentEquals("eMatrix")) {
-								int row_size = Integer.parseInt(reader.getAttributeValue(0));
-								int col_size =  Integer.parseInt(reader.getAttributeValue(1));
-								matVals = new float[row_size][col_size];
-								for(int i=0;i<row_size;i++)
-									for(int j=0;j<col_size;j++)
-										matVals[i][j]=0.00f;
-									 
-							} else if(tagname.contentEquals("eRow")) {
-								eRows++;
-								eColumns=0;
-									 
-							} else if(tagname.contentEquals("eAttribute")) {
-								matVals[eRows][eColumns] = Float.parseFloat( reader.getAttributeValue(0) );
-								eColumns++;
-									 
-							}
-						} else {
-							if(tagname.contentEquals("eMatrix")) {
-								break;
-							}
-						}
-					}
-				}
-			}
-		} catch( XMLStreamException ex ) {
-			logger.debug("XML-Reader in loadEnvironmentMatrix()");
-			ex.printStackTrace();
-		}
-		return matVals;
-	}
 }

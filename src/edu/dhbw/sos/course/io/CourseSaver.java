@@ -11,6 +11,7 @@ package edu.dhbw.sos.course.io;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -20,6 +21,8 @@ import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.influence.Influence;
+import edu.dhbw.sos.course.lecture.Lecture;
+import edu.dhbw.sos.course.lecture.TimeBlock;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
 import edu.dhbw.sos.helper.CalcVector;
@@ -35,6 +38,17 @@ import edu.dhbw.sos.helper.CalcVector;
  */
 public class CourseSaver {
 	private static final Logger	logger	= Logger.getLogger(CourseSaver.class);
+	
+	private static int getLectureType( String type ) {
+		if(type.contentEquals("theory"))
+			return 0;
+		if(type.contentEquals("group"))
+			return 1;
+		if(type.contentEquals("exercise"))
+			return 2;
+		return 3;
+	}
+	
 	public static void saveCourses(LinkedList<Course> courses, String savepath) {
 		XMLOutputFactory factory = XMLOutputFactory.newInstance();
 		try {
@@ -62,10 +76,15 @@ public class CourseSaver {
 						
 						IPlace[][] students = courses.get(i).getStudents();
 						if(students.length>0) {
-							writer.writeAttribute("y", String.valueOf(students.length));
 							writer.writeAttribute("x", String.valueOf(students[i].length));
+							writer.writeAttribute("y", String.valueOf(students.length));
 						}
-						
+
+						Lecture lecture = courses.get(i).getLecture();
+						//<lecture>
+						//		<date val="13.03.2012"></date>
+						//		<timeblock val="..."></timeblock>
+						//		<timeblock val="..."></timeblock>
 						for (int j = 0; j < students.length; j++) {
 							for (int k = 0; k < students[j].length; k++) {
 								// For each student --> <student>
@@ -85,8 +104,7 @@ public class CourseSaver {
 										 * FIXME: Influence-name
 										 */
 										// writer.writeAttribute("name", courses[i].getInfluence(). );
-										writer.writeAttribute("value",
-												String.valueOf(currentStudent.getActualState().getValueAt(m)));
+										writer.writeAttribute("value", String.valueOf(currentStudent.getActualState().getValueAt(m)));
 										writer.writeEndElement();
 										// </attribute>
 									}
@@ -95,6 +113,20 @@ public class CourseSaver {
 								writer.writeEndElement();
 								// </student>
 							}
+						}
+						writer.writeStartElement("lecture");
+							
+						String date = String.valueOf(lecture.getStart().getDate()) + "." + String.valueOf(lecture.getStart().getMonth()) + "." + String.valueOf(lecture.getStart().getYear());
+						date += ", " + String.valueOf(lecture.getStart().getHours()) + ":" + String.valueOf(lecture.getStart().getMinutes());
+							writer.writeStartElement("date");
+							writer.writeAttribute("start", date);
+							writer.writeEndElement();
+						
+						for(int j=0;j<lecture.getTimeBlocks().size();j++) {
+							writer.writeStartElement("timeblocks");
+							writer.writeAttribute("length", String.valueOf(lecture.getTimeBlocks().get(i).getLen()));
+							writer.writeAttribute("type", String.valueOf(getLectureType(lecture.getTimeBlocks().get(i).getType().toString())) );
+							writer.writeEndElement();
 						}
 						writer.writeEndElement();
 						// </course>
