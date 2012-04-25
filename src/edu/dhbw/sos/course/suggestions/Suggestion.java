@@ -170,6 +170,33 @@ public class Suggestion implements Comparable<Suggestion> {
 		}
 		return this.parameters[index];
 	}
+	
+	
+	public String[] getParamNames() {
+		String[] result = new String[this.parameters.length];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = this.parameters[i].getName();
+		}
+		return result;
+	}
+	
+	public void removeUnusedParameters(String[] paramNames) {
+		XMLParam[] newParams = new XMLParam[paramNames.length];
+		int k = 0;
+		for (int i = 0; i < this.parameters.length && k < newParams.length; i++) {
+			boolean isNeeded = false;
+			for (int j = 0; j < paramNames.length; i++) {
+				if (this.parameters[i].getName().compareTo(paramNames[j]) == 0) {
+					isNeeded = true;
+					break;
+				}
+			}
+			if (isNeeded) {
+				newParams[k] = this.parameters[i];
+				k++;
+			}
+		}
+	}
 
 	
 	/**
