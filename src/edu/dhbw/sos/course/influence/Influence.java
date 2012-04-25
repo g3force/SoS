@@ -84,19 +84,19 @@ public class Influence {
 		}
 		environmentalInfl.put(EInfluenceType.NEIGHBOR, cv1); // not used atm
 		
-		float[] breakReaction = { 20.0f, -10.0f, 30.0f, 20.0f };
+		float[] breakReaction = { 100.0f, -1.0f, 120.0f, 100.0f };
 		environmentalInfl.put(EInfluenceType.BREAK_REACTION, new CalcVector(breakReaction));
 		
 		float[] timeReaction = { -20.0f, -10.0f, -10.0f, -20.0f };
 		environmentalInfl.put(EInfluenceType.TIME_DEPENDING, new CalcVector(timeReaction));
 		
-		float[] exerciseReaction = { -10.0f, 20.0f, -10.0f, 20.0f };
+		float[] exerciseReaction = { -1.0f, 2.0f, -1.0f, 2.0f };
 		environmentalInfl.put(EInfluenceType.EXERCISE_REACTION, new CalcVector(exerciseReaction));
 		
-		float[] groupReaction = { 40.0f, -20.0f, 30.0f, 20.0f };
+		float[] groupReaction = { 4.0f, -2.0f, 3.0f, 2.0f };
 		environmentalInfl.put(EInfluenceType.GROUP_REACTION, new CalcVector(groupReaction));
 		
-		float[] theoryReaction = { -40.0f, -10.0f, -30.0f, -20.0f };
+		float[] theoryReaction = { -4.0f, -1.0f, -3.0f, -2.0f };
 		environmentalInfl.put(EInfluenceType.THEORY_REACTION, new CalcVector(theoryReaction));
 	}
 	
