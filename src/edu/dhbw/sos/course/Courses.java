@@ -13,7 +13,6 @@ import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
 
-import edu.dhbw.sos.course.io.CourseLoader;
 import edu.dhbw.sos.course.io.CourseSaver;
 
 
@@ -40,16 +39,16 @@ public class Courses extends LinkedList<Course> {
 	 */
 	public Courses(String savepath) {
 		super();
-		this.savepath = savepath;
-		this.addAll(CourseLoader.loadCourses(this.savepath));
-		if (this.size() == 0) {
-			logger.fatal("There are no courses. This should not happened");
-		} else if (this.size() == 1) {
-			curCourse = this.get(0);
-		} else {
-			// TODO has to be handled yet
-			curCourse = this.get(0);
-		}
+		this.savepath = savepath;/*
+										 * if (this.size() == 0) {
+										 * logger.fatal("There are no courses. This should not happened");
+										 * } else if (this.size() == 1) {
+										 * curCourse = this.get(0);
+										 * } else {
+										 * // TODO has to be handled yet
+										 * curCourse = this.get(0);
+										 * }
+										 */
 	}
 	
 	

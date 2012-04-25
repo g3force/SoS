@@ -211,6 +211,7 @@ public class CalcVector implements Cloneable {
 	/**
 	 * Creates an exact clone of this CalcVector with the same values.
 	 */
+	@Override
 	public CalcVector clone() {
 		CalcVector result = new CalcVector(vector.length);
 		for (int i = 0; i < this.size(); i++) {
@@ -232,6 +233,6 @@ public class CalcVector implements Cloneable {
 		for (int i = 0; i < this.size(); i++) {
 			out += this.vector[i] + " / ";
 		}
-		logger.info(out.subSequence(0, out.length() - 3));
+		logger.debug(out.subSequence(0, out.length() - 3));
 	}
 }

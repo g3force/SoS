@@ -15,7 +15,7 @@ package edu.dhbw.sos.helper;
  * @author bene
  * 
  */
-public class XMLParam {
+public class XMLParam implements Cloneable {
 	private String	name;
 	private float	influence;
 	private float	rangeLowerEnd;

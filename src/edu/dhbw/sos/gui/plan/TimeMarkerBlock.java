@@ -150,7 +150,7 @@ public class TimeMarkerBlock extends Rectangle implements ITimeObserver {
 	}
 	
 	
-	public void printTbb() {
+	public void printTmb() {
 		logger.trace("TBB.time" + time + "; TMB.X=" + this.x);
 	}
 
@@ -204,6 +204,6 @@ public class TimeMarkerBlock extends Rectangle implements ITimeObserver {
 		ga.fill(this);
 		ga.draw(this);
 		ga.drawLine(getTime(), 10, getTime(), 135);
-		printTbb();
+		printTmb();
 	}
 }

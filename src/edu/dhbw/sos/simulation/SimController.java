@@ -35,7 +35,7 @@ import edu.dhbw.sos.gui.right.IEditModeObserver;
  * 
  */
 
-public class SimController implements ActionListener, MouseListener, IEditModeObserver {
+public class SimController implements ActionListener, MouseListener, IEditModeObserver, ITimeObserver {
 	private static final Logger			logger			= Logger.getLogger(SimController.class);
 	
 	private Course								course;
@@ -45,7 +45,9 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 																																// "begin"
 	private int									speed;																	// in
 																																// milliseconds
-	private int									interval;
+	private int									notifyStep		= 1;
+	private int									realInterval	= 1000;
+	private int									interval			= 1000;
 	private transient Timer					pulse				= new Timer();
 	private boolean							run				= false;
 	
@@ -119,10 +121,22 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	 * @author dirk
 	 */
 	private void simulationStep() {
-		setCurrentTime(currentTime + 1000);
+		setCurrentTime(currentTime + realInterval);
 		logger.info("Simulation Step at " + currentTime);
-		course.simulationStep(currentTime, interval);
-		logger.info("History states: " + course.getPlace(0, 0).getHistoryStates().size());
+		course.simulationStep(currentTime);
+		logger.debug("History states: " + course.getPlace(0, 0).getHistoryStates().size());
+		
+		// calculate state statistics for whole course
+		course.calcStatistics(currentTime);
+		
+		// notify GUI after simulation
+		notifyStep--;
+		if (notifyStep == 0) {
+			notifyStep = speed;
+			course.notifyStudentsObservers();
+			course.notifySelectedStudentObservers();
+			course.notifyStatisticsObservers();
+		}
 	}
 	
 	
@@ -151,12 +165,14 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	
 	public void setSpeed(int speed) {
-		if (speed > 64)
-			speed = 64;
+		if (speed > 1024)
+			speed = 1024;
 		if (speed < 1)
 			speed = 1;
 		this.speed = speed;
-		this.interval = 1000 / speed;
+		this.interval = realInterval / speed;
+		if (interval == 0)
+			interval = 1;
 		if (run) {
 			stop();
 			run();
@@ -191,7 +207,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		if (e.getButton() == MouseEvent.BUTTON3)
 			value *= -1;
 		if (course.getSelectedStudent() != null) {
-			course.donInput(course.getSelectedProperty(), value, currentTime);
+			course.donInputQueue(course.getSelectedProperty(), value, currentTime);
 		}
 		course.notifyStudentsObservers();
 	}
@@ -229,5 +245,12 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	public void exitEditMode() {
 		// TODO NicolaiO Auto-generated method stub
 		
+	}
+	
+	
+	@Override
+	public void timeChanged(int time) {
+		setCurrentTime(time);
+		course.setTime(time);
 	}
 }
