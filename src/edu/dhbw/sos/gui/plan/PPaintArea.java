@@ -30,6 +30,7 @@ import edu.dhbw.sos.course.statistics.IStatisticsObserver;
 import edu.dhbw.sos.gui.Diagram;
 import edu.dhbw.sos.gui.plan.MovableBlock.Areas;
 import edu.dhbw.sos.helper.CalcVector;
+import edu.dhbw.sos.simulation.ITimeObserver;
 
 
 /**
@@ -40,30 +41,34 @@ import edu.dhbw.sos.helper.CalcVector;
  * 
  */
 public class PPaintArea extends JPanel implements MouseListener, MouseMotionListener, IStatisticsObserver {
-	private static final long		serialVersionUID	= 5194596384018441495L;
-	private static final Logger	logger				= Logger.getLogger(PPaintArea.class);
+	private static final long				serialVersionUID	= 5194596384018441495L;
+	private static final Logger			logger				= Logger.getLogger(PPaintArea.class);
 	
 	// list of all movable blocks
-	private MovableBlocks			movableBlocks		= new MovableBlocks();
+	private MovableBlocks					movableBlocks		= new MovableBlocks();
 	// this block is set, when a block is moved by dragging with the mouse.
 	// it is set to the reference to the moving block
 	// it should be null, if no block is moved
-	private MovableBlock				moveBlock			= null;
-	private int							index					= -1;
-	private int							widthLeft			= -1;
-	private int							widthRight			= -1;
-	private TimeBlocks				tbs;
-	private Course						course;
+	private MovableBlock						moveBlock			= null;
+	private int									index					= -1;
+	private int									widthLeft			= -1;
+	private int									widthRight			= -1;
+	private TimeBlocks						tbs;
+	private Course								course;
 	
-	double								scaleRatio			= 1;
-	int									start;
+	private TimeMarkerBlock					tmb;
 	
-	private Diagram					attDia;
+	double										scaleRatio			= 1;
+	int											start;
 	
-	private Mode						mode					= null;
-	private Areas						area					= null;
+	private Diagram							attDia;
 	
+	private Mode								mode					= null;
+	private Areas								area					= null;
 	
+	private LinkedList<ITimeObserver>	timeObservers		= new LinkedList<ITimeObserver>();
+
+
 	/**
 	 * Initialize PaintArea
 	 * 
@@ -77,8 +82,30 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		this.course = course;
 		this.initMovableBlocks();
 		
+		tmb = new TimeMarkerBlock(tbs.getTotalLength());
+		course.getSimController().subscribeTime(tmb);
+		subscribeTime(course.getSimController());
 		attDia = new Diagram(new LinkedList<Float>());
 		attDia.setLocation(new Point(5, 10));
+	}
+	
+	
+	/**
+	 * TODO andres, add comment!
+	 * 
+	 * @param simController
+	 * @author andres
+	 */
+	private void subscribeTime(ITimeObserver to) {
+		timeObservers.add(to);
+	}
+	
+	
+	public void notifyTimeObservers() {
+		int timeInMilSec = tmb.getTime() * 60000;
+		for (ITimeObserver to : timeObservers) {
+			to.timeChanged(timeInMilSec);
+		}
 	}
 	
 	
@@ -92,7 +119,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	 * @author NicolaiO
 	 */
 	public void initMovableBlocks() {
-		start = 5;
+		start = 0;
 		movableBlocks = new MovableBlocks();
 		scaleRatio = movableBlocks.init(tbs, start, this.getWidth());
 	}
@@ -145,11 +172,18 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		double timemarkers = scaleRatio * mi;
 		// logger.debug(timemarkers + "");
 		if (timemarkers > 0.0) {
+			int time = 8;
 			for (int i = start; i < this.getWidth(); i += (int) timemarkers) {
 				ga.drawLine(i, 135, i, 145);
+				if (time % 2 == 0)
+					ga.drawString(time + ":00", i + 2, 139);
+				time++;
 			}
 		}
 		
+		// TimeMarkerBlock
+		tmb.draw(ga);
+
 		// draw diagram
 		// updateDiagram();
 		ga.setColor(Color.black);
@@ -166,7 +200,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 			newData.add(stat.getValueAt(0));
 		}
 		attDia.setData(newData);
-		this.repaint();
+		// this.repaint();
 	}
 	
 	
@@ -178,6 +212,11 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	
 	@Override
 	public void mousePressed(MouseEvent e) {
+		if (tmb.contains(e.getPoint())) {
+			mode = Mode.Time;
+			return;
+		}
+
 		// Check if mouse clicked on a block and wants to drag
 		for (MovableBlock mb : movableBlocks) {
 			if (mb.containsArea(e.getPoint()) == MovableBlock.Areas.InArea) {
@@ -210,9 +249,11 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		}
 	}
 	
+	
 	private enum Mode {
 		Move,
-		Resize
+		Resize,
+		Time
 	}
 	
 	
@@ -227,12 +268,14 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 				// mb.setRelMouseLocation(new Point(0, 0));
 			}
 			// this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-			mode = null;
 			area = null;
 			
 			initMovableBlocks();
 			this.repaint();
 		}
+		if (mode == Mode.Time)
+			notifyTimeObservers();
+		mode = null;
 		return;
 	}
 	
@@ -256,6 +299,9 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 					break;
 				case Resize:
 					dAndDResize(e.getPoint());
+					break;
+				case Time:
+					dAndDTime(e.getPoint());
 					break;
 			}
 		}
@@ -292,6 +338,38 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	}
 	
 	
+	/**
+	 * TODO andres, add comment!
+	 * 
+	 * @param point
+	 * @author andres
+	 */
+	private void dAndDTime(Point e) {
+		int mmt_X = (int) Math.floor(e.getX() + tmb.getRelMouseLocation().getX() - tmb.getX());
+		// calculate new position of moveBlock
+		double x_mb = tmb.getLocation().getX();
+		double paWidth = this.getWidth();
+		if (x_mb < 0 && mmt_X < 0) {
+			// e.getPoint().setLocation(0, e.getPoint().getY());
+			return;
+		} else if ((x_mb + tmb.getWidth()) >= paWidth && mmt_X >= 0) {
+			// e.getPoint().setLocation(this.getWidth(), e.getPoint().getY());
+			return;
+		}
+		
+		double x = e.getX();
+		if (x < 0) {
+			// e.getPoint().setLocation(0, 0);
+			x = 0.0;
+		} else if (x > paWidth) {
+			// e.getPoint().setLocation(paWidth, 0);
+			x = paWidth;
+		}
+		tmb.timeChanged((int) x + 5);
+		tmb.printTmb();
+	}
+
+
 	private void dAndDMove(Point e) {
 		// while mouse is pressed and moving, this will move the button
 		if (moveBlock != null) {

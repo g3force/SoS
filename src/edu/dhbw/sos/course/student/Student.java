@@ -322,7 +322,7 @@ public class Student implements IPlace, Cloneable {
 	 * @author dirk
 	 */
 	public void saveHistoryStates(int time) {
-		historyStates.put(time, actualState);
+		historyStates.put(time, actualState.clone());
 	}
 	
 	
