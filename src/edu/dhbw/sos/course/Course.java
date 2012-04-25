@@ -292,6 +292,7 @@ public class Course {
 		double timeBlockInf = 0.001;
 		
 		BlockType bt = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType();
+		System.out.println(bt.toString());
 		preChangeVector.addCalcVector(influence.getEnvironmentVector(bt.getEinfluenceType(), timeBlockInf));
 
 		preChangeVector.printCalcVector("Sim: after timeblock (" + bt.toString() + ")");
