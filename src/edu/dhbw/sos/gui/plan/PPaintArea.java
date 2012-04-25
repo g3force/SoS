@@ -200,7 +200,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 			newData.add(stat.getValueAt(0));
 		}
 		attDia.setData(newData);
-		// this.repaint();
+		this.repaint();
 	}
 	
 	
