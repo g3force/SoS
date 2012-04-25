@@ -30,10 +30,10 @@ public class Student implements IPlace, Cloneable {
 	 * Consider to add new attributes to the clone() method
 	 * if you want to store them persistent!
 	 */
-	private CalcVector									actualState;
-	private LinkedHashMap<Integer, CalcVector>	historyStates	= new LinkedHashMap<Integer, CalcVector>();
+	private transient CalcVector									actualState;
+	private transient LinkedHashMap<Integer, CalcVector>	historyStates	= new LinkedHashMap<Integer, CalcVector>();
 	private CalcVector									changeVector;
-	private static final Logger						logger			= Logger.getLogger(Student.class);
+	private transient static final Logger						logger			= Logger.getLogger(Student.class);
 	
 	
 	public Student(int vectorInitSize) {

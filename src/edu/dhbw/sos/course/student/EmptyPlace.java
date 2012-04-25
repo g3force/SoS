@@ -21,8 +21,8 @@ import edu.dhbw.sos.helper.CalcVector;
  */
 public class EmptyPlace implements IPlace {
 	
-	public int	paramCount;
-	CalcVector	actualState;
+	private transient int			paramCount;
+	private transient CalcVector	actualState;
 	
 	
 	public EmptyPlace(int paramCount) {
@@ -35,6 +35,7 @@ public class EmptyPlace implements IPlace {
 	}
 	
 	
+	@Override
 	public CalcVector getActualState() {
 		return actualState;
 	}
@@ -52,6 +53,7 @@ public class EmptyPlace implements IPlace {
 	}
 	
 	
+	@Override
 	public void printAcutalState() {
 		System.out.println("Empty Place");
 	}

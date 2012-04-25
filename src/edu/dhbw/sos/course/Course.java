@@ -35,22 +35,22 @@ import edu.dhbw.sos.simulation.SimController;
  * @author DirkK
  */
 public class Course {
-	private static final Logger						logger						= Logger.getLogger(Course.class);
-	private LinkedList<IStudentsObserver>			studentsObservers			= new LinkedList<IStudentsObserver>();
-	private LinkedList<ISelectedStudentObserver>	selectedCourseObservers	= new LinkedList<ISelectedStudentObserver>();
-	private LinkedList<IStatisticsObserver>		statisticsObservers		= new LinkedList<IStatisticsObserver>();
+	private transient static final Logger							logger						= Logger.getLogger(Course.class);
+	private transient LinkedList<IStudentsObserver>				studentsObservers			= new LinkedList<IStudentsObserver>();
+	private transient LinkedList<ISelectedStudentObserver>	selectedCourseObservers	= new LinkedList<ISelectedStudentObserver>();
+	private transient LinkedList<IStatisticsObserver>			statisticsObservers		= new LinkedList<IStatisticsObserver>();
 	private IPlace[][]									students						= new IPlace[0][0];
 	private Influence										influence					= new Influence();
 	private String											name							= "";
 	private Lecture										lecture;
-	private SimController								simController;
+	private transient SimController									simController;
 	
 	private LinkedList<String>							parameters					= new LinkedList<String>();
 	// place here? not implemented yet, so do not know...
-	private LinkedHashMap<String, String>			statistics					= new LinkedHashMap<String, String>();
-	private CalcVector									statState					= new CalcVector(4);
-	private LinkedHashMap<Integer, CalcVector>	histStatStates				= new LinkedHashMap<Integer, CalcVector>();
-	private LinkedList<String>							suggestions					= new LinkedList<String>();
+	private transient LinkedHashMap<String, String>				statistics					= new LinkedHashMap<String, String>();
+	private transient CalcVector										statState					= new CalcVector(4);
+	private transient LinkedHashMap<Integer, CalcVector>		histStatStates				= new LinkedHashMap<Integer, CalcVector>();
+	private transient LinkedList<String>							suggestions					= new LinkedList<String>();
 	
 	// the student and property that was selected in the GUI (by hovering over the student)
 	private IPlace											selectedStudent			= null;

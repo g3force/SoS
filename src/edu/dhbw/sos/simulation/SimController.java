@@ -60,6 +60,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		currentTime = 0;
 		speed = 1;
 		interval = 1000;
+		run = false;
 	}
 	
 	
