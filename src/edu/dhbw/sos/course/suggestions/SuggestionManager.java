@@ -105,7 +105,7 @@ public class SuggestionManager implements ISuggestionsObserver {
 			while (true) {
 				Suggestion s = (Suggestion) in.readObject();
 				if (haveToAddSuggestion(s)) {
-					s.removeUnusedParameters((String[]) courseParams.toArray());
+					s.removeUnusedParameters(courseParams);
 					availableSuggestions.add(s);
 				}
 			}
@@ -175,5 +175,13 @@ public class SuggestionManager implements ISuggestionsObserver {
 			result = result && isInSuggestion;
 		}
 		return result;
+	}
+	
+	
+	// DEBUG prints all loaded suggestions
+	public void print() {
+		for (Suggestion s : availableSuggestions) {
+			System.out.println(xs.toXML(s));
+		}
 	}
 }
