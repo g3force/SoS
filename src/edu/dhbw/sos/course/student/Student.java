@@ -58,6 +58,7 @@ public class Student implements IPlace, Cloneable {
 	 * @param value value to add (negative to sub)
 	 * @author NicolaiO
 	 */
+	@Override
 	public void donInput(int index, float value, int time) {
 			CalcVector cv = new CalcVector(4);
 			cv.setValueAt(index, value);
@@ -155,9 +156,9 @@ public class Student implements IPlace, Cloneable {
 			// i.e. acutalState = 95, addVector = 20 -> (100-95)*2/100 -> 0,1*20 = 2 -> 97
 			// i.e. acutalState = 98, addVector = 20 -> (100-98)*2/100 -> 0,04*20 = 0.8 -> 98.8
 			if (vValue > 0) {
-				actualState.setValueAt(i, actualState.getValueAt(i) + (int) (vValue * ((100 - sValue) * 2 / 100)));
+				actualState.setValueAt(i, actualState.getValueAt(i) + (float) (vValue * ((100 - sValue) * 2 / 100)));
 			} else {
-				actualState.setValueAt(i, actualState.getValueAt(i) + (int) (vValue * ((sValue) * 2 / 100)));
+				actualState.setValueAt(i, actualState.getValueAt(i) + (float) (vValue * ((sValue) * 2 / 100)));
 			}
 			if (actualState.getValueAt(i) < 0) {
 				actualState.setValueAt(i, 0);
@@ -186,6 +187,7 @@ public class Student implements IPlace, Cloneable {
 	}
 	
 	
+	@Override
 	public void printAcutalState() {
 		String out = "Students state: ";
 		for (int i = 0; i < actualState.size(); i++)
@@ -201,6 +203,7 @@ public class Student implements IPlace, Cloneable {
 	 * @return
 	 * @author NicolaiO
 	 */
+	@Override
 	public int getAverageState() {
 		int res = 0;
 		for (int i = 0; i < actualState.size(); i++) {
@@ -218,6 +221,7 @@ public class Student implements IPlace, Cloneable {
 	 * @return
 	 * @author bene
 	 */
+	@Override
 	public CalcVector getActualState() {
 		return this.actualState;
 	}
@@ -229,6 +233,7 @@ public class Student implements IPlace, Cloneable {
 	 * @return
 	 * @author dirk
 	 */
+	@Override
 	public void setActualState(CalcVector cv) {
 		this.actualState = cv;
 	}
@@ -301,6 +306,7 @@ public class Student implements IPlace, Cloneable {
 	/**
 	 * Creates an exact clone of this student object. All values are copied into a completely new object (no references!)
 	 */
+	@Override
 	public Student clone() {
 		Student student = new Student(this.actualState.clone(), this.changeVector.clone());
 		student.setHistoryStates(this.historyStates);
