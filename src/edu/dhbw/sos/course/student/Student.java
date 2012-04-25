@@ -9,7 +9,6 @@
  */
 package edu.dhbw.sos.course.student;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
@@ -27,30 +26,45 @@ import edu.dhbw.sos.helper.CalcVector;
  * 
  */
 public class Student implements IPlace, Cloneable {
+	private static final Logger									logger	= Logger.getLogger(Student.class);
 	/**
 	 * Consider to add new attributes to the clone() method
 	 * if you want to store them persistent!
 	 */
-	private CalcVector									actualState;
-	private LinkedHashMap<Integer, CalcVector>	historyStates		= new LinkedHashMap<Integer, CalcVector>();
-	private HashMap<Integer, Student>				historyDonInput	= new HashMap<Integer, Student>();
-	private CalcVector									changeVector;
-	private static final Logger						logger				= Logger.getLogger(Student.class);
+	private transient CalcVector									actualState;
+	private transient LinkedHashMap<Integer, CalcVector>	historyStates;
+	private CalcVector												changeVector;
 	
 	
 	public Student(int vectorInitSize) {
-		this.actualState = new CalcVector(vectorInitSize);
-		float[] changeVectorF = {1f, 1f, 1f, 1f};
+		float[] changeVectorF = new float[vectorInitSize];
+		for (int i = 0; i < vectorInitSize; i++) {
+			changeVectorF[i] = 1f;
+		}
 		this.changeVector = new CalcVector(changeVectorF);
+		init();
 	}
 	
 	
 	public Student(CalcVector actualState, CalcVector changeVector) {
 		this.actualState = actualState;
 		this.changeVector = changeVector;
+		this.historyStates = new LinkedHashMap<Integer, CalcVector>();
 	}
 	
 	
+	private void init() {
+		this.actualState = new CalcVector(changeVector.size());
+		this.historyStates = new LinkedHashMap<Integer, CalcVector>();
+	}
+	
+	
+	private Object readResolve() {
+		init();
+		return this;
+	}
+
+
 	/**
 	 * Only for testing yet. Should be tested and discussed
 	 * 
@@ -60,24 +74,12 @@ public class Student implements IPlace, Cloneable {
 	 */
 	@Override
 	public void donInput(int index, float value, int time) {
-			CalcVector cv = new CalcVector(4);
-			cv.setValueAt(index, value);
-			addHistoryDonInput(time);
-			changeVector.printCalcVector("Don Input: preChangeVector: ");
-			addToChangeVector(index, value);
-			addToStateVector(cv, 0, 0);
-			changeVector.printCalcVector("Don Input: postChangeVector: ");
-	}
-	
-	
-	/**
-	 * adds a new state to the history states
-	 * @param time
-	 * @param currentState
-	 * @author dirk
-	 */
-	public void addHistoryDonInput(int time) {
-		historyDonInput.put(time, this.clone());
+		CalcVector cv = new CalcVector(4);
+		cv.setValueAt(index, value);
+		changeVector.printCalcVector("Don Input: preChangeVector: ");
+		addToChangeVector(index, value);
+		addToStateVector(cv, 0, 0);
+		changeVector.printCalcVector("Don Input: postChangeVector: ");
 	}
 	
 	
@@ -90,10 +92,10 @@ public class Student implements IPlace, Cloneable {
 	 * @return
 	 * @author dirk
 	 */
-	public Entry<Integer, Student> historyDonInputInInterval(int start, int end) {
-		Entry<Integer, Student> latest = null;
-		for (Entry<Integer, Student> historyState : historyDonInput.entrySet()) {
-			if (historyState.getKey() > start && historyState.getKey() < end) {
+	public Entry<Integer, CalcVector> nearestHistoryState(int time) {
+		Entry<Integer, CalcVector> latest = null;
+		for (Entry<Integer, CalcVector> historyState : historyStates.entrySet()) {
+			if (historyState.getKey() < time) {
 				if (latest == null || latest.getKey() < historyState.getKey())
 					latest = historyState;
 			}
@@ -102,6 +104,26 @@ public class Student implements IPlace, Cloneable {
 	}
 	
 	
+	/**
+	 * deletes all history states after a given time
+	 * 
+	 * @param time
+	 * @return
+	 * @author dirk
+	 */
+	public void deleteHistoryStateFrom(int time) {
+		LinkedList<Integer> toDelete = new LinkedList<Integer>();
+		for (Entry<Integer, CalcVector> historyState : historyStates.entrySet()) {
+			if (historyState.getKey() > time) {
+				toDelete.add(historyState.getKey());
+			}
+		}
+		for (Integer state : toDelete) {
+			historyStates.remove(state);
+		}
+	}
+	
+
 	/**
 	 * calculates the next state for the actual state vector
 	 * @param addVector
@@ -113,10 +135,10 @@ public class Student implements IPlace, Cloneable {
 		saveHistoryStates(time);
 		
 		// parameter matrix * actual state
-		double parameterInf = 0.0001;
-		addVector.addCalcVector(influence.getInfluencedParameterVector(this.getActualState().clone(), parameterInf));
-		if (y == 1 && x == 1)
-			addVector.printCalcVector("Sim(1,1): matrix influenced");
+		// double parameterInf = 0.00000001;
+		// addVector.addCalcVector(influence.getInfluencedParameterVector(this.getActualState().clone(), parameterInf));
+		// if (y == 1 && x == 1)
+		// addVector.printCalcVector("Sim(1,1): matrix influenced");
 		
 		// usual behavior of the student ( usualBehav * behaviorInf )
 		
@@ -156,9 +178,9 @@ public class Student implements IPlace, Cloneable {
 			// i.e. acutalState = 95, addVector = 20 -> (100-95)*2/100 -> 0,1*20 = 2 -> 97
 			// i.e. acutalState = 98, addVector = 20 -> (100-98)*2/100 -> 0,04*20 = 0.8 -> 98.8
 			if (vValue > 0) {
-				actualState.setValueAt(i, actualState.getValueAt(i) + (int) (vValue * ((100 - sValue) * 2 / 100)));
+				actualState.setValueAt(i, actualState.getValueAt(i) + (float) (vValue * ((100 - sValue) * 2 / 100)));
 			} else {
-				actualState.setValueAt(i, actualState.getValueAt(i) + (int) (vValue * ((sValue) * 2 / 100)));
+				actualState.setValueAt(i, actualState.getValueAt(i) + (float) (vValue * ((sValue) * 2 / 100)));
 			}
 			if (actualState.getValueAt(i) < 0) {
 				actualState.setValueAt(i, 0);
@@ -176,14 +198,14 @@ public class Student implements IPlace, Cloneable {
 	 * @author dirk
 	 */
 	public void addToChangeVector(int index, float value) {
-		changeVector.setValueAt(index, changeVector.getValueAt(index) + value/100);
-//		changeVector.addCalcVector(addVector);
-//		for (int i = 0; i < changeVector.size(); i++) {
-//			if (changeVector.getValueAt(i) < 100)
-//				changeVector.setValueAt(i, 100);
-//			if (changeVector.getValueAt(i) > 0)
-//				changeVector.setValueAt(i, 0);
-//		}
+		changeVector.setValueAt(index, changeVector.getValueAt(index) + value / 100);
+		// changeVector.addCalcVector(addVector);
+		// for (int i = 0; i < changeVector.size(); i++) {
+		// if (changeVector.getValueAt(i) < 100)
+		// changeVector.setValueAt(i, 100);
+		// if (changeVector.getValueAt(i) > 0)
+		// changeVector.setValueAt(i, 0);
+		// }
 	}
 	
 	
@@ -193,7 +215,7 @@ public class Student implements IPlace, Cloneable {
 		for (int i = 0; i < actualState.size(); i++)
 			out += actualState.getValueAt(i) + ", ";
 		out = out.substring(0, out.length() - 2);
-		logger.info(out);
+		logger.debug(out);
 	}
 	
 	
@@ -310,7 +332,6 @@ public class Student implements IPlace, Cloneable {
 	public Student clone() {
 		Student student = new Student(this.actualState.clone(), this.changeVector.clone());
 		student.setHistoryStates(this.historyStates);
-		student.setHistoryDonInput(this.historyDonInput);
 		return student;
 	}
 	
@@ -329,16 +350,6 @@ public class Student implements IPlace, Cloneable {
 	@Override
 	public LinkedHashMap<Integer, CalcVector> getHistoryStates() {
 		return historyStates;
-	}
-
-
-	public HashMap<Integer, Student> getHistoryDonInput() {
-		return historyDonInput;
-	}
-
-
-	public void setHistoryDonInput(HashMap<Integer, Student> historyDonInput) {
-		this.historyDonInput = historyDonInput;
 	}
 
 

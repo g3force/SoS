@@ -35,54 +35,58 @@ import edu.dhbw.sos.simulation.SimController;
  * @author DirkK
  */
 public class Course {
-	private static final Logger						logger						= Logger.getLogger(Course.class);
-	private LinkedList<IStudentsObserver>			studentsObservers			= new LinkedList<IStudentsObserver>();
-	private LinkedList<ISelectedStudentObserver>	selectedCourseObservers	= new LinkedList<ISelectedStudentObserver>();
-	private LinkedList<IStatisticsObserver>		statisticsObservers		= new LinkedList<IStatisticsObserver>();
-	private IPlace[][]									students						= new IPlace[0][0];
-	private Influence										influence					= new Influence();
-	private String											name							= "";
-	private Lecture										lecture;
-	private SimController								simController;
+	private static final Logger										logger	= Logger.getLogger(Course.class);
 	
-	private LinkedList<String>							parameters					= new LinkedList<String>();
+	// observers
+	private transient LinkedList<IStudentsObserver>				studentsObservers;
+	private transient LinkedList<ISelectedStudentObserver>	selectedCourseObservers;
+	private transient LinkedList<IStatisticsObserver>			statisticsObservers;
+
+	private transient SimController									simController;
+	
 	// place here? not implemented yet, so do not know...
-	private LinkedHashMap<String, String>			statistics					= new LinkedHashMap<String, String>();
-	private CalcVector									statState					= new CalcVector(4);
-	private LinkedList<CalcVector>					histStatStates				= new LinkedList<CalcVector>();
-	private LinkedList<String>							suggestions					= new LinkedList<String>();
+	private transient LinkedHashMap<String, String>				statistics;
+	private transient CalcVector										statState;
+	private transient LinkedHashMap<Integer, CalcVector>		histStatStates;
+	private transient LinkedList<String>							suggestions;
 	
+	// persistent data
+	private IPlace[][]													students;
+	private Influence														influence;
+	private String															name;
+	private Lecture														lecture;
+	private LinkedList<String>											parameters;
+
 	// the student and property that was selected in the GUI (by hovering over the student)
-	private IPlace											selectedStudent			= null;
-	private int												selectedProperty			= 0;
-	private boolean										simulating					= false;
-	private LinkedList<DonInput>						donInputQueue				= new LinkedList<DonInput>();
+	private transient IPlace											selectedStudent;
+	private transient int												selectedProperty;
+	private transient boolean											simulating;
+	private transient LinkedList<DonInput>							donInputQueue;
 	
 	
 	public Course(String name) {
 		this.name = name;
-		simController = new SimController(this);
-		lecture = new Lecture(new Date());
+		init();
 		
 		suggestions.add("Sug1");
 		suggestions.add("Sug2");
 		suggestions.add("Sug3");
 		suggestions.add("Sug4");
 		// calculate state statistics for whole course
-		calcStatistics();
+		// calcStatistics();
 		
 		students = new IPlace[5][7];
-		LinkedList<String> properties = new LinkedList<String>();
-		properties.add("Tireness");
-		properties.add("Loudness");
-		properties.add("Attention");
-		properties.add("Quality");
+		parameters = new LinkedList<String>();
+		parameters.add("Tireness");
+		parameters.add("Loudness");
+		parameters.add("Attention");
+		parameters.add("Quality");
 		for (int y = 0; y < 5; y++) {
 			for (int x = 0; x < 7; x++) {
 				if (y == 3 && x == 4) {
-					students[y][x] = new EmptyPlace(properties.size());
+					students[y][x] = new EmptyPlace(parameters.size());
 				} else {
-					Student newStud = new Student(properties.size());
+					Student newStud = new Student(parameters.size());
 					
 					for (int i = 0; i < 4; i++) {
 						newStud.addValueToChangeVector(i, (int) (Math.random() * 100));
@@ -101,9 +105,35 @@ public class Course {
 		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.exercise));
 		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.pause));
 		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.group));
-
+		
 	}
 	
+	
+	private void init() {
+		simController = new SimController(this);
+		lecture = new Lecture(new Date());
+
+		studentsObservers = new LinkedList<IStudentsObserver>();
+		selectedCourseObservers = new LinkedList<ISelectedStudentObserver>();
+		statisticsObservers = new LinkedList<IStatisticsObserver>();
+		
+		statistics = new LinkedHashMap<String, String>();
+		statState = new CalcVector(4);
+		histStatStates = new LinkedHashMap<Integer, CalcVector>();
+		suggestions = new LinkedList<String>();
+
+		selectedStudent = null;
+		selectedProperty = 0;
+		simulating = false;
+		donInputQueue = new LinkedList<DonInput>();
+	}
+	
+	
+	private Object readResolve() {
+		init();
+		return this;
+	}
+
 	
 	/**
 	 * notify all subscribers of the students array
@@ -239,28 +269,32 @@ public class Course {
 	}
 	
 	
-	public void donInput(int index, float value, int currentTime) {
+	public void donInputQueue(int index, float value, int currentTime) {
 		if (simulating) {
 			logger.trace("donInput1: " + index + " " + value + " " + currentTime);
 			donInputQueue.add(new DonInput(index, value, currentTime));
 		} else {
-			logger.trace("donInput2: " + index + " " + value + " " + currentTime);
-			selectedStudent.getActualState().printCalcVector("Don Input: preActualState: ");
-			selectedStudent.donInput(index, value, currentTime);
-			selectedStudent.getActualState().printCalcVector("Don Input: postActualState: ");
+			donInput(index, value, currentTime);
 		}
 	}
 	
 	
+	public void donInput(int index, float value, int currentTime) {
+		logger.trace("donInput2: " + index + " " + value + " " + currentTime);
+		selectedStudent.getActualState().printCalcVector("Don Input: preActualState: ");
+		selectedStudent.donInput(index, value, currentTime);
+		selectedStudent.getActualState().printCalcVector("Don Input: postActualState: ");
+	}
+	
+
 	/**
 	 * calculates the next step of the simulation
 	 * calculate for every student the next state
 	 * 
 	 * @param currentTime current time of the lecture
-	 * @param speed speed of simulation
 	 * @author dirk
 	 */
-	public void simulationStep(int currentTime, int speed) {
+	public void simulationStep(int currentTime) {
 		simulating = true;
 		students[0][0].printAcutalState();
 		
@@ -269,10 +303,11 @@ public class Course {
 		// -------------------------------------------------
 		
 		// the new array for the calculated students, fill it with EmptyPalce
-		IPlace[][] newState = new IPlace[students.length][students[0].length];
-		for (int y = 0; y < 5; y++) {
-			for (int x = 0; x < 7; x++) {
-				newState[y][x] = new EmptyPlace(parameters.size());
+		CalcVector[][] oldVec = new CalcVector[students.length][students[0].length];
+		for (int y = 0; y < students.length; y++) {
+			for (int x = 0; x < students[0].length; x++) {
+				if (students[y][x] instanceof Student)
+					oldVec[y][x] = ((Student) students[y][x]).getActualState().clone();
 			}
 		}
 		
@@ -284,19 +319,17 @@ public class Course {
 		preChangeVector.printCalcVector("Sim: Init");
 		
 		// time block depending ( inf(Break) * breakInf )
-		double timeBlockInf = 0.01;
+		double timeBlockInf = 0.001;
 		
 		BlockType bt = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType();
+		System.out.println(bt.toString());
 		preChangeVector.addCalcVector(influence.getEnvironmentVector(bt.getEinfluenceType(), timeBlockInf));
-		// if (lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType() == BlockType.pause) {
-		// logger.info("Influenced by break");
-		// preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.BREAK_REACTION, breakInf));
-		// }
+
 		preChangeVector.printCalcVector("Sim: after timeblock (" + bt.toString() + ")");
 		
 		// timeDending ( inf(Time) * currentTime/1000 * timeInf )
-		double timeInf = 0.000001;
-		double timeTimeInf = timeInf * currentTime / 1000;
+		double timeInf = 0.00000000001;
+		double timeTimeInf = timeInf * currentTime / 1000; // in seconds
 		preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.TIME_DEPENDING, timeTimeInf));
 		preChangeVector.printCalcVector("Sim: after time depending");
 		
@@ -308,32 +341,23 @@ public class Course {
 				if (students[y][x] instanceof Student) {
 					Student student = (Student) students[y][x];
 					
-					// check if there was an interaction from the don
-					Entry<Integer, Student> donInteraction = student.historyDonInputInInterval(currentTime - speed,
-							currentTime);
-					if (donInteraction != null) {
-						student = donInteraction.getValue();
-					}
-					
 					// influence of the surrounding students
-					CalcVector neighborInfl = getNeighborsInfluence(student, x, y);
+					CalcVector neighborInfl = getNeighborsInfluence(student, oldVec, x, y);
 					// output for one student (1,1) -> only for analyzing the simulation behavior
 					if (y == 1 && x == 1)
 						neighborInfl.printCalcVector("Sim(1,1): Neighbor");
 					
 					// create a new vector which contains the pre calculates vector and the neighbor vector
-					CalcVector preChangeVectorSpecial = neighborInfl.addCalcVector(preChangeVector).addCalcVector(
-							neighborInfl);
+					CalcVector preChangeVectorSpecial = neighborInfl.addCalcVector(preChangeVector).clone()
+							.addCalcVector(neighborInfl);
 					// output for one student (1,1) -> only for analyzing the simulation behavior
 					if (y == 1 && x == 1)
 						neighborInfl.printCalcVector("Sim(1,1): preChangeVectorSpecial = Neighbor + preChangeVector");
 					
 					// create a new student and let him calculate a new change vector
-					Student newStudent = student.clone();
-					newState[y][x] = newStudent;
-					newStudent.calcNextSimulationStep(preChangeVectorSpecial, influence, currentTime, x, y);
+					student.calcNextSimulationStep(preChangeVectorSpecial, influence, currentTime, x, y);
 					if (y == 1 && x == 1)
-						newStudent.getActualState().printCalcVector("Sim(1,1): actualStateEnd");
+						student.getActualState().printCalcVector("Sim(1,1): actualStateEnd");
 				}
 			}
 		}
@@ -342,9 +366,6 @@ public class Course {
 		// -------------- post simulation ------------------
 		// -------------------------------------------------
 		
-		// give the reference from newState to real students array
-		students = newState;
-		
 		// handle any donInputs, that had accord during simulation
 		simulating = false;
 		for (DonInput di : donInputQueue) {
@@ -352,14 +373,7 @@ public class Course {
 		}
 		donInputQueue.clear();
 		
-		// calculate state statistics for whole course
-		calcStatistics();
 		
-		// notify all subscribers of the students array
-		if (currentTime % 1000 == 0) {
-			notifyStudentsObservers();
-			notifySelectedStudentObservers();
-		}
 	}
 	
 	
@@ -371,7 +385,7 @@ public class Course {
 	 * @return changeVector
 	 * @author dirk
 	 */
-	private CalcVector getNeighborsInfluence(Student student, int x, int y) {
+	private CalcVector getNeighborsInfluence(Student student, CalcVector[][] oldVec, int x, int y) {
 		// neighbor ( inf(Neighbor) * state(studentLeft) * neighbor + inf(Neighbor) * state(studentRight) * ... )
 		
 		// x x x factor for each relative position to the student
@@ -398,10 +412,9 @@ public class Course {
 					int newx = x + i;
 					int newy = y + j;
 					if (newx < students[0].length && newx >= 0 && newy < students.length && newy >= 0) {
-						IPlace s = students[newy][newx];
-						surronding = surronding.addCalcVector(s.getActualState());
-						if (s instanceof Student)
-							neighbourAmount++;
+						if (students[newy][newx] instanceof Student)
+							surronding = surronding.addCalcVector(oldVec[newy][newx]);
+						neighbourAmount++;
 						
 						// add small percentage of surrounding students to every student
 						// problem: will increase until infinity
@@ -425,10 +438,10 @@ public class Course {
 				studentMAverage *= -1;
 			float reducer = (100 - studentMAverage) / 100;
 			if (x == 1 && y == 1)
-				logger.info("Sim(1,1): average: " + average + " / actualState: " + student.getActualState().getValueAt(i)
+				logger.debug("Sim(1,1): average: " + average + " / actualState: " + student.getActualState().getValueAt(i)
 						+ " / reducer: " + reducer + " / value: " + (average - student.getActualState().getValueAt(i))
 						* reducer * 0.1f);
-			changeVector.setValueAt(i, (average - student.getActualState().getValueAt(i)) * reducer * 0.1f);
+			changeVector.setValueAt(i, (average - student.getActualState().getValueAt(i)) * reducer * 0.001f);
 			// changeVector.multiplyWithVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR,0.01));
 		}
 		if (x == 1 && y == 1)
@@ -463,13 +476,33 @@ public class Course {
 	}
 	
 	
+	private void simulateUntil(int time) {
+		
+	}
+	
+	
+	public void setTime(int time) {
+		for (int y = 0; y < students.length; y++) {
+			for (int x = 0; x < students[y].length; x++) {
+				if (students[y][x] instanceof Student) {
+					Student student = (Student) students[y][x];
+					Entry<Integer, CalcVector> historyState = student.nearestHistoryState(time);
+					student.setActualState(historyState.getValue().clone());
+					student.deleteHistoryStateFrom(historyState.getKey());
+				}
+			}
+		}
+		simulateUntil(time);
+	}
+
+
 	/**
 	 * 
 	 * Calculates the statistics for the whole course and save them in an histroy state.
 	 * 
 	 * @author andres
 	 */
-	private void calcStatistics() {
+	public void calcStatistics(int time) {
 		
 		statState.multiply(0);
 		
@@ -495,12 +528,25 @@ public class Course {
 			statistics.put("Tired: ", statState.getValueAt(1) + "");
 			statistics.put("Quality: ", statState.getValueAt(2) + "");
 			statistics.put("?: ", statState.getValueAt(3) + "");
-			histStatStates.add(statState.clone());
-			notifyStatisticsObservers();
+			histStatStates.put(time, statState.clone());
+
 		}
 	}
 	
 	
+	public void deleteHistoryStatStateFrom(int time) {
+		LinkedList<Integer> toDelete = new LinkedList<Integer>();
+		for (Entry<Integer, CalcVector> historyStatState : histStatStates.entrySet()) {
+			if (historyStatState.getKey() > time) {
+				toDelete.add(historyStatState.getKey());
+			}
+		}
+		for (Integer state : toDelete) {
+			histStatStates.remove(state);
+		}
+	}
+	
+
 	// --- GETTERS and SETTERS ---
 	
 	public IPlace[][] getStudents() {
@@ -606,7 +652,7 @@ public class Course {
 	}
 	
 	
-	public LinkedList<CalcVector> getHistStatState() {
+	public LinkedHashMap<Integer, CalcVector> getHistStatState() {
 		return histStatStates;
 	}
 	

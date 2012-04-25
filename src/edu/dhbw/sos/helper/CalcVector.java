@@ -199,7 +199,8 @@ public class CalcVector implements Cloneable {
 	 */
 	public CalcVector addCalcVector(CalcVector v) {
 		if (v.size() != this.size()) {
-			throw new IllegalArgumentException("Can not add vectors with different sizes.");
+			throw new IllegalArgumentException("Can not add vectors with different sizes. (this=" + this.size() + " / v="
+					+ v.size());
 		}
 		for (int i = 0; i < this.size(); i++) {
 			this.vector[i] += v.getValueAt(i);
@@ -211,6 +212,7 @@ public class CalcVector implements Cloneable {
 	/**
 	 * Creates an exact clone of this CalcVector with the same values.
 	 */
+	@Override
 	public CalcVector clone() {
 		CalcVector result = new CalcVector(vector.length);
 		for (int i = 0; i < this.size(); i++) {
@@ -232,6 +234,6 @@ public class CalcVector implements Cloneable {
 		for (int i = 0; i < this.size(); i++) {
 			out += this.vector[i] + " / ";
 		}
-		logger.info(out.subSequence(0, out.length() - 3));
+		logger.debug(out.subSequence(0, out.length() - 3));
 	}
 }

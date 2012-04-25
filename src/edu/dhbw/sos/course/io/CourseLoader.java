@@ -14,6 +14,7 @@ import java.io.File;
 import org.apache.log4j.Logger;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.Courses;
@@ -60,7 +61,11 @@ public class CourseLoader {
 				if (ext.contentEquals("xml")) {
 					File xmlfile = new File(savepath + dir.list()[i]);
 					if (xmlfile.length() > 0) {
-						allCourses.add((Course) xstream.fromXML(xmlfile));
+						try{
+							allCourses.add((Course) xstream.fromXML(xmlfile));
+						} catch (CannotResolveClassException e) {
+							logger.fatal("ALARM! ALARM! ALARM! Basti mach das heile");
+						}
 					}
 				}
 			}
@@ -69,7 +74,7 @@ public class CourseLoader {
 			allCourses.add(new Course("Dummy course"));
 		}
 		allCourses.setCurrentCourse(allCourses.get(0));
-		System.out.println("CoursesSize: " + allCourses.size() + ", setCourse: " + allCourses.getCurrentCourse());
+		logger.info("CoursesSize: " + allCourses.size() + ", setCourse: " + allCourses.getCurrentCourse());
 		return allCourses;
 		/*
 		 * try {

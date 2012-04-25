@@ -21,8 +21,8 @@ import org.apache.log4j.Logger;
  * 
  */
 public class TimeBlocks extends LinkedList<TimeBlock> {
-	private static final long		serialVersionUID	= -5463421486049533791L;
-	private static final Logger	logger				= Logger.getLogger(TimeBlocks.class);
+	private transient static final long		serialVersionUID	= -5463421486049533791L;
+	private transient static final Logger	logger				= Logger.getLogger(TimeBlocks.class);
 	
 	
 	/**

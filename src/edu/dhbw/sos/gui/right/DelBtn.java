@@ -44,6 +44,9 @@ public class DelBtn extends JButton {
 			this.setIcon(newIcon);
 			this.setText("");
 			this.setBorderPainted(false);
+			// this.setBackground(new Color(0, 0, 0, 0));
 		}
 	}
+
+
 }
