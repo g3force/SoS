@@ -235,5 +235,6 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	@Override
 	public void timeChanged(int time) {
 		setCurrentTime(time);
+		course.setTime(time);
 	}
 }
