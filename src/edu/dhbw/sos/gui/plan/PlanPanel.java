@@ -13,24 +13,21 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.course.Courses;
 import edu.dhbw.sos.course.lecture.TimeBlocks;
 import edu.dhbw.sos.helper.Messages;
 import edu.dhbw.sos.simulation.ISpeedObserver;
@@ -62,7 +59,8 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	 * @param data general GUIData object with needed information for GUI
 	 * @author NicolaiO
 	 */
-	public PlanPanel(SimController simController, Course course) {
+	public PlanPanel(SimController simController, Courses courses) {
+		Course course = courses.getCurrentCourse();
 		// get data
 		timeBlocks = new TimeBlocks(course.getLecture().getTimeBlocks());
 		
@@ -137,17 +135,28 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		
 		
 		// time
-		JLabel lblFromTo = new JLabel(Messages.getString("Lecture.FROMTO"), SwingConstants.LEFT);
-		JTextField txtFrom = new JTextField("08:00", 5);
-		JTextField txtTo = new JTextField("11:00", 5);
-		lblFromTo.setAlignmentX(Component.LEFT_ALIGNMENT);
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+		String start = timeFormat.format(course.getLecture().getStart());
+		Date endTime = new Date();
+		endTime.setTime(course.getLecture().getStart().getTime() + course.getLecture().getLength() * 60 * 1000);
+		String end = timeFormat.format(endTime);
+
+		JLabel lblFrom = new JLabel(Messages.getString("Lecture.FROM"), SwingConstants.LEFT);
+		JLabel lblTo = new JLabel(Messages.getString("Lecture.TO"), SwingConstants.LEFT);
+		JTextField txtFrom = new JTextField(start, 5);
+		JTextField txtTo = new JTextField(end, 5);
+		lblFrom.setAlignmentX(Component.LEFT_ALIGNMENT);
+		lblTo.setAlignmentX(Component.LEFT_ALIGNMENT);
 		txtFrom.setAlignmentX(Component.LEFT_ALIGNMENT);
 		txtTo.setAlignmentX(Component.LEFT_ALIGNMENT);
 		txtFrom.setMaximumSize(new Dimension(40, 0));
 		txtTo.setMaximumSize(new Dimension(40, 0));
-		sidePanel.add(lblFromTo);
-		sidePanel.add(txtFrom);
-		sidePanel.add(txtTo);
+		JPanel timePanel = new JPanel();
+		timePanel.add(lblFrom);
+		timePanel.add(txtFrom);
+		timePanel.add(lblTo);
+		timePanel.add(txtTo);
+		sidePanel.add(timePanel);
 	}
 	
 	

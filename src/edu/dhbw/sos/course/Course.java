@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.influence.EInfluenceType;
 import edu.dhbw.sos.course.influence.Influence;
+import edu.dhbw.sos.course.io.CourseSaver;
 import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.Lecture;
 import edu.dhbw.sos.course.lecture.TimeBlock;
@@ -597,8 +598,15 @@ public class Course {
 	}
 	
 	
-	public void setName(String name) {
-		this.name = name;
+	public void setName(String _name) {
+		try {
+			CourseSaver.removeFile(this, System.getProperty("user.home") + "/.sos/");
+			this.name = _name;
+			CourseSaver.saveCourse(this, System.getProperty("user.home") + "/.sos/");
+		} catch (SecurityException io) {
+			io.printStackTrace();
+			this.name = _name; // name needs to be set no matter what.
+		}
 	}
 	
 	
