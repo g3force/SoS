@@ -100,8 +100,7 @@ public class SuggestionManager implements ISuggestionsObserver {
 	 */
 	private int loadSuggestionsFromFile() {
 		try {
-			ObjectInputStream in = xs.createObjectInputStream(new FileReader(System.getProperty("user.home")
-					+ "/.SoS/suggestions.xml"));
+			ObjectInputStream in = xs.createObjectInputStream(new FileReader(SUGGESTION_FILE));
 			while (true) {
 				Suggestion s = (Suggestion) in.readObject();
 				if (haveToAddSuggestion(s)) {

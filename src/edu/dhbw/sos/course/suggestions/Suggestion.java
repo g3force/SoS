@@ -198,6 +198,7 @@ public class Suggestion implements Comparable<Suggestion> {
 				k++;
 			}
 		}
+		this.parameters = newParams;
 	}
 
 	
