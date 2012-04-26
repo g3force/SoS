@@ -33,6 +33,16 @@ public class CourseSaver {
 	private static final Logger	logger	= Logger.getLogger(CourseSaver.class);
 
 	
+	public static void removeFile(Course course, String savepath) {
+		try {
+			File fh = new File(savepath + course.getName() + ".xml");
+			if (fh.exists()) {
+				fh.delete();
+			}
+		} catch (NullPointerException ne) {
+			ne.printStackTrace();
+		}
+	}
 	public static void saveCourse(Course course, String savepath) {
 		try {
 			File path = new File(new File(savepath).getParent());

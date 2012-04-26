@@ -9,7 +9,6 @@
  */
 package edu.dhbw.sos.course;
 
-import java.io.File;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -598,13 +597,9 @@ public class Course {
 	
 	public void setName(String _name) {
 		try {
-			File fh = new File(System.getProperty("user.home") + "/.sos/" + this.name + ".xml");
+			CourseSaver.removeFile(this, System.getProperty("user.home") + "/.sos/");
 			this.name = _name;
-			if (fh.exists()) {
-				fh.delete();
-			}
 			CourseSaver.saveCourse(this, System.getProperty("user.home") + "/.sos/");
-			fh = null;
 		} catch (SecurityException io) {
 			io.printStackTrace();
 			this.name = _name; // name needs to be set no matter what.

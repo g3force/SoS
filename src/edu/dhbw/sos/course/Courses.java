@@ -70,6 +70,7 @@ public class Courses extends LinkedList<Course> {
 			changeCurCourse = true;
 		}
 		boolean res = super.remove(course);
+		CourseSaver.removeFile((Course) course, savepath);
 		if(changeCurCourse) {
 			setCurrentCourse(this.get(0));
 		}
