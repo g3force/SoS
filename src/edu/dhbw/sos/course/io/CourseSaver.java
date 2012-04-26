@@ -47,6 +47,7 @@ public class CourseSaver {
 				try {
 					FileWriter fw = new FileWriter(savepath + courses.get(i).getName() + ".xml", false);
 					fw.write(xml);
+					fw.flush();
 					fw.close();
 				} catch (IOException io) {
 					io.printStackTrace();
