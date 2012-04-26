@@ -206,7 +206,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		float value = 100;
+		float value = 20;
 		// right click
 		if (e.getButton() == MouseEvent.BUTTON3)
 			value *= -1;
@@ -255,6 +255,6 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	@Override
 	public void timeChanged(int time) {
 		setCurrentTime(time);
-		course.setTime(time);
+		course.setTime(currentTime, time);
 	}
 }

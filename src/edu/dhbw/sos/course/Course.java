@@ -89,7 +89,7 @@ public class Course {
 					Student newStud = new Student(parameters.size());
 					
 					for (int i = 0; i < 4; i++) {
-						newStud.addValueToChangeVector(i, (int) (Math.random() * 100));
+						newStud.addValueToChangeVector(i, (float) (Math.random() - 0.5));
 						newStud.addValueToStateVector(i, (int) (Math.random() * 100));
 					}
 					// ((Student)students[y][x]).
@@ -476,12 +476,15 @@ public class Course {
 	}
 	
 	
-	private void simulateUntil(int time) {
-		
+	private void simulateUntil(int actual, int required) {
+		while (actual < required) {
+			simulationStep(actual);
+			actual++;
+		}
 	}
 	
 	
-	public void setTime(int time) {
+	public void setTime(int actualTime, int time) {
 		for (int y = 0; y < students.length; y++) {
 			for (int x = 0; x < students[y].length; x++) {
 				if (students[y][x] instanceof Student) {
@@ -492,7 +495,7 @@ public class Course {
 				}
 			}
 		}
-		simulateUntil(time);
+		simulateUntil(actualTime, time);
 	}
 
 
