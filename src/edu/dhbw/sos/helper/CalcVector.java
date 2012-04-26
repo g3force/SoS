@@ -199,7 +199,8 @@ public class CalcVector implements Cloneable {
 	 */
 	public CalcVector addCalcVector(CalcVector v) {
 		if (v.size() != this.size()) {
-			throw new IllegalArgumentException("Can not add vectors with different sizes.");
+			throw new IllegalArgumentException("Can not add vectors with different sizes. (this=" + this.size() + " / v="
+					+ v.size());
 		}
 		for (int i = 0; i < this.size(); i++) {
 			this.vector[i] += v.getValueAt(i);

@@ -35,34 +35,38 @@ import edu.dhbw.sos.simulation.SimController;
  * @author DirkK
  */
 public class Course {
-	private static final Logger						logger						= Logger.getLogger(Course.class);
-	private LinkedList<IStudentsObserver>			studentsObservers			= new LinkedList<IStudentsObserver>();
-	private LinkedList<ISelectedStudentObserver>	selectedCourseObservers	= new LinkedList<ISelectedStudentObserver>();
-	private LinkedList<IStatisticsObserver>		statisticsObservers		= new LinkedList<IStatisticsObserver>();
-	private IPlace[][]									students						= new IPlace[0][0];
-	private Influence										influence					= new Influence();
-	private String											name							= "";
-	private Lecture										lecture;
-	private SimController								simController;
+	private static final Logger										logger	= Logger.getLogger(Course.class);
 	
-	private LinkedList<String>							parameters					= new LinkedList<String>();
+	// observers
+	private transient LinkedList<IStudentsObserver>				studentsObservers;
+	private transient LinkedList<ISelectedStudentObserver>	selectedCourseObservers;
+	private transient LinkedList<IStatisticsObserver>			statisticsObservers;
+
+	private transient SimController									simController;
+	
 	// place here? not implemented yet, so do not know...
-	private LinkedHashMap<String, String>			statistics					= new LinkedHashMap<String, String>();
-	private CalcVector									statState					= new CalcVector(4);
-	private LinkedHashMap<Integer, CalcVector>	histStatStates				= new LinkedHashMap<Integer, CalcVector>();
-	private LinkedList<String>							suggestions					= new LinkedList<String>();
+	private transient LinkedHashMap<String, String>				statistics;
+	private transient CalcVector										statState;
+	private transient LinkedHashMap<Integer, CalcVector>		histStatStates;
+	private transient LinkedList<String>							suggestions;
 	
+	// persistent data
+	private IPlace[][]													students;
+	private Influence														influence;
+	private String															name;
+	private Lecture														lecture;
+	private LinkedList<String>											parameters;
+
 	// the student and property that was selected in the GUI (by hovering over the student)
-	private IPlace											selectedStudent			= null;
-	private int												selectedProperty			= 0;
-	private boolean										simulating					= false;
-	private LinkedList<DonInput>						donInputQueue				= new LinkedList<DonInput>();
+	private transient IPlace											selectedStudent;
+	private transient int												selectedProperty;
+	private transient boolean											simulating;
+	private transient LinkedList<DonInput>							donInputQueue;
 	
 	
 	public Course(String name) {
 		this.name = name;
-		simController = new SimController(this);
-		lecture = new Lecture(new Date());
+		init();
 		
 		suggestions.add("Sug1");
 		suggestions.add("Sug2");
@@ -72,17 +76,17 @@ public class Course {
 		// calcStatistics();
 		
 		students = new IPlace[5][7];
-		LinkedList<String> properties = new LinkedList<String>();
-		properties.add("Tireness");
-		properties.add("Loudness");
-		properties.add("Attention");
-		properties.add("Quality");
+		parameters = new LinkedList<String>();
+		parameters.add("Tireness");
+		parameters.add("Loudness");
+		parameters.add("Attention");
+		parameters.add("Quality");
 		for (int y = 0; y < 5; y++) {
 			for (int x = 0; x < 7; x++) {
 				if (y == 3 && x == 4) {
-					students[y][x] = new EmptyPlace(properties.size());
+					students[y][x] = new EmptyPlace(parameters.size());
 				} else {
-					Student newStud = new Student(properties.size());
+					Student newStud = new Student(parameters.size());
 					
 					for (int i = 0; i < 4; i++) {
 						newStud.addValueToChangeVector(i, (int) (Math.random() * 100));
@@ -101,9 +105,35 @@ public class Course {
 		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.exercise));
 		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.pause));
 		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.group));
-
+		
 	}
 	
+	
+	private void init() {
+		simController = new SimController(this);
+		lecture = new Lecture(new Date());
+
+		studentsObservers = new LinkedList<IStudentsObserver>();
+		selectedCourseObservers = new LinkedList<ISelectedStudentObserver>();
+		statisticsObservers = new LinkedList<IStatisticsObserver>();
+		
+		statistics = new LinkedHashMap<String, String>();
+		statState = new CalcVector(4);
+		histStatStates = new LinkedHashMap<Integer, CalcVector>();
+		suggestions = new LinkedList<String>();
+
+		selectedStudent = null;
+		selectedProperty = 0;
+		simulating = false;
+		donInputQueue = new LinkedList<DonInput>();
+	}
+	
+	
+	private Object readResolve() {
+		init();
+		return this;
+	}
+
 	
 	/**
 	 * notify all subscribers of the students array
@@ -255,8 +285,8 @@ public class Course {
 		selectedStudent.donInput(index, value, currentTime);
 		selectedStudent.getActualState().printCalcVector("Don Input: postActualState: ");
 	}
-
 	
+
 	/**
 	 * calculates the next step of the simulation
 	 * calculate for every student the next state
@@ -292,6 +322,7 @@ public class Course {
 		double timeBlockInf = 0.001;
 		
 		BlockType bt = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType();
+		System.out.println(bt.toString());
 		preChangeVector.addCalcVector(influence.getEnvironmentVector(bt.getEinfluenceType(), timeBlockInf));
 
 		preChangeVector.printCalcVector("Sim: after timeblock (" + bt.toString() + ")");
@@ -383,7 +414,7 @@ public class Course {
 					if (newx < students[0].length && newx >= 0 && newy < students.length && newy >= 0) {
 						if (students[newy][newx] instanceof Student)
 							surronding = surronding.addCalcVector(oldVec[newy][newx]);
-							neighbourAmount++;
+						neighbourAmount++;
 						
 						// add small percentage of surrounding students to every student
 						// problem: will increase until infinity
@@ -514,8 +545,8 @@ public class Course {
 			histStatStates.remove(state);
 		}
 	}
-
 	
+
 	// --- GETTERS and SETTERS ---
 	
 	public IPlace[][] getStudents() {

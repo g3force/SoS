@@ -60,6 +60,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		currentTime = 0;
 		speed = 1;
 		interval = 1000;
+		run = false;
 	}
 	
 	
@@ -89,10 +90,13 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	
 	public boolean toggle() {
-		if (run)
+		if (run) {
+			logger.info("Simulation stopped");
 			stop();
-		else
+		} else {
+			logger.info("Simulation started");
 			run();
+		}
 		run = !run;
 		return true;
 	}

@@ -26,29 +26,45 @@ import edu.dhbw.sos.helper.CalcVector;
  * 
  */
 public class Student implements IPlace, Cloneable {
+	private static final Logger									logger	= Logger.getLogger(Student.class);
 	/**
 	 * Consider to add new attributes to the clone() method
 	 * if you want to store them persistent!
 	 */
-	private CalcVector									actualState;
-	private LinkedHashMap<Integer, CalcVector>	historyStates	= new LinkedHashMap<Integer, CalcVector>();
-	private CalcVector									changeVector;
-	private static final Logger						logger			= Logger.getLogger(Student.class);
+	private transient CalcVector									actualState;
+	private transient LinkedHashMap<Integer, CalcVector>	historyStates;
+	private CalcVector												changeVector;
 	
 	
 	public Student(int vectorInitSize) {
-		this.actualState = new CalcVector(vectorInitSize);
-		float[] changeVectorF = { 1f, 1f, 1f, 1f };
+		float[] changeVectorF = new float[vectorInitSize];
+		for (int i = 0; i < vectorInitSize; i++) {
+			changeVectorF[i] = 1f;
+		}
 		this.changeVector = new CalcVector(changeVectorF);
+		init();
 	}
 	
 	
 	public Student(CalcVector actualState, CalcVector changeVector) {
 		this.actualState = actualState;
 		this.changeVector = changeVector;
+		this.historyStates = new LinkedHashMap<Integer, CalcVector>();
 	}
 	
 	
+	private void init() {
+		this.actualState = new CalcVector(changeVector.size());
+		this.historyStates = new LinkedHashMap<Integer, CalcVector>();
+	}
+	
+	
+	private Object readResolve() {
+		init();
+		return this;
+	}
+
+
 	/**
 	 * Only for testing yet. Should be tested and discussed
 	 * 
@@ -335,7 +351,6 @@ public class Student implements IPlace, Cloneable {
 	public LinkedHashMap<Integer, CalcVector> getHistoryStates() {
 		return historyStates;
 	}
-
 
 
 	public void setHistoryStates(LinkedHashMap<Integer, CalcVector> historyStates) {

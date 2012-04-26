@@ -21,13 +21,17 @@ import edu.dhbw.sos.helper.CalcVector;
  */
 public class EmptyPlace implements IPlace {
 	
-	public int	paramCount;
-	CalcVector	actualState;
+	private int							paramCount;
+	private transient CalcVector	actualState;
 	
 	
 	public EmptyPlace(int paramCount) {
 		this.paramCount = paramCount;
-		
+		init();
+	}
+	
+	
+	private void init() {
 		// creates an empty state vector
 		actualState = new CalcVector(paramCount);
 		for (int i = 0; i < paramCount; i++)
@@ -35,6 +39,13 @@ public class EmptyPlace implements IPlace {
 	}
 	
 	
+	private Object readResolve() {
+		init();
+		return this;
+	}
+
+
+	@Override
 	public CalcVector getActualState() {
 		return actualState;
 	}
@@ -52,6 +63,7 @@ public class EmptyPlace implements IPlace {
 	}
 	
 	
+	@Override
 	public void printAcutalState() {
 		System.out.println("Empty Place");
 	}

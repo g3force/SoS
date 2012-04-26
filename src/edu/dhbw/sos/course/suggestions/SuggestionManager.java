@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.LinkedList;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 
@@ -99,12 +100,11 @@ public class SuggestionManager implements ISuggestionsObserver {
 	 */
 	private int loadSuggestionsFromFile() {
 		try {
-			ObjectInputStream in = xs.createObjectInputStream(new FileReader(System.getProperty("user.home")
-					+ "/.SoS/suggestions.xml"));
+			ObjectInputStream in = xs.createObjectInputStream(new FileReader(SUGGESTION_FILE));
 			while (true) {
 				Suggestion s = (Suggestion) in.readObject();
 				if (haveToAddSuggestion(s)) {
-					s.removeUnusedParameters((String[]) courseParams.toArray());
+					s.removeUnusedParameters(courseParams);
 					availableSuggestions.add(s);
 				}
 			}
@@ -125,17 +125,26 @@ public class SuggestionManager implements ISuggestionsObserver {
 	}
 	
 	
+	// generates 4 random suggestions with the current course parameters.
 	private boolean writeDummySuggestions() {
-		float[][] range = { { 10, 30 }, { 5, 10 }, { 15, 20 }, { 25, 30 } };
-		float[] influence = { 20, 10, 25, 5 };
-		Suggestion sug1 = new Suggestion(range, "hello world", 5, influence, courseParams);
+		Suggestion[] sugArray = new Suggestion[4];
+		Random r = new Random();
+		for (int i = 0; i < 4; i++) {
+			float[][] range = new float[courseParams.size()][2];
+			float[] influence = new float[courseParams.size()];
+			for (int j = 0; j < courseParams.size(); j++) {
+				range[j][0] = r.nextInt(40);
+				range[j][1] = r.nextInt(60);
+				influence[j] = r.nextInt(50);
+			}
+			sugArray[i] = new Suggestion(range, "Vorschlag " + i, r.nextInt(5), influence, courseParams);
+		}
 		try {
-			ObjectOutputStream out = xs.createObjectOutputStream(new FileWriter(SUGGESTION_FILE));
+			ObjectOutputStream out = xs.createObjectOutputStream(new FileWriter(SUGGESTION_FILE), "suggestionList");
 			
-			// out.writeObject(new Person("Joe", "Walnes"));
-			// out.writeObject(new Person("Someone", "Else"));
-			out.writeObject("hello");
-			out.writeInt(12345);
+			for (int i = 0; i < 4; i++) {
+				out.writeObject(sugArray[i]);
+			}
 			
 			out.close();
 			return true;
@@ -165,5 +174,13 @@ public class SuggestionManager implements ISuggestionsObserver {
 			result = result && isInSuggestion;
 		}
 		return result;
+	}
+	
+	
+	// DEBUG prints all loaded suggestions
+	public void print() {
+		for (Suggestion s : availableSuggestions) {
+			System.out.println(xs.toXML(s));
+		}
 	}
 }

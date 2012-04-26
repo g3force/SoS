@@ -10,6 +10,7 @@
 package edu.dhbw.sos.course.suggestions;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import edu.dhbw.sos.helper.CalcVector;
 import edu.dhbw.sos.helper.XMLParam;
@@ -180,13 +181,14 @@ public class Suggestion implements Comparable<Suggestion> {
 		return result;
 	}
 	
-	public void removeUnusedParameters(String[] paramNames) {
-		XMLParam[] newParams = new XMLParam[paramNames.length];
+	
+	public void removeUnusedParameters(List<String> paramNames) {
+		XMLParam[] newParams = new XMLParam[paramNames.size()];
 		int k = 0;
 		for (int i = 0; i < this.parameters.length && k < newParams.length; i++) {
 			boolean isNeeded = false;
-			for (int j = 0; j < paramNames.length; i++) {
-				if (this.parameters[i].getName().compareTo(paramNames[j]) == 0) {
+			for (int j = 0; j < paramNames.size(); j++) {
+				if (this.parameters[i].getName().compareTo(paramNames.get(j)) == 0) {
 					isNeeded = true;
 					break;
 				}
@@ -196,6 +198,7 @@ public class Suggestion implements Comparable<Suggestion> {
 				k++;
 			}
 		}
+		this.parameters = newParams;
 	}
 
 	
