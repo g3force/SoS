@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 
 import com.thoughtworks.xstream.XStream;
 
+import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.Courses;
 
 
@@ -30,6 +31,32 @@ import edu.dhbw.sos.course.Courses;
  */
 public class CourseSaver {
 	private static final Logger	logger	= Logger.getLogger(CourseSaver.class);
+
+	
+	public static void saveCourse(Course course, String savepath) {
+		try {
+			File path = new File(new File(savepath).getParent());
+			if (!path.isDirectory()) {
+				if (!path.mkdirs()) {
+					logger.error("Could not create " + path.getPath() + " for saving.");
+					return;
+				}
+			}
+			XStream xstream = new XStream();
+			String xml = xstream.toXML(course);
+			try {
+				FileWriter fw = new FileWriter(savepath + course.getName() + ".xml", false);
+				fw.write(xml);
+				fw.flush();
+				fw.close();
+			} catch (IOException io) {
+				io.printStackTrace();
+			}
+		} catch (NullPointerException ne) {
+			ne.printStackTrace();
+		}
+	}
+
 
 	public static void saveCourses(Courses courses, String savepath) {
 		// XMLOutputFactory factory = XMLOutputFactory.newInstance();

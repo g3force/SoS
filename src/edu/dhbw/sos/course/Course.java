@@ -9,6 +9,7 @@
  */
 package edu.dhbw.sos.course;
 
+import java.io.File;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -18,6 +19,7 @@ import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.influence.EInfluenceType;
 import edu.dhbw.sos.course.influence.Influence;
+import edu.dhbw.sos.course.io.CourseSaver;
 import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.Lecture;
 import edu.dhbw.sos.course.lecture.TimeBlock;
@@ -594,8 +596,19 @@ public class Course {
 	}
 	
 	
-	public void setName(String name) {
-		this.name = name;
+	public void setName(String _name) {
+		try {
+			File fh = new File(System.getProperty("user.home") + "/.sos/" + this.name + ".xml");
+			this.name = _name;
+			if (fh.exists()) {
+				fh.delete();
+			}
+			CourseSaver.saveCourse(this, System.getProperty("user.home") + "/.sos/");
+			fh = null;
+		} catch (SecurityException io) {
+			io.printStackTrace();
+			this.name = _name; // name needs to be set no matter what.
+		}
 	}
 	
 	
