@@ -206,7 +206,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		float value = 100;
+		float value = 20;
 		// right click
 		if (e.getButton() == MouseEvent.BUTTON3)
 			value *= -1;
@@ -257,7 +257,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		setCurrentTime(time);
 		// stop the simulation to make the correct deletions or to simulate to the correct point
 		stop();
-		course.setTime(time);
+		course.setTime(currentTime, time);
 		// if simulation was running, set running again
 		if (run)
 			run();
