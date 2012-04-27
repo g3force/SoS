@@ -84,7 +84,6 @@ public class SuggestionManager implements ISuggestionsObserver, MouseListener {
 	 */
 	public boolean removeSuggestion(Suggestion s) {
 		if (currentSuggestions.contains(s)) {
-			// TODO make influence of s available for simulation
 			currentSuggestions.remove(s);
 			return true;
 		} else {
@@ -188,11 +187,13 @@ public class SuggestionManager implements ISuggestionsObserver, MouseListener {
 	}
 	
 	
-	// DEBUG prints all loaded suggestions
-	public void print() {
-		for (Suggestion s : availableSuggestions) {
-			System.out.println(xs.toXML(s));
+	private Suggestion lookUpSuggestion(String text) {
+		for (Suggestion s : currentSuggestions) {
+			if (s.getMessage().compareTo(text) == 0) {
+				return s;
+			}
 		}
+		return null;
 	}
 	
 	
@@ -206,8 +207,13 @@ public class SuggestionManager implements ISuggestionsObserver, MouseListener {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO bene Auto-generated method stub
-		String bla = ((JLabel) e.getSource()).getText();
-		
+		String sugText = ((JLabel) e.getSource()).getText();
+		Suggestion clicked = this.lookUpSuggestion(sugText);
+		if (clicked != null) {
+			// TODO pass suggestion to simulation
+			this.removeSuggestion(clicked);
+			this.updateSuggestions();
+		}
 	}
 	
 	
@@ -221,7 +227,6 @@ public class SuggestionManager implements ISuggestionsObserver, MouseListener {
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO bene Auto-generated method stub
-		
 	}
 	
 	
