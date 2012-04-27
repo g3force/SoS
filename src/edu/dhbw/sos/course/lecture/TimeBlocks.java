@@ -9,20 +9,23 @@
  */
 package edu.dhbw.sos.course.lecture;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
 
+import edu.dhbw.sos.course.Course;
+
 
 /**
- * This class holds is a LinkedListof type TimeBlock wich hold as all TimeBlocks of a lecture and gives methods for
+ * This class holds is a LinkedListof type TimeBlock which hold as all TimeBlocks of a lecture and gives methods for
  * adding, moving and removing blocks.
  * @author NicolaiO, andres
  * 
  */
-public class TimeBlocks extends LinkedList<TimeBlock> {
-	private transient static final long		serialVersionUID	= -5463421486049533791L;
-	private transient static final Logger	logger				= Logger.getLogger(TimeBlocks.class);
+public class TimeBlocks implements Iterable<TimeBlock> {
+	private static final Logger	logger	= Logger.getLogger(TimeBlocks.class);
+	private LinkedList<TimeBlock>	timeblocks;
 	
 	
 	/**
@@ -30,16 +33,59 @@ public class TimeBlocks extends LinkedList<TimeBlock> {
 	 * @author NicolaiO, andres
 	 */
 	public TimeBlocks(LinkedList<TimeBlock> timeblocks) {
-		super(timeblocks);
+		this.timeblocks = timeblocks;
 	}
 	
 	
+	public boolean add(TimeBlock timeblock) {
+		return timeblocks.add(timeblock);
+	}
+	
+	
+	public boolean remove(Object timeblock) {
+		return timeblocks.remove(timeblock);
+	}
+	
+	
+	@Override
+	public Iterator<TimeBlock> iterator() {
+		return timeblocks.iterator();
+	}
+	
+	
+	public int size() {
+		return timeblocks.size();
+	}
+	
+	
+	/**
+	 * TODO NicolaiO, add comment!
+	 * 
+	 * @param currentCourse
+	 * @return
+	 * @author NicolaiO
+	 */
+	public int indexOf(Course currentCourse) {
+		return timeblocks.indexOf(currentCourse);
+	}
+	
+	
+	public void clear() {
+		timeblocks.clear();
+	}
+	
+
+	public TimeBlock get(int i) {
+		return timeblocks.get(i);
+	}
+
+
 	/**
 	 * Constructor with empty LinkedList
 	 * @author NicolaiO, andres
 	 */
 	public TimeBlocks() {
-		super();
+		timeblocks = new LinkedList<TimeBlock>();
 	}
 	
 	
@@ -51,20 +97,10 @@ public class TimeBlocks extends LinkedList<TimeBlock> {
 	 */
 	public int getTotalLength() {
 		int sum = 0;
-		for (TimeBlock tb : this) {
+		for (TimeBlock tb : timeblocks) {
 			sum += tb.getLen();
 		}
 		return sum;
-	}
-	
-	
-	/**
-	 * Adds a TimeBlock at the end
-	 * 
-	 * @param timeBlock the timeBlock to add
-	 */
-	public void addTimeBlock(TimeBlock timeBlock) {
-		this.add(timeBlock);
 	}
 	
 	
@@ -78,8 +114,8 @@ public class TimeBlocks extends LinkedList<TimeBlock> {
 	public void addTimeBlockBetween(TimeBlock timeBlock, int pos) {
 		int index = getIndexAtPos(pos);
 		// int length = timeBlock.getLen();
-		this.add(index, timeBlock);
-		trimTBlen(index, this.get(index).getLen());
+		timeblocks.add(index, timeBlock);
+		trimTBlen(index, timeblocks.get(index).getLen());
 	}
 	
 	
@@ -93,18 +129,18 @@ public class TimeBlocks extends LinkedList<TimeBlock> {
 	 */
 	private void trimTBlen(int index, int lengthToTrim) {
 		// Wenn das aktuelle Element das letzte ist, wird die verbleibende Zeit zur Gesamtlänge hinzugefügt
-		if (this.size() == (index + 1)) {
+		if (timeblocks.size() == (index + 1)) {
 			// length += lengthToTrim;
 			return;
 		}
-		int lengthNext = this.get(index + 1).getLen();
+		int lengthNext = timeblocks.get(index + 1).getLen();
 		if (lengthNext - lengthToTrim >= 0) {
 			// wenn der verschobene Block - neuer Block größer als 0 min ist, dann soll der verschobene Block verkürzt
 			// werden
-			this.get(index + 1).setLen(lengthNext - lengthToTrim);
+			timeblocks.get(index + 1).setLen(lengthNext - lengthToTrim);
 		} else {
 			// Wenn verschobene Block Länge - neue Block Länge kleiner 0 ist wird der verschobene Blcok gelöscht
-			this.remove(index + 1);
+			timeblocks.remove(index + 1);
 			trimTBlen(index, lengthToTrim - lengthNext);
 		}
 		return;
@@ -125,10 +161,10 @@ public class TimeBlocks extends LinkedList<TimeBlock> {
 	 */
 	private int getIndexAtPos(int pos) {
 		int index = 0;
-		int time = this.get(index).getLen();
+		int time = timeblocks.get(index).getLen();
 		while (pos > time) {
 			index++;
-			time += this.get(index).getLen();
+			time += timeblocks.get(index).getLen();
 		}
 		return index;
 	}
@@ -144,7 +180,7 @@ public class TimeBlocks extends LinkedList<TimeBlock> {
 	public TimeBlock getTimeBlockAtTime(int pos) {
 		TimeBlock result;
 		try {
-			result = this.get(getIndexAtPos(pos));
+			result = timeblocks.get(getIndexAtPos(pos));
 		} catch (IndexOutOfBoundsException e) {
 			logger.warn("No TimeBlock. Create Theory Block of length 1");
 			result = new TimeBlock(1, BlockType.theory);

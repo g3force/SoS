@@ -40,7 +40,6 @@ import org.apache.log4j.Logger;
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.Courses;
 import edu.dhbw.sos.course.ICurrentCourseObserver;
-import edu.dhbw.sos.course.lecture.TimeBlocks;
 import edu.dhbw.sos.helper.Messages;
 import edu.dhbw.sos.simulation.ISpeedObserver;
 import edu.dhbw.sos.simulation.SimController;
@@ -63,7 +62,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	// label where speed of playback is shown
 	private JLabel						lblSpeed;
 	// reference to the timeblocks to display
-	private TimeBlocks				timeBlocks;
+	// private TimeBlocks timeBlocks;
 	
 	private JFormattedTextField	txtFrom;
 	
@@ -77,7 +76,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	public PlanPanel(SimController simController, Courses courses) {
 		Course course = courses.getCurrentCourse();
 		// get data
-		timeBlocks = new TimeBlocks(course.getLecture().getTimeBlocks());
+		// timeBlocks = new TimeBlocks(course.getLecture().getTimeBlocks());
 		
 		// init this Panel
 		this.setBorder(BorderFactory.createLineBorder(Color.black));

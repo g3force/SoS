@@ -88,6 +88,7 @@ public class SPaintArea extends JPanel {
 					diagram = new Diagram(new LinkedList<Float>());
 					diagram.setLocation(new Point(10, 10));
 					diagram.setMaxY(100.0f);
+					diagram.setRescaleY(false);
 					diagram.setDrawAxis(true);
 				}
 				if (diagrams.size() > 1) {
@@ -130,6 +131,8 @@ public class SPaintArea extends JPanel {
 					diagram.setData(newData.get(i));
 					diagram.setLocation(new Point(10, 10));
 					diagram.setDrawAxis(true);
+					diagram.setMaxY(100.0f);
+					diagram.setRescaleY(false);
 					diagrams.add(diagram);
 				}
 				for (Entry<Integer, CalcVector> cv : course.getHistStatState().entrySet()) {

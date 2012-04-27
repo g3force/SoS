@@ -265,7 +265,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 			index = widthLeft = widthRight = -1;
 			tbs.clear();
 			for (MovableBlock mb : movableBlocks) {
-				tbs.addTimeBlock(mb.getTimeBlock());
+				tbs.add(mb.getTimeBlock());
 				// mb.setRelMouseLocation(new Point(0, 0));
 			}
 			// this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

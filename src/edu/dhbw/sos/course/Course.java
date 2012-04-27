@@ -101,11 +101,11 @@ public class Course {
 		
 		influence = new Influence();
 		lecture = new Lecture(new Date());
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.theory));
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(20, BlockType.pause));
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.exercise));
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.pause));
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.group));
+		lecture.getTimeBlocks().add(new TimeBlock(10, BlockType.theory));
+		lecture.getTimeBlocks().add(new TimeBlock(20, BlockType.pause));
+		lecture.getTimeBlocks().add(new TimeBlock(30, BlockType.exercise));
+		lecture.getTimeBlocks().add(new TimeBlock(10, BlockType.pause));
+		lecture.getTimeBlocks().add(new TimeBlock(30, BlockType.group));
 		
 	}
 	
@@ -132,6 +132,7 @@ public class Course {
 	
 	private Object readResolve() {
 		init();
+		getPlace(0, 0).getActualState().printCalcVector("COURSE INIT");
 		return this;
 	}
 
@@ -482,6 +483,7 @@ public class Course {
 			simulationStep(actual);
 			actual++;
 		}
+		notifyStudentsObservers();
 	}
 	
 	

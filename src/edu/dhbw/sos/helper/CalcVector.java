@@ -76,7 +76,6 @@ public class CalcVector implements Cloneable {
 		if (index >= this.vector.length) {
 			throw new IllegalArgumentException("Cannot access index outside of vector");
 		}
-		if (value < 1.5 && value > 0.5)
 		this.vector[index] = value;
 	}
 	
