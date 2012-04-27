@@ -62,7 +62,22 @@ public class CourseLoader {
 					File xmlfile = new File(savepath + dir.list()[i]);
 					if (xmlfile.length() > 0) {
 						try{
-							allCourses.add((Course) xstream.fromXML(xmlfile));
+							/*
+							 * BufferedReader fr;
+							 * try {
+							 * fr = new BufferedReader(new FileReader(xmlfile));
+							 * String tmp = "";
+							 * while ((tmp = fr.readLine()) != null) {
+							 * System.out.println("File: " + tmp);
+							 * }
+							 * } catch (IOException err) {
+							 * // TODO SebastianN Auto-generated catch block
+							 * err.printStackTrace();
+							 * }
+							 */
+							Course newCourse = (Course) xstream.fromXML(xmlfile);
+							
+							allCourses.add(newCourse);
 						} catch (CannotResolveClassException e) {
 							logger.fatal("ALARM! ALARM! ALARM! Basti mach das heile");
 						}
