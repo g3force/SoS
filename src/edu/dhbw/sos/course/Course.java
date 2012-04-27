@@ -132,6 +132,7 @@ public class Course {
 	
 	private Object readResolve() {
 		init();
+		getPlace(0, 0).getActualState().printCalcVector("COURSE INIT");
 		return this;
 	}
 
@@ -482,6 +483,7 @@ public class Course {
 			simulationStep(actual);
 			actual++;
 		}
+		notifyStudentsObservers();
 	}
 	
 	
