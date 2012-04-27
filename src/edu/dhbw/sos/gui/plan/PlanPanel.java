@@ -17,6 +17,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,19 +26,20 @@ import java.util.Date;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.InputVerifier;
-import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.text.DateFormatter;
+import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
+
+import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.Courses;
 import edu.dhbw.sos.course.ICurrentCourseObserver;
-import edu.dhbw.sos.course.lecture.TimeBlocks;
 import edu.dhbw.sos.helper.Messages;
 import edu.dhbw.sos.simulation.ISpeedObserver;
 import edu.dhbw.sos.simulation.SimController;
@@ -52,13 +55,14 @@ import edu.dhbw.sos.simulation.SimController;
  * 
  */
 public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserver, ICurrentCourseObserver {
+	private static final Logger	logger				= Logger.getLogger(PlanPanel.class);
 	private static final long		serialVersionUID	= -1665784555881941508L;
 	// paintArea is the part of the Panel, where some drawings have to be done
 	private final PPaintArea		paintArea;
 	// label where speed of playback is shown
 	private JLabel						lblSpeed;
 	// reference to the timeblocks to display
-	private TimeBlocks				timeBlocks;
+	// private TimeBlocks timeBlocks;
 	
 	private JFormattedTextField	txtFrom;
 	
@@ -72,7 +76,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	public PlanPanel(SimController simController, Courses courses) {
 		Course course = courses.getCurrentCourse();
 		// get data
-		timeBlocks = new TimeBlocks(course.getLecture().getTimeBlocks());
+		// timeBlocks = new TimeBlocks(course.getLecture().getTimeBlocks());
 		
 		// init this Panel
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -159,36 +163,49 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 			// TODO andres Auto-generated catch block
 			err.printStackTrace();
 		}
+		// new RegexFormatter("(([0-1][0-9])|(2[0-3])):([0-5][0-9])")
+		txtFrom = new JFormattedTextField();
+
 		txtFrom.setText(start);
 		txtFrom.setColumns(5);
 		JTextField txtTo = new JTextField(end, 5);
 		txtTo.setEditable(false);
-		
-		txtFrom.addActionListener(new StartTextFieldListener());
+		txtFrom.setFormatterFactory(new DefaultFormatterFactory(new DateFormatter(new SimpleDateFormat("HH:mm"))));
+		txtFrom.addPropertyChangeListener("value", new PropertyChangeListener() {
 
-		txtFrom.setInputVerifier(new InputVerifier() {
 			@Override
-			public boolean verify(JComponent input) {
-				if ((input instanceof JFormattedTextField) && ((JFormattedTextField) input).isEditValid()) {
-					((JFormattedTextField) input).setFocusLostBehavior(JFormattedTextField.COMMIT);
-					return true;
-				}
-				((JFormattedTextField) input).setFocusLostBehavior(JFormattedTextField.REVERT);
-				return false;
-			}
-			
-			
-			@Override
-			public boolean shouldYieldFocus(javax.swing.JComponent input) {
-				if (!verify(input)) {
-					input.setForeground(java.awt.Color.RED);
-					return false;
-				} else {
-					input.setForeground(java.awt.Color.BLACK);
-					return true;
-				}
+			public void propertyChange(PropertyChangeEvent evt) {
+				System.out.println(txtFrom.getValue());
+
 			}
 		});
+		
+		// txtFrom.addActionListener(new StartTextFieldListener());
+		//
+		// txtFrom.setInputVerifier(new InputVerifier() {
+		// @Override
+		// public boolean verify(JComponent input) {
+		// if ((input instanceof JFormattedTextField) && ((JFormattedTextField) input).isEditValid()) {
+		// ((JFormattedTextField) input).getFormatter();
+		// ((JFormattedTextField) input).setFocusLostBehavior(JFormattedTextField.COMMIT);
+		// return true;
+		// }
+		// ((JFormattedTextField) input).setFocusLostBehavior(JFormattedTextField.REVERT);
+		// return false;
+		// }
+		//
+		//
+		// @Override
+		// public boolean shouldYieldFocus(javax.swing.JComponent input) {
+		// if (!verify(input)) {
+		// input.setForeground(java.awt.Color.RED);
+		// return false;
+		// } else {
+		// input.setForeground(java.awt.Color.BLACK);
+		// return true;
+		// }
+		// }
+		// });
 
 		lblFrom.setAlignmentX(Component.LEFT_ALIGNMENT);
 		lblTo.setAlignmentX(Component.LEFT_ALIGNMENT);

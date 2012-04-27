@@ -52,10 +52,10 @@ public class Course {
 	private transient LinkedList<String>							suggestions;
 	
 	// persistent data
+	private Lecture														lecture;
 	private IPlace[][]													students;
 	private Influence														influence;
 	private String															name;
-	private Lecture														lecture;
 	private LinkedList<String>											parameters;
 
 	// the student and property that was selected in the GUI (by hovering over the student)
@@ -90,7 +90,7 @@ public class Course {
 					Student newStud = new Student(parameters.size());
 					
 					for (int i = 0; i < 4; i++) {
-						newStud.addValueToChangeVector(i, (float) (Math.random() - 0.5));
+						newStud.addValueToChangeVector(i, (float) (Math.random() * 100) - 50);
 						newStud.addValueToStateVector(i, (int) (Math.random() * 100));
 					}
 					// ((Student)students[y][x]).
@@ -101,18 +101,17 @@ public class Course {
 		
 		influence = new Influence();
 		lecture = new Lecture(new Date());
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.theory));
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(20, BlockType.pause));
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.exercise));
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(10, BlockType.pause));
-		lecture.getTimeBlocks().addTimeBlock(new TimeBlock(30, BlockType.group));
+		lecture.getTimeBlocks().add(new TimeBlock(10, BlockType.theory));
+		lecture.getTimeBlocks().add(new TimeBlock(20, BlockType.pause));
+		lecture.getTimeBlocks().add(new TimeBlock(30, BlockType.exercise));
+		lecture.getTimeBlocks().add(new TimeBlock(10, BlockType.pause));
+		lecture.getTimeBlocks().add(new TimeBlock(30, BlockType.group));
 		
 	}
 	
 	
 	private void init() {
 		simController = new SimController(this);
-		lecture = new Lecture(new Date());
 
 		studentsObservers = new LinkedList<IStudentsObserver>();
 		selectedCourseObservers = new LinkedList<ISelectedStudentObserver>();
@@ -132,6 +131,7 @@ public class Course {
 	
 	private Object readResolve() {
 		init();
+		getPlace(0, 0).getActualState().printCalcVector("COURSE INIT");
 		return this;
 	}
 
@@ -482,6 +482,7 @@ public class Course {
 			simulationStep(actual);
 			actual++;
 		}
+		notifyStudentsObservers();
 	}
 	
 	
