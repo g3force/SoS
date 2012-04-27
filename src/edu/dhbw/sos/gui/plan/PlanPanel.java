@@ -13,24 +13,29 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Image;
-import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
+import javax.swing.InputVerifier;
+import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.text.MaskFormatter;
 
 import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.course.Courses;
+import edu.dhbw.sos.course.ICurrentCourseObserver;
 import edu.dhbw.sos.course.lecture.TimeBlocks;
 import edu.dhbw.sos.helper.Messages;
 import edu.dhbw.sos.simulation.ISpeedObserver;
@@ -46,23 +51,26 @@ import edu.dhbw.sos.simulation.SimController;
  * @author NicolaiO
  * 
  */
-public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserver {
-	private static final long	serialVersionUID	= -1665784555881941508L;
+public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserver, ICurrentCourseObserver {
+	private static final long		serialVersionUID	= -1665784555881941508L;
 	// paintArea is the part of the Panel, where some drawings have to be done
-	private final PPaintArea	paintArea;
+	private final PPaintArea		paintArea;
 	// label where speed of playback is shown
-	private JLabel					lblSpeed;
+	private JLabel						lblSpeed;
 	// reference to the timeblocks to display
-	private TimeBlocks			timeBlocks;
+	private TimeBlocks				timeBlocks;
 	
+	private JFormattedTextField	txtFrom;
 	
+
 	/**
 	 * Initialize the PlanPanel with GUIData
 	 * 
 	 * @param data general GUIData object with needed information for GUI
 	 * @author NicolaiO
 	 */
-	public PlanPanel(SimController simController, Course course) {
+	public PlanPanel(SimController simController, Courses courses) {
+		Course course = courses.getCurrentCourse();
 		// get data
 		timeBlocks = new TimeBlocks(course.getLecture().getTimeBlocks());
 		
@@ -137,17 +145,63 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		
 		
 		// time
-		JLabel lblFromTo = new JLabel(Messages.getString("Lecture.FROMTO"), SwingConstants.LEFT);
-		JTextField txtFrom = new JTextField("08:00", 5);
-		JTextField txtTo = new JTextField("11:00", 5);
-		lblFromTo.setAlignmentX(Component.LEFT_ALIGNMENT);
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+		String start = timeFormat.format(course.getLecture().getStart());
+		Date endTime = new Date();
+		endTime.setTime(course.getLecture().getStart().getTime() + course.getLecture().getLength() * 60 * 1000);
+		String end = timeFormat.format(endTime);
+
+		JLabel lblFrom = new JLabel(Messages.getString("Lecture.FROM"), SwingConstants.LEFT);
+		JLabel lblTo = new JLabel(Messages.getString("Lecture.TO"), SwingConstants.LEFT);
+		try {
+			txtFrom = new JFormattedTextField(new MaskFormatter("##:##"));
+		} catch (ParseException err) {
+			// TODO andres Auto-generated catch block
+			err.printStackTrace();
+		}
+		txtFrom.setText(start);
+		txtFrom.setColumns(5);
+		JTextField txtTo = new JTextField(end, 5);
+		txtTo.setEditable(false);
+		
+		txtFrom.addActionListener(new StartTextFieldListener());
+
+		txtFrom.setInputVerifier(new InputVerifier() {
+			@Override
+			public boolean verify(JComponent input) {
+				if ((input instanceof JFormattedTextField) && ((JFormattedTextField) input).isEditValid()) {
+					((JFormattedTextField) input).setFocusLostBehavior(JFormattedTextField.COMMIT);
+					return true;
+				}
+				((JFormattedTextField) input).setFocusLostBehavior(JFormattedTextField.REVERT);
+				return false;
+			}
+			
+			
+			@Override
+			public boolean shouldYieldFocus(javax.swing.JComponent input) {
+				if (!verify(input)) {
+					input.setForeground(java.awt.Color.RED);
+					return false;
+				} else {
+					input.setForeground(java.awt.Color.BLACK);
+					return true;
+				}
+			}
+		});
+
+		lblFrom.setAlignmentX(Component.LEFT_ALIGNMENT);
+		lblTo.setAlignmentX(Component.LEFT_ALIGNMENT);
 		txtFrom.setAlignmentX(Component.LEFT_ALIGNMENT);
 		txtTo.setAlignmentX(Component.LEFT_ALIGNMENT);
 		txtFrom.setMaximumSize(new Dimension(40, 0));
 		txtTo.setMaximumSize(new Dimension(40, 0));
-		sidePanel.add(lblFromTo);
-		sidePanel.add(txtFrom);
-		sidePanel.add(txtTo);
+		JPanel timePanel = new JPanel();
+		timePanel.add(lblFrom);
+		timePanel.add(txtFrom);
+		timePanel.add(lblTo);
+		timePanel.add(txtTo);
+		sidePanel.add(timePanel);
 	}
 	
 	
@@ -176,5 +230,19 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	@Override
 	public void speedChanged(int speed) {
 		lblSpeed.setText(speed + "x");
+	}
+	
+	private class StartTextFieldListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent evt) {
+
+		}
+	}
+	
+	
+	@Override
+	public void updateCurrentCourse(Course course) {
+		// TODO andres Auto-generated method stub
+		
 	}
 }

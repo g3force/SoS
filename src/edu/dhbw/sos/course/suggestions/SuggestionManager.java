@@ -42,18 +42,17 @@ public class SuggestionManager implements ISuggestionsObserver {
 	private LinkedList<Suggestion>	availableSuggestions;
 	private LinkedList<Suggestion>	currentSuggestions;
 	private LinkedList<String>			courseParams;
-	private int								paramCount;
 	private XStream						xs;
 	
 	
 	public SuggestionManager(LinkedList<String> params) {
 		this.courseParams = params;
-		this.paramCount = params.size();
 		availableSuggestions = new LinkedList<Suggestion>();
 		currentSuggestions = new LinkedList<Suggestion>();
 		
 		// init xml writer/reader
 		xs = new XStream();
+		// aliases are not required for functionality but for improving readability of the generated xml file.
 		xs.alias("parameters", XMLParam[].class);
 		xs.alias("param", XMLParam.class);
 		xs.alias("suggestion", Suggestion.class);
@@ -65,7 +64,7 @@ public class SuggestionManager implements ISuggestionsObserver {
 			if (writeDummySuggestions()) {
 				if (loadSuggestionsFromFile() != 1) {
 					logger.error("Cannot create a suggestions.xml file. Please check the permission of \"" + SUGGESTION_FILE
-							+ "\".");
+							+ "\" and the surrounding folder.");
 				}
 			}
 		}
@@ -80,13 +79,19 @@ public class SuggestionManager implements ISuggestionsObserver {
 	 * @author bene
 	 */
 	public boolean removeSuggestion(Suggestion s) {
-		return true;
+		if (currentSuggestions.contains(s)) {
+			// TODO make influence of s available for simulation
+			currentSuggestions.remove(s);
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	
 	@Override
 	public void updateSuggestions() {
-		// TODO bene Auto-generated method stub
+		// TODO call remove suggestion and afterwards update GUI
 		
 	}
 	
@@ -158,7 +163,9 @@ public class SuggestionManager implements ISuggestionsObserver {
 	private boolean haveToAddSuggestion(Suggestion s) {
 		String[] suggestionParamNames = s.getParamNames();
 		// suggestion contains less parameters than the course and can therefore not be used
-		if (suggestionParamNames.length < courseParams.size()) {
+		// OR course does not have any parameters (valid suggestions cannot be determined if there are no course
+		// parameters).
+		if (suggestionParamNames.length < courseParams.size() || courseParams.size() == 0) {
 			return false;
 		}
 		boolean result = true;
