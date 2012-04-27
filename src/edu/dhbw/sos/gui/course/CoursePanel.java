@@ -62,7 +62,7 @@ public class CoursePanel extends JPanel implements ComponentListener, ICurrentCo
 	private float						border;
 	// student that should be highlighted at the moment
 	private StudentCircle			hoveredStudent		= null;
-	private StudentCircle[][]		studentCircles		= new StudentCircle[0][0];					;
+	private StudentCircle[][]		studentCircles		= new StudentCircle[0][0];
 	
 	
 	/**

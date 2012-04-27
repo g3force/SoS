@@ -73,7 +73,7 @@ public class CourseSaver {
 		try {
 			File path = new File(new File(savepath).getParent());
 			if (!path.isDirectory()) {
-				if(!path.mkdirs()) {
+				if (!path.mkdirs()) {
 					logger.error("Could not create " + path.getPath() + " for saving.");
 					return;
 				}

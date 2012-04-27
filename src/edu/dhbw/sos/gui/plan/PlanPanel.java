@@ -13,25 +13,18 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import edu.dhbw.sos.course.Course;
-import edu.dhbw.sos.course.lecture.TimeBlocks;
 import edu.dhbw.sos.helper.Messages;
 import edu.dhbw.sos.simulation.ISpeedObserver;
 import edu.dhbw.sos.simulation.SimController;
@@ -53,7 +46,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	// label where speed of playback is shown
 	private JLabel					lblSpeed;
 	// reference to the timeblocks to display
-	private TimeBlocks			timeBlocks;
+	// private TimeBlocks timeBlocks;
 	
 	
 	/**
@@ -64,7 +57,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	 */
 	public PlanPanel(SimController simController, Course course) {
 		// get data
-		timeBlocks = new TimeBlocks(course.getLecture().getTimeBlocks());
+		// timeBlocks = new TimeBlocks(course.getLecture().getTimeBlocks());
 		
 		// init this Panel
 		this.setBorder(BorderFactory.createLineBorder(Color.black));

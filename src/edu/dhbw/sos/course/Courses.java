@@ -9,6 +9,7 @@
  */
 package edu.dhbw.sos.course;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
@@ -24,55 +25,55 @@ import edu.dhbw.sos.course.io.CourseSaver;
  * @author NicolaiO
  * 
  */
-public class Courses extends LinkedList<Course> {
-	private static final long							serialVersionUID				= 1L;
+public class Courses implements Iterable<Course> {
 	private static final Logger						logger							= Logger.getLogger(Courses.class);
 	private Course											curCourse;
 	private LinkedList<ICurrentCourseObserver>	currentCourseOberservers	= new LinkedList<ICurrentCourseObserver>();
 	private LinkedList<ICoursesListObserver>		coursesListOberservers		= new LinkedList<ICoursesListObserver>();
-	private String savepath = "";
+	private String											savepath							= "";
+	private LinkedList<Course>							courses;
 	
+
 	/**
 	 * TODO NicolaiO, add comment!
 	 * 
 	 * @author NicolaiO
 	 */
 	public Courses(String savepath) {
-		super();
-		this.savepath = savepath;/*
-										 * if (this.size() == 0) {
-										 * logger.fatal("There are no courses. This should not happened");
-										 * } else if (this.size() == 1) {
-										 * curCourse = this.get(0);
-										 * } else {
-										 * // TODO has to be handled yet
-										 * curCourse = this.get(0);
-										 * }
-										 */
+		courses = new LinkedList<Course>();
+		this.savepath = savepath;
+		
+		if (courses.size() == 0) {
+			logger.fatal("There are no courses. This should not happened");
+		} else if (courses.size() == 1) {
+			curCourse = courses.get(0);
+		} else {
+			// TODO has to be handled yet
+			curCourse = courses.get(0);
+		}
+
 	}
 	
 	
-	@Override
 	public boolean add(Course course) {
-		boolean res = super.add(course);
+		boolean res = courses.add(course);
 		CourseSaver.saveCourses(this, savepath);
 		notifyCoursesListObservers();
 		return res;
 	}
 	
 	
-	@Override
 	public boolean remove(Object course) {
-		if(this.size()<2)
+		if (courses.size() < 2)
 			return false;
 		boolean changeCurCourse = false;
-		if(curCourse.equals(course)) {
+		if (curCourse.equals(course)) {
 			changeCurCourse = true;
 		}
-		boolean res = super.remove(course);
+		boolean res = courses.remove(course);
 		CourseSaver.removeFile((Course) course, savepath);
-		if(changeCurCourse) {
-			setCurrentCourse(this.get(0));
+		if (changeCurCourse) {
+			setCurrentCourse(courses.get(0));
 		}
 		CourseSaver.saveCourses(this, savepath);
 		notifyCoursesListObservers();
@@ -80,6 +81,34 @@ public class Courses extends LinkedList<Course> {
 	}
 	
 	
+	@Override
+	public Iterator<Course> iterator() {
+		return courses.iterator();
+	}
+	
+	
+	public int size() {
+		return courses.size();
+	}
+	
+	
+	/**
+	 * TODO NicolaiO, add comment!
+	 * 
+	 * @param currentCourse
+	 * @return
+	 * @author NicolaiO
+	 */
+	public int indexOf(Course currentCourse) {
+		return courses.indexOf(currentCourse);
+	}
+	
+	
+	public Course get(int i) {
+		return courses.get(i);
+	}
+
+
 	public void notifyCoursesListObservers() {
 		for (ICoursesListObserver clo : coursesListOberservers) {
 			clo.updateCoursesList();
@@ -115,7 +144,7 @@ public class Courses extends LinkedList<Course> {
 			notifyCurrentCourseObservers();
 			return;
 		}
-		for (Course c : this) {
+		for (Course c : courses) {
 			if (c.getName().equals((String) newCurrent)) {
 				curCourse = c;
 				notifyCurrentCourseObservers();
