@@ -55,12 +55,18 @@ public class Student implements IPlace, Cloneable {
 	
 	private void init() {
 		this.actualState = new CalcVector(changeVector.size());
+		for (int i = 0; i < changeVector.size(); i++) {
+			float changeVectorFloat = changeVector.getValueAt(i);
+			this.actualState.setValueAt(i, changeVectorFloat * 50);
+			this.getActualState().printCalcVector("STUDENT2");
+		}
 		this.historyStates = new LinkedHashMap<Integer, CalcVector>();
 	}
 	
 	
 	private Object readResolve() {
 		init();
+		getActualState().printCalcVector("STUDENT");
 		return this;
 	}
 
@@ -150,7 +156,7 @@ public class Student implements IPlace, Cloneable {
 		
 		// time depending
 		// TODO: bring all values to an average value by time
-		
+		// addVector.multiply(0.1);
 		this.addToStateVector(addVector, x, y);
 	}
 	
@@ -286,7 +292,11 @@ public class Student implements IPlace, Cloneable {
 		if (index >= changeVector.size()) {
 			throw new IndexOutOfBoundsException();
 		}
-		changeVector.setValueAt(index, changeVector.getValueAt(index) + value);
+		if (value < 1.5)
+			this.changeVector.setValueAt(index, 1.5f);
+		else if (value > 0.5)
+			this.changeVector.setValueAt(index, 0.5f);
+		changeVector.setValueAt(index, changeVector.getValueAt(index) + value / 100);
 	}
 	
 	
