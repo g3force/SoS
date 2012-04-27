@@ -85,6 +85,8 @@ public class MainFrame extends JFrame implements WindowListener {
 		// some subscriptions
 		rightPanel.subscribeEditMode(simController);
 		rightPanel.subscribeEditMode(coursePanel);
+		courses.subscribeCurrentCourse(studentPanel);
+		// courses.subscribeCurrentCourse(planPanel); // TODO Daniel
 		simController.subscribeSpeed(planPanel);
 		
 		// put BottomPanel and StatusBar in a new Panel
@@ -109,7 +111,7 @@ public class MainFrame extends JFrame implements WindowListener {
 		
 		logger.debug("Initialized.");
 	}
-	
+
 	
 	@Override
 	public void windowOpened(WindowEvent e) {

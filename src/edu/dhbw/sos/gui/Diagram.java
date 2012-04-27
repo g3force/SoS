@@ -143,7 +143,7 @@ public class Diagram {
 	 */
 	private float getMaxY() {
 		if (rescaleY) {
-			float max = 0;
+			float max = 1f;
 			for (float val : data) {
 				if (val > max)
 					max = val;

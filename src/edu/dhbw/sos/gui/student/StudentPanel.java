@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.course.ICurrentCourseObserver;
 import edu.dhbw.sos.course.ISelectedStudentObserver;
 import edu.dhbw.sos.helper.Messages;
 
@@ -33,7 +34,7 @@ import edu.dhbw.sos.helper.Messages;
  * @author NicolaiO
  * 
  */
-public class StudentPanel extends JPanel implements ISelectedStudentObserver {
+public class StudentPanel extends JPanel implements ISelectedStudentObserver, ICurrentCourseObserver {
 	private static final Logger	logger				= Logger.getLogger(StudentPanel.class);
 	private static final long		serialVersionUID	= 722304874911423036L;
 	private final SPaintArea		paintArea;
@@ -76,6 +77,12 @@ public class StudentPanel extends JPanel implements ISelectedStudentObserver {
 			lblParameterName.setText(Messages.getString("StudentPanel.AVG"));
 			paintArea.update(course);
 		}
+	}
+	
+	
+	@Override
+	public void updateCurrentCourse(Course course) {
+		this.course = course;
 	}
 	
 }
