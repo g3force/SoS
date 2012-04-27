@@ -9,6 +9,8 @@
  */
 package edu.dhbw.sos.course.suggestions;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.EOFException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -18,6 +20,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 import java.util.Random;
+
+import javax.swing.JLabel;
 
 import org.apache.log4j.Logger;
 
@@ -33,7 +37,7 @@ import edu.dhbw.sos.helper.XMLParam;
  * @author bene
  * 
  */
-public class SuggestionManager implements ISuggestionsObserver {
+public class SuggestionManager implements ISuggestionsObserver, MouseListener {
 	private static final Logger		logger				= Logger.getLogger(SuggestionManager.class);
 
 
@@ -189,5 +193,41 @@ public class SuggestionManager implements ISuggestionsObserver {
 		for (Suggestion s : availableSuggestions) {
 			System.out.println(xs.toXML(s));
 		}
+	}
+	
+	
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO bene Auto-generated method stub
+		
+	}
+	
+	
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO bene Auto-generated method stub
+		String bla = ((JLabel) e.getSource()).getText();
+		
+	}
+	
+	
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO bene Auto-generated method stub
+		
+	}
+	
+	
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO bene Auto-generated method stub
+		
+	}
+	
+	
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO bene Auto-generated method stub
+		
 	}
 }
