@@ -58,7 +58,6 @@ public class Student implements IPlace, Cloneable {
 		for (int i = 0; i < changeVector.size(); i++) {
 			float changeVectorFloat = changeVector.getValueAt(i);
 			this.actualState.setValueAt(i, changeVectorFloat * 50);
-			this.getActualState().printCalcVector("STUDENT2");
 		}
 		this.historyStates = new LinkedHashMap<Integer, CalcVector>();
 	}
@@ -66,7 +65,6 @@ public class Student implements IPlace, Cloneable {
 	
 	private Object readResolve() {
 		init();
-		getActualState().printCalcVector("STUDENT");
 		return this;
 	}
 

@@ -52,10 +52,10 @@ public class Course {
 	private transient LinkedList<String>							suggestions;
 	
 	// persistent data
+	private Lecture														lecture;
 	private IPlace[][]													students;
 	private Influence														influence;
 	private String															name;
-	private Lecture														lecture;
 	private LinkedList<String>											parameters;
 
 	// the student and property that was selected in the GUI (by hovering over the student)
@@ -90,7 +90,7 @@ public class Course {
 					Student newStud = new Student(parameters.size());
 					
 					for (int i = 0; i < 4; i++) {
-						newStud.addValueToChangeVector(i, (float) (Math.random() - 0.5));
+						newStud.addValueToChangeVector(i, (float) (Math.random() * 100) - 50);
 						newStud.addValueToStateVector(i, (int) (Math.random() * 100));
 					}
 					// ((Student)students[y][x]).
@@ -112,7 +112,6 @@ public class Course {
 	
 	private void init() {
 		simController = new SimController(this);
-		lecture = new Lecture(new Date());
 
 		studentsObservers = new LinkedList<IStudentsObserver>();
 		selectedCourseObservers = new LinkedList<ISelectedStudentObserver>();
