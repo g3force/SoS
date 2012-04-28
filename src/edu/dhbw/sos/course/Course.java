@@ -57,7 +57,6 @@ public class Course {
 	private Influence														influence;
 	private String															name;
 	private LinkedList<String>											parameters;
-	private CalcVector													courseAverage;
 
 	// the student and property that was selected in the GUI (by hovering over the student)
 	private transient IPlace											selectedStudent;
@@ -99,7 +98,6 @@ public class Course {
 				}
 			}
 		}
-		courseAverage = new CalcVector(parameters.size());
 		influence = new Influence();
 		lecture = new Lecture(new Date());
 		lecture.getTimeBlocks().add(new TimeBlock(10, BlockType.theory));
@@ -362,21 +360,6 @@ public class Course {
 				}
 			}
 		}
-		// -------------------------------------------------
-		// -------- calculate course average values --------
-		// -------------------------------------------------
-		// CalcVector sums = new CalcVector(parameters.size());
-		// int studentCount = 0;
-		// for (int y = 0; y < students.length; y++) {
-		// for (int x = 0; x < students[y].length; x++) {
-		// if (students[y][x] instanceof Student) {
-		// studentCount++;
-		// sums.addCalcVector(students[x][y].getActualState());
-		// }
-		// }
-		// }
-		// // calc average by dividing sums by student count
-		// courseAverage = sums.multiply(1 / studentCount);
 		
 
 		// -------------------------------------------------
@@ -584,11 +567,6 @@ public class Course {
 		return influence;
 	}
 	
-	
-	public CalcVector getCourseAverage() {
-		return courseAverage;
-	}
-	
 
 	public void setInfluence(Influence influence) {
 		this.influence = influence;
@@ -785,5 +763,9 @@ public class Course {
 			this.currentTime = currentTime;
 		}
 
+	}
+
+	public CalcVector getStatState() {
+		return statState;
 	}
 }

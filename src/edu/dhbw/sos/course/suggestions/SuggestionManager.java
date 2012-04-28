@@ -245,7 +245,7 @@ public class SuggestionManager implements ISuggestionsObserver, MouseListener, I
 	
 	@Override
 	public void updateCurrentCourse(Course course) {
-		CalcVector averages = course.getCourseAverage();
+		CalcVector averages = course.getStatState();
 		currentSuggestions.clear();
 		for (int i = 0; i < availableSuggestions.size(); i++) {
 			boolean addSuggestion = true;
