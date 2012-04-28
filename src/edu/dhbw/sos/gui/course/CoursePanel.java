@@ -59,7 +59,7 @@ public class CoursePanel extends JPanel implements ComponentListener, ICurrentCo
 		
 		this.editBtns = new LinkedList<JLabel>();
 		courses.subscribeCurrentCourse(this);
-		courses.getCurrentCourse().subscribeStudents(this);
+		courses.subscribeStudents(this);
 		paintArea = new CPaintArea();
 		this.add(paintArea, BorderLayout.CENTER);
 		paintArea.setCourse(courses.getCurrentCourse());

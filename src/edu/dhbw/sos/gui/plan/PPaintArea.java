@@ -88,7 +88,6 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	
 	
 	public void init(Course course) {
-		course.subscribeStatistics(this); // FIXME not on course... course change is a problem
 		this.tbs = course.getLecture().getTimeBlocks();
 		this.course = course;
 		this.initMovableBlocks();

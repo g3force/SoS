@@ -117,6 +117,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		paintArea = new PPaintArea(simController, course);
 		this.add(paintArea, BorderLayout.CENTER);
 		paintArea.subscribeTime(simController);
+		courses.subscribeStatistics(paintArea);
 		// paintArea.initMovableBlocks();
 		
 		// create sidePanel

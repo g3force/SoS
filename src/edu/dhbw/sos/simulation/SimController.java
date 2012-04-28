@@ -20,6 +20,7 @@ import java.util.TimerTask;
 import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.course.Courses;
 import edu.dhbw.sos.course.ICurrentCourseObserver;
 import edu.dhbw.sos.course.ISimulation;
 import edu.dhbw.sos.gui.plan.ForwardBtn;
@@ -66,6 +67,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	public void reset() {
 		stop();
+		course.reset();
 		currentTime = 0;
 		speed = 1;
 		interval = 1000;
@@ -174,9 +176,9 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		notifyStep--;
 		if (notifyStep == 0) {
 			notifyStep = speed;
-			course.notifyStudentsObservers();
-			course.notifySelectedStudentObservers();
-			course.notifyStatisticsObservers();
+			Courses.notifyStudentsObservers();
+			Courses.notifySelectedStudentObservers();
+			Courses.notifyStatisticsObservers();
 		}
 	}
 	
@@ -250,7 +252,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		if (course.getSelectedStudent() != null) {
 			course.donInputQueue(course.getSelectedProperty(), value, currentTime);
 		}
-		course.notifyStudentsObservers();
+		Courses.notifyStudentsObservers();
 	}
 	
 	
@@ -278,7 +280,6 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	@Override
 	public void enterEditMode() {
 		reset();
-		// TODO observer for notifying PlayBtn
 	}
 	
 	

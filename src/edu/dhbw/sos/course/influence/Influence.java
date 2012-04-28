@@ -57,11 +57,10 @@ public class Influence {
 	
 	
 	/**
-	 * @deprecated
-	 * 	maybe not deprecated?... We need default data, if nothing could be loaded...
-	 *	 	deprecated
+	 * Constructs influence with dummy data
+	 * 
+	 * @author NicolaiO
 	 */
-	@Deprecated
 	public Influence() {
 		float[][] array = { { 0f, 10f, -20f, -20f }, { 20f, 0f, -20f, -20f }, { -20f, 10f, 0f, 20f },
 				{ 20f, 10f, 20f, 0f } }; // new float[4][4];

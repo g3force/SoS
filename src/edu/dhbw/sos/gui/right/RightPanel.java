@@ -67,7 +67,7 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 		this.courses = courses;
 		courses.subscribeCoursesList(this);
 		courses.subscribeCurrentCourse(this);
-		courses.getCurrentCourse().subscribeStatistics(this);
+		courses.subscribeStatistics(this);
 		
 		// #############################################################################
 		// drop down list
@@ -153,7 +153,6 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 	public void updateCurrentCourse(Course course) {
 		if (courses.size() > 0) {
 			courseList.setSelectedIndex(courses.indexOf(courses.getCurrentCourse()));
-			course.subscribeStatistics(this);
 		}
 	}
 	

@@ -22,7 +22,6 @@ import edu.dhbw.sos.course.io.CourseSaver;
 import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.Lecture;
 import edu.dhbw.sos.course.lecture.TimeBlock;
-import edu.dhbw.sos.course.statistics.IStatisticsObserver;
 import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
@@ -37,10 +36,6 @@ import edu.dhbw.sos.helper.CalcVector;
 public class Course {
 	private static final Logger										logger	= Logger.getLogger(Course.class);
 	
-	// observers
-	private transient LinkedList<IStudentsObserver>				studentsObservers;
-	private transient LinkedList<ISelectedStudentObserver>	selectedCourseObservers;
-	private transient LinkedList<IStatisticsObserver>			statisticsObservers;
 
 	// private transient SimController simController;
 	
@@ -111,9 +106,6 @@ public class Course {
 	private void init() {
 		// simController = new SimController(this);
 
-		studentsObservers = new LinkedList<IStudentsObserver>();
-		selectedCourseObservers = new LinkedList<ISelectedStudentObserver>();
-		statisticsObservers = new LinkedList<IStatisticsObserver>();
 		
 		statistics = new LinkedHashMap<String, String>();
 		statState = new CalcVector(4);
@@ -127,85 +119,20 @@ public class Course {
 	}
 	
 	
+	/**
+	 * TODO NicolaiO, add comment!
+	 * 
+	 * @author NicolaiO
+	 */
+	public void reset() {
+		init();
+	}
+	
+	
 	private Object readResolve() {
 		init();
 		getPlace(0, 0).getActualState().printCalcVector("COURSE INIT");
 		return this;
-	}
-	
-
-	/**
-	 * notify all subscribers of the students array
-	 * 
-	 * @author dirk
-	 */
-	public void notifyStudentsObservers() {
-		for (IStudentsObserver so : studentsObservers) {
-			so.updateStudents();
-		}
-	}
-	
-	
-	/**
-	 * 
-	 * TODO NicolaiO, add comment!
-	 * 
-	 * @author NicolaiO
-	 */
-	public void notifySelectedStudentObservers() {
-		for (ISelectedStudentObserver so : selectedCourseObservers) {
-			so.updateSelectedStudent();
-		}
-	}
-	
-	
-	/**
-	 * notify all subscribers of the statistics
-	 * 
-	 * @author andres
-	 */
-	public void notifyStatisticsObservers() {
-		for (IStatisticsObserver so : statisticsObservers) {
-			so.updateStatistics();
-		}
-	}
-	
-	
-	/**
-	 * 
-	 * objects interested in the students field can subscribe here
-	 * the object will be notified if the field changes
-	 * 
-	 * @param so the object which needs to be informed
-	 * @author dirk
-	 */
-	public void subscribeStudents(IStudentsObserver so) {
-		studentsObservers.add(so);
-	}
-	
-	
-	/**
-	 * 
-	 * TODO NicolaiO, add comment!
-	 * 
-	 * @param so
-	 * @author NicolaiO
-	 */
-	public void subscribeSelectedStudent(ISelectedStudentObserver so) {
-		selectedCourseObservers.add(so);
-	}
-	
-	
-	/**
-	 * 
-	 * objects interested in the statistics field can subscribe here
-	 * the object will be notified if the field changes
-	 * 
-	 * @param so the object which needs to be informed
-	 * @author andres
-	 */
-	public void subscribeStatistics(IStatisticsObserver so) {
-		statisticsObservers.add(so);
 	}
 	
 	
@@ -480,7 +407,7 @@ public class Course {
 			simulationStep(actual);
 			actual++;
 		}
-		notifyStudentsObservers();
+		Courses.notifyStudentsObservers();
 	}
 	
 	
@@ -653,7 +580,7 @@ public class Course {
 			}
 		}
 		students = newStudents;
-		notifyStudentsObservers();
+		Courses.notifyStudentsObservers();
 	}
 	
 	
@@ -689,7 +616,7 @@ public class Course {
 			}
 		}
 		students = newStudents;
-		notifyStudentsObservers();
+		Courses.notifyStudentsObservers();
 	}
 
 
@@ -726,7 +653,7 @@ public class Course {
 	
 	public void setSelectedStudent(IPlace selectedStudent) {
 		this.selectedStudent = selectedStudent;
-		notifySelectedStudentObservers();
+		Courses.notifySelectedStudentObservers();
 	}
 	
 	
@@ -737,7 +664,7 @@ public class Course {
 	
 	public void setSelectedProperty(int selectedProperty) {
 		this.selectedProperty = selectedProperty;
-		notifySelectedStudentObservers();
+		Courses.notifySelectedStudentObservers();
 	}
 	
 	
