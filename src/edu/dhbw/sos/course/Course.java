@@ -588,8 +588,8 @@ public class Course {
 	public CalcVector getCourseAverage() {
 		return courseAverage;
 	}
-
 	
+
 	public void setInfluence(Influence influence) {
 		this.influence = influence;
 	}
@@ -637,6 +637,85 @@ public class Course {
 	}
 	
 	
+	public void addStudents(String location) {
+		int oldX = 0;
+		if (students.length > 0) {
+			oldX = students[0].length;
+		}
+		int oldY = students.length;
+		int newX = oldX;
+		int newY = oldY;
+		int offsetX = 0;
+		int offsetY = 0;
+		if (location.equals("left")) {
+			newX++;
+			offsetX++;
+		} else if (location.equals("right")) {
+			newX++;
+		} else if (location.equals("top")) {
+			newY++;
+			offsetY++;
+		} else if (location.equals("bottom")) {
+			newY++;
+		} else {
+			logger.warn("Action performed with unkown button.");
+		}
+		IPlace[][] newStudents = new IPlace[newY][newX];
+		for (int y = 0; y < newY; y++) {
+			for (int x = 0; x < newX; x++) {
+				if (x < offsetX || y < offsetY || (x - offsetX) >= oldX || (y - offsetY) >= oldY) {
+					Student newStud = new Student(parameters.size());
+					for (int i = 0; i < parameters.size(); i++) {
+						newStud.addValueToChangeVector(i, (float) (Math.random() * 100) - 50);
+						newStud.addValueToStateVector(i, (int) (Math.random() * 100));
+					}
+					newStudents[y][x] = newStud;
+				} else {
+					newStudents[y][x] = students[y - offsetY][x - offsetX];
+				}
+			}
+		}
+		students = newStudents;
+		notifyStudentsObservers();
+	}
+	
+	
+	/**
+	 * TODO NicolaiO, add comment!
+	 * 
+	 * @param name2
+	 * @author NicolaiO
+	 */
+	public void subStudents(String location) {
+		int oldX = 0;
+		if (students.length > 0) {
+			oldX = students[0].length;
+		}
+		int oldY = students.length;
+		int newX = oldX;
+		int newY = oldY;
+		if (location.equals("left")) {
+			newX--;
+		} else if (location.equals("right")) {
+			newX--;
+		} else if (location.equals("top")) {
+			newY--;
+		} else if (location.equals("bottom")) {
+			newY--;
+		} else {
+			logger.warn("Action performed with unkown button.");
+		}
+		IPlace[][] newStudents = new IPlace[newY][newX];
+		for (int y = 0; y < newY; y++) {
+			for (int x = 0; x < newX; x++) {
+				newStudents[y][x] = students[y][x];
+			}
+		}
+		students = newStudents;
+		notifyStudentsObservers();
+	}
+
+
 	@Override
 	public String toString() {
 		return getName();

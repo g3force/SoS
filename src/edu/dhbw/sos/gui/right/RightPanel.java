@@ -92,10 +92,10 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				for (IEditModeObserver so : editModeObservers) {
-					if (((EditBtn) e.getSource()).getModel().isPressed())
-						so.exitEditMode();
-					else
+					if (((EditBtn) e.getSource()).isSelected())
 						so.enterEditMode();
+					else
+						so.exitEditMode();
 				}
 			}
 		});
