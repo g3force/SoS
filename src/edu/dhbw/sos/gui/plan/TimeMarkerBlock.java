@@ -45,42 +45,12 @@ public class TimeMarkerBlock extends Rectangle implements ITimeObserver {
 	private int							time;
 	private int							length;
 
-
-	/**
-	 * Initialize a new block with given size and color
-	 * 
-	 * @param size size of the block
-	 * @param _color color of the block
-	 * @author NicolaiO
-	 */
-	private TimeMarkerBlock(Dimension size, Color _color) {
-		super(size);
-		color = _color;
-	}
-	
-	
-	/**
-	 * Initialize a new block with given size and color
-	 * Additionally set the location within the parent of this block
-	 * (this is given to the constructor of the rectangle
-	 * @param location location within parent
-	 * @param size size of the block
-	 * @param _color color of the block
-	 * @author NicolaiO
-	 */
-	private TimeMarkerBlock(Point location, Dimension size, Color _color) {
-		super(location, size);
-		color = _color;
-	}
-	
-	
 	public TimeMarkerBlock(int length) {
 		super(new Point(-5, 135), new Dimension(10, 10));
 		setColor(Color.GRAY);
 		setTime(0);
 		setLength(length);
 	}
-	
 
 	/**
 	 * Sets the location within parent
@@ -195,8 +165,9 @@ public class TimeMarkerBlock extends Rectangle implements ITimeObserver {
 	
 	
 	/**
-	 * TODO andres, add comment!
+	 * Draw the TimeMarker
 	 * 
+	 * @param Graphics2D
 	 * @author andres
 	 */
 	public void draw(Graphics2D ga) {
@@ -204,6 +175,5 @@ public class TimeMarkerBlock extends Rectangle implements ITimeObserver {
 		ga.fill(this);
 		ga.draw(this);
 		ga.drawLine(getTime(), 10, getTime(), 135);
-		printTmb();
 	}
 }

@@ -11,6 +11,7 @@ package edu.dhbw.sos.gui.plan;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
@@ -213,4 +214,10 @@ public class MovableBlock extends Rectangle {
 		InArea
 	};
 	
+	
+	public void draw(Graphics2D ga) {
+		ga.setPaint(this.getColor());
+		ga.fill(this);
+	}
+
 }
