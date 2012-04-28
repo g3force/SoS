@@ -22,12 +22,10 @@ import edu.dhbw.sos.course.io.CourseSaver;
 import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.Lecture;
 import edu.dhbw.sos.course.lecture.TimeBlock;
-import edu.dhbw.sos.course.statistics.IStatisticsObserver;
 import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
 import edu.dhbw.sos.helper.CalcVector;
-import edu.dhbw.sos.simulation.SimController;
 
 
 /**
@@ -37,14 +35,7 @@ import edu.dhbw.sos.simulation.SimController;
  */
 public class Course {
 	private static final Logger										logger	= Logger.getLogger(Course.class);
-	
-	// observers
-	private transient LinkedList<IStudentsObserver>				studentsObservers;
-	private transient LinkedList<ISelectedStudentObserver>	selectedCourseObservers;
-	private transient LinkedList<IStatisticsObserver>			statisticsObservers;
 
-	private transient SimController									simController;
-	
 	// place here? not implemented yet, so do not know...
 	private transient LinkedHashMap<String, String>				statistics;
 	private transient CalcVector										statState;
@@ -106,17 +97,10 @@ public class Course {
 		lecture.getTimeBlocks().add(new TimeBlock(30, BlockType.exercise));
 		lecture.getTimeBlocks().add(new TimeBlock(10, BlockType.pause));
 		lecture.getTimeBlocks().add(new TimeBlock(30, BlockType.group));
-		
 	}
 	
 	
 	private void init() {
-		simController = new SimController(this);
-
-		studentsObservers = new LinkedList<IStudentsObserver>();
-		selectedCourseObservers = new LinkedList<ISelectedStudentObserver>();
-		statisticsObservers = new LinkedList<IStatisticsObserver>();
-		
 		statistics = new LinkedHashMap<String, String>();
 		statState = new CalcVector(4);
 		histStatStates = new LinkedHashMap<Integer, CalcVector>();
@@ -133,81 +117,6 @@ public class Course {
 		init();
 		getPlace(0, 0).getActualState().printCalcVector("COURSE INIT");
 		return this;
-	}
-
-	
-	/**
-	 * notify all subscribers of the students array
-	 * 
-	 * @author dirk
-	 */
-	public void notifyStudentsObservers() {
-		for (IStudentsObserver so : studentsObservers) {
-			so.updateStudents();
-		}
-	}
-	
-	
-	/**
-	 * 
-	 * TODO NicolaiO, add comment!
-	 * 
-	 * @author NicolaiO
-	 */
-	public void notifySelectedStudentObservers() {
-		for (ISelectedStudentObserver so : selectedCourseObservers) {
-			so.updateSelectedStudent();
-		}
-	}
-	
-	
-	/**
-	 * notify all subscribers of the statistics
-	 * 
-	 * @author andres
-	 */
-	public void notifyStatisticsObservers() {
-		for (IStatisticsObserver so : statisticsObservers) {
-			so.updateStatistics();
-		}
-	}
-	
-	
-	/**
-	 * 
-	 * objects interested in the students field can subscribe here
-	 * the object will be notified if the field changes
-	 * 
-	 * @param so the object which needs to be informed
-	 * @author dirk
-	 */
-	public void subscribeStudents(IStudentsObserver so) {
-		studentsObservers.add(so);
-	}
-	
-	
-	/**
-	 * 
-	 * TODO NicolaiO, add comment!
-	 * 
-	 * @param so
-	 * @author NicolaiO
-	 */
-	public void subscribeSelectedStudent(ISelectedStudentObserver so) {
-		selectedCourseObservers.add(so);
-	}
-	
-	
-	/**
-	 * 
-	 * objects interested in the statistics field can subscribe here
-	 * the object will be notified if the field changes
-	 * 
-	 * @param so the object which needs to be informed
-	 * @author andres
-	 */
-	public void subscribeStatistics(IStatisticsObserver so) {
-		statisticsObservers.add(so);
 	}
 	
 	
@@ -487,6 +396,16 @@ public class Course {
 	
 	
 	public void setTime(int actualTime, int time) {
+		LinkedList<Integer> toDelete = new LinkedList<Integer>();
+		for (Entry<Integer, CalcVector> historyState : histStatStates.entrySet()) {
+			if (historyState.getKey() > time) {
+				toDelete.add(historyState.getKey());
+			}
+		}
+		for (Integer state : toDelete) {
+			histStatStates.remove(state);
+		}
+		
 		for (int y = 0; y < students.length; y++) {
 			for (int x = 0; x < students[y].length; x++) {
 				if (students[y][x] instanceof Student) {
@@ -498,6 +417,7 @@ public class Course {
 			}
 		}
 		simulateUntil(actualTime, time);
+		logger.debug(time + " " + histStatStates.size());
 	}
 
 
@@ -608,11 +528,6 @@ public class Course {
 			io.printStackTrace();
 			this.name = _name; // name needs to be set no matter what.
 		}
-	}
-	
-	
-	public SimController getSimController() {
-		return simController;
 	}
 	
 	

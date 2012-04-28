@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.io.CourseSaver;
+import edu.dhbw.sos.course.statistics.IStatisticsObserver;
 
 
 /**
@@ -26,12 +27,17 @@ import edu.dhbw.sos.course.io.CourseSaver;
  * 
  */
 public class Courses implements Iterable<Course> {
-	private static final Logger						logger							= Logger.getLogger(Courses.class);
-	private Course											curCourse;
-	private LinkedList<ICurrentCourseObserver>	currentCourseOberservers	= new LinkedList<ICurrentCourseObserver>();
-	private LinkedList<ICoursesListObserver>		coursesListOberservers		= new LinkedList<ICoursesListObserver>();
-	private String											savepath							= "";
-	private LinkedList<Course>							courses;
+	private static final Logger										logger	= Logger.getLogger(Courses.class);
+	private Course															curCourse;
+	
+	// observers
+	private transient LinkedList<IStudentsObserver>				studentsObservers;
+	private transient LinkedList<ISelectedStudentObserver>	selectedCourseObservers;
+	private transient LinkedList<IStatisticsObserver>			statisticsObservers;
+	private transient LinkedList<ICurrentCourseObserver>		currentCourseOberservers;
+	private transient LinkedList<ICoursesListObserver>			coursesListOberservers;
+	private String															savepath	= "";
+	private LinkedList<Course>											courses;
 	
 
 	/**
@@ -43,6 +49,12 @@ public class Courses implements Iterable<Course> {
 		courses = new LinkedList<Course>();
 		this.savepath = savepath;
 		
+		studentsObservers = new LinkedList<IStudentsObserver>();
+		selectedCourseObservers = new LinkedList<ISelectedStudentObserver>();
+		statisticsObservers = new LinkedList<IStatisticsObserver>();
+		currentCourseOberservers = new LinkedList<ICurrentCourseObserver>();
+		coursesListOberservers = new LinkedList<ICoursesListObserver>();
+
 		if (courses.size() == 0) {
 			logger.fatal("There are no courses. This should not happened");
 		} else if (courses.size() == 1) {
@@ -51,7 +63,82 @@ public class Courses implements Iterable<Course> {
 			// TODO has to be handled yet
 			curCourse = courses.get(0);
 		}
-
+		
+	}
+	
+	
+	/**
+	 * notify all subscribers of the students array
+	 * 
+	 * @author dirk
+	 */
+	public void notifyStudentsObservers() {
+		for (IStudentsObserver so : studentsObservers) {
+			so.updateStudents();
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * TODO NicolaiO, add comment!
+	 * 
+	 * @author NicolaiO
+	 */
+	public void notifySelectedStudentObservers() {
+		for (ISelectedStudentObserver so : selectedCourseObservers) {
+			so.updateSelectedStudent();
+		}
+	}
+	
+	
+	/**
+	 * notify all subscribers of the statistics
+	 * 
+	 * @author andres
+	 */
+	public void notifyStatisticsObservers() {
+		for (IStatisticsObserver so : statisticsObservers) {
+			so.updateStatistics();
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * objects interested in the students field can subscribe here
+	 * the object will be notified if the field changes
+	 * 
+	 * @param so the object which needs to be informed
+	 * @author dirk
+	 */
+	public void subscribeStudents(IStudentsObserver so) {
+		studentsObservers.add(so);
+	}
+	
+	
+	/**
+	 * 
+	 * TODO NicolaiO, add comment!
+	 * 
+	 * @param so
+	 * @author NicolaiO
+	 */
+	public void subscribeSelectedStudent(ISelectedStudentObserver so) {
+		selectedCourseObservers.add(so);
+	}
+	
+	
+	/**
+	 * 
+	 * objects interested in the statistics field can subscribe here
+	 * the object will be notified if the field changes
+	 * 
+	 * @param so the object which needs to be informed
+	 * @author andres
+	 */
+	public void subscribeStatistics(IStatisticsObserver so) {
+		statisticsObservers.add(so);
 	}
 	
 	

@@ -87,15 +87,6 @@ public class Student implements IPlace, Cloneable {
 	}
 	
 	
-	/**
-	 * takes a start and end time
-	 * if there was an interaction from the don in this time period the latest interaction will be returned
-	 * otherwise null will be returned
-	 * @param start time in milliseconds
-	 * @param end time in milliseconds
-	 * @return
-	 * @author dirk
-	 */
 	public Entry<Integer, CalcVector> nearestHistoryState(int time) {
 		Entry<Integer, CalcVector> latest = null;
 		for (Entry<Integer, CalcVector> historyState : historyStates.entrySet()) {

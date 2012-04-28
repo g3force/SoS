@@ -32,6 +32,7 @@ import edu.dhbw.sos.gui.Diagram;
 import edu.dhbw.sos.gui.plan.MovableBlock.Areas;
 import edu.dhbw.sos.helper.CalcVector;
 import edu.dhbw.sos.simulation.ITimeObserver;
+import edu.dhbw.sos.simulation.SimController;
 
 
 /**
@@ -75,7 +76,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	 * 
 	 * @author NicolaiO
 	 */
-	public PPaintArea(Course course) {
+	public PPaintArea(SimController simController, Course course) {
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		course.subscribeStatistics(this);
@@ -84,8 +85,8 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		this.initMovableBlocks();
 		
 		tmb = new TimeMarkerBlock(tbs.getTotalLength());
-		course.getSimController().subscribeTime(tmb);
-		subscribeTime(course.getSimController());
+		simController.subscribeTime(tmb);
+		subscribeTime(simController);
 		attDia = new Diagram(new LinkedList<Float>());
 		attDia.setLocation(new Point(5, 10));
 	}

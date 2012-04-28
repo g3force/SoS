@@ -59,7 +59,7 @@ public class MainFrame extends JFrame implements WindowListener {
 	 * @param data
 	 * @author NicolaiO
 	 */
-	public MainFrame(CourseController courseController, Courses courses) {
+	public MainFrame(SimController simController, CourseController courseController, Courses courses) {
 		logger.debug("Initializing...");
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLocationByPlatform(true);
@@ -75,7 +75,6 @@ public class MainFrame extends JFrame implements WindowListener {
 			this.setIconImage(Toolkit.getDefaultToolkit().getImage(iconUrl));
 		}
 
-		SimController simController = courses.getCurrentCourse().getSimController();
 		CoursePanel coursePanel = new CoursePanel(simController, courseController, courses);
 		RightPanel rightPanel = new RightPanel(courseController, courses);
 		StatusBar statusBar = new StatusBar();
