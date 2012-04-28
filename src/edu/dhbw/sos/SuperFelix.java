@@ -13,6 +13,7 @@ import edu.dhbw.sos.course.Courses;
 import edu.dhbw.sos.course.io.CourseLoader;
 import edu.dhbw.sos.course.io.CourseSaver;
 import edu.dhbw.sos.gui.MainFrame;
+import edu.dhbw.sos.simulation.SimController;
 
 
 public class SuperFelix {
@@ -51,8 +52,8 @@ public class SuperFelix {
 		
 		courses = CourseLoader.loadCourses(savepath);
 		CourseController courseController = new CourseController(courses);
-
-		MainFrame mainFrame = new MainFrame(courseController, courses);
+		SimController simController = new SimController(courses.getCurrentCourse());
+		MainFrame mainFrame = new MainFrame(simController, courseController, courses);
 		mainFrame.pack();
 		logger.info("Sim of Students started.");
 	}

@@ -39,23 +39,23 @@ import edu.dhbw.sos.gui.right.IEditModeObserver;
 
 public class SimController implements ActionListener, MouseListener, IEditModeObserver, ITimeObserver,
 		ICurrentCourseObserver {
-	private static final Logger			logger			= Logger.getLogger(SimController.class);
+	private static final Logger			logger						= Logger.getLogger(SimController.class);
 	
 	private Course								course;
-	private int									currentTime;															// in
-																																// milliseconds
-																																// from
-																																// "begin"
-	private int									speed;																	// in
-																																// milliseconds
-	private int									notifyStep		= 1;
-	private int									realInterval	= 1000;
-	private int									interval			= 1000;
-	private transient Timer					pulse				= new Timer();
-	private boolean							run				= false;
+	private int									currentTime;																		// in
+																																			// milliseconds
+																																			// from
+																																			// "begin"
+	private int									speed;																				// in
+																																			// milliseconds
+	private int									notifyStep					= 1;
+	private int									realInterval				= 1000;
+	private int									interval						= 1000;
+	private transient Timer					pulse							= new Timer();
+	private boolean							run							= false;
 	
-	private LinkedList<ISpeedObserver>	speedObservers	= new LinkedList<ISpeedObserver>();
-	private LinkedList<ITimeObserver>	timeObservers	= new LinkedList<ITimeObserver>();
+	private LinkedList<ISpeedObserver>	speedObservers				= new LinkedList<ISpeedObserver>();
+	private LinkedList<ITimeObserver>	timeObservers				= new LinkedList<ITimeObserver>();
 	private LinkedList<ISimulation>		simulationOberservers	= new LinkedList<ISimulation>();
 	
 
@@ -100,7 +100,8 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	
 	public void subscribeTime(ITimeObserver to) {
-		timeObservers.add(to);
+		if (to != null)
+			timeObservers.add(to);
 	}
 	
 	
@@ -228,7 +229,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 			// FIXME Not implemented
 		} else if (e.getSource() instanceof PlayBtn) {
 			if (toggle()) {
-				((PlayBtn) e.getSource()).toggle();
+				// ((PlayBtn) e.getSource()).toggle();
 			}
 		} else if (e.getSource() instanceof ForwardBtn) {
 			setSpeed(getSpeed() * 2);

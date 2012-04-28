@@ -27,7 +27,6 @@ import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
 import edu.dhbw.sos.helper.CalcVector;
-import edu.dhbw.sos.simulation.SimController;
 
 
 /**
@@ -43,7 +42,7 @@ public class Course {
 	private transient LinkedList<ISelectedStudentObserver>	selectedCourseObservers;
 	private transient LinkedList<IStatisticsObserver>			statisticsObservers;
 
-	private transient SimController									simController;
+	// private transient SimController simController;
 	
 	// place here? not implemented yet, so do not know...
 	private transient LinkedHashMap<String, String>				statistics;
@@ -110,7 +109,7 @@ public class Course {
 	
 	
 	private void init() {
-		simController = new SimController(this);
+		// simController = new SimController(this);
 
 		studentsObservers = new LinkedList<IStudentsObserver>();
 		selectedCourseObservers = new LinkedList<ISelectedStudentObserver>();
@@ -610,9 +609,9 @@ public class Course {
 	}
 	
 	
-	public SimController getSimController() {
-		return simController;
-	}
+	// public SimController getSimController() {
+	// return simController;
+	// }
 	
 	
 	public void addStudents(String location) {
