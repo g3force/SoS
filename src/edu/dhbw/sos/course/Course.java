@@ -365,18 +365,18 @@ public class Course {
 		// -------------------------------------------------
 		// -------- calculate course average values --------
 		// -------------------------------------------------
-		CalcVector sums = new CalcVector(parameters.size());
-		int studentCount = 0;
-		for (int y = 0; y < students.length; y++) {
-			for (int x = 0; x < students[y].length; x++) {
-				if (students[y][x] instanceof Student) {
-					studentCount++;
-					sums.addCalcVector(students[x][y].getActualState());
-				}
-			}
-		}
-		// calc average by dividing sums by student count
-		courseAverage = sums.multiply(1 / studentCount);
+		// CalcVector sums = new CalcVector(parameters.size());
+		// int studentCount = 0;
+		// for (int y = 0; y < students.length; y++) {
+		// for (int x = 0; x < students[y].length; x++) {
+		// if (students[y][x] instanceof Student) {
+		// studentCount++;
+		// sums.addCalcVector(students[x][y].getActualState());
+		// }
+		// }
+		// }
+		// // calc average by dividing sums by student count
+		// courseAverage = sums.multiply(1 / studentCount);
 		
 
 		// -------------------------------------------------
