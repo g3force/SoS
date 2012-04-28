@@ -17,6 +17,8 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
@@ -88,6 +90,8 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		subscribeTime(course.getSimController());
 		attDia = new Diagram(new LinkedList<Float>());
 		attDia.setLocation(new Point(5, 10));
+		
+		start = 0;
 	}
 	
 	
@@ -136,32 +140,14 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		// initialize
 		Graphics2D ga = (Graphics2D) g;
 		ga.clearRect(0, 0, this.getWidth(), this.getHeight());
-		
-		// ga.drawString("Pause", 5, 30);
-		// ga.drawString("Übung", 5, 60);
-		// ga.drawString("Gruppe", 5, 90);
-		// ga.drawString("Theorie", 5, 120);
-		// draw sinus
-		// ga.setPaint(Color.green);
-		// ga.setStroke(new BasicStroke(2F));
-		// int x1 = 0, x2 = 50, y1 = 0, y2 = 100;
-		// for (int i = 0; i < 200; i++) {
-		// x1 = i * 2 + 50;
-		// y1 = (int) (Math.sin((double) i) * 70 + 70);
-		// ga.drawLine(x2, y2, x1, y1);
-		// x2 = x1;
-		// y2 = y1;
-		// }
 
 		// draw block
 		for (MovableBlock mb : movableBlocks) {
-			ga.setPaint(mb.getColor());
-			ga.fill(mb);
+			mb.draw(ga);
 		}
-		if (moveBlock != null) {
-			ga.setPaint(Color.black);
-			ga.draw(moveBlock);
-		}
+		// if (moveBlock != null) {
+		// moveBlock.draw(ga);
+		// }
 		
 		
 		// draw Timeline
@@ -173,12 +159,14 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		double timemarkers = scaleRatio * mi;
 		// logger.debug(timemarkers + "");
 		if (timemarkers > 0.0) {
-			int time = 8;
+			SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+			Calendar timeCal = Calendar.getInstance();
+			timeCal.setTime(course.getLecture().getStart());
 			for (int i = start; i < this.getWidth(); i += (int) timemarkers) {
+				String time = timeFormat.format(timeCal.getTime());
 				ga.drawLine(i, 135, i, 145);
-				if (time % 2 == 0)
-					ga.drawString(time + ":00", i + 2, 139);
-				time++;
+				ga.drawString(time, i + 2, 139);
+				timeCal.add(Calendar.HOUR, 1);
 			}
 		}
 		
