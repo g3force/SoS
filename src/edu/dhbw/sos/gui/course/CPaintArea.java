@@ -51,7 +51,6 @@ public class CPaintArea extends JPanel implements MouseMotionListener, MouseList
 	private StudentCircle[][]		studentCircles;
 	// student that should be highlighted at the moment
 	private StudentCircle			hoveredStudent		= null;
-	private StudentCircle			draggedStudent		= null;
 	
 	private Course						course;
 	// space between circles
