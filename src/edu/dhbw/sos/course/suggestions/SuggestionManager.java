@@ -18,6 +18,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -30,8 +31,8 @@ import com.thoughtworks.xstream.XStream;
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.Courses;
 import edu.dhbw.sos.course.ICurrentCourseObserver;
+import edu.dhbw.sos.helper.CalcVector;
 import edu.dhbw.sos.helper.XMLParam;
-
 
 
 /**
@@ -211,41 +212,50 @@ public class SuggestionManager implements ISuggestionsObserver, MouseListener, I
 		if (clicked != null) {
 			// TODO pass suggestions influence to simulation
 			this.removeSuggestion(clicked);
-			this.updateSuggestions();
+			// DOES NOT UPDATE DIRECTLY, UPDATE OF GUI IS DONE WITH NEXT SIMULATIONSTEP!
 		}
 	}
 	
 	
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO bene Auto-generated method stub
+		// empty
 		
 	}
 	
 	
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO bene Auto-generated method stub
+		// empty
 		
 	}
 	
 	
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO bene Auto-generated method stub
+		// empty
 	}
 	
 	
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO bene Auto-generated method stub
-		
+		// empty
 	}
 	
 	
 	@Override
 	public void updateCurrentCourse(Course course) {
-		// TODO bene Auto-generated method stub
-		
+		CalcVector averages = course.getCourseAverage();
+		currentSuggestions.clear();
+		for (int i = 0; i < availableSuggestions.size(); i++) {
+			boolean addSuggestion = true;
+			for (int j = 0; j < courseParams.size(); j++) {
+				addSuggestion = addSuggestion && availableSuggestions.get(i).paramIsInRange(j, averages.getValueAt(j));
+			}
+			if (addSuggestion) {
+				currentSuggestions.add(availableSuggestions.get(i));
+			}
+		}
+		Collections.sort(currentSuggestions);
 	}
 }
