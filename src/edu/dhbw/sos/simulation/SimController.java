@@ -206,7 +206,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		float value = 20;
+		float value = -20;
 		// right click
 		if (e.getButton() == MouseEvent.BUTTON3)
 			value *= -1;

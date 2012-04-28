@@ -99,8 +99,10 @@ public class SPaintArea extends JPanel {
 			diagram.setHeight(this.getHeight() - 20);
 			diagram.setWidth(this.getWidth() - 20);
 			LinkedList<Float> newData = new LinkedList<Float>();
-			for (int key : student.getHistoryStates().keySet()) {
-				newData.add(student.getHistoryStates().get(key).getValueAt(parameterIndex));
+			synchronized (student.getHistoryStates()) {
+				for (int key : student.getHistoryStates().keySet()) {
+					newData.add(student.getHistoryStates().get(key).getValueAt(parameterIndex));
+				}
 			}
 			diagram.setData(newData);
 		} else {

@@ -529,10 +529,10 @@ public class Course {
 			statState.printCalcVector("Course statistics");
 			// TODO save history statistics.
 			statistics.clear();
-			statistics.put("Attention: ", statState.getValueAt(0) + "");
-			statistics.put("Tired: ", statState.getValueAt(1) + "");
-			statistics.put("Quality: ", statState.getValueAt(2) + "");
-			statistics.put("?: ", statState.getValueAt(3) + "");
+			statistics.put("Last break:", "unkown");
+			for (int i = 0; i < parameters.size(); i++) {
+				statistics.put(parameters.get(i) + ": ", ((int) statState.getValueAt(i)) + "");
+			}
 			histStatStates.put(time, statState.clone());
 
 		}
