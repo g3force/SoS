@@ -16,7 +16,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.LinkedList;
 import java.util.Map;
 
 import javax.swing.Box;
@@ -48,7 +47,6 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 	private static final long					serialVersionUID	= -6879799823225506209L;
 	// private static final Logger logger = Logger.getLogger(RightPanel.class);
 	
-	private LinkedList<IEditModeObserver>	editModeObservers	= new LinkedList<IEditModeObserver>();
 	// width of panel
 	private static final int					PREF_SIZE			= 200;
 	// margin left and right
@@ -59,7 +57,7 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 	private JPanel									suggestionPanel;
 	private JComboBox<Course>					courseList;
 	
-	private Courses								courses;
+	private Courses				courses;
 	
 	
 	public RightPanel(CourseController courseController, Courses courses) {
@@ -91,7 +89,7 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 		editBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for (IEditModeObserver so : editModeObservers) {
+				for (IEditModeObserver so : RightPanel.this.courses.getEditModeObservers()) {
 					if (((EditBtn) e.getSource()).isSelected())
 						so.enterEditMode();
 					else
@@ -137,11 +135,6 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 		// #############################################################################
 		// fill the rest of the space
 		this.add(Box.createVerticalGlue());
-	}
-	
-	
-	public void subscribeEditMode(IEditModeObserver so) {
-		editModeObservers.add(so);
 	}
 	
 	

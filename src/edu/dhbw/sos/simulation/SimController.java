@@ -20,6 +20,8 @@ import java.util.TimerTask;
 import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.course.ICurrentCourseObserver;
+import edu.dhbw.sos.course.ISimulation;
 import edu.dhbw.sos.gui.plan.ForwardBtn;
 import edu.dhbw.sos.gui.plan.LiveBtn;
 import edu.dhbw.sos.gui.plan.PlayBtn;
@@ -35,7 +37,8 @@ import edu.dhbw.sos.gui.right.IEditModeObserver;
  * 
  */
 
-public class SimController implements ActionListener, MouseListener, IEditModeObserver, ITimeObserver {
+public class SimController implements ActionListener, MouseListener, IEditModeObserver, ITimeObserver,
+		ICurrentCourseObserver {
 	private static final Logger			logger			= Logger.getLogger(SimController.class);
 	
 	private Course								course;
@@ -53,10 +56,16 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	private LinkedList<ISpeedObserver>	speedObservers	= new LinkedList<ISpeedObserver>();
 	private LinkedList<ITimeObserver>	timeObservers	= new LinkedList<ITimeObserver>();
+	private LinkedList<ISimulation>		simulationOberservers	= new LinkedList<ISimulation>();
 	
 
 	public SimController(Course course) {
-		this.course = course;
+		reset(course);
+	}
+	
+	
+	public void reset() {
+		stop();
 		currentTime = 0;
 		speed = 1;
 		interval = 1000;
@@ -64,6 +73,12 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	}
 	
 	
+	public void reset(Course course) {
+		this.course = course;
+		reset();
+	}
+	
+
 	public void notifySpeedObservers() {
 		for (ISpeedObserver so : speedObservers) {
 			so.speedChanged(speed);
@@ -89,6 +104,25 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	}
 	
 	
+	public void notifySimulationStarted() {
+		for (ISimulation cco : simulationOberservers) {
+			cco.simulationStarted();
+		}
+	}
+	
+	
+	public void notifySimulationStopped() {
+		for (ISimulation cco : simulationOberservers) {
+			cco.simulationStopped();
+		}
+	}
+	
+	
+	public void subscribeSimulation(ISimulation cco) {
+		simulationOberservers.add(cco);
+	}
+
+
 	public boolean toggle() {
 		if (run) {
 			logger.info("Simulation stopped");
@@ -103,6 +137,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	
 	public void run() {
+		notifySimulationStarted();
 		pulse = new Timer();
 		TimerTask simulation = new TimerTask() {
 			@Override
@@ -117,6 +152,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	public void stop() {
 		pulse.cancel();
 		pulse.purge();
+		notifySimulationStopped();
 	}
 	
 	
@@ -240,14 +276,13 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	@Override
 	public void enterEditMode() {
-		// TODO NicolaiO Auto-generated method stub
-		
+		reset();
+		// TODO observer for notifying PlayBtn
 	}
 	
 	
 	@Override
 	public void exitEditMode() {
-		// TODO NicolaiO Auto-generated method stub
 		
 	}
 	
@@ -262,5 +297,11 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		if (run)
 			run();
 		logger.debug(course.getPlace(0, 0).getHistoryStates().size());
+	}
+	
+	
+	@Override
+	public void updateCurrentCourse(Course course) {
+		reset(course);
 	}
 }

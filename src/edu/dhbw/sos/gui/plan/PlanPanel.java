@@ -130,8 +130,10 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		LiveBtn btnLive = new LiveBtn();
 		btnPlay.addActionListener(simController);
 		btnLive.addActionListener(simController);
+		simController.subscribeSimulation(btnPlay);
+		courses.subscribeEditMode(btnPlay);
 		
-		
+
 		controlPanel.add(btnPlay);
 		controlPanel.add(btnLive);
 		sidePanel.add(controlPanel);

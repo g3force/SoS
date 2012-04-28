@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.io.CourseSaver;
+import edu.dhbw.sos.gui.right.IEditModeObserver;
 
 
 /**
@@ -30,6 +31,7 @@ public class Courses implements Iterable<Course> {
 	private Course											curCourse;
 	private LinkedList<ICurrentCourseObserver>	currentCourseOberservers	= new LinkedList<ICurrentCourseObserver>();
 	private LinkedList<ICoursesListObserver>		coursesListOberservers		= new LinkedList<ICoursesListObserver>();
+	private LinkedList<IEditModeObserver>			editModeObservers				= new LinkedList<IEditModeObserver>();
 	private String											savepath							= "";
 	private LinkedList<Course>							courses;
 	
@@ -107,6 +109,11 @@ public class Courses implements Iterable<Course> {
 	public Course get(int i) {
 		return courses.get(i);
 	}
+	
+	
+	public void subscribeEditMode(IEditModeObserver so) {
+		editModeObservers.add(so);
+	}
 
 
 	public void notifyCoursesListObservers() {
@@ -121,8 +128,8 @@ public class Courses implements Iterable<Course> {
 			cco.updateCurrentCourse(curCourse);
 		}
 	}
-	
-	
+
+
 	public void subscribeCurrentCourse(ICurrentCourseObserver cco) {
 		currentCourseOberservers.add(cco);
 	}
@@ -152,5 +159,10 @@ public class Courses implements Iterable<Course> {
 			}
 		}
 		logger.warn("Could not find course \"" + newCurrent + "\". Cannot set as current.");
+	}
+	
+	
+	public LinkedList<IEditModeObserver> getEditModeObservers() {
+		return editModeObservers;
 	}
 }

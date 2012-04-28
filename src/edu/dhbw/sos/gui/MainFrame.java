@@ -83,8 +83,8 @@ public class MainFrame extends JFrame implements WindowListener {
 		PlanPanel planPanel = new PlanPanel(simController, courses);
 		
 		// some subscriptions
-		rightPanel.subscribeEditMode(simController);
-		rightPanel.subscribeEditMode(coursePanel);
+		courses.subscribeEditMode(simController);
+		courses.subscribeEditMode(coursePanel);
 		courses.subscribeCurrentCourse(studentPanel);
 		// courses.subscribeCurrentCourse(planPanel); // TODO Daniel
 		simController.subscribeSpeed(planPanel);
