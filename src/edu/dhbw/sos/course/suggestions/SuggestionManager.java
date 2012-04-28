@@ -9,6 +9,8 @@
  */
 package edu.dhbw.sos.course.suggestions;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.EOFException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -16,13 +18,20 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
+
+import javax.swing.JLabel;
 
 import org.apache.log4j.Logger;
 
 import com.thoughtworks.xstream.XStream;
 
+import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.course.Courses;
+import edu.dhbw.sos.course.ICurrentCourseObserver;
+import edu.dhbw.sos.helper.CalcVector;
 import edu.dhbw.sos.helper.XMLParam;
 
 
@@ -33,7 +42,7 @@ import edu.dhbw.sos.helper.XMLParam;
  * @author bene
  * 
  */
-public class SuggestionManager implements ISuggestionsObserver {
+public class SuggestionManager implements ISuggestionsObserver, MouseListener, ICurrentCourseObserver {
 	private static final Logger		logger				= Logger.getLogger(SuggestionManager.class);
 
 
@@ -45,11 +54,13 @@ public class SuggestionManager implements ISuggestionsObserver {
 	private XStream						xs;
 	
 	
-	public SuggestionManager(LinkedList<String> params) {
-		this.courseParams = params;
+	public SuggestionManager(Courses courses) {
+		this.courseParams = courses.getCurrentCourse().getProperties();
+		courses.subscribeCurrentCourse(this);
 		availableSuggestions = new LinkedList<Suggestion>();
 		currentSuggestions = new LinkedList<Suggestion>();
 		
+
 		// init xml writer/reader
 		xs = new XStream();
 		// aliases are not required for functionality but for improving readability of the generated xml file.
@@ -78,9 +89,8 @@ public class SuggestionManager implements ISuggestionsObserver {
 	 * @return true if the Suggestion could be removed or false if not.
 	 * @author bene
 	 */
-	public boolean removeSuggestion(Suggestion s) {
+	private boolean removeSuggestion(Suggestion s) {
 		if (currentSuggestions.contains(s)) {
-			// TODO make influence of s available for simulation
 			currentSuggestions.remove(s);
 			return true;
 		} else {
@@ -91,7 +101,8 @@ public class SuggestionManager implements ISuggestionsObserver {
 	
 	@Override
 	public void updateSuggestions() {
-		// TODO call remove suggestion and afterwards update GUI
+		// TODO check which suggestions should be displayed based on average course parameters
+		// TODO update gui
 		
 	}
 	
@@ -184,10 +195,67 @@ public class SuggestionManager implements ISuggestionsObserver {
 	}
 	
 	
-	// DEBUG prints all loaded suggestions
-	public void print() {
-		for (Suggestion s : availableSuggestions) {
-			System.out.println(xs.toXML(s));
+	private Suggestion lookUpSuggestion(String text) {
+		for (Suggestion s : currentSuggestions) {
+			if (s.getMessage().compareTo(text) == 0) {
+				return s;
+			}
 		}
+		return null;
+	}
+	
+	
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		String sugText = ((JLabel) e.getSource()).getText();
+		Suggestion clicked = this.lookUpSuggestion(sugText);
+		if (clicked != null) {
+			// TODO pass suggestions influence to simulation
+			this.removeSuggestion(clicked);
+			// DOES NOT UPDATE DIRECTLY, UPDATE OF GUI IS DONE WITH NEXT SIMULATIONSTEP!
+		}
+	}
+	
+	
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// empty
+		
+	}
+	
+	
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// empty
+		
+	}
+	
+	
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// empty
+	}
+	
+	
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// empty
+	}
+	
+	
+	@Override
+	public void updateCurrentCourse(Course course) {
+		CalcVector averages = course.getCourseAverage();
+		currentSuggestions.clear();
+		for (int i = 0; i < availableSuggestions.size(); i++) {
+			boolean addSuggestion = true;
+			for (int j = 0; j < courseParams.size(); j++) {
+				addSuggestion = addSuggestion && availableSuggestions.get(i).paramIsInRange(j, averages.getValueAt(j));
+			}
+			if (addSuggestion) {
+				currentSuggestions.add(availableSuggestions.get(i));
+			}
+		}
+		Collections.sort(currentSuggestions);
 	}
 }
