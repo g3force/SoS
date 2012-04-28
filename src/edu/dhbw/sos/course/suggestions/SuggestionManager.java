@@ -30,7 +30,6 @@ import com.thoughtworks.xstream.XStream;
 
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.Courses;
-import edu.dhbw.sos.course.ICurrentCourseObserver;
 import edu.dhbw.sos.helper.CalcVector;
 import edu.dhbw.sos.helper.XMLParam;
 
@@ -42,7 +41,7 @@ import edu.dhbw.sos.helper.XMLParam;
  * @author bene
  * 
  */
-public class SuggestionManager implements ISuggestionsObserver, MouseListener, ICurrentCourseObserver {
+public class SuggestionManager implements ISuggestionsObserver, MouseListener {
 	private static final Logger		logger				= Logger.getLogger(SuggestionManager.class);
 
 
@@ -56,7 +55,6 @@ public class SuggestionManager implements ISuggestionsObserver, MouseListener, I
 	
 	public SuggestionManager(Courses courses) {
 		this.courseParams = courses.getCurrentCourse().getProperties();
-		courses.subscribeCurrentCourse(this);
 		availableSuggestions = new LinkedList<Suggestion>();
 		currentSuggestions = new LinkedList<Suggestion>();
 		
@@ -243,8 +241,7 @@ public class SuggestionManager implements ISuggestionsObserver, MouseListener, I
 	}
 	
 	
-	@Override
-	public void updateCurrentCourse(Course course) {
+	public void unknow(Course course) {
 		CalcVector averages = course.getStatState();
 		currentSuggestions.clear();
 		for (int i = 0; i < availableSuggestions.size(); i++) {
