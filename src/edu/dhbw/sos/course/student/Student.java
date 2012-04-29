@@ -69,6 +69,12 @@ public class Student implements IPlace, Cloneable {
 	}
 
 
+	@Override
+	public void reset() {
+		init();
+	}
+
+
 	/**
 	 * Only for testing yet. Should be tested and discussed
 	 * 
@@ -364,6 +370,4 @@ public class Student implements IPlace, Cloneable {
 	public void setHistoryStates(LinkedHashMap<Integer, CalcVector> historyStates) {
 		this.historyStates = historyStates;
 	}
-	
-	
 }

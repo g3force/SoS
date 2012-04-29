@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import edu.dhbw.sos.SuperFelix;
 import edu.dhbw.sos.course.CourseController;
 import edu.dhbw.sos.course.Courses;
+import edu.dhbw.sos.course.suggestions.SuggestionManager;
 import edu.dhbw.sos.gui.course.CoursePanel;
 import edu.dhbw.sos.gui.plan.PlanPanel;
 import edu.dhbw.sos.gui.right.RightPanel;
@@ -59,7 +60,8 @@ public class MainFrame extends JFrame implements WindowListener {
 	 * @param data
 	 * @author NicolaiO
 	 */
-	public MainFrame(CourseController courseController, Courses courses) {
+	public MainFrame(SimController simController, CourseController courseController, Courses courses,
+			SuggestionManager sm) {
 		logger.debug("Initializing...");
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLocationByPlatform(true);
@@ -75,18 +77,17 @@ public class MainFrame extends JFrame implements WindowListener {
 			this.setIconImage(Toolkit.getDefaultToolkit().getImage(iconUrl));
 		}
 
-		SimController simController = courses.getCurrentCourse().getSimController();
 		CoursePanel coursePanel = new CoursePanel(simController, courseController, courses);
-		RightPanel rightPanel = new RightPanel(courseController, courses);
+		RightPanel rightPanel = new RightPanel(courseController, courses, sm);
 		StatusBar statusBar = new StatusBar();
 		StudentPanel studentPanel = new StudentPanel(courses.getCurrentCourse());
 		PlanPanel planPanel = new PlanPanel(simController, courses);
 		
 		// some subscriptions
-		rightPanel.subscribeEditMode(simController);
-		rightPanel.subscribeEditMode(coursePanel);
+		courses.subscribeEditMode(simController);
+		courses.subscribeEditMode(coursePanel);
 		courses.subscribeCurrentCourse(studentPanel);
-		// courses.subscribeCurrentCourse(planPanel); // TODO Daniel
+		courses.subscribeCurrentCourse(planPanel);
 		simController.subscribeSpeed(planPanel);
 		
 		// put BottomPanel and StatusBar in a new Panel

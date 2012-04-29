@@ -41,5 +41,8 @@ public interface IPlace {
 	void addToStateVector(CalcVector addVector, int x, int y);
 
 	
+	void reset();
+
+
 	public LinkedHashMap<Integer, CalcVector> getHistoryStates();
 }

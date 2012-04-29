@@ -14,9 +14,6 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.LinkedList;
 import java.util.Map;
 
 import javax.swing.Box;
@@ -32,6 +29,7 @@ import edu.dhbw.sos.course.ICoursesListObserver;
 import edu.dhbw.sos.course.ICurrentCourseObserver;
 import edu.dhbw.sos.course.statistics.IStatisticsObserver;
 import edu.dhbw.sos.course.suggestions.ISuggestionsObserver;
+import edu.dhbw.sos.course.suggestions.SuggestionManager;
 import edu.dhbw.sos.gui.MainFrame;
 import edu.dhbw.sos.helper.Messages;
 
@@ -45,31 +43,33 @@ import edu.dhbw.sos.helper.Messages;
  */
 public class RightPanel extends JPanel implements ICurrentCourseObserver, ICoursesListObserver, IStatisticsObserver,
 		ISuggestionsObserver, IEditModeObserver {
-	private static final long					serialVersionUID	= -6879799823225506209L;
+	private static final long	serialVersionUID	= -6879799823225506209L;
 	// private static final Logger logger = Logger.getLogger(RightPanel.class);
 	
-	private LinkedList<IEditModeObserver>	editModeObservers	= new LinkedList<IEditModeObserver>();
 	// width of panel
-	private static final int					PREF_SIZE			= 200;
+	private static final int	PREF_SIZE			= 200;
 	// margin left and right
-	private static final int					MARGIN_LR			= 5;
+	private static final int	MARGIN_LR			= 5;
 	
 	// child elements
-	private JPanel									statsPanel;
-	private JPanel									suggestionPanel;
-	private JComboBox<Course>					courseList;
+	private JPanel					statsPanel;
+	private JPanel					suggestionPanel;
+	private JComboBox<Course>	courseList;
 	
-	private Courses								courses;
+	private Courses				courses;
+	private SuggestionManager	sugMngr;
 	
 	
-	public RightPanel(CourseController courseController, Courses courses) {
+	public RightPanel(CourseController courseController, Courses courses, SuggestionManager sm) {
 		this.setBorder(MainFrame.COMPOUND_BORDER);
 		this.setPreferredSize(new Dimension(PREF_SIZE, 0));
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		this.courses = courses;
 		courses.subscribeCoursesList(this);
 		courses.subscribeCurrentCourse(this);
-		courses.getCurrentCourse().subscribeStatistics(this);
+		courses.subscribeStatistics(this);
+		this.sugMngr = sm;
+		this.sugMngr.subscribeSuggestions(this);
 		
 		// #############################################################################
 		// drop down list
@@ -91,11 +91,11 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 		editBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for (IEditModeObserver so : editModeObservers) {
-					if (((EditBtn) e.getSource()).getModel().isPressed())
-						so.exitEditMode();
-					else
+				for (IEditModeObserver so : RightPanel.this.courses.getEditModeObservers()) {
+					if (((EditBtn) e.getSource()).isSelected())
 						so.enterEditMode();
+					else
+						so.exitEditMode();
 				}
 			}
 		});
@@ -140,11 +140,6 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 	}
 	
 	
-	public void subscribeEditMode(IEditModeObserver so) {
-		editModeObservers.add(so);
-	}
-	
-	
 	@Override
 	public void updateCoursesList() {
 		// course list
@@ -160,7 +155,6 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 	public void updateCurrentCourse(Course course) {
 		if (courses.size() > 0) {
 			courseList.setSelectedIndex(courses.indexOf(courses.getCurrentCourse()));
-			course.subscribeStatistics(this);
 		}
 	}
 	
@@ -171,39 +165,9 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 		if (suggestionPanel.getComponentCount() != courses.getCurrentCourse().getStatistics().size() + 1) {
 			suggestionPanel.removeAll();
 			suggestionPanel.add(new JLabel(Messages.getString("suggestions")));
-			for (String sugg : courses.getCurrentCourse().getSuggestions()) {
+			for (String sugg : this.sugMngr.getSuggestionNames()) {
 				JLabel lblSug = new JLabel(sugg);
-				lblSug.addMouseListener(new MouseListener() {
-					@Override
-					public void mouseReleased(MouseEvent e) {
-					}
-					
-					
-					@Override
-					public void mousePressed(MouseEvent e) {
-					}
-					
-					
-					@Override
-					public void mouseExited(MouseEvent e) {
-					}
-					
-					
-					@Override
-					public void mouseEntered(MouseEvent e) {
-					}
-					
-					
-					@Override
-					public void mouseClicked(MouseEvent e) {
-						JLabel me = (JLabel) e.getSource();
-						if (me != null) {
-							courses.getCurrentCourse().getSuggestions().remove(me.getText());
-							suggestionPanel.remove(me);
-							suggestionPanel.updateUI();
-						}
-					}
-				});
+				lblSug.addMouseListener(this.sugMngr);
 				suggestionPanel.add(lblSug);
 			}
 		}
@@ -213,7 +177,8 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 	@Override
 	public void updateStatistics() {
 		// statistics
-		if (statsPanel.getComponentCount() == 0 || statsPanel.getComponentCount() == courses.getCurrentCourse().getStatistics().size()) {
+		if (statsPanel.getComponentCount() == 0
+				|| statsPanel.getComponentCount() == courses.getCurrentCourse().getStatistics().size()) {
 			statsPanel.removeAll();
 			for (Map.Entry<String, String> entry : courses.getCurrentCourse().getStatistics().entrySet()) {
 				JLabel lblKey = new JLabel(entry.getKey());
@@ -226,8 +191,8 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 			for (Map.Entry<String, String> entry : courses.getCurrentCourse().getStatistics().entrySet()) {
 				synchronized (statsPanel.getTreeLock()) {
 					((JLabel) statsPanel.getComponent(i)).setText(entry.getKey());
-					((JLabel) statsPanel.getComponent(i+1)).setText(entry.getValue());
-					i+=2;
+					((JLabel) statsPanel.getComponent(i + 1)).setText(entry.getValue());
+					i += 2;
 				}
 			}
 		}

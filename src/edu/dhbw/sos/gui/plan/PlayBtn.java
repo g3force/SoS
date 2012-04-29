@@ -15,6 +15,9 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
+import edu.dhbw.sos.course.ISimulation;
+import edu.dhbw.sos.gui.right.IEditModeObserver;
+
 
 /**
  * Live Button
@@ -22,10 +25,12 @@ import javax.swing.JButton;
  * @author andres
  * 
  */
-public class PlayBtn extends JButton {
+public class PlayBtn extends JButton implements ISimulation, IEditModeObserver {
 	
 	private static final long	serialVersionUID	= -3859433203503408752L;
-	private Mode					mode					= Mode.PAUSE;
+	
+	
+	// private Mode mode = Mode.PAUSE;
 	
 	
 	/**
@@ -34,24 +39,25 @@ public class PlayBtn extends JButton {
 	 */
 	public PlayBtn() {
 		super("PL");
-		toggle();
+		setPause();
 	}
 	
-	private enum Mode {
-		PLAY,
-		PAUSE
-	}
+	
+	// private enum Mode {
+	// PLAY,
+	// PAUSE
+	// }
 	
 	
 	private void setPlay() {
-		setIconAndText("/res/icons/play.png", "PL");
-		mode = Mode.PLAY;
+		setIconAndText("/res/icons/pause.png", "PL");
+		// mode = Mode.PLAY;
 	}
 	
 	
 	private void setPause() {
-		setIconAndText("/res/icons/pause.png", "PA");
-		mode = Mode.PAUSE;
+		setIconAndText("/res/icons/play.png", "PA");
+		// mode = Mode.PAUSE;
 	}
 	
 	
@@ -71,16 +77,41 @@ public class PlayBtn extends JButton {
 	}
 	
 	
+	@Deprecated
 	public void toggle() {
-		switch (mode) {
-			case PLAY:
-				setPause();
-				break;
-			case PAUSE:
-				setPlay();
-				break;
-			default:
-				break;
-		}
+		// switch (mode) {
+		// case PLAY:
+		// setPause();
+		// break;
+		// case PAUSE:
+		// setPlay();
+		// break;
+		// default:
+		// break;
+		// }
+	}
+	
+	
+	@Override
+	public void simulationStopped() {
+		setPause();
+	}
+	
+	
+	@Override
+	public void simulationStarted() {
+		setPlay();
+	}
+	
+	
+	@Override
+	public void enterEditMode() {
+		this.setEnabled(false);
+	}
+	
+	
+	@Override
+	public void exitEditMode() {
+		this.setEnabled(true);
 	}
 }

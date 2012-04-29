@@ -13,6 +13,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
+import javax.swing.JLabel;
 
 import edu.dhbw.sos.gui.right.AddBtn;
 import edu.dhbw.sos.gui.right.DelBtn;
@@ -24,7 +28,7 @@ import edu.dhbw.sos.gui.right.EditBtn;
  * @author SebastianN
  * 
  */
-public class CourseController implements ActionListener, ItemListener {
+public class CourseController implements ActionListener, MouseListener, ItemListener {
 	// private static final Logger logger = Logger.getLogger(CourseController.class);
 	private Courses	courses;
 	
@@ -58,5 +62,47 @@ public class CourseController implements ActionListener, ItemListener {
 			}
 			courses.setCurrentCourse(e.getItem());
 		}
+	}
+	
+	
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if (e.getSource() instanceof JLabel) {
+			JLabel editBtn = (JLabel) e.getSource();
+			// the action command contains left, right, top or bottom. Give it directly to the next method
+			if (e.getButton() == MouseEvent.BUTTON3) {
+				courses.getCurrentCourse().subStudents(editBtn.getName());
+			} else {
+				courses.getCurrentCourse().addStudents(editBtn.getName());
+			}
+		}
+	}
+	
+	
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO NicolaiO Auto-generated method stub
+		
+	}
+	
+	
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO NicolaiO Auto-generated method stub
+		
+	}
+	
+	
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO NicolaiO Auto-generated method stub
+		
+	}
+	
+	
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO NicolaiO Auto-generated method stub
+		
 	}
 }

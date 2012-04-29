@@ -12,14 +12,18 @@ import edu.dhbw.sos.course.CourseController;
 import edu.dhbw.sos.course.Courses;
 import edu.dhbw.sos.course.io.CourseLoader;
 import edu.dhbw.sos.course.io.CourseSaver;
+import edu.dhbw.sos.course.suggestions.SuggestionManager;
 import edu.dhbw.sos.gui.MainFrame;
+import edu.dhbw.sos.simulation.SimController;
 
 
 public class SuperFelix {
-	public static String				VERSION	= "0.5";
-	private static final Logger	logger	= Logger.getLogger(SuperFelix.class);
-	private static Courses	courses;
-	private static String savepath;
+	public static String					VERSION	= "0.5";
+	private static final Logger		logger	= Logger.getLogger(SuperFelix.class);
+	private static Courses				courses;
+	private static String				savepath;
+	private static SuggestionManager	sugMngr;
+
 	
 	public SuperFelix() {
 		/*
@@ -51,8 +55,10 @@ public class SuperFelix {
 		
 		courses = CourseLoader.loadCourses(savepath);
 		CourseController courseController = new CourseController(courses);
-
-		MainFrame mainFrame = new MainFrame(courseController, courses);
+		sugMngr = new SuggestionManager();
+		SimController simController = new SimController(courses.getCurrentCourse(), sugMngr);
+		courses.subscribeCurrentCourse(simController);
+		MainFrame mainFrame = new MainFrame(simController, courseController, courses, sugMngr);
 		mainFrame.pack();
 		logger.info("Sim of Students started.");
 	}

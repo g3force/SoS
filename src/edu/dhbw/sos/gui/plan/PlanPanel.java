@@ -13,19 +13,21 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.InputVerifier;
+import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -33,7 +35,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.text.DateFormatter;
 import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.MaskFormatter;
 
 import org.apache.log4j.Logger;
 
@@ -58,14 +59,16 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	private static final Logger	logger				= Logger.getLogger(PlanPanel.class);
 	private static final long		serialVersionUID	= -1665784555881941508L;
 	// paintArea is the part of the Panel, where some drawings have to be done
-	private final PPaintArea		paintArea;
+	private PPaintArea				paintArea;
 	// label where speed of playback is shown
 	private JLabel						lblSpeed;
 	// reference to the timeblocks to display
 	// private TimeBlocks timeBlocks;
-	
+
 	private JFormattedTextField	txtFrom;
 	
+	private Courses					courses;
+
 
 	/**
 	 * Initialize the PlanPanel with GUIData
@@ -74,6 +77,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	 * @author NicolaiO
 	 */
 	public PlanPanel(SimController simController, Courses courses) {
+		this.courses = courses;
 		Course course = courses.getCurrentCourse();
 		// get data
 		// timeBlocks = new TimeBlocks(course.getLecture().getTimeBlocks());
@@ -110,8 +114,10 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		this.add(lPanel, BorderLayout.WEST);
 		
 		// init paintArea
-		paintArea = new PPaintArea(course);
+		paintArea = new PPaintArea(simController, course);
 		this.add(paintArea, BorderLayout.CENTER);
+		paintArea.subscribeTime(simController);
+		courses.subscribeStatistics(paintArea);
 		// paintArea.initMovableBlocks();
 		
 		// create sidePanel
@@ -126,8 +132,10 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		LiveBtn btnLive = new LiveBtn();
 		btnPlay.addActionListener(simController);
 		btnLive.addActionListener(simController);
+		simController.subscribeSimulation(btnPlay);
+		courses.subscribeEditMode(btnPlay);
 		
-		
+
 		controlPanel.add(btnPlay);
 		controlPanel.add(btnLive);
 		sidePanel.add(controlPanel);
@@ -157,55 +165,65 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 
 		JLabel lblFrom = new JLabel(Messages.getString("Lecture.FROM"), SwingConstants.LEFT);
 		JLabel lblTo = new JLabel(Messages.getString("Lecture.TO"), SwingConstants.LEFT);
-		try {
-			txtFrom = new JFormattedTextField(new MaskFormatter("##:##"));
-		} catch (ParseException err) {
-			// TODO andres Auto-generated catch block
-			err.printStackTrace();
-		}
-		// new RegexFormatter("(([0-1][0-9])|(2[0-3])):([0-5][0-9])")
-		txtFrom = new JFormattedTextField();
+
+
+		txtFrom = new JFormattedTextField(new DefaultFormatterFactory(new DateFormatter(timeFormat)));
 
 		txtFrom.setText(start);
 		txtFrom.setColumns(5);
 		JTextField txtTo = new JTextField(end, 5);
 		txtTo.setEditable(false);
-		txtFrom.setFormatterFactory(new DefaultFormatterFactory(new DateFormatter(new SimpleDateFormat("HH:mm"))));
-		txtFrom.addPropertyChangeListener("value", new PropertyChangeListener() {
+		txtTo.setToolTipText(Messages.getString("Lecture.TOINFO"));
+
+		
+		txtFrom.addKeyListener(new EnterKeyListener());
+		
+		txtFrom.setInputVerifier(new InputVerifier() {
+			@Override
+			public boolean verify(JComponent input) {
+				if ((input instanceof JFormattedTextField)) {
+					JFormattedTextField in = (JFormattedTextField) input;
+					
+					
+					Pattern timeP = Pattern.compile("([0-1][0-9]|2[0-3]):[0-5][0-9]");
+					Matcher timeM = timeP.matcher(((JFormattedTextField) input).getText());
+					// checks if the colon is at the right point
+					// TODO maybe check if the number of digits is correct and maybe check the range of the numbers (now
+					// // if the number ist out of range it will overflow)
+					// if (in.isEditValid() && (((in.getText(1, 1).equals(":") && in.getText().length() == 4)))
+					// || (in.getText(2, 1).equals(":") && in.getText().length() == 5)) {
+					if (timeM.matches()) {
+						in.setFocusLostBehavior(JFormattedTextField.COMMIT);
+						in.getText();
+						return true;
+					}
+					in.setFocusLostBehavior(JFormattedTextField.REVERT);
+					return false;
+				} else
+					return false;
+			}
+			
 
 			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				System.out.println(txtFrom.getValue());
-
+			public boolean shouldYieldFocus(JComponent input) {
+				if (!verify(input)) {
+					logger.debug("Time value is not correct");
+					input.setToolTipText(Messages.getString("Lecture.STARTFAIL"));
+					input.setForeground(Color.WHITE);
+					input.setBackground(Color.RED);
+					return false;
+				} else {
+					logger.debug("Time value is correct");
+					input.setToolTipText("");
+					input.setForeground(Color.BLACK);
+					input.setBackground(Color.WHITE);
+					updateStart((String) ((JFormattedTextField) input).getText());
+					return true;
+				}
 			}
+
+
 		});
-		
-		// txtFrom.addActionListener(new StartTextFieldListener());
-		//
-		// txtFrom.setInputVerifier(new InputVerifier() {
-		// @Override
-		// public boolean verify(JComponent input) {
-		// if ((input instanceof JFormattedTextField) && ((JFormattedTextField) input).isEditValid()) {
-		// ((JFormattedTextField) input).getFormatter();
-		// ((JFormattedTextField) input).setFocusLostBehavior(JFormattedTextField.COMMIT);
-		// return true;
-		// }
-		// ((JFormattedTextField) input).setFocusLostBehavior(JFormattedTextField.REVERT);
-		// return false;
-		// }
-		//
-		//
-		// @Override
-		// public boolean shouldYieldFocus(javax.swing.JComponent input) {
-		// if (!verify(input)) {
-		// input.setForeground(java.awt.Color.RED);
-		// return false;
-		// } else {
-		// input.setForeground(java.awt.Color.BLACK);
-		// return true;
-		// }
-		// }
-		// });
 
 		lblFrom.setAlignmentX(Component.LEFT_ALIGNMENT);
 		lblTo.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -249,9 +267,29 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		lblSpeed.setText(speed + "x");
 	}
 	
-	private class StartTextFieldListener implements ActionListener {
+	private class EnterKeyListener implements KeyListener {
 		@Override
-		public void actionPerformed(ActionEvent evt) {
+		public void keyPressed(KeyEvent e) {
+			
+			int key = e.getKeyCode();
+			
+			if (key == KeyEvent.VK_ENTER) {
+				if (e.getSource() instanceof JFormattedTextField)
+				((JFormattedTextField) e.getSource()).getInputVerifier().shouldYieldFocus((JComponent) e.getSource());
+			}
+		}
+		
+		
+		@Override
+		public void keyTyped(KeyEvent e) {
+			// TODO andres Auto-generated method stub
+			
+		}
+
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+			// TODO andres Auto-generated method stub
 
 		}
 	}
@@ -259,7 +297,32 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	
 	@Override
 	public void updateCurrentCourse(Course course) {
-		// TODO andres Auto-generated method stub
-		
+		paintArea.init(course);
+		paintArea.initMovableBlocks();
+		paintArea.repaint();
+	}
+	
+	
+	
+
+	/**
+	 * Updates the start time of the current course lectures.
+	 * Only used by InputVerifer of Start TextField in GUI.
+	 * 
+	 * @param time
+	 * @author andres
+	 */
+	private void updateStart(String time) {
+		Date startDate;
+		try {
+			SimpleDateFormat timeFormat = (new SimpleDateFormat("HH:mm"));
+			startDate = timeFormat.parse(time);
+			String oldDate = timeFormat.format(courses.getCurrentCourse().getLecture().getStart());
+			courses.getCurrentCourse().getLecture().setStart(startDate);
+			logger.debug("Changed Start of Lecture from " + oldDate + " to " + time);
+		} catch (ParseException err) {
+			// Normally this exception shouldn't be thrown, because the input is already verified by the calling method
+			logger.warn("Could not parse time " + time);
+		}
 	}
 }

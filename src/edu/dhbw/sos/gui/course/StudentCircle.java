@@ -16,7 +16,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 
 import edu.dhbw.sos.course.student.IPlace;
-import edu.dhbw.sos.course.student.Student;
 
 
 /**
@@ -146,7 +145,7 @@ public class StudentCircle extends Ellipse2D.Float {
 	}
 	
 	
-	public void setStudent(Student student) {
+	public void setStudent(IPlace student) {
 		this.student = student;
 	}
 	

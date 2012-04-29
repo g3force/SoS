@@ -9,6 +9,8 @@
  */
 package edu.dhbw.sos.course.suggestions;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.EOFException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -16,13 +18,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
+
+import javax.swing.JLabel;
 
 import org.apache.log4j.Logger;
 
 import com.thoughtworks.xstream.XStream;
 
+import edu.dhbw.sos.helper.CalcVector;
 import edu.dhbw.sos.helper.XMLParam;
 
 
@@ -33,30 +39,47 @@ import edu.dhbw.sos.helper.XMLParam;
  * @author bene
  * 
  */
-public class SuggestionManager implements ISuggestionsObserver {
-	private static final Logger		logger				= Logger.getLogger(SuggestionManager.class);
-
-
-	private static final String		SUGGESTION_FILE	= System.getProperty("user.home") + "/.sos/suggestions.xml";
-
-	private LinkedList<Suggestion>	availableSuggestions;
-	private LinkedList<Suggestion>	currentSuggestions;
-	private LinkedList<String>			courseParams;
-	private XStream						xs;
+public class SuggestionManager implements MouseListener {
+	private static final Logger											logger					= Logger
+																														.getLogger(SuggestionManager.class);
 	
 	
-	public SuggestionManager(LinkedList<String> params) {
-		this.courseParams = params;
+	private static final String											SUGGESTION_FILE		= System.getProperty("user.home")
+																														+ "/.sos/suggestions.xml";
+	
+	private static transient LinkedList<ISuggestionsObserver>	suggestionObserver	= new LinkedList<ISuggestionsObserver>();
+	/**
+	 * Stores all available suggestions that were loaded from the xml file.
+	 */
+	private LinkedList<Suggestion>										availableSuggestions;
+	/**
+	 * Stores all currently displayed suggestions.
+	 */
+	private LinkedList<Suggestion>										currentSuggestions;
+	private LinkedList<String>												courseParams;
+	private XStream															xs;
+	/**
+	 * Buffer for the CalcVector objects of clicked Suggestions.
+	 */
+	private LinkedList<CalcVector>										influences;
+
+	
+	public SuggestionManager() {
 		availableSuggestions = new LinkedList<Suggestion>();
 		currentSuggestions = new LinkedList<Suggestion>();
+		influences = new LinkedList<CalcVector>();
 		
+
 		// init xml writer/reader
 		xs = new XStream();
 		// aliases are not required for functionality but for improving readability of the generated xml file.
 		xs.alias("parameters", XMLParam[].class);
 		xs.alias("param", XMLParam.class);
 		xs.alias("suggestion", Suggestion.class);
-		
+	}
+	
+	
+	private void loadXML() {
 		// try loading the suggestions from file
 		int retCode = loadSuggestionsFromFile();
 		// no file was found => create file with dummy data and try loading again
@@ -71,6 +94,15 @@ public class SuggestionManager implements ISuggestionsObserver {
 	}
 	
 	
+	public void reset(LinkedList<String> params) {
+		this.courseParams = params;
+		availableSuggestions.clear();
+		currentSuggestions.clear();
+		influences.clear();
+		loadXML();
+	}
+	
+	
 	/**
 	 * Removes the Suggestion object s from the list of displayed suggestions.
 	 * 
@@ -78,21 +110,13 @@ public class SuggestionManager implements ISuggestionsObserver {
 	 * @return true if the Suggestion could be removed or false if not.
 	 * @author bene
 	 */
-	public boolean removeSuggestion(Suggestion s) {
+	private boolean removeSuggestion(Suggestion s) {
 		if (currentSuggestions.contains(s)) {
-			// TODO make influence of s available for simulation
 			currentSuggestions.remove(s);
 			return true;
 		} else {
 			return false;
 		}
-	}
-	
-	
-	@Override
-	public void updateSuggestions() {
-		// TODO call remove suggestion and afterwards update GUI
-		
 	}
 	
 	
@@ -184,10 +208,97 @@ public class SuggestionManager implements ISuggestionsObserver {
 	}
 	
 	
-	// DEBUG prints all loaded suggestions
-	public void print() {
-		for (Suggestion s : availableSuggestions) {
-			System.out.println(xs.toXML(s));
+	private Suggestion lookUpSuggestion(String text) {
+		for (Suggestion s : currentSuggestions) {
+			if (s.getMessage().compareTo(text) == 0) {
+				return s;
+			}
 		}
+		return null;
+	}
+	
+	
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		String sugText = ((JLabel) e.getSource()).getText();
+		Suggestion clicked = this.lookUpSuggestion(sugText);
+		if (clicked != null) {
+			this.influences.add(clicked.getInfluenceVector());
+			this.removeSuggestion(clicked);
+			notifySuggestionObservers();
+		}
+	}
+	
+	
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// empty
+		
+	}
+	
+	
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// empty
+		
+	}
+	
+	
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// empty
+	}
+	
+	
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// empty
+	}
+	
+	
+	public void subscribeSuggestions(ISuggestionsObserver so) {
+		suggestionObserver.add(so);
+	}
+	
+	
+	public static void notifySuggestionObservers() {
+		for (ISuggestionsObserver so : suggestionObserver) {
+			so.updateSuggestions();
+		}
+	}
+
+
+	public void updateSuggestions(CalcVector averages) {
+		currentSuggestions.clear();
+		for (int i = 0; i < availableSuggestions.size(); i++) {
+			boolean addSuggestion = true;
+			for (int j = 0; j < courseParams.size(); j++) {
+				addSuggestion = addSuggestion && availableSuggestions.get(i).paramIsInRange(j, averages.getValueAt(j));
+			}
+			if (addSuggestion) {
+				currentSuggestions.add(availableSuggestions.get(i));
+			}
+		}
+		Collections.sort(currentSuggestions);
+		notifySuggestionObservers();
+	}
+	
+	
+	public LinkedList<CalcVector> getAndClearInfluences() {
+		LinkedList<CalcVector> ret = new LinkedList<CalcVector>();
+		for (int i = 0; i < influences.size(); i++) {
+			ret.add(i, influences.get(i));
+		}
+		influences.clear();
+		return ret;
+	}
+	
+	
+	public LinkedList<String> getSuggestionNames() {
+		LinkedList<String> ret = new LinkedList<String>();
+		for (int i = 0; i < this.currentSuggestions.size(); i++) {
+			ret.add(i, this.currentSuggestions.get(i).getMessage());
+		}
+		return ret;
 	}
 }

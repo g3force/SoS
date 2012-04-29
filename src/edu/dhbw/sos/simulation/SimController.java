@@ -20,6 +20,10 @@ import java.util.TimerTask;
 import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.course.Courses;
+import edu.dhbw.sos.course.ICurrentCourseObserver;
+import edu.dhbw.sos.course.ISimulation;
+import edu.dhbw.sos.course.suggestions.SuggestionManager;
 import edu.dhbw.sos.gui.plan.ForwardBtn;
 import edu.dhbw.sos.gui.plan.LiveBtn;
 import edu.dhbw.sos.gui.plan.PlayBtn;
@@ -35,35 +39,52 @@ import edu.dhbw.sos.gui.right.IEditModeObserver;
  * 
  */
 
-public class SimController implements ActionListener, MouseListener, IEditModeObserver, ITimeObserver {
-	private static final Logger			logger			= Logger.getLogger(SimController.class);
+public class SimController implements ActionListener, MouseListener, IEditModeObserver, ITimeObserver,
+		ICurrentCourseObserver {
+	private static final Logger			logger						= Logger.getLogger(SimController.class);
 	
 	private Course								course;
-	private int									currentTime;															// in
-																																// milliseconds
-																																// from
-																																// "begin"
-	private int									speed;																	// in
-																																// milliseconds
-	private int									notifyStep		= 1;
-	private int									realInterval	= 1000;
-	private int									interval			= 1000;
-	private transient Timer					pulse				= new Timer();
-	private boolean							run				= false;
+	private int									currentTime;																		// in
+																																			// milliseconds
+																																			// from
+																																			// "begin"
+	private int									speed;																				// in
+																																			// milliseconds
+	private int									notifyStep					= 1;
+	private int									realInterval				= 1000;
+	private int									interval						= 1000;
+	private transient Timer					pulse							= new Timer();
+	private boolean							run							= false;
 	
-	private LinkedList<ISpeedObserver>	speedObservers	= new LinkedList<ISpeedObserver>();
-	private LinkedList<ITimeObserver>	timeObservers	= new LinkedList<ITimeObserver>();
+	private LinkedList<ISpeedObserver>	speedObservers				= new LinkedList<ISpeedObserver>();
+	private LinkedList<ITimeObserver>	timeObservers				= new LinkedList<ITimeObserver>();
+	private LinkedList<ISimulation>		simulationOberservers	= new LinkedList<ISimulation>();
 	
+	private SuggestionManager				sm;
 
-	public SimController(Course course) {
-		this.course = course;
-		currentTime = 0;
-		speed = 1;
-		interval = 1000;
+
+	public SimController(Course course, SuggestionManager sm) {
+		this.sm = sm;
+		reset(course);
+	}
+	
+	
+	public void reset() {
+		stop();
+		course.reset();
+		setCurrentTime(0);
+		setSpeed(1);
+		sm.reset(course.getProperties());
 		run = false;
 	}
 	
 	
+	public void reset(Course course) {
+		this.course = course;
+		reset();
+	}
+	
+
 	public void notifySpeedObservers() {
 		for (ISpeedObserver so : speedObservers) {
 			so.speedChanged(speed);
@@ -85,10 +106,30 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	
 	public void subscribeTime(ITimeObserver to) {
-		timeObservers.add(to);
+		if (to != null)
+			timeObservers.add(to);
 	}
 	
 	
+	public void notifySimulationStarted() {
+		for (ISimulation cco : simulationOberservers) {
+			cco.simulationStarted();
+		}
+	}
+	
+	
+	public void notifySimulationStopped() {
+		for (ISimulation cco : simulationOberservers) {
+			cco.simulationStopped();
+		}
+	}
+	
+	
+	public void subscribeSimulation(ISimulation cco) {
+		simulationOberservers.add(cco);
+	}
+
+
 	public boolean toggle() {
 		if (run) {
 			logger.info("Simulation stopped");
@@ -103,6 +144,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	
 	public void run() {
+		notifySimulationStarted();
 		pulse = new Timer();
 		TimerTask simulation = new TimerTask() {
 			@Override
@@ -117,6 +159,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	public void stop() {
 		pulse.cancel();
 		pulse.purge();
+		notifySimulationStopped();
 	}
 	
 	
@@ -132,14 +175,16 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		
 		// calculate state statistics for whole course
 		course.calcStatistics(currentTime);
+		// update suggestions using statistics of whole course
+		sm.updateSuggestions(course.getStatState());
 		
 		// notify GUI after simulation
 		notifyStep--;
 		if (notifyStep == 0) {
 			notifyStep = speed;
-			course.notifyStudentsObservers();
-			course.notifySelectedStudentObservers();
-			course.notifyStatisticsObservers();
+			Courses.notifyStudentsObservers();
+			Courses.notifySelectedStudentObservers();
+			Courses.notifyStatisticsObservers();
 		}
 	}
 	
@@ -181,6 +226,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 			stop();
 			run();
 		}
+		notifySpeedObservers();
 	}
 	
 	
@@ -192,7 +238,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 			// FIXME Not implemented
 		} else if (e.getSource() instanceof PlayBtn) {
 			if (toggle()) {
-				((PlayBtn) e.getSource()).toggle();
+				// ((PlayBtn) e.getSource()).toggle();
 			}
 		} else if (e.getSource() instanceof ForwardBtn) {
 			setSpeed(getSpeed() * 2);
@@ -206,14 +252,14 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		float value = 20;
+		float value = -20;
 		// right click
 		if (e.getButton() == MouseEvent.BUTTON3)
 			value *= -1;
 		if (course.getSelectedStudent() != null) {
 			course.donInputQueue(course.getSelectedProperty(), value, currentTime);
 		}
-		course.notifyStudentsObservers();
+		Courses.notifyStudentsObservers();
 	}
 	
 	
@@ -240,14 +286,12 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	@Override
 	public void enterEditMode() {
-		// TODO NicolaiO Auto-generated method stub
-		
+		reset();
 	}
 	
 	
 	@Override
 	public void exitEditMode() {
-		// TODO NicolaiO Auto-generated method stub
 		
 	}
 	
@@ -262,5 +306,11 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		if (run)
 			run();
 		logger.debug(course.getPlace(0, 0).getHistoryStates().size());
+	}
+	
+	
+	@Override
+	public void updateCurrentCourse(Course course) {
+		reset(course);
 	}
 }

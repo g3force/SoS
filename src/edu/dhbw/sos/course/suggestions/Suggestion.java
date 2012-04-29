@@ -200,8 +200,8 @@ public class Suggestion implements Comparable<Suggestion> {
 		}
 		this.parameters = newParams;
 	}
-
 	
+
 	/**
 	 * Compares this Suggestions priority with the Suggestion s' priority. Returns 0 if both are equal, a negative value
 	 * if this Suggestions priority is lower than that of s and a positive value if this Suggestions priority is higher
