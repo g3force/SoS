@@ -56,10 +56,6 @@ public class SuggestionManager implements MouseListener {
 	 * Stores all currently displayed suggestions.
 	 */
 	private LinkedList<Suggestion>										currentSuggestions;
-	/**
-	 * Stores the names of all currently displayed suggestions.
-	 */
-	private LinkedList<String>												suggestionNames;
 	private LinkedList<String>												courseParams;
 	private XStream															xs;
 	/**
@@ -71,7 +67,6 @@ public class SuggestionManager implements MouseListener {
 	public SuggestionManager() {
 		availableSuggestions = new LinkedList<Suggestion>();
 		currentSuggestions = new LinkedList<Suggestion>();
-		suggestionNames = new LinkedList<String>();
 		influences = new LinkedList<CalcVector>();
 		
 
@@ -103,7 +98,6 @@ public class SuggestionManager implements MouseListener {
 		this.courseParams = params;
 		availableSuggestions.clear();
 		currentSuggestions.clear();
-		suggestionNames.clear();
 		influences.clear();
 		loadXML();
 	}
@@ -276,7 +270,6 @@ public class SuggestionManager implements MouseListener {
 
 	public void updateSuggestions(CalcVector averages) {
 		currentSuggestions.clear();
-		suggestionNames.clear();
 		for (int i = 0; i < availableSuggestions.size(); i++) {
 			boolean addSuggestion = true;
 			for (int j = 0; j < courseParams.size(); j++) {
@@ -284,10 +277,9 @@ public class SuggestionManager implements MouseListener {
 			}
 			if (addSuggestion) {
 				currentSuggestions.add(availableSuggestions.get(i));
-				suggestionNames.add(availableSuggestions.get(i).getMessage());
 			}
 		}
-		Collections.sort(suggestionNames);
+		Collections.sort(currentSuggestions);
 		notifySuggestionObservers();
 	}
 	
@@ -303,6 +295,10 @@ public class SuggestionManager implements MouseListener {
 	
 	
 	public LinkedList<String> getSuggestionNames() {
-		return this.suggestionNames;
+		LinkedList<String> ret = new LinkedList<String>();
+		for (int i = 0; i < this.currentSuggestions.size(); i++) {
+			ret.add(i, this.currentSuggestions.get(i).getMessage());
+		}
+		return ret;
 	}
 }
