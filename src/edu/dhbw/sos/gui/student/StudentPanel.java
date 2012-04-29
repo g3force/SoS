@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.course.Courses;
 import edu.dhbw.sos.course.ICurrentCourseObserver;
 import edu.dhbw.sos.course.ISelectedStudentObserver;
 import edu.dhbw.sos.helper.Messages;
@@ -55,7 +56,7 @@ public class StudentPanel extends JPanel implements ISelectedStudentObserver, IC
 		this.setLayout(new BorderLayout());
 		this.course = course;
 		this.add(paintArea, BorderLayout.CENTER);
-		this.course.subscribeSelectedStudent(this);
+		Courses.subscribeSelectedStudent(this);
 		
 		lblParameterName = new JLabel("", JLabel.CENTER);
 		lblParameterName.setFont(new Font("Book Antiqua", Font.BOLD, 30));

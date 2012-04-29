@@ -15,6 +15,8 @@ import java.util.LinkedList;
 import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.io.CourseSaver;
+import edu.dhbw.sos.course.statistics.IStatisticsObserver;
+import edu.dhbw.sos.gui.right.IEditModeObserver;
 
 
 /**
@@ -26,20 +28,33 @@ import edu.dhbw.sos.course.io.CourseSaver;
  * 
  */
 public class Courses implements Iterable<Course> {
-	private static final Logger						logger							= Logger.getLogger(Courses.class);
-	private Course											curCourse;
-	private LinkedList<ICurrentCourseObserver>	currentCourseOberservers	= new LinkedList<ICurrentCourseObserver>();
-	private LinkedList<ICoursesListObserver>		coursesListOberservers		= new LinkedList<ICoursesListObserver>();
-	private String											savepath							= "";
-	private LinkedList<Course>							courses;
-	
+	private static final Logger										logger							= Logger
+																															.getLogger(Courses.class);
+	private Course															curCourse;
+	// observers
+	private transient static LinkedList<IStudentsObserver>	studentsObservers;
+	private transient static LinkedList<ISelectedStudentObserver>	selectedCourseObservers;
+	private transient static LinkedList<IStatisticsObserver>			statisticsObservers;
+	private transient LinkedList<ICurrentCourseObserver>		currentCourseOberservers;
+	private transient LinkedList<ICoursesListObserver>			coursesListOberservers;
+	private transient LinkedList<IEditModeObserver>				editModeObservers;
+	private String															savepath							= "";
+	private LinkedList<Course>											courses;
 
+	
 	/**
 	 * TODO NicolaiO, add comment!
 	 * 
 	 * @author NicolaiO
 	 */
 	public Courses(String savepath) {
+		studentsObservers = new LinkedList<IStudentsObserver>();
+		selectedCourseObservers = new LinkedList<ISelectedStudentObserver>();
+		statisticsObservers = new LinkedList<IStatisticsObserver>();
+		currentCourseOberservers = new LinkedList<ICurrentCourseObserver>();
+		coursesListOberservers = new LinkedList<ICoursesListObserver>();
+		editModeObservers = new LinkedList<IEditModeObserver>();
+
 		courses = new LinkedList<Course>();
 		this.savepath = savepath;
 		
@@ -107,6 +122,86 @@ public class Courses implements Iterable<Course> {
 	public Course get(int i) {
 		return courses.get(i);
 	}
+	
+	
+	/**
+	 * notify all subscribers of the students array
+	 * 
+	 * @author dirk
+	 */
+	public static void notifyStudentsObservers() {
+		for (IStudentsObserver so : studentsObservers) {
+			so.updateStudents();
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * TODO NicolaiO, add comment!
+	 * 
+	 * @author NicolaiO
+	 */
+	public static void notifySelectedStudentObservers() {
+		for (ISelectedStudentObserver so : selectedCourseObservers) {
+			so.updateSelectedStudent();
+		}
+	}
+	
+	
+	/**
+	 * notify all subscribers of the statistics
+	 * 
+	 * @author andres
+	 */
+	public static void notifyStatisticsObservers() {
+		for (IStatisticsObserver so : statisticsObservers) {
+			so.updateStatistics();
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * objects interested in the students field can subscribe here
+	 * the object will be notified if the field changes
+	 * 
+	 * @param so the object which needs to be informed
+	 * @author dirk
+	 */
+	public void subscribeStudents(IStudentsObserver so) {
+		studentsObservers.add(so);
+	}
+	
+	
+	/**
+	 * 
+	 * TODO NicolaiO, add comment!
+	 * 
+	 * @param so
+	 * @author NicolaiO
+	 */
+	public static void subscribeSelectedStudent(ISelectedStudentObserver so) {
+		selectedCourseObservers.add(so);
+	}
+	
+	
+	/**
+	 * 
+	 * objects interested in the statistics field can subscribe here
+	 * the object will be notified if the field changes
+	 * 
+	 * @param so the object which needs to be informed
+	 * @author andres
+	 */
+	public void subscribeStatistics(IStatisticsObserver so) {
+		statisticsObservers.add(so);
+	}
+
+	
+	public void subscribeEditMode(IEditModeObserver so) {
+		editModeObservers.add(so);
+	}
 
 
 	public void notifyCoursesListObservers() {
@@ -121,8 +216,8 @@ public class Courses implements Iterable<Course> {
 			cco.updateCurrentCourse(curCourse);
 		}
 	}
-	
-	
+
+
 	public void subscribeCurrentCourse(ICurrentCourseObserver cco) {
 		currentCourseOberservers.add(cco);
 	}
@@ -152,5 +247,10 @@ public class Courses implements Iterable<Course> {
 			}
 		}
 		logger.warn("Could not find course \"" + newCurrent + "\". Cannot set as current.");
+	}
+	
+	
+	public LinkedList<IEditModeObserver> getEditModeObservers() {
+		return editModeObservers;
 	}
 }

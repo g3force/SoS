@@ -22,12 +22,10 @@ import edu.dhbw.sos.course.io.CourseSaver;
 import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.Lecture;
 import edu.dhbw.sos.course.lecture.TimeBlock;
-import edu.dhbw.sos.course.statistics.IStatisticsObserver;
 import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
 import edu.dhbw.sos.helper.CalcVector;
-import edu.dhbw.sos.simulation.SimController;
 
 
 /**
@@ -38,12 +36,8 @@ import edu.dhbw.sos.simulation.SimController;
 public class Course {
 	private static final Logger										logger	= Logger.getLogger(Course.class);
 	
-	// observers
-	private transient LinkedList<IStudentsObserver>				studentsObservers;
-	private transient LinkedList<ISelectedStudentObserver>	selectedCourseObservers;
-	private transient LinkedList<IStatisticsObserver>			statisticsObservers;
 
-	private transient SimController									simController;
+	// private transient SimController simController;
 	
 	// place here? not implemented yet, so do not know...
 	private transient LinkedHashMap<String, String>				statistics;
@@ -57,7 +51,6 @@ public class Course {
 	private Influence														influence;
 	private String															name;
 	private LinkedList<String>											parameters;
-	private CalcVector													courseAverage;
 
 	// the student and property that was selected in the GUI (by hovering over the student)
 	private transient IPlace											selectedStudent;
@@ -99,7 +92,6 @@ public class Course {
 				}
 			}
 		}
-		courseAverage = new CalcVector(parameters.size());
 		influence = new Influence();
 		lecture = new Lecture(new Date());
 		lecture.getTimeBlocks().add(new TimeBlock(10, BlockType.theory));
@@ -112,11 +104,8 @@ public class Course {
 	
 	
 	private void init() {
-		simController = new SimController(this);
+		// simController = new SimController(this);
 
-		studentsObservers = new LinkedList<IStudentsObserver>();
-		selectedCourseObservers = new LinkedList<ISelectedStudentObserver>();
-		statisticsObservers = new LinkedList<IStatisticsObserver>();
 		
 		statistics = new LinkedHashMap<String, String>();
 		statState = new CalcVector(4);
@@ -130,85 +119,20 @@ public class Course {
 	}
 	
 	
+	/**
+	 * TODO NicolaiO, add comment!
+	 * 
+	 * @author NicolaiO
+	 */
+	public void reset() {
+		init();
+	}
+	
+	
 	private Object readResolve() {
 		init();
 		getPlace(0, 0).getActualState().printCalcVector("COURSE INIT");
 		return this;
-	}
-	
-
-	/**
-	 * notify all subscribers of the students array
-	 * 
-	 * @author dirk
-	 */
-	public void notifyStudentsObservers() {
-		for (IStudentsObserver so : studentsObservers) {
-			so.updateStudents();
-		}
-	}
-	
-	
-	/**
-	 * 
-	 * TODO NicolaiO, add comment!
-	 * 
-	 * @author NicolaiO
-	 */
-	public void notifySelectedStudentObservers() {
-		for (ISelectedStudentObserver so : selectedCourseObservers) {
-			so.updateSelectedStudent();
-		}
-	}
-	
-	
-	/**
-	 * notify all subscribers of the statistics
-	 * 
-	 * @author andres
-	 */
-	public void notifyStatisticsObservers() {
-		for (IStatisticsObserver so : statisticsObservers) {
-			so.updateStatistics();
-		}
-	}
-	
-	
-	/**
-	 * 
-	 * objects interested in the students field can subscribe here
-	 * the object will be notified if the field changes
-	 * 
-	 * @param so the object which needs to be informed
-	 * @author dirk
-	 */
-	public void subscribeStudents(IStudentsObserver so) {
-		studentsObservers.add(so);
-	}
-	
-	
-	/**
-	 * 
-	 * TODO NicolaiO, add comment!
-	 * 
-	 * @param so
-	 * @author NicolaiO
-	 */
-	public void subscribeSelectedStudent(ISelectedStudentObserver so) {
-		selectedCourseObservers.add(so);
-	}
-	
-	
-	/**
-	 * 
-	 * objects interested in the statistics field can subscribe here
-	 * the object will be notified if the field changes
-	 * 
-	 * @param so the object which needs to be informed
-	 * @author andres
-	 */
-	public void subscribeStatistics(IStatisticsObserver so) {
-		statisticsObservers.add(so);
 	}
 	
 	
@@ -362,21 +286,6 @@ public class Course {
 				}
 			}
 		}
-		// -------------------------------------------------
-		// -------- calculate course average values --------
-		// -------------------------------------------------
-		// CalcVector sums = new CalcVector(parameters.size());
-		// int studentCount = 0;
-		// for (int y = 0; y < students.length; y++) {
-		// for (int x = 0; x < students[y].length; x++) {
-		// if (students[y][x] instanceof Student) {
-		// studentCount++;
-		// sums.addCalcVector(students[x][y].getActualState());
-		// }
-		// }
-		// }
-		// // calc average by dividing sums by student count
-		// courseAverage = sums.multiply(1 / studentCount);
 		
 
 		// -------------------------------------------------
@@ -498,7 +407,7 @@ public class Course {
 			simulationStep(actual);
 			actual++;
 		}
-		notifyStudentsObservers();
+		Courses.notifyStudentsObservers();
 	}
 	
 	
@@ -584,12 +493,7 @@ public class Course {
 		return influence;
 	}
 	
-	
-	public CalcVector getCourseAverage() {
-		return courseAverage;
-	}
 
-	
 	public void setInfluence(Influence influence) {
 		this.influence = influence;
 	}
@@ -632,11 +536,90 @@ public class Course {
 	}
 	
 	
-	public SimController getSimController() {
-		return simController;
+	// public SimController getSimController() {
+	// return simController;
+	// }
+	
+	
+	public void addStudents(String location) {
+		int oldX = 0;
+		if (students.length > 0) {
+			oldX = students[0].length;
+		}
+		int oldY = students.length;
+		int newX = oldX;
+		int newY = oldY;
+		int offsetX = 0;
+		int offsetY = 0;
+		if (location.equals("left")) {
+			newX++;
+			offsetX++;
+		} else if (location.equals("right")) {
+			newX++;
+		} else if (location.equals("top")) {
+			newY++;
+			offsetY++;
+		} else if (location.equals("bottom")) {
+			newY++;
+		} else {
+			logger.warn("Action performed with unkown button.");
+		}
+		IPlace[][] newStudents = new IPlace[newY][newX];
+		for (int y = 0; y < newY; y++) {
+			for (int x = 0; x < newX; x++) {
+				if (x < offsetX || y < offsetY || (x - offsetX) >= oldX || (y - offsetY) >= oldY) {
+					Student newStud = new Student(parameters.size());
+					for (int i = 0; i < parameters.size(); i++) {
+						newStud.addValueToChangeVector(i, (float) (Math.random() * 100) - 50);
+						newStud.addValueToStateVector(i, (int) (Math.random() * 100));
+					}
+					newStudents[y][x] = newStud;
+				} else {
+					newStudents[y][x] = students[y - offsetY][x - offsetX];
+				}
+			}
+		}
+		students = newStudents;
+		Courses.notifyStudentsObservers();
 	}
 	
 	
+	/**
+	 * TODO NicolaiO, add comment!
+	 * 
+	 * @param name2
+	 * @author NicolaiO
+	 */
+	public void subStudents(String location) {
+		int oldX = 0;
+		if (students.length > 0) {
+			oldX = students[0].length;
+		}
+		int oldY = students.length;
+		int newX = oldX;
+		int newY = oldY;
+		if (location.equals("left")) {
+			newX--;
+		} else if (location.equals("right")) {
+			newX--;
+		} else if (location.equals("top")) {
+			newY--;
+		} else if (location.equals("bottom")) {
+			newY--;
+		} else {
+			logger.warn("Action performed with unkown button.");
+		}
+		IPlace[][] newStudents = new IPlace[newY][newX];
+		for (int y = 0; y < newY; y++) {
+			for (int x = 0; x < newX; x++) {
+				newStudents[y][x] = students[y][x];
+			}
+		}
+		students = newStudents;
+		Courses.notifyStudentsObservers();
+	}
+
+
 	@Override
 	public String toString() {
 		return getName();
@@ -670,7 +653,7 @@ public class Course {
 	
 	public void setSelectedStudent(IPlace selectedStudent) {
 		this.selectedStudent = selectedStudent;
-		notifySelectedStudentObservers();
+		Courses.notifySelectedStudentObservers();
 	}
 	
 	
@@ -681,7 +664,7 @@ public class Course {
 	
 	public void setSelectedProperty(int selectedProperty) {
 		this.selectedProperty = selectedProperty;
-		notifySelectedStudentObservers();
+		Courses.notifySelectedStudentObservers();
 	}
 	
 	
@@ -706,5 +689,9 @@ public class Course {
 			this.currentTime = currentTime;
 		}
 
+	}
+
+	public CalcVector getStatState() {
+		return statState;
 	}
 }
