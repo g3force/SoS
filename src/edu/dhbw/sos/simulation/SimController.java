@@ -23,6 +23,7 @@ import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.Courses;
 import edu.dhbw.sos.course.ICurrentCourseObserver;
 import edu.dhbw.sos.course.ISimulation;
+import edu.dhbw.sos.course.suggestions.SuggestionManager;
 import edu.dhbw.sos.gui.plan.ForwardBtn;
 import edu.dhbw.sos.gui.plan.LiveBtn;
 import edu.dhbw.sos.gui.plan.PlayBtn;
@@ -59,9 +60,12 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	private LinkedList<ITimeObserver>	timeObservers				= new LinkedList<ITimeObserver>();
 	private LinkedList<ISimulation>		simulationOberservers	= new LinkedList<ISimulation>();
 	
+	private SuggestionManager				sm;
+
 
 	public SimController(Course course) {
 		reset(course);
+		this.sm = new SuggestionManager(this.course.getProperties());
 	}
 	
 	
@@ -70,6 +74,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		course.reset();
 		setCurrentTime(0);
 		setSpeed(1);
+		sm.reset(course.getProperties());
 		run = false;
 	}
 	
@@ -170,6 +175,8 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		
 		// calculate state statistics for whole course
 		course.calcStatistics(currentTime);
+		// update suggestions using statistics of whole course
+		sm.updateSuggestions(course.getStatState());
 		
 		// notify GUI after simulation
 		notifyStep--;
