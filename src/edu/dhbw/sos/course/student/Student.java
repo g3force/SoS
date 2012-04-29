@@ -34,6 +34,8 @@ public class Student implements IPlace, Cloneable {
 	private transient CalcVector									actualState;
 	private transient LinkedHashMap<Integer, CalcVector>	historyStates;
 	private CalcVector												changeVector;
+	int																	noChange				= 0;
+	final int															donInputNoChange	= 60;
 	
 	
 	public Student(int vectorInitSize) {
@@ -84,6 +86,7 @@ public class Student implements IPlace, Cloneable {
 	 */
 	@Override
 	public void donInput(int index, float value) {
+		noChange = donInputNoChange;
 		CalcVector cv = new CalcVector(4);
 		cv.setValueAt(index, value);
 		changeVector.printCalcVector("Don Input: preChangeVector: ");
@@ -141,7 +144,10 @@ public class Student implements IPlace, Cloneable {
 	 * @author dirk
 	 */
 	public void calcNextSimulationStep(CalcVector addVector, Influence influence, int time, int x, int y) {
-		
+		if (noChange > 0) {
+			noChange--;
+			return;
+		}
 		saveHistoryStates(time);
 		
 		// parameter matrix * actual state
@@ -174,6 +180,7 @@ public class Student implements IPlace, Cloneable {
 	 * @param y TO DELETE, only for simulation debug
 	 * @author dirk
 	 */
+	@Override
 	public void addToStateVector(CalcVector addVector, int x, int y) {
 		if (y == 1 && x == 1)
 			addVector.printCalcVector("Add(1,1): addVector");
