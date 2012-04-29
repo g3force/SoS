@@ -38,5 +38,8 @@ public interface IPlace {
 	void donInput(int index, float value, int time);
 	
 	
+	void reset();
+
+
 	public LinkedHashMap<Integer, CalcVector> getHistoryStates();
 }

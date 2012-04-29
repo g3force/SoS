@@ -68,9 +68,8 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	public void reset() {
 		stop();
 		course.reset();
-		currentTime = 0;
-		speed = 1;
-		interval = 1000;
+		setCurrentTime(0);
+		setSpeed(1);
 		run = false;
 	}
 	
@@ -220,6 +219,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 			stop();
 			run();
 		}
+		notifySpeedObservers();
 	}
 	
 	

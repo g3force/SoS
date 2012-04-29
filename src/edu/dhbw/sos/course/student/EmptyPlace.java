@@ -39,6 +39,12 @@ public class EmptyPlace implements IPlace {
 	}
 	
 	
+	@Override
+	public void reset() {
+		
+	}
+	
+	
 	private Object readResolve() {
 		init();
 		return this;

@@ -105,15 +105,6 @@ public class SPaintArea extends JPanel {
 				}
 			}
 			diagram.setData(newData);
-		} else {
-			// dummy data
-			// double last = 50;
-			// for (int i = 0; i < 50; i++) {
-			// last = last + ((Math.random() - 0.5) * 30.0);
-			// if (last < 0)
-			// last = 0;
-			// newData.add((float) last);
-			// }
 		}
 		repaint();
 	}

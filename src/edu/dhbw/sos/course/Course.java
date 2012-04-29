@@ -126,6 +126,11 @@ public class Course {
 	 */
 	public void reset() {
 		init();
+		for (int y = 0; y < students.length; y++) {
+			for (int x = 0; x < students[y].length; x++) {
+				students[y][x].reset();
+			}
+		}
 	}
 	
 	
