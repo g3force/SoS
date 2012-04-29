@@ -22,6 +22,7 @@ import edu.dhbw.sos.course.io.CourseSaver;
 import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.Lecture;
 import edu.dhbw.sos.course.lecture.TimeBlock;
+import edu.dhbw.sos.course.lecture.TimeBlocks;
 import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
@@ -91,20 +92,17 @@ public class Course {
 			}
 		}
 		influence = new Influence();
-		lecture = new Lecture(new Date());
-		lecture.getTimeBlocks().add(new TimeBlock(10, BlockType.theory));
-		lecture.getTimeBlocks().add(new TimeBlock(20, BlockType.pause));
-		lecture.getTimeBlocks().add(new TimeBlock(30, BlockType.exercise));
-		lecture.getTimeBlocks().add(new TimeBlock(10, BlockType.pause));
-		lecture.getTimeBlocks().add(new TimeBlock(30, BlockType.group));
-		
+		TimeBlocks tbs = new TimeBlocks();
+		tbs.add(new TimeBlock(10, BlockType.theory));
+		tbs.add(new TimeBlock(20, BlockType.pause));
+		tbs.add(new TimeBlock(30, BlockType.exercise));
+		tbs.add(new TimeBlock(10, BlockType.pause));
+		tbs.add(new TimeBlock(30, BlockType.group));
+		lecture = new Lecture(new Date(), tbs);
 	}
 	
 	
 	private void init() {
-		// simController = new SimController(this);
-
-		
 		statistics = new LinkedHashMap<String, String>();
 		statState = new CalcVector(4);
 		histStatStates = new LinkedHashMap<Integer, CalcVector>();

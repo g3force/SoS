@@ -25,6 +25,7 @@ public class Lecture {
 	private TimeBlocks	timeBlocks;
 	
 	
+	@Deprecated
 	public Lecture(Date start) {
 		this.start = start;
 		this.timeBlocks = new TimeBlocks();
