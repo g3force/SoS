@@ -52,17 +52,22 @@ public class SuggestionManager implements MouseListener {
 	 * Stores all currently displayed suggestions.
 	 */
 	private LinkedList<Suggestion>	currentSuggestions;
+	/**
+	 * Stores the names of all currently displayed suggestions.
+	 */
+	private LinkedList<String>			suggestionNames;
 	private LinkedList<String>			courseParams;
 	private XStream						xs;
 	/**
 	 * Buffer for the CalcVector objects of clicked Suggestions.
 	 */
 	private LinkedList<CalcVector>	influences;
-
 	
+
 	public SuggestionManager() {
 		availableSuggestions = new LinkedList<Suggestion>();
 		currentSuggestions = new LinkedList<Suggestion>();
+		suggestionNames = new LinkedList<String>();
 		influences = new LinkedList<CalcVector>();
 		
 
@@ -94,6 +99,7 @@ public class SuggestionManager implements MouseListener {
 		this.courseParams = params;
 		availableSuggestions.clear();
 		currentSuggestions.clear();
+		suggestionNames.clear();
 		influences.clear();
 		loadXML();
 	}
@@ -254,6 +260,7 @@ public class SuggestionManager implements MouseListener {
 	
 	public void updateSuggestions(CalcVector averages) {
 		currentSuggestions.clear();
+		suggestionNames.clear();
 		for (int i = 0; i < availableSuggestions.size(); i++) {
 			boolean addSuggestion = true;
 			for (int j = 0; j < courseParams.size(); j++) {
@@ -261,9 +268,10 @@ public class SuggestionManager implements MouseListener {
 			}
 			if (addSuggestion) {
 				currentSuggestions.add(availableSuggestions.get(i));
+				suggestionNames.add(availableSuggestions.get(i).getMessage());
 			}
 		}
-		Collections.sort(currentSuggestions);
+		Collections.sort(suggestionNames);
 	}
 	
 	
@@ -274,5 +282,10 @@ public class SuggestionManager implements MouseListener {
 		}
 		influences.clear();
 		return ret;
+	}
+	
+	
+	public LinkedList<String> getSuggestionNames() {
+		return this.suggestionNames;
 	}
 }
