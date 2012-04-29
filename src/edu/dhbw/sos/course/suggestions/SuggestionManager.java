@@ -28,8 +28,6 @@ import org.apache.log4j.Logger;
 
 import com.thoughtworks.xstream.XStream;
 
-import edu.dhbw.sos.course.Course;
-import edu.dhbw.sos.course.Courses;
 import edu.dhbw.sos.helper.CalcVector;
 import edu.dhbw.sos.helper.XMLParam;
 
@@ -41,22 +39,32 @@ import edu.dhbw.sos.helper.XMLParam;
  * @author bene
  * 
  */
-public class SuggestionManager implements ISuggestionsObserver, MouseListener {
+public class SuggestionManager implements MouseListener {
 	private static final Logger		logger				= Logger.getLogger(SuggestionManager.class);
 
 
 	private static final String		SUGGESTION_FILE	= System.getProperty("user.home") + "/.sos/suggestions.xml";
-
+	/**
+	 * Stores all available suggestions that were loaded from the xml file.
+	 */
 	private LinkedList<Suggestion>	availableSuggestions;
+	/**
+	 * Stores all currently displayed suggestions.
+	 */
 	private LinkedList<Suggestion>	currentSuggestions;
 	private LinkedList<String>			courseParams;
 	private XStream						xs;
+	/**
+	 * Buffer for the CalcVector objects of clicked Suggestions.
+	 */
+	private LinkedList<CalcVector>	influences;
+
 	
-	
-	public SuggestionManager(Courses courses) {
-		this.courseParams = courses.getCurrentCourse().getProperties();
+	public SuggestionManager(LinkedList<String> params) {
+		this.courseParams = params;
 		availableSuggestions = new LinkedList<Suggestion>();
 		currentSuggestions = new LinkedList<Suggestion>();
+		influences = new LinkedList<CalcVector>();
 		
 
 		// init xml writer/reader
@@ -66,6 +74,11 @@ public class SuggestionManager implements ISuggestionsObserver, MouseListener {
 		xs.alias("param", XMLParam.class);
 		xs.alias("suggestion", Suggestion.class);
 		
+		loadXML();
+	}
+	
+	
+	private void loadXML() {
 		// try loading the suggestions from file
 		int retCode = loadSuggestionsFromFile();
 		// no file was found => create file with dummy data and try loading again
@@ -77,6 +90,15 @@ public class SuggestionManager implements ISuggestionsObserver, MouseListener {
 				}
 			}
 		}
+	}
+	
+	
+	public void reset(LinkedList<String> params) {
+		this.courseParams = params;
+		availableSuggestions.clear();
+		currentSuggestions.clear();
+		influences.clear();
+		loadXML();
 	}
 	
 	
@@ -94,14 +116,6 @@ public class SuggestionManager implements ISuggestionsObserver, MouseListener {
 		} else {
 			return false;
 		}
-	}
-	
-	
-	@Override
-	public void updateSuggestions() {
-		// TODO check which suggestions should be displayed based on average course parameters
-		// TODO update gui
-		
 	}
 	
 	
@@ -208,7 +222,7 @@ public class SuggestionManager implements ISuggestionsObserver, MouseListener {
 		String sugText = ((JLabel) e.getSource()).getText();
 		Suggestion clicked = this.lookUpSuggestion(sugText);
 		if (clicked != null) {
-			// TODO pass suggestions influence to simulation
+			this.influences.add(clicked.getInfluenceVector());
 			this.removeSuggestion(clicked);
 			// DOES NOT UPDATE DIRECTLY, UPDATE OF GUI IS DONE WITH NEXT SIMULATIONSTEP!
 		}
@@ -241,8 +255,7 @@ public class SuggestionManager implements ISuggestionsObserver, MouseListener {
 	}
 	
 	
-	public void unknow(Course course) {
-		CalcVector averages = course.getStatState();
+	public void updateSuggestions(CalcVector averages) {
 		currentSuggestions.clear();
 		for (int i = 0; i < availableSuggestions.size(); i++) {
 			boolean addSuggestion = true;
@@ -254,5 +267,13 @@ public class SuggestionManager implements ISuggestionsObserver, MouseListener {
 			}
 		}
 		Collections.sort(currentSuggestions);
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public LinkedList<CalcVector> getAndClearInfluences() {
+		LinkedList<CalcVector> ret = (LinkedList<CalcVector>) influences.clone();
+		influences.clear();
+		return ret;
 	}
 }
