@@ -56,15 +56,6 @@ public class Courses implements Iterable<Course> {
 
 		courses = new LinkedList<Course>();
 		this.savepath = savepath;
-		
-		if (courses.size() == 0) {
-			logger.fatal("There are no courses. This should not happened");
-		} else if (courses.size() == 1) {
-			curCourse = courses.get(0);
-		} else {
-			// TODO has to be handled yet
-			curCourse = courses.get(0);
-		}
 
 	}
 	
