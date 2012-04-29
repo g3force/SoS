@@ -40,30 +40,34 @@ import edu.dhbw.sos.helper.XMLParam;
  * 
  */
 public class SuggestionManager implements MouseListener {
-	private static final Logger		logger				= Logger.getLogger(SuggestionManager.class);
-
-
-	private static final String		SUGGESTION_FILE	= System.getProperty("user.home") + "/.sos/suggestions.xml";
+	private static final Logger											logger					= Logger
+																														.getLogger(SuggestionManager.class);
+	
+	
+	private static final String											SUGGESTION_FILE		= System.getProperty("user.home")
+																														+ "/.sos/suggestions.xml";
+	
+	private static transient LinkedList<ISuggestionsObserver>	suggestionObserver	= new LinkedList<ISuggestionsObserver>();
 	/**
 	 * Stores all available suggestions that were loaded from the xml file.
 	 */
-	private LinkedList<Suggestion>	availableSuggestions;
+	private LinkedList<Suggestion>										availableSuggestions;
 	/**
 	 * Stores all currently displayed suggestions.
 	 */
-	private LinkedList<Suggestion>	currentSuggestions;
+	private LinkedList<Suggestion>										currentSuggestions;
 	/**
 	 * Stores the names of all currently displayed suggestions.
 	 */
-	private LinkedList<String>			suggestionNames;
-	private LinkedList<String>			courseParams;
-	private XStream						xs;
+	private LinkedList<String>												suggestionNames;
+	private LinkedList<String>												courseParams;
+	private XStream															xs;
 	/**
 	 * Buffer for the CalcVector objects of clicked Suggestions.
 	 */
-	private LinkedList<CalcVector>	influences;
-	
+	private LinkedList<CalcVector>										influences;
 
+	
 	public SuggestionManager() {
 		availableSuggestions = new LinkedList<Suggestion>();
 		currentSuggestions = new LinkedList<Suggestion>();
@@ -227,7 +231,7 @@ public class SuggestionManager implements MouseListener {
 		if (clicked != null) {
 			this.influences.add(clicked.getInfluenceVector());
 			this.removeSuggestion(clicked);
-			// DOES NOT UPDATE DIRECTLY, UPDATE OF GUI IS DONE WITH NEXT SIMULATIONSTEP!
+			notifySuggestionObservers();
 		}
 	}
 	
@@ -258,6 +262,18 @@ public class SuggestionManager implements MouseListener {
 	}
 	
 	
+	public void subscribeSuggestions(ISuggestionsObserver so) {
+		suggestionObserver.add(so);
+	}
+	
+	
+	public static void notifySuggestionObservers() {
+		for (ISuggestionsObserver so : suggestionObserver) {
+			so.updateSuggestions();
+		}
+	}
+
+
 	public void updateSuggestions(CalcVector averages) {
 		currentSuggestions.clear();
 		suggestionNames.clear();
@@ -272,6 +288,7 @@ public class SuggestionManager implements MouseListener {
 			}
 		}
 		Collections.sort(suggestionNames);
+		notifySuggestionObservers();
 	}
 	
 	

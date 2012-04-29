@@ -63,8 +63,8 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	private SuggestionManager				sm;
 
 
-	public SimController(Course course) {
-		this.sm = new SuggestionManager();
+	public SimController(Course course, SuggestionManager sm) {
+		this.sm = sm;
 		reset(course);
 	}
 	
