@@ -84,6 +84,7 @@ public class StudentPanel extends JPanel implements ISelectedStudentObserver, IC
 	@Override
 	public void updateCurrentCourse(Course course) {
 		this.course = course;
+		updateSelectedStudent();
 	}
 	
 }

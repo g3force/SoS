@@ -108,10 +108,13 @@ public class Diagram {
 		if (drawAxis) {
 			Color oldColor = ga.getColor();
 			ga.setColor(Color.black);
+			// x axis
 			Line2D.Double xAxis = new Line2D.Double(location.x, height + location.y, width + location.x, height
 					+ location.y);
 			ga.draw(xAxis);
 			drawArrowHead(ga, xAxis);
+			
+			// y axis
 			Line2D.Double yAxis = new Line2D.Double(location.x, height + location.y, location.x, location.y);
 			ga.draw(yAxis);
 			drawArrowHead(ga, yAxis);
