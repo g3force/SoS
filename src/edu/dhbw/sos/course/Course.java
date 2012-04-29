@@ -26,7 +26,6 @@ import edu.dhbw.sos.course.lecture.TimeBlocks;
 import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
-import edu.dhbw.sos.course.suggestions.SuggestionManager;
 import edu.dhbw.sos.helper.CalcVector;
 
 
@@ -45,7 +44,6 @@ public class Course {
 	private transient LinkedHashMap<String, String>				statistics;
 	private transient CalcVector										statState;
 	private transient LinkedHashMap<Integer, CalcVector>		histStatStates;
-	private transient SuggestionManager							suggestionManager;
 	
 	// persistent data
 	private Lecture													lecture;
@@ -310,15 +308,8 @@ public class Course {
 		for (DonInput di : donInputQueue) {
 			donInput(di.index, di.value);
 		}
-		
-		//handle any suggestions
-		for (CalcVector cv : suggestionManager.getAndClearInfluences()) {
-			suggestionInput(cv);
-		}
 
 		donInputQueue.clear();
-		
-		
 	}
 	
 	
@@ -654,11 +645,6 @@ public class Course {
 	
 	public void setStatistics(LinkedHashMap<String, String> statistics) {
 		this.statistics = statistics;
-	}
-	
-	
-	public void setSuggestionManager(SuggestionManager suggestionManager) {
-		this.suggestionManager = suggestionManager;
 	}
 
 

@@ -45,6 +45,10 @@ public class MovableBlock extends Rectangle {
 	
 	// Position in LinkedList
 	private int							index;
+	// private double X = 0;
+	// private double Y = 0;
+	private double						width					= 0;
+	private double						height				= 0;
 	
 	
 	/**
@@ -115,36 +119,36 @@ public class MovableBlock extends Rectangle {
 	}
 	
 	
-	@Deprecated
-	public void setLocationRelMouse(Point p) {
-		// default values
-		int x = this.getLocation().x;
-		int y = this.getLocation().y;
-		if (moveHorizontal) {
-			x = p.x - relMouseLocation.x;
-		}
-		if (moveVertical) {
-			y = p.y - relMouseLocation.y;
-		}
-		Point abs = new Point(x, y);
-		super.setLocation(abs);
-	}
+	// @Deprecated
+	// public void setLocationRelMouse(Point p) {
+	// // default values
+	// int x = this.getLocation().x;
+	// int y = this.getLocation().y;
+	// if (moveHorizontal) {
+	// x = p.x - relMouseLocation.x;
+	// }
+	// if (moveVertical) {
+	// y = p.y - relMouseLocation.y;
+	// }
+	// Point abs = new Point(x, y);
+	// super.setLocation(abs);
+	// }
 	
 	
 	public void setLocation(double x, double y) {
-		setLocation(new Point((int) x, (int) y));
+		// this.X = x;
+		// this.Y = y;
+		this.setLocation(new Point((int) x, (int) y));
 	}
 	
 	
-	@Deprecated
 	public void setX(double x) {
-		setLocationRelMouse(new Point((int) x, (int) this.getY()));
+		setLocation(x, this.getY());
 	}
 	
 	
-	@Deprecated
 	public void setY(double y) {
-		setLocationRelMouse(new Point((int) this.getX(), (int) y));
+		setLocation(this.getX(), y);
 	}
 	
 
@@ -208,14 +212,14 @@ public class MovableBlock extends Rectangle {
 	}
 	
 	
-	public void setWidth(int width, double scaleRatio) {
+	public void setWidth(double width) {
 		this.width = width;
-		// this.getTimeBlock().setLen((int) (this.width / scaleRatio));
+		super.width = (int) width;
 	}
 	
 	
-	public void addWidth(int width, double scaleRatio) {
-		this.setWidth((int) (this.getWidth() + width), scaleRatio);
+	public void addWidth(double width) {
+		this.setWidth(this.getWidth() + width);
 	}
 	
 
@@ -255,6 +259,18 @@ public class MovableBlock extends Rectangle {
 	public void draw(Graphics2D ga) {
 		ga.setPaint(this.getColor());
 		ga.fill(this);
+	}
+
+	
+	@Override
+	public double getX() {
+		return x;
+	}
+	
+	
+	@Override
+	public double getY() {
+		return y;
 	}
 
 }
