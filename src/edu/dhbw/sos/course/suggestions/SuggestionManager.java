@@ -267,9 +267,11 @@ public class SuggestionManager implements MouseListener {
 	}
 	
 	
-	@SuppressWarnings("unchecked")
 	public LinkedList<CalcVector> getAndClearInfluences() {
-		LinkedList<CalcVector> ret = (LinkedList<CalcVector>) influences.clone();
+		LinkedList<CalcVector> ret = new LinkedList<CalcVector>();
+		for (int i = 0; i < influences.size(); i++) {
+			ret.add(i, influences.get(i));
+		}
 		influences.clear();
 		return ret;
 	}
