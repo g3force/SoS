@@ -60,8 +60,7 @@ public class SuggestionManager implements MouseListener {
 	private LinkedList<CalcVector>	influences;
 
 	
-	public SuggestionManager(LinkedList<String> params) {
-		this.courseParams = params;
+	public SuggestionManager() {
 		availableSuggestions = new LinkedList<Suggestion>();
 		currentSuggestions = new LinkedList<Suggestion>();
 		influences = new LinkedList<CalcVector>();
@@ -73,8 +72,6 @@ public class SuggestionManager implements MouseListener {
 		xs.alias("parameters", XMLParam[].class);
 		xs.alias("param", XMLParam.class);
 		xs.alias("suggestion", Suggestion.class);
-		
-		loadXML();
 	}
 	
 	
