@@ -29,6 +29,7 @@ import edu.dhbw.sos.gui.plan.LiveBtn;
 import edu.dhbw.sos.gui.plan.PlayBtn;
 import edu.dhbw.sos.gui.plan.RewindBtn;
 import edu.dhbw.sos.gui.right.IEditModeObserver;
+import edu.dhbw.sos.helper.CalcVector;
 
 
 /**
@@ -186,6 +187,11 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 			Courses.notifySelectedStudentObservers();
 			Courses.notifyStatisticsObservers();
 		}
+		
+		// handle any suggestions
+		for (CalcVector cv : sm.getAndClearInfluences()) {
+			course.suggestionInput(cv);
+		 }
 	}
 	
 	
@@ -298,10 +304,12 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	@Override
 	public void timeChanged(int time) {
-		setCurrentTime(time);
 		// stop the simulation to make the correct deletions or to simulate to the correct point
 		stop();
+
 		course.setTime(currentTime, time);
+		setCurrentTime(time);
+
 		// if simulation was running, set running again
 		if (run)
 			run();

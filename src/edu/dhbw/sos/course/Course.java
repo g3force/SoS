@@ -26,7 +26,6 @@ import edu.dhbw.sos.course.lecture.TimeBlocks;
 import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
-import edu.dhbw.sos.course.suggestions.SuggestionManager;
 import edu.dhbw.sos.helper.CalcVector;
 
 
@@ -36,29 +35,28 @@ import edu.dhbw.sos.helper.CalcVector;
  * @author DirkK
  */
 public class Course {
-	private static final Logger										logger	= Logger.getLogger(Course.class);
-	
+	private static final Logger									logger	= Logger.getLogger(Course.class);
 
+	
 	// private transient SimController simController;
 	
 	// place here? not implemented yet, so do not know...
 	private transient LinkedHashMap<String, String>				statistics;
 	private transient CalcVector										statState;
 	private transient LinkedHashMap<Integer, CalcVector>		histStatStates;
-	private transient SuggestionManager							suggestionManager;
 	
 	// persistent data
-	private Lecture														lecture;
-	private IPlace[][]													students;
-	private Influence														influence;
-	private String															name;
-	private LinkedList<String>											parameters;
+	private Lecture													lecture;
+	private IPlace[][]												students;
+	private Influence													influence;
+	private String														name;
+	private LinkedList<String>										parameters;
 
 	// the student and property that was selected in the GUI (by hovering over the student)
-	private transient IPlace											selectedStudent;
-	private transient int												selectedProperty;
-	private transient boolean											simulating;
-	private transient LinkedList<DonInput>							donInputQueue;
+	private transient IPlace										selectedStudent;
+	private transient int											selectedProperty;
+	private transient boolean										simulating;
+	private transient LinkedList<DonInput>						donInputQueue;
 	
 	
 	public Course(String name) {
@@ -258,7 +256,6 @@ public class Course {
 		double timeBlockInf = 0.001;
 		
 		BlockType bt = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType();
-		System.out.println(bt.toString());
 		preChangeVector.addCalcVector(influence.getEnvironmentVector(bt.getEinfluenceType(), timeBlockInf));
 
 		preChangeVector.printCalcVector("Sim: after timeblock (" + bt.toString() + ")");
@@ -307,15 +304,8 @@ public class Course {
 		for (DonInput di : donInputQueue) {
 			donInput(di.index, di.value);
 		}
-		
-		//handle any suggestions
-		for (CalcVector cv : suggestionManager.getAndClearInfluences()) {
-			suggestionInput(cv);
-		}
 
 		donInputQueue.clear();
-		
-		
 	}
 	
 	
@@ -433,8 +423,10 @@ public class Course {
 				if (students[y][x] instanceof Student) {
 					Student student = (Student) students[y][x];
 					Entry<Integer, CalcVector> historyState = student.nearestHistoryState(time);
-					student.setActualState(historyState.getValue().clone());
-					student.deleteHistoryStateFrom(historyState.getKey());
+					if (historyState != null) {
+						student.setActualState(historyState.getValue().clone());
+						student.deleteHistoryStateFrom(historyState.getKey());
+					}
 				}
 			}
 		}
@@ -650,11 +642,6 @@ public class Course {
 	public void setStatistics(LinkedHashMap<String, String> statistics) {
 		this.statistics = statistics;
 	}
-	
-	
-	public void setSuggestionManager(SuggestionManager suggestionManager) {
-		this.suggestionManager = suggestionManager;
-	}
 
 
 	public IPlace getSelectedStudent() {
@@ -701,6 +688,7 @@ public class Course {
 		}
 
 	}
+
 
 	public CalcVector getStatState() {
 		return statState;

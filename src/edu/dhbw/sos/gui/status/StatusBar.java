@@ -19,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import edu.dhbw.sos.gui.AboutDlg;
+import edu.dhbw.sos.helper.Messages;
 
 
 
@@ -36,13 +37,14 @@ public class StatusBar extends JPanel {
 	
 	public StatusBar() {
 		this.setLayout(new BorderLayout(5,0));
-		JLabel lblStatusText = new JLabel("This is the statusbar. It looks really ugly, but that`s Daniels problem :)");
+		JLabel lblStatusText = new JLabel("");
 		lblStatusText.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.add(lblStatusText, BorderLayout.CENTER);
 
 		JLabel lblcopyright = new JLabel("© SimSoft");
 		lblcopyright.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.add(lblcopyright, BorderLayout.EAST);
+		lblcopyright.setToolTipText(Messages.getString("AboutDlg.TITLE"));
 		lblcopyright.addMouseListener(new MouseListener() {
 			
 			@Override

@@ -57,7 +57,6 @@ public class SuperFelix {
 		courses = CourseLoader.loadCourses(coursepath);
 		CourseController courseController = new CourseController(courses);
 		SuggestionManager sugMngr = new SuggestionManager();
-		courses.getCurrentCourse().setSuggestionManager(sugMngr);
 		SimController simController = new SimController(courses.getCurrentCourse(), sugMngr);
 		courses.subscribeCurrentCourse(simController);
 		MainFrame mainFrame = new MainFrame(simController, courseController, courses, sugMngr);

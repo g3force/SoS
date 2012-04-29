@@ -45,6 +45,10 @@ public class MovableBlock extends Rectangle {
 	
 	// Position in LinkedList
 	private int							index;
+	// private double X = 0;
+	// private double Y = 0;
+	private double						width					= 0;
+	private double						height				= 0;
 	
 	
 	/**
@@ -101,13 +105,13 @@ public class MovableBlock extends Rectangle {
 	 */
 	@Override
 	public void setLocation(Point p) {
+		// default values
 		int x = this.getLocation().x;
 		int y = this.getLocation().y;
 		if (moveHorizontal) {
-			x = p.x + relMouseLocation.x;
+			x = p.x;
 		}
 		if (moveVertical) {
-			// y = p.y + relMouseLocation.y;
 			y = p.y;
 		}
 		Point abs = new Point(x, y);
@@ -115,13 +119,39 @@ public class MovableBlock extends Rectangle {
 	}
 	
 	
+	// @Deprecated
+	// public void setLocationRelMouse(Point p) {
+	// // default values
+	// int x = this.getLocation().x;
+	// int y = this.getLocation().y;
+	// if (moveHorizontal) {
+	// x = p.x - relMouseLocation.x;
+	// }
+	// if (moveVertical) {
+	// y = p.y - relMouseLocation.y;
+	// }
+	// Point abs = new Point(x, y);
+	// super.setLocation(abs);
+	// }
+	
+	
 	public void setLocation(double x, double y) {
-		Point p = new Point();
-		p.setLocation(x, y);
-		setLocation(p);
+		// this.X = x;
+		// this.Y = y;
+		this.setLocation(new Point((int) x, (int) y));
 	}
 	
 	
+	public void setX(double x) {
+		setLocation(x, this.getY());
+	}
+	
+	
+	public void setY(double y) {
+		setLocation(this.getX(), y);
+	}
+	
+
 	public Point getRelMouseLocation() {
 		return relMouseLocation;
 	}
@@ -182,6 +212,17 @@ public class MovableBlock extends Rectangle {
 	}
 	
 	
+	public void setWidth(double width) {
+		this.width = width;
+		super.width = (int) width;
+	}
+	
+	
+	public void addWidth(double width) {
+		this.setWidth(this.getWidth() + width);
+	}
+	
+
 	public void printMbTb(int index, String pos) {
 		logger.trace(pos + "; MB.index=" + index + "; TB.len=" + timeBlock.getLen() + "; MB.width=" + this.width
 				+ "; MB.X=" + this.x);
@@ -218,6 +259,18 @@ public class MovableBlock extends Rectangle {
 	public void draw(Graphics2D ga) {
 		ga.setPaint(this.getColor());
 		ga.fill(this);
+	}
+
+	
+	@Override
+	public double getX() {
+		return x;
+	}
+	
+	
+	@Override
+	public double getY() {
+		return y;
 	}
 
 }
