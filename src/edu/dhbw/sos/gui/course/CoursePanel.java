@@ -63,6 +63,7 @@ public class CoursePanel extends JPanel implements ComponentListener, ICurrentCo
 		paintArea = new CPaintArea();
 		this.add(paintArea, BorderLayout.CENTER);
 		paintArea.setCourse(courses.getCurrentCourse());
+		paintArea.addMouseListener(simController);
 		
 		JLabel leftBtn = new JLabel("Add", JLabel.CENTER);
 		JLabel rightBtn = new JLabel("Add", JLabel.CENTER);

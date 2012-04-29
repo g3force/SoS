@@ -22,7 +22,6 @@ public class SuperFelix {
 	private static final Logger		logger	= Logger.getLogger(SuperFelix.class);
 	private static Courses				courses;
 	private static String				savepath;
-	private static SuggestionManager	sugMngr;
 
 	
 	public SuperFelix() {
@@ -55,7 +54,7 @@ public class SuperFelix {
 		
 		courses = CourseLoader.loadCourses(savepath);
 		CourseController courseController = new CourseController(courses);
-		sugMngr = new SuggestionManager();
+		SuggestionManager sugMngr = new SuggestionManager();
 		SimController simController = new SimController(courses.getCurrentCourse(), sugMngr);
 		courses.subscribeCurrentCourse(simController);
 		MainFrame mainFrame = new MainFrame(simController, courseController, courses, sugMngr);
