@@ -25,6 +25,7 @@ import edu.dhbw.sos.course.lecture.TimeBlock;
 import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
+import edu.dhbw.sos.course.suggestions.SuggestionManager;
 import edu.dhbw.sos.helper.CalcVector;
 
 
@@ -43,7 +44,7 @@ public class Course {
 	private transient LinkedHashMap<String, String>				statistics;
 	private transient CalcVector										statState;
 	private transient LinkedHashMap<Integer, CalcVector>		histStatStates;
-	private transient LinkedList<String>							suggestions;
+	private transient SuggestionManager							suggestionManager;
 	
 	// persistent data
 	private Lecture														lecture;
@@ -63,10 +64,6 @@ public class Course {
 		this.name = name;
 		init();
 		
-		suggestions.add("Sug1");
-		suggestions.add("Sug2");
-		suggestions.add("Sug3");
-		suggestions.add("Sug4");
 		// calculate state statistics for whole course
 		// calcStatistics();
 		
@@ -78,7 +75,8 @@ public class Course {
 		parameters.add("Quality");
 		for (int y = 0; y < 5; y++) {
 			for (int x = 0; x < 7; x++) {
-				if (y == 3 && x == 4) {
+				if ((y == 1 && x == 6) || (y == 2 && x == 6) || (y == 2 && x == 5) || (y == 3 && x == 6)
+						|| (y == 4 && x == 6)) {
 					students[y][x] = new EmptyPlace(parameters.size());
 				} else {
 					Student newStud = new Student(parameters.size());
@@ -110,7 +108,6 @@ public class Course {
 		statistics = new LinkedHashMap<String, String>();
 		statState = new CalcVector(4);
 		histStatStates = new LinkedHashMap<Integer, CalcVector>();
-		suggestions = new LinkedList<String>();
 
 		selectedStudent = null;
 		selectedProperty = 0;
@@ -205,15 +202,25 @@ public class Course {
 			logger.trace("donInput1: " + index + " " + value + " " + currentTime);
 			donInputQueue.add(new DonInput(index, value, currentTime));
 		} else {
-			donInput(index, value, currentTime);
+			donInput(index, value);
 		}
 	}
 	
 	
-	public void donInput(int index, float value, int currentTime) {
-		logger.trace("donInput2: " + index + " " + value + " " + currentTime);
+	public void suggestionInput(CalcVector calcVec) {
+		logger.info("Suggestion performed");
+		for (int y = 0; y < students.length; y++) {
+			for (int x = 0; x < students[y].length; x++) {
+				students[y][x].addToStateVector(calcVec, x, y);
+			}
+		}
+	}
+	
+	
+	public void donInput(int index, float value) {
+		logger.trace("donInput2: " + index + " " + value);
 		selectedStudent.getActualState().printCalcVector("Don Input: preActualState: ");
-		selectedStudent.donInput(index, value, currentTime);
+		selectedStudent.donInput(index, value);
 		selectedStudent.getActualState().printCalcVector("Don Input: postActualState: ");
 	}
 	
@@ -300,8 +307,14 @@ public class Course {
 		// handle any donInputs, that had accord during simulation
 		simulating = false;
 		for (DonInput di : donInputQueue) {
-			donInput(di.index, di.value, di.currentTime);
+			donInput(di.index, di.value);
 		}
+		
+		//handle any suggestions
+		for (CalcVector cv : suggestionManager.getAndClearInfluences()) {
+			suggestionInput(cv);
+		}
+
 		donInputQueue.clear();
 		
 		
@@ -641,16 +654,11 @@ public class Course {
 	}
 	
 	
-	public LinkedList<String> getSuggestions() {
-		return suggestions;
+	public void setSuggestionManager(SuggestionManager suggestionManager) {
+		this.suggestionManager = suggestionManager;
 	}
-	
-	
-	public void setSuggestions(LinkedList<String> suggestions) {
-		this.suggestions = suggestions;
-	}
-	
-	
+
+
 	public IPlace getSelectedStudent() {
 		return selectedStudent;
 	}
