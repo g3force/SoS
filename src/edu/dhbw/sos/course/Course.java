@@ -275,15 +275,24 @@ public class Course {
 			logger.trace("donInput1: " + index + " " + value + " " + currentTime);
 			donInputQueue.add(new DonInput(index, value, currentTime));
 		} else {
-			donInput(index, value, currentTime);
+			donInput(index, value);
 		}
 	}
 	
 	
-	public void donInput(int index, float value, int currentTime) {
-		logger.trace("donInput2: " + index + " " + value + " " + currentTime);
+	public void suggestionInput(CalcVector calcVec) {
+		for (int y = 0; y < students.length; y++) {
+			for (int x = 0; x < students[y].length; x++) {
+				students[y][x].addToStateVector(calcVec, x, y);
+			}
+		}
+	}
+	
+	
+	public void donInput(int index, float value) {
+		logger.trace("donInput2: " + index + " " + value);
 		selectedStudent.getActualState().printCalcVector("Don Input: preActualState: ");
-		selectedStudent.donInput(index, value, currentTime);
+		selectedStudent.donInput(index, value);
 		selectedStudent.getActualState().printCalcVector("Don Input: postActualState: ");
 	}
 	
@@ -370,7 +379,7 @@ public class Course {
 		// handle any donInputs, that had accord during simulation
 		simulating = false;
 		for (DonInput di : donInputQueue) {
-			donInput(di.index, di.value, di.currentTime);
+			donInput(di.index, di.value);
 		}
 		donInputQueue.clear();
 		

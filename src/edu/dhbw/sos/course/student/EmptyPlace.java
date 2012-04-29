@@ -70,10 +70,16 @@ public class EmptyPlace implements IPlace {
 	
 	
 	@Override
-	public void donInput(int index, float value, int time) {
+	public void donInput(int index, float value) {
 		// just do nothing
 	}
 	
+	
+	@Override
+	public void addToStateVector(CalcVector addVector, int x, int y) {
+		// just do nothing
+	}
+
 	
 	@Override
 	public LinkedHashMap<Integer, CalcVector> getHistoryStates() {

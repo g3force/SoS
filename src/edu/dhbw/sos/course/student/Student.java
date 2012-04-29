@@ -77,7 +77,7 @@ public class Student implements IPlace, Cloneable {
 	 * @author NicolaiO
 	 */
 	@Override
-	public void donInput(int index, float value, int time) {
+	public void donInput(int index, float value) {
 		CalcVector cv = new CalcVector(4);
 		cv.setValueAt(index, value);
 		changeVector.printCalcVector("Don Input: preChangeVector: ");

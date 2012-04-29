@@ -35,8 +35,11 @@ public interface IPlace {
 	void printAcutalState();
 	
 	
-	void donInput(int index, float value, int time);
+	void donInput(int index, float value);
 	
+	
+	void addToStateVector(CalcVector addVector, int x, int y);
+
 	
 	public LinkedHashMap<Integer, CalcVector> getHistoryStates();
 }
