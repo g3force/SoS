@@ -34,29 +34,29 @@ import edu.dhbw.sos.helper.CalcVector;
  * @author DirkK
  */
 public class Course {
-	private static final Logger										logger	= Logger.getLogger(Course.class);
-	
+	private static final Logger									logger	= Logger.getLogger(Course.class);
 
+	
 	// private transient SimController simController;
 	
 	// place here? not implemented yet, so do not know...
-	private transient LinkedHashMap<String, String>				statistics;
-	private transient CalcVector										statState;
-	private transient LinkedHashMap<Integer, CalcVector>		histStatStates;
-	private transient LinkedList<String>							suggestions;
+	private transient LinkedHashMap<String, String>			statistics;
+	private transient CalcVector									statState;
+	private transient LinkedHashMap<Integer, CalcVector>	histStatStates;
+	private transient LinkedList<String>						suggestions;
 	
 	// persistent data
-	private Lecture														lecture;
-	private IPlace[][]													students;
-	private Influence														influence;
-	private String															name;
-	private LinkedList<String>											parameters;
+	private Lecture													lecture;
+	private IPlace[][]												students;
+	private Influence													influence;
+	private String														name;
+	private LinkedList<String>										parameters;
 
 	// the student and property that was selected in the GUI (by hovering over the student)
-	private transient IPlace											selectedStudent;
-	private transient int												selectedProperty;
-	private transient boolean											simulating;
-	private transient LinkedList<DonInput>							donInputQueue;
+	private transient IPlace										selectedStudent;
+	private transient int											selectedProperty;
+	private transient boolean										simulating;
+	private transient LinkedList<DonInput>						donInputQueue;
 	
 	
 	public Course(String name) {
@@ -105,8 +105,8 @@ public class Course {
 	
 	private void init() {
 		// simController = new SimController(this);
-
 		
+
 		statistics = new LinkedHashMap<String, String>();
 		statState = new CalcVector(4);
 		histStatStates = new LinkedHashMap<Integer, CalcVector>();
@@ -253,7 +253,6 @@ public class Course {
 		double timeBlockInf = 0.001;
 		
 		BlockType bt = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType();
-		System.out.println(bt.toString());
 		preChangeVector.addCalcVector(influence.getEnvironmentVector(bt.getEinfluenceType(), timeBlockInf));
 
 		preChangeVector.printCalcVector("Sim: after timeblock (" + bt.toString() + ")");
@@ -422,8 +421,10 @@ public class Course {
 				if (students[y][x] instanceof Student) {
 					Student student = (Student) students[y][x];
 					Entry<Integer, CalcVector> historyState = student.nearestHistoryState(time);
-					student.setActualState(historyState.getValue().clone());
-					student.deleteHistoryStateFrom(historyState.getKey());
+					if (historyState != null) {
+						student.setActualState(historyState.getValue().clone());
+						student.deleteHistoryStateFrom(historyState.getKey());
+					}
 				}
 			}
 		}
@@ -695,6 +696,7 @@ public class Course {
 		}
 
 	}
+
 
 	public CalcVector getStatState() {
 		return statState;
