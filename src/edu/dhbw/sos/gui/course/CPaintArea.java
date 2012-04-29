@@ -83,6 +83,7 @@ public class CPaintArea extends JPanel implements MouseMotionListener, MouseList
 	
 	public void updateStudentCircles() {
 		calcStudentCircles(course.getStudents());
+		updateHoveredStudent(hoveredStudent);
 		this.repaint();
 	}
 	

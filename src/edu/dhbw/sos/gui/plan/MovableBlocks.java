@@ -100,8 +100,9 @@ public class MovableBlocks extends LinkedList<MovableBlock> {
 	 * @param mb2
 	 * @author andres
 	 */
-	protected void swap(int mb1, int mb2) {
+	protected int swap(int mb1, int mb2) {
 		this.add(mb1, this.remove(mb2));
+		return mb2;
 	}
 
 }

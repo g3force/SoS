@@ -22,7 +22,7 @@ public class SuperFelix {
 	private static final Logger		logger	= Logger.getLogger(SuperFelix.class);
 	private static Courses				courses;
 	private static String				savepath;
-	private static SuggestionManager	sugMngr;
+	private static String			coursepath;
 
 	
 	public SuperFelix() {
@@ -48,14 +48,16 @@ public class SuperFelix {
 		// load datapath
 		// works for Windows and Linux... so the data is stored in the systems userdata folder...
 		savepath = System.getProperty("user.home") + "/.sos/";
+		coursepath = savepath + "/courses/";
 		
 		
 		// create object for the data to be displayed in GUI
 		// the references will be used to update it afterwards
 		
-		courses = CourseLoader.loadCourses(savepath);
+		courses = CourseLoader.loadCourses(coursepath);
 		CourseController courseController = new CourseController(courses);
-		sugMngr = new SuggestionManager();
+		SuggestionManager sugMngr = new SuggestionManager();
+		courses.getCurrentCourse().setSuggestionManager(sugMngr);
 		SimController simController = new SimController(courses.getCurrentCourse(), sugMngr);
 		courses.subscribeCurrentCourse(simController);
 		MainFrame mainFrame = new MainFrame(simController, courseController, courses, sugMngr);
@@ -65,7 +67,7 @@ public class SuperFelix {
 	
 	
 	public static void close() {
-		CourseSaver.saveCourses(courses, savepath);
+		CourseSaver.saveCourses(courses, coursepath);
 		System.exit(0);
 	}
 	

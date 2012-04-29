@@ -122,6 +122,16 @@ public class MovableBlock extends Rectangle {
 	}
 	
 	
+	public void setX(double x) {
+		setLocation(x, this.getY());
+	}
+	
+	
+	public void setY(double y) {
+		setLocation(this.getX(), y);
+	}
+
+	
 	public Point getRelMouseLocation() {
 		return relMouseLocation;
 	}
@@ -181,6 +191,18 @@ public class MovableBlock extends Rectangle {
 		this.moveVertical = moveVertical;
 	}
 	
+	
+	public void setWidth(int width, double scaleRatio) {
+		this.width = width;
+		this.getTimeBlock().setLen((int) (this.width / scaleRatio));
+	}
+	
+	
+	public void addWidth(int width, double scaleRatio) {
+		this.setWidth((int) (this.getWidth() + width), scaleRatio);
+	}
+
+
 	
 	public void printMbTb(int index, String pos) {
 		logger.trace(pos + "; MB.index=" + index + "; TB.len=" + timeBlock.getLen() + "; MB.width=" + this.width

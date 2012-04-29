@@ -298,10 +298,12 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	@Override
 	public void timeChanged(int time) {
-		setCurrentTime(time);
 		// stop the simulation to make the correct deletions or to simulate to the correct point
 		stop();
+
 		course.setTime(currentTime, time);
+		setCurrentTime(time);
+
 		// if simulation was running, set running again
 		if (run)
 			run();
