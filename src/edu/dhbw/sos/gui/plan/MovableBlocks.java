@@ -51,7 +51,8 @@ public class MovableBlocks extends LinkedList<MovableBlock> {
 	
 	
 	public double init(TimeBlocks tbs, int start, int width) {
-		double scaleRatio = (width - start) / (tbs.getTotalLength() != 0 ? tbs.getTotalLength() : 1);
+		double scaleRatio = ((double) width - (double) start)
+				/ (tbs.getTotalLength() != 0 ? (double) tbs.getTotalLength() : 1.0);
 		for (TimeBlock tb : tbs) {
 			Point location;
 			Color color;
@@ -79,7 +80,7 @@ public class MovableBlocks extends LinkedList<MovableBlock> {
 			MovableBlock mb = new MovableBlock(location, new Dimension((int) (tb.getLen() * scaleRatio), 30), color, tb);
 			this.add(mb);
 			// System.out.println("start:" + start + " location:" + location + " type:" + tb.getType());
-			start += tb.getLen() * scaleRatio;
+			start += (tb.getLen() * scaleRatio);
 		}
 		return scaleRatio;
 	}

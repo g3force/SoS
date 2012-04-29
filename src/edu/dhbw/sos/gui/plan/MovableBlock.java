@@ -101,13 +101,13 @@ public class MovableBlock extends Rectangle {
 	 */
 	@Override
 	public void setLocation(Point p) {
+		// default values
 		int x = this.getLocation().x;
 		int y = this.getLocation().y;
 		if (moveHorizontal) {
-			x = p.x + relMouseLocation.x;
+			x = p.x;
 		}
 		if (moveVertical) {
-			// y = p.y + relMouseLocation.y;
 			y = p.y;
 		}
 		Point abs = new Point(x, y);
@@ -115,23 +115,39 @@ public class MovableBlock extends Rectangle {
 	}
 	
 	
+	@Deprecated
+	public void setLocationRelMouse(Point p) {
+		// default values
+		int x = this.getLocation().x;
+		int y = this.getLocation().y;
+		if (moveHorizontal) {
+			x = p.x - relMouseLocation.x;
+		}
+		if (moveVertical) {
+			y = p.y - relMouseLocation.y;
+		}
+		Point abs = new Point(x, y);
+		super.setLocation(abs);
+	}
+	
+	
 	public void setLocation(double x, double y) {
-		Point p = new Point();
-		p.setLocation(x, y);
-		setLocation(p);
+		setLocation(new Point((int) x, (int) y));
 	}
 	
 	
+	@Deprecated
 	public void setX(double x) {
-		setLocation(x, this.getY());
+		setLocationRelMouse(new Point((int) x, (int) this.getY()));
 	}
 	
 	
+	@Deprecated
 	public void setY(double y) {
-		setLocation(this.getX(), y);
+		setLocationRelMouse(new Point((int) this.getX(), (int) y));
 	}
-
 	
+
 	public Point getRelMouseLocation() {
 		return relMouseLocation;
 	}
@@ -194,16 +210,15 @@ public class MovableBlock extends Rectangle {
 	
 	public void setWidth(int width, double scaleRatio) {
 		this.width = width;
-		this.getTimeBlock().setLen((int) (this.width / scaleRatio));
+		// this.getTimeBlock().setLen((int) (this.width / scaleRatio));
 	}
 	
 	
 	public void addWidth(int width, double scaleRatio) {
 		this.setWidth((int) (this.getWidth() + width), scaleRatio);
 	}
-
-
 	
+
 	public void printMbTb(int index, String pos) {
 		logger.trace(pos + "; MB.index=" + index + "; TB.len=" + timeBlock.getLen() + "; MB.width=" + this.width
 				+ "; MB.X=" + this.x);
