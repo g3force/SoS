@@ -700,9 +700,9 @@ public class Course {
 	
 	
 	public void notifySimUntilObservers(boolean state) {
-		for (ISimUntilObserver suo : simUntilObservers) {
-			suo.updateSimUntil(state);
-		}
+		// for (ISimUntilObserver suo : simUntilObservers) {
+		// suo.updateSimUntil(state);
+		// }
 	}
 	
 	
