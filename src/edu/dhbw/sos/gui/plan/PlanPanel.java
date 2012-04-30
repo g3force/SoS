@@ -119,6 +119,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		this.add(paintArea, BorderLayout.CENTER);
 		paintArea.subscribeTime(simController);
 		courses.subscribeStatistics(paintArea);
+		course.subscribeSimUntil(paintArea);
 		// paintArea.initMovableBlocks();
 		
 		// create sidePanel
@@ -239,6 +240,8 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		timePanel.add(lblTo);
 		timePanel.add(txtTo);
 		sidePanel.add(timePanel);
+		
+
 	}
 	
 	
@@ -302,6 +305,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		paintArea.init(course);
 		paintArea.initMovableBlocks();
 		paintArea.repaint();
+		course.subscribeSimUntil(paintArea);
 	}
 	
 	
