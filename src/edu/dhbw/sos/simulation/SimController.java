@@ -13,23 +13,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.Course;
-import edu.dhbw.sos.course.Courses;
-import edu.dhbw.sos.course.ICurrentCourseObserver;
-import edu.dhbw.sos.course.ISimulation;
 import edu.dhbw.sos.course.suggestions.SuggestionManager;
 import edu.dhbw.sos.gui.plan.ForwardBtn;
 import edu.dhbw.sos.gui.plan.LiveBtn;
 import edu.dhbw.sos.gui.plan.PlayBtn;
 import edu.dhbw.sos.gui.plan.RewindBtn;
-import edu.dhbw.sos.gui.right.IEditModeObserver;
 import edu.dhbw.sos.helper.CalcVector;
+import edu.dhbw.sos.observers.ICurrentCourseObserver;
+import edu.dhbw.sos.observers.IEditModeObserver;
+import edu.dhbw.sos.observers.ITimeObserver;
+import edu.dhbw.sos.observers.Observers;
 
 
 /**
@@ -42,30 +41,27 @@ import edu.dhbw.sos.helper.CalcVector;
 
 public class SimController implements ActionListener, MouseListener, IEditModeObserver, ITimeObserver,
 		ICurrentCourseObserver {
-	private static final Logger				logger						= Logger.getLogger(SimController.class);
+	private static final Logger	logger			= Logger.getLogger(SimController.class);
 	
-	private Course									course;
-	private int										currentTime;																		// in
-																																				// milliseconds
-																																				// from
-																																				// "begin"
-	private int										speed;																				// in
-																																				// milliseconds
-	private int										notifyStep					= 1;
-	private int										realInterval				= 1000;
-	private int										interval						= 1000;
-	private transient Timer						pulse							= new Timer();
-	private boolean								run							= false;
+	private Course						course;
+	private int							currentTime;															// in
+																														// milliseconds
+																														// from
+																														// "begin"
+	private int							speed;																	// in
+																														// milliseconds
+	private int							notifyStep		= 1;
+	public static final int			realInterval	= 1000;
+	private int							interval			= 1000;
+	private transient Timer			pulse				= new Timer();
+	private boolean					run				= false;
 	
-	private LinkedList<ISpeedObserver>		speedObservers				= new LinkedList<ISpeedObserver>();
-	private LinkedList<ITimeObserver>		timeObservers				= new LinkedList<ITimeObserver>();
-	private LinkedList<ISimulation>			simulationOberservers	= new LinkedList<ISimulation>();
 	
-	private SuggestionManager					sm;
-
-
+	private SuggestionManager		suggestionMgr;
+	
+	
 	public SimController(Course course, SuggestionManager sm) {
-		this.sm = sm;
+		this.suggestionMgr = sm;
 		reset(course);
 	}
 	
@@ -75,7 +71,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		course.reset();
 		setCurrentTime(0);
 		setSpeed(1);
-		sm.reset(course.getProperties());
+		suggestionMgr.reset(course.getProperties());
 		run = false;
 	}
 	
@@ -84,89 +80,50 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		this.course = course;
 		reset();
 	}
-	
-
-	public void notifySpeedObservers() {
-		for (ISpeedObserver so : speedObservers) {
-			so.speedChanged(speed);
-		}
-	}
-	
-	
-	public void subscribeSpeed(ISpeedObserver so) {
-		speedObservers.add(so);
-	}
-	
-	
-	public void notifyTimeObservers() {
-		int timeInMin = currentTime / 60000;
-		for (ITimeObserver to : timeObservers) {
-			to.timeChanged(timeInMin);
-		}
-	}
-	
-	
-	public void subscribeTime(ITimeObserver to) {
-		if (to != null)
-			timeObservers.add(to);
-	}
-	
-	
-	
-	
-
-	public void notifySimulationStarted() {
-		for (ISimulation cco : simulationOberservers) {
-			cco.simulationStarted();
-		}
-	}
-	
-	
-	public void notifySimulationStopped() {
-		for (ISimulation cco : simulationOberservers) {
-			cco.simulationStopped();
-		}
-	}
-	
-	
-	public void subscribeSimulation(ISimulation cco) {
-		simulationOberservers.add(cco);
-	}
 
 
-	public boolean toggle() {
+	private void toggle() {
 		if (run) {
-			logger.info("Simulation stopped");
 			stop();
 		} else {
-			logger.info("Simulation started");
 			run();
 		}
 		run = !run;
-		return true;
 	}
 	
 	
 	public void run() {
-		notifySimulationStarted();
+		Observers.notifySimulationStarted();
+		if (pulse != null) {
+			pulse.cancel();
+			pulse.purge();
+		}
 		pulse = new Timer();
 		TimerTask simulation = new TimerTask() {
 			@Override
 			public void run() {
 				simulationStep();
+				// Check if end of simulation reached
 				if (course.getLecture().getLength() * 60 < currentTime / realInterval) {
 					stop();
 				}
 			}
 		};
 		pulse.scheduleAtFixedRate(simulation, 0, interval);
+		logger.info("Simulation started");
 	}
 	
 	
+	/**
+	 * Stop simulation by canceling the timer and notifing observers
+	 * 
+	 * @author dirk
+	 */
 	public void stop() {
 		pulse.cancel();
 		pulse.purge();
-		notifySimulationStopped();
+		Observers.notifySimulationStopped();
+		logger.info("Simulation stopped");
 	}
 	
 	
@@ -178,29 +135,29 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		setCurrentTime(currentTime + realInterval);
 		logger.debug("Simulation Step at " + currentTime);
 		course.simulationStep(currentTime);
-		logger.debug("History states: " + course.getPlace(0, 0).getHistoryStates().size());
 		
 		// calculate state statistics for whole course
 		course.calcStatistics(currentTime);
 		// update suggestions using statistics of whole course
-		sm.updateSuggestions(course.getStatState());
+		suggestionMgr.updateSuggestions(course.getStatAvgStudentState());
 		
 		// notify GUI after simulation
 		notifyStep--;
 		if (notifyStep == 0) {
 			notifyStep = speed;
-			Courses.notifyStudentsObservers();
-			Courses.notifySelectedStudentObservers();
-			Courses.notifyStatisticsObservers();
+			Observers.notifyStudents();
+			Observers.notifySelectedStudent();
+			Observers.notifyStatistics();
 		}
 		
 		// handle any suggestions
-		for (CalcVector cv : sm.getAndClearInfluences()) {
+		for (CalcVector cv : suggestionMgr.getAndClearInfluences()) {
 			course.suggestionInput(cv);
 		}
 	}
 	
 	
+	// FIXME Dirk not used
 	public void jumpTo(int time) {
 		currentTime = time;
 		// fetch start state from history
@@ -216,7 +173,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	public void setCurrentTime(int currentTime) {
 		this.currentTime = currentTime;
-		notifyTimeObservers();
+		Observers.notifyTime(currentTime);
 	}
 	
 	
@@ -238,7 +195,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 			stop();
 			run();
 		}
-		notifySpeedObservers();
+		Observers.notifySpeed(speed);
 	}
 	
 	
@@ -249,15 +206,13 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		if (e.getSource() instanceof LiveBtn) {
 			// FIXME Not implemented
 		} else if (e.getSource() instanceof PlayBtn) {
-			if (toggle()) {
-				// ((PlayBtn) e.getSource()).toggle();
-			}
+			toggle();
 		} else if (e.getSource() instanceof ForwardBtn) {
 			setSpeed(getSpeed() * 2);
-			notifySpeedObservers();
+			Observers.notifySpeed(this.getSpeed());
 		} else if (e.getSource() instanceof RewindBtn) {
 			setSpeed(getSpeed() / 2);
-			notifySpeedObservers();
+			Observers.notifySpeed(this.getSpeed());
 		}
 	}
 	
@@ -269,9 +224,10 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		if (e.getButton() == MouseEvent.BUTTON3)
 			value *= -1;
 		if (course.getSelectedStudent() != null) {
-			course.donInputQueue(course.getSelectedProperty(), value, currentTime);
+			// process don input
+			course.donInputQueue(course.getSelectedProperty(), value);
 		}
-		Courses.notifyStudentsObservers();
+		Observers.notifyStudents();
 	}
 	
 	
@@ -325,6 +281,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	@Override
 	public void updateCurrentCourse(Course course) {
+		this.course.reset();
 		reset(course);
 	}
 }

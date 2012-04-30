@@ -17,7 +17,7 @@ import java.awt.Rectangle;
 
 import org.apache.log4j.Logger;
 
-import edu.dhbw.sos.simulation.ITimeObserver;
+import edu.dhbw.sos.observers.ITimeObserver;
 
 
 /**

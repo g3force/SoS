@@ -34,6 +34,7 @@ import edu.dhbw.sos.gui.right.RightPanel;
 import edu.dhbw.sos.gui.status.StatusBar;
 import edu.dhbw.sos.gui.student.StudentPanel;
 import edu.dhbw.sos.helper.Messages;
+import edu.dhbw.sos.observers.Observers;
 import edu.dhbw.sos.simulation.SimController;
 
 
@@ -84,11 +85,11 @@ public class MainFrame extends JFrame implements WindowListener {
 		PlanPanel planPanel = new PlanPanel(simController, courses);
 		
 		// some subscriptions
-		courses.subscribeEditMode(simController);
-		courses.subscribeEditMode(coursePanel);
-		courses.subscribeCurrentCourse(studentPanel);
-		courses.subscribeCurrentCourse(planPanel);
-		simController.subscribeSpeed(planPanel);
+		Observers.subscribeEditMode(simController);
+		Observers.subscribeEditMode(coursePanel);
+		Observers.subscribeCurrentCourse(studentPanel);
+		Observers.subscribeCurrentCourse(planPanel);
+		Observers.subscribeSpeed(planPanel);
 		
 		// put BottomPanel and StatusBar in a new Panel
 		JPanel bsPanel = new JPanel();

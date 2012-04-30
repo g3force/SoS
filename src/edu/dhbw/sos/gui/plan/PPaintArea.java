@@ -31,13 +31,13 @@ import org.apache.log4j.Logger;
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.TimeBlocks;
-import edu.dhbw.sos.course.statistics.IStatisticsObserver;
 import edu.dhbw.sos.gui.Diagram;
 import edu.dhbw.sos.gui.plan.MovableBlock.Areas;
 import edu.dhbw.sos.helper.CalcVector;
-import edu.dhbw.sos.simulation.ISimUntilObserver;
-import edu.dhbw.sos.simulation.ITimeObserver;
-import edu.dhbw.sos.simulation.SimController;
+import edu.dhbw.sos.observers.ISimUntilObserver;
+import edu.dhbw.sos.observers.IStatisticsObserver;
+import edu.dhbw.sos.observers.ITimeObserver;
+import edu.dhbw.sos.observers.Observers;
 
 
 /**
@@ -76,20 +76,22 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	private Mode								mode					= null;
 	private Areas								area					= null;
 	
-	private LinkedList<ITimeObserver>	timeObservers		= new LinkedList<ITimeObserver>();
 	private boolean							simulateUntil		= false;
 	
+	// FIXME Daniel this is very confusing :o Don't know what this observer does compared to the one in Observers
+	private LinkedList<ITimeObserver>	timeObservers		= new LinkedList<ITimeObserver>();
+
 	
 	/**
 	 * Initialize PaintArea
 	 * 
 	 * @author NicolaiO
 	 */
-	public PPaintArea(SimController simController, Course course) {
+	public PPaintArea(Course course) {
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		tmb = new TimeMarkerBlock(0);
-		simController.subscribeTime(tmb);
+		Observers.subscribeTime(tmb);
 		init(course);
 	}
 	
@@ -207,7 +209,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		attDia.setWidth(tmb.getTime());
 		LinkedList<Float> newData = new LinkedList<Float>();
 		
-		for (Entry<Integer, CalcVector> stat : course.getHistStatState().entrySet()) {
+		for (Entry<Integer, CalcVector> stat : course.getHistStatAvgStudentStates().entrySet()) {
 			newData.add(stat.getValue().getValueAt(0));
 		}
 		attDia.setData(newData);

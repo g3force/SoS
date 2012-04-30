@@ -114,11 +114,13 @@ public class CPaintArea extends JPanel implements MouseMotionListener, MouseList
 		ga.clearRect(0, 0, this.getWidth(), this.getHeight());
 		
 		// draw all students
-		for (int y = 0; y < studentCircles.length; y++) {
-			for (int x = 0; x < studentCircles[0].length; x++) {
-				if (studentCircles[y][x].getStudent() instanceof Student) {
-					ga.setPaint(studentCircles[y][x].getColor());
-					ga.fill(studentCircles[y][x]);
+		synchronized (studentCircles) {
+			for (int y = 0; y < studentCircles.length; y++) {
+				for (int x = 0; x < studentCircles[0].length; x++) {
+					if (studentCircles[y][x].getStudent() instanceof Student) {
+						ga.setPaint(studentCircles[y][x].getColor());
+						ga.fill(studentCircles[y][x]);
+					}
 				}
 			}
 		}
