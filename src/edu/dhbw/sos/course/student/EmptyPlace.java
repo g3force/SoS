@@ -71,7 +71,6 @@ public class EmptyPlace implements IPlace {
 	
 	@Override
 	public void printAcutalState() {
-		System.out.println("Empty Place");
 	}
 	
 	

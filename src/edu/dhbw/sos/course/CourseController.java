@@ -42,7 +42,7 @@ public class CourseController implements ActionListener, MouseListener, ItemList
 	public void actionPerformed(ActionEvent e) {
 		// handle add, modify, delete course
 		if (e.getSource() instanceof AddBtn) {
-			Course newC = new Course("New Profile " + courses.size());
+			Course newC = new Course("New Course " + courses.size());
 			courses.add(newC);
 			courses.setCurrentCourse(newC);
 		} else if (e.getSource() instanceof EditBtn) {

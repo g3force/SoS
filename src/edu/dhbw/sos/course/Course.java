@@ -105,9 +105,6 @@ public class Course {
 	
 	
 	private void init() {
-		// simController = new SimController(this);
-		
-
 		statistics = new LinkedHashMap<String, String>();
 		statState = new CalcVector(4);
 		histStatStates = new LinkedHashMap<Integer, CalcVector>();
@@ -419,7 +416,7 @@ public class Course {
 		notifySimUntilObservers(true);
 		while (actual < required) {
 			simulationStep(actual);
-			actual++;
+			actual += 1000; // FIXME Dirk
 		}
 		Courses.notifyStudentsObservers();
 		notifySimUntilObservers(false);
