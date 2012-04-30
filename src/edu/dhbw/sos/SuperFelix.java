@@ -43,7 +43,7 @@ public class SuperFelix {
 		}
 		
 		// Locale.setDefault(new Locale("en", "EN"));
-		Locale.setDefault(new Locale("de", "DE"));
+		Locale.setDefault(new Locale("en", "EN"));
 		
 		// load datapath
 		// works for Windows and Linux... so the data is stored in the systems userdata folder...
