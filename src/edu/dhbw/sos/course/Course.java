@@ -356,9 +356,10 @@ public class Course {
 					int newx = x + i;
 					int newy = y + j;
 					if (newx < students[0].length && newx >= 0 && newy < students.length && newy >= 0) {
-						if (students[newy][newx] instanceof Student)
+						if (students[newy][newx] instanceof Student) {
 							surronding = surronding.addCalcVector(oldVec[newy][newx]);
-						neighbourAmount++;
+							neighbourAmount++;
+						}
 						
 						// add small percentage of surrounding students to every student
 						// problem: will increase until infinity
