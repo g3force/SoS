@@ -733,12 +733,10 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 			// e.getPoint().setLocation(paWidth, 0);
 			x = paWidth;
 		}
-		// if (leftBlock == null) {
-		// if (rightBlock.getLocation().x > moveBlock.getX()) {
-		// moveBlock.setWidth(rightBlock.getLocation().x);
-		// }
-		// } else if (rightBlock == null) {
-		// moveBlock.setWidth((moveBlock.getWidth() - moveX));
+		// if (leftBlock == null && rightBlock != null && rightBlock.getX() > moveBlock.getWidth() + 1) {
+		// moveBlock.setWidth(rightBlock.getX());
+		// } else if (rightBlock == null && leftBlock != null && leftBlock.getX() < moveBlock.getWidth() + 1) {
+		// moveBlock.setWidth(leftBlock.getX());
 		// moveBlock.setLocation(new Point(x - moveBlock.getRelMouseLocation().x, moveBlock.y));
 		// } else {
 		moveBlock.setLocation(new Point(x - moveBlock.getRelMouseLocation().x, moveBlock.y));

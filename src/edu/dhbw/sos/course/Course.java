@@ -441,9 +441,6 @@ public class Course {
 	 * @author andres
 	 */
 	public void calcStatistics(int time) {
-		
-		statState.multiply(0);
-		
 		statState.multiply(0);
 		int studentNum = 0;
 		// for (IPlace[] studentRow : students) {
