@@ -14,9 +14,11 @@ import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -33,6 +35,7 @@ import edu.dhbw.sos.course.statistics.IStatisticsObserver;
 import edu.dhbw.sos.gui.Diagram;
 import edu.dhbw.sos.gui.plan.MovableBlock.Areas;
 import edu.dhbw.sos.helper.CalcVector;
+import edu.dhbw.sos.simulation.ISimUntilObserver;
 import edu.dhbw.sos.simulation.ITimeObserver;
 import edu.dhbw.sos.simulation.SimController;
 
@@ -44,7 +47,8 @@ import edu.dhbw.sos.simulation.SimController;
  * @author NicolaiO
  * 
  */
-public class PPaintArea extends JPanel implements MouseListener, MouseMotionListener, IStatisticsObserver {
+public class PPaintArea extends JPanel implements MouseListener, MouseMotionListener, IStatisticsObserver,
+		ISimUntilObserver {
 	private static final long				serialVersionUID	= 5194596384018441495L;
 	private static final Logger			logger				= Logger.getLogger(PPaintArea.class);
 	
@@ -73,6 +77,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	private Areas								area					= null;
 	
 	private LinkedList<ITimeObserver>	timeObservers		= new LinkedList<ITimeObserver>();
+	private boolean							simulateUntil		= false;
 	
 	
 	/**
@@ -150,6 +155,14 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		Graphics2D ga = (Graphics2D) g;
 		ga.clearRect(0, 0, this.getWidth(), this.getHeight());
 		
+		if (simulateUntil) {
+			URL iconUrl = getClass().getResource("/res/icons/sos_logo.png");
+			if (iconUrl != null) {
+				ga.drawImage(Toolkit.getDefaultToolkit().getImage(iconUrl), 40, 30, this);
+			}
+			return;
+		}
+
 		// draw block
 		for (MovableBlock mb : movableBlocks) {
 			mb.draw(ga);
@@ -191,7 +204,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	
 	private void updateDiagram() {
 		attDia.setHeight(this.getHeight() - 20);
-		attDia.setWidth(tmb.getLength());
+		attDia.setWidth(tmb.getTime());
 		LinkedList<Float> newData = new LinkedList<Float>();
 		
 		for (Entry<Integer, CalcVector> stat : course.getHistStatState().entrySet()) {
@@ -783,6 +796,12 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	public void updateStatistics() {
 		updateDiagram();
 		this.validate();
+	}
+
+	
+	@Override
+	public void updateSimUntil(boolean state) {
+		simulateUntil = state;
 	}
 
 }

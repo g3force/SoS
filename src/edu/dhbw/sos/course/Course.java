@@ -27,6 +27,7 @@ import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
 import edu.dhbw.sos.helper.CalcVector;
+import edu.dhbw.sos.simulation.ISimUntilObserver;
 
 
 /**
@@ -35,15 +36,15 @@ import edu.dhbw.sos.helper.CalcVector;
  * @author DirkK
  */
 public class Course {
-	private static final Logger									logger	= Logger.getLogger(Course.class);
+	private static final Logger									logger				= Logger.getLogger(Course.class);
 
 	
 	// private transient SimController simController;
 	
 	// place here? not implemented yet, so do not know...
-	private transient LinkedHashMap<String, String>				statistics;
-	private transient CalcVector										statState;
-	private transient LinkedHashMap<Integer, CalcVector>		histStatStates;
+	private transient LinkedHashMap<String, String>			statistics;
+	private transient CalcVector									statState;
+	private transient LinkedHashMap<Integer, CalcVector>	histStatStates;
 	
 	// persistent data
 	private Lecture													lecture;
@@ -58,7 +59,10 @@ public class Course {
 	private transient boolean										simulating;
 	private transient LinkedList<DonInput>						donInputQueue;
 	
+	// SimulateUntil Obeserver for showing a grfaik when simulating to a point
+	private transient LinkedList<ISimUntilObserver>			simUntilObservers	= new LinkedList<ISimUntilObserver>();
 	
+
 	public Course(String name) {
 		this.name = name;
 		init();
@@ -97,7 +101,6 @@ public class Course {
 		tbs.add(new TimeBlock(10, BlockType.pause));
 		tbs.add(new TimeBlock(30, BlockType.group));
 		lecture = new Lecture(new Date(), tbs);
-		
 	}
 	
 	
@@ -413,11 +416,13 @@ public class Course {
 	
 	
 	private void simulateUntil(int actual, int required) {
+		notifySimUntilObservers(true);
 		while (actual < required) {
 			simulationStep(actual);
 			actual++;
 		}
 		Courses.notifyStudentsObservers();
+		notifySimUntilObservers(false);
 	}
 	
 	
@@ -696,5 +701,18 @@ public class Course {
 
 	public CalcVector getStatState() {
 		return statState;
+	}
+	
+	
+	public void notifySimUntilObservers(boolean state) {
+		for (ISimUntilObserver suo : simUntilObservers) {
+			suo.updateSimUntil(state);
+		}
+	}
+	
+	
+	public void subscribeSimUntil(ISimUntilObserver suo) {
+		// TODO Daniel
+		// simUntilObservers.add(suo);
 	}
 }

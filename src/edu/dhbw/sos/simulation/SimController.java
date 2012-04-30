@@ -42,26 +42,26 @@ import edu.dhbw.sos.helper.CalcVector;
 
 public class SimController implements ActionListener, MouseListener, IEditModeObserver, ITimeObserver,
 		ICurrentCourseObserver {
-	private static final Logger			logger						= Logger.getLogger(SimController.class);
+	private static final Logger				logger						= Logger.getLogger(SimController.class);
 	
-	private Course								course;
-	private int									currentTime;																		// in
-																																			// milliseconds
-																																			// from
-																																			// "begin"
-	private int									speed;																				// in
-																																			// milliseconds
-	private int									notifyStep					= 1;
-	private int									realInterval				= 1000;
-	private int									interval						= 1000;
-	private transient Timer					pulse							= new Timer();
-	private boolean							run							= false;
+	private Course									course;
+	private int										currentTime;																		// in
+																																				// milliseconds
+																																				// from
+																																				// "begin"
+	private int										speed;																				// in
+																																				// milliseconds
+	private int										notifyStep					= 1;
+	private int										realInterval				= 1000;
+	private int										interval						= 1000;
+	private transient Timer						pulse							= new Timer();
+	private boolean								run							= false;
 	
-	private LinkedList<ISpeedObserver>	speedObservers				= new LinkedList<ISpeedObserver>();
-	private LinkedList<ITimeObserver>	timeObservers				= new LinkedList<ITimeObserver>();
-	private LinkedList<ISimulation>		simulationOberservers	= new LinkedList<ISimulation>();
+	private LinkedList<ISpeedObserver>		speedObservers				= new LinkedList<ISpeedObserver>();
+	private LinkedList<ITimeObserver>		timeObservers				= new LinkedList<ITimeObserver>();
+	private LinkedList<ISimulation>			simulationOberservers	= new LinkedList<ISimulation>();
 	
-	private SuggestionManager				sm;
+	private SuggestionManager					sm;
 
 
 	public SimController(Course course, SuggestionManager sm) {
@@ -112,6 +112,9 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	}
 	
 	
+	
+	
+
 	public void notifySimulationStarted() {
 		for (ISimulation cco : simulationOberservers) {
 			cco.simulationStarted();
@@ -191,7 +194,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		// handle any suggestions
 		for (CalcVector cv : sm.getAndClearInfluences()) {
 			course.suggestionInput(cv);
-		 }
+		}
 	}
 	
 	
