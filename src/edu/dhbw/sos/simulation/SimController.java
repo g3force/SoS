@@ -151,6 +151,9 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 			@Override
 			public void run() {
 				simulationStep();
+				// if (course.getLecture().getLength() < currentTime / realInterval) {
+				// stop();
+				// }
 			}
 		};
 		pulse.scheduleAtFixedRate(simulation, 0, interval);
@@ -170,7 +173,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	 */
 	private void simulationStep() {
 		setCurrentTime(currentTime + realInterval);
-		logger.info("Simulation Step at " + currentTime);
+		logger.debug("Simulation Step at " + currentTime);
 		course.simulationStep(currentTime);
 		logger.debug("History states: " + course.getPlace(0, 0).getHistoryStates().size());
 		

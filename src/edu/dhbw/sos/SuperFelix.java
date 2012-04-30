@@ -59,6 +59,7 @@ public class SuperFelix {
 		SuggestionManager sugMngr = new SuggestionManager();
 		SimController simController = new SimController(courses.getCurrentCourse(), sugMngr);
 		courses.subscribeCurrentCourse(simController);
+		courses.subscribeEditMode(simController);
 		MainFrame mainFrame = new MainFrame(simController, courseController, courses, sugMngr);
 		mainFrame.pack();
 		logger.info("Sim of Students started.");

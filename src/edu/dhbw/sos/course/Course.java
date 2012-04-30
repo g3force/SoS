@@ -411,7 +411,7 @@ public class Course {
 	private void simulateUntil(int actual, int required) {
 		while (actual < required) {
 			simulationStep(actual);
-			actual++;
+			actual += 1000; // FIXME Dirk
 		}
 		Courses.notifyStudentsObservers();
 	}
