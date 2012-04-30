@@ -29,6 +29,7 @@ import edu.dhbw.sos.gui.plan.LiveBtn;
 import edu.dhbw.sos.gui.plan.PlayBtn;
 import edu.dhbw.sos.gui.plan.RewindBtn;
 import edu.dhbw.sos.gui.right.IEditModeObserver;
+import edu.dhbw.sos.helper.CalcVector;
 
 
 /**
@@ -41,26 +42,26 @@ import edu.dhbw.sos.gui.right.IEditModeObserver;
 
 public class SimController implements ActionListener, MouseListener, IEditModeObserver, ITimeObserver,
 		ICurrentCourseObserver {
-	private static final Logger			logger						= Logger.getLogger(SimController.class);
+	private static final Logger				logger						= Logger.getLogger(SimController.class);
 	
-	private Course								course;
-	private int									currentTime;																		// in
-																																			// milliseconds
-																																			// from
-																																			// "begin"
-	private int									speed;																				// in
-																																			// milliseconds
-	private int									notifyStep					= 1;
-	private int									realInterval				= 1000;
-	private int									interval						= 1000;
-	private transient Timer					pulse							= new Timer();
-	private boolean							run							= false;
+	private Course									course;
+	private int										currentTime;																		// in
+																																				// milliseconds
+																																				// from
+																																				// "begin"
+	private int										speed;																				// in
+																																				// milliseconds
+	private int										notifyStep					= 1;
+	private int										realInterval				= 1000;
+	private int										interval						= 1000;
+	private transient Timer						pulse							= new Timer();
+	private boolean								run							= false;
 	
-	private LinkedList<ISpeedObserver>	speedObservers				= new LinkedList<ISpeedObserver>();
-	private LinkedList<ITimeObserver>	timeObservers				= new LinkedList<ITimeObserver>();
-	private LinkedList<ISimulation>		simulationOberservers	= new LinkedList<ISimulation>();
+	private LinkedList<ISpeedObserver>		speedObservers				= new LinkedList<ISpeedObserver>();
+	private LinkedList<ITimeObserver>		timeObservers				= new LinkedList<ITimeObserver>();
+	private LinkedList<ISimulation>			simulationOberservers	= new LinkedList<ISimulation>();
 	
-	private SuggestionManager				sm;
+	private SuggestionManager					sm;
 
 
 	public SimController(Course course, SuggestionManager sm) {
@@ -111,6 +112,9 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	}
 	
 	
+	
+	
+
 	public void notifySimulationStarted() {
 		for (ISimulation cco : simulationOberservers) {
 			cco.simulationStarted();
@@ -150,6 +154,9 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 			@Override
 			public void run() {
 				simulationStep();
+				// if (course.getLecture().getLength() < currentTime / realInterval) {
+				// stop();
+				// }
 			}
 		};
 		pulse.scheduleAtFixedRate(simulation, 0, interval);
@@ -169,7 +176,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	 */
 	private void simulationStep() {
 		setCurrentTime(currentTime + realInterval);
-		logger.info("Simulation Step at " + currentTime);
+		logger.debug("Simulation Step at " + currentTime);
 		course.simulationStep(currentTime);
 		logger.debug("History states: " + course.getPlace(0, 0).getHistoryStates().size());
 		
@@ -185,6 +192,11 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 			Courses.notifyStudentsObservers();
 			Courses.notifySelectedStudentObservers();
 			Courses.notifyStatisticsObservers();
+		}
+		
+		// handle any suggestions
+		for (CalcVector cv : sm.getAndClearInfluences()) {
+			course.suggestionInput(cv);
 		}
 	}
 	
@@ -298,10 +310,12 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	@Override
 	public void timeChanged(int time) {
-		setCurrentTime(time);
 		// stop the simulation to make the correct deletions or to simulate to the correct point
 		stop();
+
 		course.setTime(currentTime, time);
+		setCurrentTime(time);
+
 		// if simulation was running, set running again
 		if (run)
 			run();

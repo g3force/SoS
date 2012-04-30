@@ -28,18 +28,17 @@ import edu.dhbw.sos.gui.right.IEditModeObserver;
  * 
  */
 public class Courses implements Iterable<Course> {
-	private static final Logger										logger							= Logger
-																															.getLogger(Courses.class);
-	private Course															curCourse;
+	private static final Logger												logger	= Logger.getLogger(Courses.class);
+	private Course																	curCourse;
 	// observers
-	private transient static LinkedList<IStudentsObserver>	studentsObservers;
+	private transient static LinkedList<IStudentsObserver>			studentsObservers;
 	private transient static LinkedList<ISelectedStudentObserver>	selectedCourseObservers;
 	private transient static LinkedList<IStatisticsObserver>			statisticsObservers;
-	private transient LinkedList<ICurrentCourseObserver>		currentCourseOberservers;
-	private transient LinkedList<ICoursesListObserver>			coursesListOberservers;
-	private transient LinkedList<IEditModeObserver>				editModeObservers;
-	private String															savepath							= "";
-	private LinkedList<Course>											courses;
+	private transient LinkedList<ICurrentCourseObserver>				currentCourseOberservers;
+	private transient LinkedList<ICoursesListObserver>					coursesListOberservers;
+	private transient LinkedList<IEditModeObserver>						editModeObservers;
+	private String																	savepath	= "";
+	private LinkedList<Course>													courses;
 
 	
 	/**
@@ -57,15 +56,6 @@ public class Courses implements Iterable<Course> {
 
 		courses = new LinkedList<Course>();
 		this.savepath = savepath;
-		
-		if (courses.size() == 0) {
-			logger.fatal("There are no courses. This should not happened");
-		} else if (courses.size() == 1) {
-			curCourse = courses.get(0);
-		} else {
-			// TODO has to be handled yet
-			curCourse = courses.get(0);
-		}
 
 	}
 	
@@ -197,8 +187,8 @@ public class Courses implements Iterable<Course> {
 	public void subscribeStatistics(IStatisticsObserver so) {
 		statisticsObservers.add(so);
 	}
-
 	
+
 	public void subscribeEditMode(IEditModeObserver so) {
 		editModeObservers.add(so);
 	}

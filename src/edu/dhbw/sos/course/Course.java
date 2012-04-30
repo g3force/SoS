@@ -22,11 +22,12 @@ import edu.dhbw.sos.course.io.CourseSaver;
 import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.Lecture;
 import edu.dhbw.sos.course.lecture.TimeBlock;
+import edu.dhbw.sos.course.lecture.TimeBlocks;
 import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
-import edu.dhbw.sos.course.suggestions.SuggestionManager;
 import edu.dhbw.sos.helper.CalcVector;
+import edu.dhbw.sos.simulation.ISimUntilObserver;
 
 
 /**
@@ -35,31 +36,33 @@ import edu.dhbw.sos.helper.CalcVector;
  * @author DirkK
  */
 public class Course {
-	private static final Logger										logger	= Logger.getLogger(Course.class);
-	
+	private static final Logger									logger				= Logger.getLogger(Course.class);
 
+	
 	// private transient SimController simController;
 	
 	// place here? not implemented yet, so do not know...
-	private transient LinkedHashMap<String, String>				statistics;
-	private transient CalcVector										statState;
-	private transient LinkedHashMap<Integer, CalcVector>		histStatStates;
-	private transient SuggestionManager							suggestionManager;
+	private transient LinkedHashMap<String, String>			statistics;
+	private transient CalcVector									statState;
+	private transient LinkedHashMap<Integer, CalcVector>	histStatStates;
 	
 	// persistent data
-	private Lecture														lecture;
-	private IPlace[][]													students;
-	private Influence														influence;
-	private String															name;
-	private LinkedList<String>											parameters;
+	private Lecture													lecture;
+	private IPlace[][]												students;
+	private Influence													influence;
+	private String														name;
+	private LinkedList<String>										parameters;
 
 	// the student and property that was selected in the GUI (by hovering over the student)
-	private transient IPlace											selectedStudent;
-	private transient int												selectedProperty;
-	private transient boolean											simulating;
-	private transient LinkedList<DonInput>							donInputQueue;
+	private transient IPlace										selectedStudent;
+	private transient int											selectedProperty;
+	private transient boolean										simulating;
+	private transient LinkedList<DonInput>						donInputQueue;
 	
+	// SimulateUntil Obeserver for showing a grfaik when simulating to a point
+	private transient LinkedList<ISimUntilObserver>			simUntilObservers	= new LinkedList<ISimUntilObserver>();
 	
+
 	public Course(String name) {
 		this.name = name;
 		init();
@@ -91,20 +94,17 @@ public class Course {
 			}
 		}
 		influence = new Influence();
-		lecture = new Lecture(new Date());
-		lecture.getTimeBlocks().add(new TimeBlock(10, BlockType.theory));
-		lecture.getTimeBlocks().add(new TimeBlock(20, BlockType.pause));
-		lecture.getTimeBlocks().add(new TimeBlock(30, BlockType.exercise));
-		lecture.getTimeBlocks().add(new TimeBlock(10, BlockType.pause));
-		lecture.getTimeBlocks().add(new TimeBlock(30, BlockType.group));
-		
+		TimeBlocks tbs = new TimeBlocks();
+		tbs.add(new TimeBlock(10, BlockType.theory));
+		tbs.add(new TimeBlock(20, BlockType.pause));
+		tbs.add(new TimeBlock(30, BlockType.exercise));
+		tbs.add(new TimeBlock(10, BlockType.pause));
+		tbs.add(new TimeBlock(30, BlockType.group));
+		lecture = new Lecture(new Date(), tbs);
 	}
 	
 	
 	private void init() {
-		// simController = new SimController(this);
-
-		
 		statistics = new LinkedHashMap<String, String>();
 		statState = new CalcVector(4);
 		histStatStates = new LinkedHashMap<Integer, CalcVector>();
@@ -260,7 +260,6 @@ public class Course {
 		double timeBlockInf = 0.001;
 		
 		BlockType bt = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType();
-		System.out.println(bt.toString());
 		preChangeVector.addCalcVector(influence.getEnvironmentVector(bt.getEinfluenceType(), timeBlockInf));
 
 		preChangeVector.printCalcVector("Sim: after timeblock (" + bt.toString() + ")");
@@ -309,15 +308,8 @@ public class Course {
 		for (DonInput di : donInputQueue) {
 			donInput(di.index, di.value);
 		}
-		
-		//handle any suggestions
-		for (CalcVector cv : suggestionManager.getAndClearInfluences()) {
-			suggestionInput(cv);
-		}
 
 		donInputQueue.clear();
-		
-		
 	}
 	
 	
@@ -422,11 +414,13 @@ public class Course {
 	
 	
 	private void simulateUntil(int actual, int required) {
+		notifySimUntilObservers(true);
 		while (actual < required) {
 			simulationStep(actual);
-			actual++;
+			actual += 1000; // FIXME Dirk
 		}
 		Courses.notifyStudentsObservers();
+		notifySimUntilObservers(false);
 	}
 	
 	
@@ -436,8 +430,10 @@ public class Course {
 				if (students[y][x] instanceof Student) {
 					Student student = (Student) students[y][x];
 					Entry<Integer, CalcVector> historyState = student.nearestHistoryState(time);
-					student.setActualState(historyState.getValue().clone());
-					student.deleteHistoryStateFrom(historyState.getKey());
+					if (historyState != null) {
+						student.setActualState(historyState.getValue().clone());
+						student.deleteHistoryStateFrom(historyState.getKey());
+					}
 				}
 			}
 		}
@@ -653,11 +649,6 @@ public class Course {
 	public void setStatistics(LinkedHashMap<String, String> statistics) {
 		this.statistics = statistics;
 	}
-	
-	
-	public void setSuggestionManager(SuggestionManager suggestionManager) {
-		this.suggestionManager = suggestionManager;
-	}
 
 
 	public IPlace getSelectedStudent() {
@@ -705,7 +696,21 @@ public class Course {
 
 	}
 
+
 	public CalcVector getStatState() {
 		return statState;
+	}
+	
+	
+	public void notifySimUntilObservers(boolean state) {
+		for (ISimUntilObserver suo : simUntilObservers) {
+			suo.updateSimUntil(state);
+		}
+	}
+	
+	
+	public void subscribeSimUntil(ISimUntilObserver suo) {
+		// TODO Daniel
+		// simUntilObservers.add(suo);
 	}
 }

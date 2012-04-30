@@ -66,6 +66,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	// private TimeBlocks timeBlocks;
 
 	private JFormattedTextField	txtFrom;
+	private JTextField				txtTo;
 	
 	private Courses					courses;
 
@@ -118,6 +119,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		this.add(paintArea, BorderLayout.CENTER);
 		paintArea.subscribeTime(simController);
 		courses.subscribeStatistics(paintArea);
+		course.subscribeSimUntil(paintArea);
 		// paintArea.initMovableBlocks();
 		
 		// create sidePanel
@@ -171,7 +173,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 
 		txtFrom.setText(start);
 		txtFrom.setColumns(5);
-		JTextField txtTo = new JTextField(end, 5);
+		txtTo = new JTextField(end, 5);
 		txtTo.setEditable(false);
 		txtTo.setToolTipText(Messages.getString("Lecture.TOINFO"));
 
@@ -218,6 +220,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 					input.setForeground(Color.BLACK);
 					input.setBackground(Color.WHITE);
 					updateStart((String) ((JFormattedTextField) input).getText());
+					updateEnd();
 					return true;
 				}
 			}
@@ -237,6 +240,8 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		timePanel.add(lblTo);
 		timePanel.add(txtTo);
 		sidePanel.add(timePanel);
+		
+
 	}
 	
 	
@@ -300,6 +305,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		paintArea.init(course);
 		paintArea.initMovableBlocks();
 		paintArea.repaint();
+		course.subscribeSimUntil(paintArea);
 	}
 	
 	
@@ -324,5 +330,15 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 			// Normally this exception shouldn't be thrown, because the input is already verified by the calling method
 			logger.warn("Could not parse time " + time);
 		}
+	}
+	
+	
+	private void updateEnd() {
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+		Date endTime = new Date();
+		endTime.setTime(courses.getCurrentCourse().getLecture().getStart().getTime()
+				+ courses.getCurrentCourse().getLecture().getLength() * 60 * 1000);
+		String end = timeFormat.format(endTime);
+		txtTo.setText(end);
 	}
 }

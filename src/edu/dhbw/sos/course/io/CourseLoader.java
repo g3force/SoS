@@ -63,19 +63,27 @@ public class CourseLoader {
 							Course course = (Course) xstream.fromXML(xmlfile);
 							allCourses.add(course);
 						} catch (CannotResolveClassException e) {
+							// shouldn't happen anymore. Suggestions.xml != course_file. Taken care of.
 							logger.fatal("ALARM! ALARM! ALARM! Basti mach das heile");
 						} catch (UnknownFieldException e) {
 							logger.warn("Course could not be loaded because of unknown field.");
-							// TODO Basti: maybe do something like deleting course?
+							xmlfile.delete(); // deletes the file in case there's an unknown field.
 						}
 					}
 				}
 			}
 		}
 		if (allCourses.size() == 0) {
-			allCourses.add(new Course("Dummy course"));
+			logger.info("No courses found. Creating dummy course instead.");
+			Course dummy = new Course("Dummy Course");
+			allCourses.add(dummy);
+			allCourses.setCurrentCourse(dummy);
+		} else if (allCourses.size() == 1) {
+			allCourses.setCurrentCourse(allCourses.get(0));
+		} else {
+			// TODO has to be handled yet
+			allCourses.setCurrentCourse(allCourses.get(0));
 		}
-		allCourses.setCurrentCourse(allCourses.get(0));
 		logger.info("CoursesSize: " + allCourses.size() + ", setCourse: " + allCourses.getCurrentCourse());
 		return allCourses;
 		/*
