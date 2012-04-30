@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import edu.dhbw.sos.course.io.CourseSaver;
 import edu.dhbw.sos.course.statistics.IStatisticsObserver;
 import edu.dhbw.sos.gui.right.IEditModeObserver;
+import edu.dhbw.sos.simulation.ISimUntilObserver;
 
 
 /**
@@ -37,6 +38,8 @@ public class Courses implements Iterable<Course> {
 	private transient LinkedList<ICurrentCourseObserver>				currentCourseOberservers;
 	private transient LinkedList<ICoursesListObserver>					coursesListOberservers;
 	private transient LinkedList<IEditModeObserver>						editModeObservers;
+	// SimulateUntil Obeserver for showing a grafik when simulating to a point
+	private transient static LinkedList<ISimUntilObserver>			simUntilObservers;
 	private String																	savepath	= "";
 	private LinkedList<Course>													courses;
 
@@ -53,6 +56,8 @@ public class Courses implements Iterable<Course> {
 		currentCourseOberservers = new LinkedList<ICurrentCourseObserver>();
 		coursesListOberservers = new LinkedList<ICoursesListObserver>();
 		editModeObservers = new LinkedList<IEditModeObserver>();
+		simUntilObservers = new LinkedList<ISimUntilObserver>();
+
 
 		courses = new LinkedList<Course>();
 		this.savepath = savepath;
@@ -242,5 +247,19 @@ public class Courses implements Iterable<Course> {
 	
 	public LinkedList<IEditModeObserver> getEditModeObservers() {
 		return editModeObservers;
+	}
+	
+	
+	public static void notifySimUntilObservers(boolean state) {
+		// TODO Daniel
+		for (ISimUntilObserver suo : simUntilObservers) {
+			suo.updateSimUntil(state);
+		}
+	}
+	
+	
+	public void subscribeSimUntil(ISimUntilObserver suo) {
+		// TODO Daniel
+		simUntilObservers.add(suo);
 	}
 }

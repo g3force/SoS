@@ -27,7 +27,6 @@ import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
 import edu.dhbw.sos.helper.CalcVector;
-import edu.dhbw.sos.simulation.ISimUntilObserver;
 
 
 /**
@@ -36,7 +35,7 @@ import edu.dhbw.sos.simulation.ISimUntilObserver;
  * @author DirkK
  */
 public class Course {
-	private static final Logger									logger				= Logger.getLogger(Course.class);
+	private static final Logger									logger	= Logger.getLogger(Course.class);
 
 	
 	// private transient SimController simController;
@@ -59,8 +58,7 @@ public class Course {
 	private transient boolean										simulating;
 	private transient LinkedList<DonInput>						donInputQueue;
 	
-	// SimulateUntil Obeserver for showing a grfaik when simulating to a point
-	private transient LinkedList<ISimUntilObserver>			simUntilObservers	= new LinkedList<ISimUntilObserver>();
+
 	
 
 	public Course(String name) {
@@ -101,6 +99,7 @@ public class Course {
 		tbs.add(new TimeBlock(10, BlockType.pause));
 		tbs.add(new TimeBlock(30, BlockType.group));
 		lecture = new Lecture(new Date(), tbs);
+		
 	}
 	
 	
@@ -108,7 +107,7 @@ public class Course {
 		statistics = new LinkedHashMap<String, String>();
 		statState = new CalcVector(4);
 		histStatStates = new LinkedHashMap<Integer, CalcVector>();
-
+		
 		selectedStudent = null;
 		selectedProperty = 0;
 		simulating = false;
@@ -413,13 +412,15 @@ public class Course {
 	
 	
 	private void simulateUntil(int actual, int required) {
-		notifySimUntilObservers(true);
+		logger.info("SimUntil started");
+		// Courses.notifySimUntilObservers(true);
 		while (actual < required) {
 			simulationStep(actual);
-			actual += 1000; // FIXME Dirk
+			actual += 100000; // FIXME Dirk
 		}
 		Courses.notifyStudentsObservers();
-		notifySimUntilObservers(false);
+		// Courses.notifySimUntilObservers(false);
+		logger.info("SimUntil ended");
 	}
 	
 	
@@ -701,15 +702,5 @@ public class Course {
 	}
 	
 	
-	public void notifySimUntilObservers(boolean state) {
-		for (ISimUntilObserver suo : simUntilObservers) {
-			suo.updateSimUntil(state);
-		}
-	}
 	
-	
-	public void subscribeSimUntil(ISimUntilObserver suo) {
-		// TODO Daniel
-		// simUntilObservers.add(suo);
-	}
 }
