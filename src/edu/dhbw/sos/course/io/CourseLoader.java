@@ -30,27 +30,16 @@ import edu.dhbw.sos.course.Courses;
 public class CourseLoader {
 	private static final Logger	logger	= Logger.getLogger(CourseLoader.class);
 	
-	
-	// private static Document doc;
-	
-	
 	/**
-	 * 
 	 * Loads the entire course-structure and the vectors
 	 * 
 	 * @param savepath
-	 * @return
 	 * @author SebastianN
 	 */
-	
 	public static Courses loadCourses(String savepath) {
-		/*
-		 * DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		 * DocumentBuilder dBuilder;
-		 */
 		XStream xstream = new XStream();
 		File dir = new File(savepath);
-		Courses allCourses = new Courses(savepath);
+		Courses allCourses = new Courses();
 		
 		if (dir.list() != null) {
 			for (int i = 0; i < dir.list().length; i++) {

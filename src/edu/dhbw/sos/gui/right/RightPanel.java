@@ -25,13 +25,15 @@ import javax.swing.JPanel;
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.CourseController;
 import edu.dhbw.sos.course.Courses;
-import edu.dhbw.sos.course.ICoursesListObserver;
-import edu.dhbw.sos.course.ICurrentCourseObserver;
-import edu.dhbw.sos.course.statistics.IStatisticsObserver;
-import edu.dhbw.sos.course.suggestions.ISuggestionsObserver;
 import edu.dhbw.sos.course.suggestions.SuggestionManager;
 import edu.dhbw.sos.gui.MainFrame;
 import edu.dhbw.sos.helper.Messages;
+import edu.dhbw.sos.observers.ICoursesListObserver;
+import edu.dhbw.sos.observers.ICurrentCourseObserver;
+import edu.dhbw.sos.observers.IEditModeObserver;
+import edu.dhbw.sos.observers.IStatisticsObserver;
+import edu.dhbw.sos.observers.ISuggestionsObserver;
+import edu.dhbw.sos.observers.Observers;
 
 
 /**
@@ -65,11 +67,11 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 		this.setPreferredSize(new Dimension(PREF_SIZE, 0));
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		this.courses = courses;
-		courses.subscribeCoursesList(this);
-		courses.subscribeCurrentCourse(this);
-		courses.subscribeStatistics(this);
 		this.sugMngr = sm;
-		this.sugMngr.subscribeSuggestions(this);
+		Observers.subscribeCoursesList(this);
+		Observers.subscribeCurrentCourse(this);
+		Observers.subscribeStatistics(this);
+		Observers.subscribeSuggestions(this);
 		
 		// #############################################################################
 		// drop down list
@@ -91,12 +93,10 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 		editBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for (IEditModeObserver so : RightPanel.this.courses.getEditModeObservers()) {
-					if (((EditBtn) e.getSource()).isSelected())
-						so.enterEditMode();
-					else
-						so.exitEditMode();
-				}
+				if (((EditBtn) e.getSource()).isSelected())
+					Observers.notifyEditModeEntered();
+				else
+					Observers.notifyEditModeExited();
 			}
 		});
 		courseListPanel.add(editBtn, BorderLayout.WEST);

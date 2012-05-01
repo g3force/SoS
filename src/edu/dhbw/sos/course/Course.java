@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
+import edu.dhbw.sos.SuperFelix;
 import edu.dhbw.sos.course.influence.EInfluenceType;
 import edu.dhbw.sos.course.influence.Influence;
 import edu.dhbw.sos.course.io.CourseSaver;
@@ -27,10 +28,13 @@ import edu.dhbw.sos.course.student.EmptyPlace;
 import edu.dhbw.sos.course.student.IPlace;
 import edu.dhbw.sos.course.student.Student;
 import edu.dhbw.sos.helper.CalcVector;
+import edu.dhbw.sos.observers.Observers;
+import edu.dhbw.sos.simulation.SimController;
 
 
 /**
  * This class is a data holder for the data belonging to the course
+ * It also provides simulation methods
  * 
  * @author DirkK
  */
@@ -38,12 +42,11 @@ public class Course {
 	private static final Logger									logger	= Logger.getLogger(Course.class);
 
 	
-	// private transient SimController simController;
-	
-	// place here? not implemented yet, so do not know...
+	// statistics (data for each simulation step)
 	private transient LinkedHashMap<String, String>			statistics;
-	private transient CalcVector									statState;
-	private transient LinkedHashMap<Integer, CalcVector>	histStatStates;
+	// current statistics (average parameter values of students)
+	private transient CalcVector									statAvgStudentState;
+	private transient LinkedHashMap<Integer, CalcVector>	histStatAvgStudentStates;
 	
 	// persistent data
 	private Lecture													lecture;
@@ -55,18 +58,14 @@ public class Course {
 	// the student and property that was selected in the GUI (by hovering over the student)
 	private transient IPlace										selectedStudent;
 	private transient int											selectedProperty;
+	// simulating indicates, that we are currently within a simulation step (important for donInput)
 	private transient boolean										simulating;
 	private transient LinkedList<DonInput>						donInputQueue;
 	
-
 	
-
 	public Course(String name) {
 		this.name = name;
 		init();
-		
-		// calculate state statistics for whole course
-		// calcStatistics();
 		
 		students = new IPlace[5][7];
 		parameters = new LinkedList<String>();
@@ -86,18 +85,18 @@ public class Course {
 						newStud.addValueToChangeVector(i, (float) (Math.random() * 100) - 50);
 						newStud.addValueToStateVector(i, (int) (Math.random() * 100));
 					}
-					// ((Student)students[y][x]).
 					students[y][x] = newStud;
 				}
 			}
 		}
 		influence = new Influence();
 		TimeBlocks tbs = new TimeBlocks();
-		tbs.add(new TimeBlock(10, BlockType.theory));
-		tbs.add(new TimeBlock(20, BlockType.pause));
+		tbs.add(new TimeBlock(60, BlockType.theory));
+		tbs.add(new TimeBlock(15, BlockType.pause));
 		tbs.add(new TimeBlock(30, BlockType.exercise));
-		tbs.add(new TimeBlock(10, BlockType.pause));
 		tbs.add(new TimeBlock(30, BlockType.group));
+		tbs.add(new TimeBlock(10, BlockType.pause));
+		tbs.add(new TimeBlock(50, BlockType.theory));
 		lecture = new Lecture(new Date(), tbs);
 		
 	}
@@ -105,9 +104,10 @@ public class Course {
 	
 	private void init() {
 		statistics = new LinkedHashMap<String, String>();
-		statState = new CalcVector(4);
-		histStatStates = new LinkedHashMap<Integer, CalcVector>();
-		
+
+		statAvgStudentState = new CalcVector(4);
+		histStatAvgStudentStates = new LinkedHashMap<Integer, CalcVector>();
+
 		selectedStudent = null;
 		selectedProperty = 0;
 		simulating = false;
@@ -116,7 +116,7 @@ public class Course {
 	
 	
 	/**
-	 * TODO NicolaiO, add comment!
+	 * Reset the non persistent data (simulation, statistics, etc.)
 	 * 
 	 * @author NicolaiO
 	 */
@@ -184,7 +184,7 @@ public class Course {
 	 * @return TRUE if student is an instance of "EmptyPlace", otherwise FALSE.
 	 * @author SebastianN
 	 */
-	public boolean IsPlaceEmpty(int row, int column) {
+	public boolean isPlaceEmpty(int row, int column) {
 		IPlace[][] students = this.getStudents();
 		if (students != null) {
 			if (students[row][column] instanceof EmptyPlace) {
@@ -196,10 +196,10 @@ public class Course {
 	}
 	
 	
-	public void donInputQueue(int index, float value, int currentTime) {
+	public void donInputQueue(int index, float value) {
 		if (simulating) {
-			logger.trace("donInput1: " + index + " " + value + " " + currentTime);
-			donInputQueue.add(new DonInput(index, value, currentTime));
+			logger.debug("donInput queued with index " + index + " and value " + value);
+			donInputQueue.add(new DonInput(index, value));
 		} else {
 			donInput(index, value);
 		}
@@ -217,10 +217,10 @@ public class Course {
 	
 	
 	public void donInput(int index, float value) {
-		logger.trace("donInput2: " + index + " " + value);
 		selectedStudent.getActualState().printCalcVector("Don Input: preActualState: ");
 		selectedStudent.donInput(index, value);
 		selectedStudent.getActualState().printCalcVector("Don Input: postActualState: ");
+		logger.debug("donInput executed with index " + index + " and value " + value);
 	}
 	
 
@@ -307,7 +307,6 @@ public class Course {
 		for (DonInput di : donInputQueue) {
 			donInput(di.index, di.value);
 		}
-
 		donInputQueue.clear();
 	}
 	
@@ -347,9 +346,10 @@ public class Course {
 					int newx = x + i;
 					int newy = y + j;
 					if (newx < students[0].length && newx >= 0 && newy < students.length && newy >= 0) {
-						if (students[newy][newx] instanceof Student)
+						if (students[newy][newx] instanceof Student) {
 							surronding = surronding.addCalcVector(oldVec[newy][newx]);
-						neighbourAmount++;
+							neighbourAmount++;
+						}
 						
 						// add small percentage of surrounding students to every student
 						// problem: will increase until infinity
@@ -411,19 +411,33 @@ public class Course {
 	}
 	
 	
-	private void simulateUntil(int actual, int required) {
-		logger.info("SimUntil started");
-		// Courses.notifySimUntilObservers(true);
-		while (actual < required) {
-			simulationStep(actual);
-			actual += 100000; // FIXME Dirk
+	/**
+	 * 
+	 * TODO andres, add comment!
+	 * 
+	 * @param curTime time in milliseconds
+	 * @param requiredTime time in milliseconds
+	 * @author andres
+	 */
+	private void simulateUntil(int curTime, int requiredTime) {
+		Observers.notifySimUntil(true);
+		while (curTime < requiredTime) {
+			simulationStep(curTime);
+			curTime += SimController.realInterval;
 		}
-		Courses.notifyStudentsObservers();
-		// Courses.notifySimUntilObservers(false);
-		logger.info("SimUntil ended");
+
+		Observers.notifyStudents();
+		Observers.notifySimUntil(false);
 	}
 	
 	
+	/**
+	 * 
+	 * 
+	 * @param actualTime current time (milliseconds)
+	 * @param time new time (milliseconds)
+	 * @author ???
+	 */
 	public void setTime(int actualTime, int time) {
 		for (int y = 0; y < students.length; y++) {
 			for (int x = 0; x < students[y].length; x++) {
@@ -444,118 +458,64 @@ public class Course {
 	/**
 	 * 
 	 * Calculates the statistics for the whole course and save them in an histroy state.
-	 * 
+	 * @param time time in milliseconds
 	 * @author andres
 	 */
 	public void calcStatistics(int time) {
-		
-		statState.multiply(0);
-		
-		statState.multiply(0);
+		statAvgStudentState.multiply(0);
 		int studentNum = 0;
 		// for (IPlace[] studentRow : students) {
 		// for (IPlace student : studentRow) {
 		// if (student instanceof Student) {
 		for (IPlace[] student : students) {
-			for (IPlace element : student) {
-				if (element instanceof Student) {
-					statState.addCalcVector(element.getActualState());
+			for (IPlace iplace : student) {
+				if (iplace instanceof Student) {
+					statAvgStudentState.addCalcVector(iplace.getActualState());
 					studentNum++;
 				}
 			}
 		}
 		if (studentNum != 0) {
-			statState.divide(studentNum);
-			statState.printCalcVector("Course statistics");
+			statAvgStudentState.divide(studentNum);
 			// TODO save history statistics.
-			statistics.clear();
-			statistics.put("Last break:", "unkown");
-			for (int i = 0; i < parameters.size(); i++) {
-				statistics.put(parameters.get(i) + ": ", ((int) statState.getValueAt(i)) + "");
+			synchronized (statistics) {
+				statistics.clear();
+				statistics.put("Last break:", "unkown"); // TODO calculate last break
+				for (int i = 0; i < parameters.size(); i++) {
+					statistics.put(parameters.get(i) + ": ", ((int) statAvgStudentState.getValueAt(i)) + "");
+				}
 			}
-			histStatStates.put(time, statState.clone());
-
+			histStatAvgStudentStates.put(time, statAvgStudentState.clone());
 		}
 	}
 	
 	
+	/**
+	 * 
+	 * 
+	 * @param time time in milliseconds
+	 * @author andres
+	 */
 	public void deleteHistoryStatStateFrom(int time) {
 		LinkedList<Integer> toDelete = new LinkedList<Integer>();
-		for (Entry<Integer, CalcVector> historyStatState : histStatStates.entrySet()) {
+		for (Entry<Integer, CalcVector> historyStatState : histStatAvgStudentStates.entrySet()) {
 			if (historyStatState.getKey() > time) {
 				toDelete.add(historyStatState.getKey());
 			}
 		}
 		for (Integer state : toDelete) {
-			histStatStates.remove(state);
-		}
-	}
-	
-
-	// --- GETTERS and SETTERS ---
-	
-	public IPlace[][] getStudents() {
-		return students;
-	}
-	
-	
-	public void setStudents(IPlace[][] students) {
-		this.students = students;
-	}
-	
-	
-	public Influence getInfluence() {
-		return influence;
-	}
-	
-
-	public void setInfluence(Influence influence) {
-		this.influence = influence;
-	}
-	
-	
-	public Lecture getLecture() {
-		return lecture;
-	}
-	
-	
-	public void setLecture(Lecture lecture) {
-		this.lecture = lecture;
-	}
-	
-	
-	public LinkedList<String> getProperties() {
-		return parameters;
-	}
-	
-	
-	public void setProperties(LinkedList<String> properties) {
-		this.parameters = properties;
-	}
-	
-	
-	public String getName() {
-		return name;
-	}
-	
-	
-	public void setName(String _name) {
-		try {
-			CourseSaver.removeFile(this, System.getProperty("user.home") + "/.sos/");
-			this.name = _name;
-			CourseSaver.saveCourse(this, System.getProperty("user.home") + "/.sos/");
-		} catch (SecurityException io) {
-			io.printStackTrace();
-			this.name = _name; // name needs to be set no matter what.
+			histStatAvgStudentStates.remove(state);
 		}
 	}
 	
 	
-	// public SimController getSimController() {
-	// return simController;
-	// }
-	
-	
+	/**
+	 * Add student row/column at given location.
+	 * location may be one of: left, right, top, bottom
+	 * 
+	 * @param location
+	 * @author NicolaiO
+	 */
 	public void addStudents(String location) {
 		int oldX = 0;
 		if (students.length > 0) {
@@ -595,14 +555,15 @@ public class Course {
 			}
 		}
 		students = newStudents;
-		Courses.notifyStudentsObservers();
+		Observers.notifyStudents();
 	}
 	
 	
 	/**
-	 * TODO NicolaiO, add comment!
+	 * Remove student row/column at given location.
+	 * location may be one of: left, right, top, bottom
 	 * 
-	 * @param name2
+	 * @param location
 	 * @author NicolaiO
 	 */
 	public void subStudents(String location) {
@@ -631,7 +592,7 @@ public class Course {
 			}
 		}
 		students = newStudents;
-		Courses.notifyStudentsObservers();
+		Observers.notifyStudents();
 	}
 
 
@@ -641,6 +602,68 @@ public class Course {
 	}
 	
 	
+	// ##################################################################################
+	// ############################# getters and setters ################################
+	// ##################################################################################
+	
+	
+	public IPlace[][] getStudents() {
+		return students;
+	}
+	
+	
+	public void setStudents(IPlace[][] students) {
+		this.students = students;
+	}
+	
+	
+	public Influence getInfluence() {
+		return influence;
+	}
+	
+	
+	public void setInfluence(Influence influence) {
+		this.influence = influence;
+	}
+	
+	
+	public Lecture getLecture() {
+		return lecture;
+	}
+	
+	
+	public void setLecture(Lecture lecture) {
+		this.lecture = lecture;
+	}
+	
+	
+	public LinkedList<String> getProperties() {
+		return parameters;
+	}
+	
+	
+	public void setProperties(LinkedList<String> properties) {
+		this.parameters = properties;
+	}
+	
+	
+	public String getName() {
+		return name;
+	}
+	
+	
+	public void setName(String _name) {
+		try {
+			CourseSaver.removeFile(this, SuperFelix.coursepath);
+			this.name = _name;
+			CourseSaver.saveCourse(this, SuperFelix.coursepath);
+		} catch (SecurityException e) {
+			logger.error("Error while renaming course:", e);
+			this.name = _name; // name needs to be set no matter what.
+		}
+	}
+
+
 	public LinkedHashMap<String, String> getStatistics() {
 		return statistics;
 	}
@@ -658,7 +681,7 @@ public class Course {
 	
 	public void setSelectedStudent(IPlace selectedStudent) {
 		this.selectedStudent = selectedStudent;
-		Courses.notifySelectedStudentObservers();
+		Observers.notifySelectedStudent();
 	}
 	
 	
@@ -669,38 +692,48 @@ public class Course {
 	
 	public void setSelectedProperty(int selectedProperty) {
 		this.selectedProperty = selectedProperty;
-		Courses.notifySelectedStudentObservers();
+		Observers.notifySelectedStudent();
 	}
 	
 	
-	public LinkedHashMap<Integer, CalcVector> getHistStatState() {
-		return histStatStates;
+	public LinkedHashMap<Integer, CalcVector> getHistStatAvgStudentStates() {
+		return histStatAvgStudentStates;
 	}
 	
+	
+	public CalcVector getStatAvgStudentState() {
+		return statAvgStudentState;
+	}
+	
+	
+	// ##################################################################################
+	// ############################# sub classes ########################################
+	// ##################################################################################
+	
+	/**
+	 * Storage class for a don input
+	 * 
+	 * @author NicolaiO
+	 * 
+	 */
 	private class DonInput {
+		// index of selected parameter
 		public int		index;
+		// positiv or negativ change value
 		public float	value;
-		public int		currentTime;
 		
 		
 		/**
-		 * TODO NicolaiO, add comment!
+		 * Create a new donInput
 		 * 
+		 * @param index index of selected parameter
+		 * @param value positiv or negativ change value
 		 * @author NicolaiO
 		 */
-		public DonInput(int index, float value, int currentTime) {
+		public DonInput(int index, float value) {
 			this.index = index;
 			this.value = value;
-			this.currentTime = currentTime;
 		}
 
 	}
-
-
-	public CalcVector getStatState() {
-		return statState;
-	}
-	
-	
-	
 }

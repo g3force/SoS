@@ -21,11 +21,12 @@ import javax.swing.JLabel;
 import edu.dhbw.sos.gui.right.AddBtn;
 import edu.dhbw.sos.gui.right.DelBtn;
 import edu.dhbw.sos.gui.right.EditBtn;
+import edu.dhbw.sos.observers.Observers;
 
 
 /**
- * Manages the stored courses
- * @author SebastianN
+ * Handles action events concerning the courses
+ * @author NicolaiO
  * 
  */
 public class CourseController implements ActionListener, MouseListener, ItemListener {
@@ -58,7 +59,7 @@ public class CourseController implements ActionListener, MouseListener, ItemList
 		if (e.getStateChange() == ItemEvent.SELECTED) {
 			if (e.getItem() instanceof String) {
 				courses.getCurrentCourse().setName((String) e.getItem());
-				courses.notifyCoursesListObservers();
+				Observers.notifyCoursesList();
 			}
 			courses.setCurrentCourse(e.getItem());
 		}
@@ -81,28 +82,20 @@ public class CourseController implements ActionListener, MouseListener, ItemList
 	
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO NicolaiO Auto-generated method stub
-		
 	}
 	
 	
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO NicolaiO Auto-generated method stub
-		
 	}
 	
 	
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO NicolaiO Auto-generated method stub
-		
 	}
 	
 	
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO NicolaiO Auto-generated method stub
-		
 	}
 }

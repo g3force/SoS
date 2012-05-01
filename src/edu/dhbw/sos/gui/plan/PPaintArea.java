@@ -31,13 +31,13 @@ import org.apache.log4j.Logger;
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.TimeBlocks;
-import edu.dhbw.sos.course.statistics.IStatisticsObserver;
 import edu.dhbw.sos.gui.Diagram;
 import edu.dhbw.sos.gui.plan.MovableBlock.Areas;
 import edu.dhbw.sos.helper.CalcVector;
-import edu.dhbw.sos.simulation.ISimUntilObserver;
-import edu.dhbw.sos.simulation.ITimeObserver;
-import edu.dhbw.sos.simulation.SimController;
+import edu.dhbw.sos.observers.ISimUntilObserver;
+import edu.dhbw.sos.observers.IStatisticsObserver;
+import edu.dhbw.sos.observers.ITimeObserver;
+import edu.dhbw.sos.observers.Observers;
 
 
 /**
@@ -76,20 +76,22 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	private Mode								mode					= null;
 	private Areas								area					= null;
 	
-	private LinkedList<ITimeObserver>	timeObservers		= new LinkedList<ITimeObserver>();
 	private boolean							simulateUntil		= false;
 	
+	// FIXME Daniel this is very confusing :o Don't know what this observer does compared to the one in Observers
+	private LinkedList<ITimeObserver>	timeObservers		= new LinkedList<ITimeObserver>();
+
 	
 	/**
 	 * Initialize PaintArea
 	 * 
 	 * @author NicolaiO
 	 */
-	public PPaintArea(SimController simController, Course course) {
+	public PPaintArea(Course course) {
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
-		tmb = new TimeMarkerBlock(0);
-		simController.subscribeTime(tmb);
+		tmb = new TimeMarkerBlock();
+		Observers.subscribeTime(tmb);
 		init(course);
 	}
 	
@@ -98,9 +100,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		this.tbs = course.getLecture().getTimeBlocks();
 		this.course = course;
 		this.initMovableBlocks();
-		// tmb.setLength((int) (tbs.getTotalLength() * scaleRatio));
-		tmb.setLength((int) (this.getWidth() / scaleRatio));
-		
+
 		attDia = new Diagram(new LinkedList<Float>());
 		attDia.setLocation(new Point(5, 10));
 		attDia.setRescaleY(false);
@@ -195,7 +195,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		}
 		
 		// TimeMarkerBlock
-		tmb.draw(ga);
+		tmb.draw(ga, scaleRatio);
 		
 		// draw diagram
 		// updateDiagram();
@@ -209,7 +209,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		attDia.setWidth(tmb.getTime());
 		LinkedList<Float> newData = new LinkedList<Float>();
 		
-		for (Entry<Integer, CalcVector> stat : course.getHistStatState().entrySet()) {
+		for (Entry<Integer, CalcVector> stat : course.getHistStatAvgStudentStates().entrySet()) {
 			newData.add(stat.getValue().getValueAt(0));
 		}
 		attDia.setData(newData);
@@ -387,24 +387,35 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	 * @author andres
 	 */
 	private void dAndDTime(Point e) {
-		int mmt_X = (int) Math.floor(e.getX() + tmb.getRelMouseLocation().getX() - tmb.getX());
-		// calculate new position of timeMarkerBloc
-		double x_mb = tmb.getLocation().getX();
-		double paWidth = this.getWidth();
-		if (x_mb < 0 && mmt_X < 0) {
-			return;
-		} else if ((x_mb + tmb.getWidth()) >= paWidth && mmt_X >= 0) {
-			return;
-		}
 		
-		double x = e.getX();
-		if (x < 0) {
-			x = 0.0;
-		} else if (x > paWidth) {
-			x = paWidth;
-		}
-		tmb.timeChanged((int) x + 5);
-		tmb.printTmb();
+		// get new time in min
+		// TODO andres Nico: Tried this as alternative to code below.
+		// Idea: change concept of TimemarkerBlock: you use both time and width -> not good!!
+		// maybe TimeMarkerBlock should do nothing itself. It could be a simple Moveable block and everything is managed
+		// from here
+		int time = (int) (e.getX() / this.getWidth()) * tbs.getTotalLength();
+		tmb.timeChanged(time * 60000);
+
+
+		// int mmt_X = (int) Math.floor(e.getX() + tmb.getRelMouseLocation().getX() - tmb.getX());
+		//
+		// // calculate new position of timeMarkerBloc
+		// double x_mb = tmb.getLocation().getX();
+		// double paWidth = this.getWidth();
+		// if (x_mb < 0 && mmt_X < 0) {
+		// return;
+		// } else if ((x_mb + tmb.getWidth()) >= paWidth && mmt_X >= 0) {
+		// return;
+		// }
+		//
+		// double x = e.getX();
+		// if (x < 0) {
+		// x = 0.0;
+		// } else if (x > paWidth) {
+		// x = paWidth;
+		// }
+		// tmb.timeChanged((int) x + 5);
+		// logger.debug(tmb.toString());
 	}
 
 
@@ -748,12 +759,10 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 			// e.getPoint().setLocation(paWidth, 0);
 			x = paWidth;
 		}
-		// if (leftBlock == null) {
-		// if (rightBlock.getLocation().x > moveBlock.getX()) {
-		// moveBlock.setWidth(rightBlock.getLocation().x);
-		// }
-		// } else if (rightBlock == null) {
-		// moveBlock.setWidth((moveBlock.getWidth() - moveX));
+		// if (leftBlock == null && rightBlock != null && rightBlock.getX() > moveBlock.getWidth() + 1) {
+		// moveBlock.setWidth(rightBlock.getX());
+		// } else if (rightBlock == null && leftBlock != null && leftBlock.getX() < moveBlock.getWidth() + 1) {
+		// moveBlock.setWidth(leftBlock.getX());
 		// moveBlock.setLocation(new Point(x - moveBlock.getRelMouseLocation().x, moveBlock.y));
 		// } else {
 		moveBlock.setLocation(new Point(x - moveBlock.getRelMouseLocation().x, moveBlock.y));

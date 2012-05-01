@@ -40,9 +40,10 @@ import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.Courses;
-import edu.dhbw.sos.course.ICurrentCourseObserver;
 import edu.dhbw.sos.helper.Messages;
-import edu.dhbw.sos.simulation.ISpeedObserver;
+import edu.dhbw.sos.observers.ICurrentCourseObserver;
+import edu.dhbw.sos.observers.ISpeedObserver;
+import edu.dhbw.sos.observers.Observers;
 import edu.dhbw.sos.simulation.SimController;
 
 
@@ -115,13 +116,13 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		this.add(lPanel, BorderLayout.WEST);
 		
 		// init paintArea
-		paintArea = new PPaintArea(simController, course);
+		paintArea = new PPaintArea(course);
 		this.add(paintArea, BorderLayout.CENTER);
 		paintArea.subscribeTime(simController);
-		courses.subscribeStatistics(paintArea);
-		courses.subscribeSimUntil(paintArea);
-		// paintArea.initMovableBlocks();
-		
+
+		Observers.subscribeStatistics(paintArea);
+		Observers.subscribeSimUntil(paintArea);
+
 		// create sidePanel
 		JPanel sidePanel = new JPanel();
 		sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.PAGE_AXIS));
@@ -134,8 +135,8 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		LiveBtn btnLive = new LiveBtn();
 		btnPlay.addActionListener(simController);
 		btnLive.addActionListener(simController);
-		simController.subscribeSimulation(btnPlay);
-		courses.subscribeEditMode(btnPlay);
+		Observers.subscribeSimulation(btnPlay);
+		Observers.subscribeEditMode(btnPlay);
 		
 
 		controlPanel.add(btnPlay);
@@ -305,7 +306,8 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		paintArea.init(course);
 		paintArea.initMovableBlocks();
 		paintArea.repaint();
-		courses.subscribeSimUntil(paintArea);
+
+		Observers.subscribeSimUntil(paintArea);
 	}
 	
 	

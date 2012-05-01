@@ -20,10 +20,11 @@ import javax.swing.JPanel;
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.CourseController;
 import edu.dhbw.sos.course.Courses;
-import edu.dhbw.sos.course.ICurrentCourseObserver;
-import edu.dhbw.sos.course.IStudentsObserver;
 import edu.dhbw.sos.gui.MainFrame;
-import edu.dhbw.sos.gui.right.IEditModeObserver;
+import edu.dhbw.sos.observers.ICurrentCourseObserver;
+import edu.dhbw.sos.observers.IEditModeObserver;
+import edu.dhbw.sos.observers.IStudentsObserver;
+import edu.dhbw.sos.observers.Observers;
 import edu.dhbw.sos.simulation.SimController;
 
 
@@ -58,8 +59,8 @@ public class CoursePanel extends JPanel implements ComponentListener, ICurrentCo
 		this.addMouseListener(simController);
 		
 		this.editBtns = new LinkedList<JLabel>();
-		courses.subscribeCurrentCourse(this);
-		courses.subscribeStudents(this);
+		Observers.subscribeCurrentCourse(this);
+		Observers.subscribeStudents(this);
 		paintArea = new CPaintArea();
 		this.add(paintArea, BorderLayout.CENTER);
 		paintArea.setCourse(courses.getCurrentCourse());
