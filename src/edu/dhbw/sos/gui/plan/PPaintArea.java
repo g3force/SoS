@@ -337,21 +337,27 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (mode != null) {
-
+			int x = e.getPoint().x;
+			if (x > this.getWidth())
+				x = this.getWidth();
+			int y = e.getPoint().y;
+			if (y > this.getHeight())
+				y = this.getHeight();
+			Point p = new Point(x, y);
 			switch (mode) {
 				case Move:
 					synchronized (this) {
-						dAndDMove(e.getPoint());
+						dAndDMove(p);
 					}
 					break;
 				case Resize:
-					// dAndDResize(e.getPoint());
+					// dAndDResize(p);
 					break;
 				case Time:
-					dAndDTime(e.getPoint());
+					dAndDTime(p);
 					break;
 			}
-			lastMouseLocation = e.getPoint();
+			lastMouseLocation = p;
 		}
 		this.repaint();
 	}
@@ -437,19 +443,16 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 			
 			/********************************/
 			// Vertical Movement
-			calcMBY(pos_Y);
+			moveVertical(pos_Y);
 			
 			/********************************/
 			// Horizontal Movement
-			// 3 possiblilites: leftmost block (leftBlock is null), middle block, and rightmostblock (rightBlock is null)
-			if (!calcMBX(e, mmt_X))
-				return;
+			moveHorizontal(mmt_X);
 			
 			/********************************/
+			// 3 possiblilites: leftmost block (leftBlock is null), middle block, and rightmostblock (rightBlock is null)
 			// not the first block
 			if (leftBlock != null) {
-				leftBlock.addWidth(mmt_X);
-				leftBlock.printMbTb(index - 1, "L");
 				// Checks if the width of right Block is lower or equal then 0
 				if (leftBlock.getWidth() + mmt_X <= 0) {
 					int newIndex = 0;
@@ -481,9 +484,8 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 					} else
 						savedWidthLeft = -1;
 					index = newIndex;
-					
 				} else {
-
+					leftBlock.addWidth(mmt_X);
 				}
 			}
 			
@@ -491,18 +493,6 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 			// Calculate width of right block and new position
 			// not the last block
 			if (rightBlock != null) {
-				
-				double x_P1 = rightBlock.getLocation().getX() + mmt_X;
-				if (x_P1 <= 0) {
-					x_P1 = 0;
-					mmt_X = 0;
-				} else if (x_P1 >= paWidth)
-					x_P1 = paWidth - rightBlock.getWidth();
-				rightBlock.setLocation(x_P1, rightBlock.getY());
-				
-				rightBlock.addWidth(-mmt_X);
-				rightBlock.printMbTb(index + 1, "R");
-
 				// Checks if the width of right Block is lower or equal then 0
 				if (rightBlock.getWidth() - mmt_X <= 0) {
 					int newIndex = 0;
@@ -520,7 +510,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 					
 					// Swap the moving Block and its right neighbour
 					newIndex = movableBlocks.swap(index, index + 1);
-
+					
 					leftBlock = movableBlocks.get(newIndex - 1);
 					if (newIndex + 1 < movableBlocks.size())
 						rightBlock = movableBlocks.get(newIndex + 1);
@@ -531,17 +521,27 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 					savedWidthLeft = (int) leftBlock.getWidth();
 					
 					leftBlock.setLocation(movableBlocks.get(newIndex).getX() - leftBlock.getWidth(), leftBlock.getY());
-
+					
 					if (newIndex + 1 < movableBlocks.size()) {
 						savedWidthRight = (int) rightBlock.getWidth();
 					} else
 						savedWidthRight = -1;
 					index = newIndex;
 				} else {
+					double x_P1 = rightBlock.getLocation().getX() + mmt_X;
+					if (x_P1 <= 0) {
+						x_P1 = 0;
+						mmt_X = 0;
+					} else if (x_P1 >= paWidth)
+						x_P1 = paWidth - rightBlock.getWidth();
+					rightBlock.setLocation(x_P1, rightBlock.getY());
 					
+					rightBlock.addWidth(-mmt_X);
+					rightBlock.printMbTb(index + 1, "R");
 				}
 			}
 			
+
 			/********************************/
 			// Checks wether the width of left and right Blocks are lower or equal then 0
 			// if (index > 0 && leftBlock.width <= 0) {
@@ -745,42 +745,44 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	}
 	
 	
-	private boolean calcMBX(Point p, int moveX) {
+	private void moveHorizontal(int moveX) {
 		// calculate new position of moveBlock
-		int x_mb = moveBlock.x;
-		int paWidth = this.getWidth();
-		if (x_mb <= 0 && moveX < 0) {
-			// e.getPoint().setLocation(0, e.getPoint().getY());
-			return false;
-		} else if ((x_mb + moveBlock.getWidth()) >= paWidth && moveX >= 0) {
-			// e.getPoint().setLocation(this.getWidth(), e.getPoint().getY());
-			return false;
-		}
+		// if (moveBlock.x < 0 && moveX < 0) {
+		// // e.getPoint().setLocation(0, e.getPoint().getY());
+		// return false;
+		// } else if ((moveBlock.x + moveBlock.getWidth()) > this.getWidth() && moveX >= 0) {
+		// // e.getPoint().setLocation(this.getWidth(), e.getPoint().getY());
+		// return false;
+		// }
 		
-		int x = p.x;
-		if (x < 0) {
-			// e.getPoint().setLocation(0, 0);
-			x = 0;
-		} else if (x > paWidth) {
-			// e.getPoint().setLocation(paWidth, 0);
-			x = paWidth;
-		}
+		// if (moveBlock.x + moveBlock.width + moveX > this.getWidth()) {
+		// moveX = moveBlock.x + moveBlock.width - this.getWidth() + 1;
+		// }
+		// if (moveBlock.x + moveX < 0) {
+		// moveX = 0;
+		// }
+
+		// int x = p.x;
+		// if (x < 0) {
+		// // e.getPoint().setLocation(0, 0);
+		// x = 0;
+		// } else if (x > this.getWidth()) {
+		// // e.getPoint().setLocation(paWidth, 0);
+		// x = this.getWidth();
+		// }
 
 		if (leftBlock == null) {
 			moveBlock.addWidth(moveX);
 		} else if (rightBlock == null) {
 			moveBlock.addWidth(-moveX);
-			moveBlock.setLocation(new Point(x - moveBlock.getRelMouseLocation().x, moveBlock.y));
+			moveBlock.setLocation(new Point(moveBlock.x + moveX, moveBlock.y));
 		} else {
-			moveBlock.setLocation(new Point(x - moveBlock.getRelMouseLocation().x, moveBlock.y));
+			moveBlock.setLocation(new Point(moveBlock.x + moveX, moveBlock.y));
 		}
-
-		// moveBlock.printMbTb(index, "M");
-		return true;
 	}
 	
 	
-	private void calcMBY(int pos_Y) {
+	private void moveVertical(int pos_Y) {
 		// FIXME other blocks are displayed randomly at other positions, after update() they are displayed correctly
 		// FIXME dynamic
 		if (pos_Y >= 1 && pos_Y < 40) {
