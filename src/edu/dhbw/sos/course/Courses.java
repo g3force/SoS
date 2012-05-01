@@ -26,10 +26,10 @@ import edu.dhbw.sos.observers.Observers;
  * 
  */
 public class Courses implements Iterable<Course> {
-
 	private static final Logger	logger	= Logger.getLogger(Courses.class);
 	private Course						curCourse;
 	private LinkedList<Course>		courses;
+
 	
 
 	/**
@@ -37,7 +37,6 @@ public class Courses implements Iterable<Course> {
 	 * 
 	 * @author NicolaiO
 	 */
-
 	public Courses() {
 		courses = new LinkedList<Course>();
 	}

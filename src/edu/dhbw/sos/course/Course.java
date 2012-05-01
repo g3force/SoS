@@ -40,7 +40,6 @@ import edu.dhbw.sos.simulation.SimController;
  */
 public class Course {
 	private static final Logger									logger	= Logger.getLogger(Course.class);
-
 	
 	// statistics (data for each simulation step)
 	private transient LinkedHashMap<String, String>			statistics;
@@ -104,7 +103,6 @@ public class Course {
 	
 	private void init() {
 		statistics = new LinkedHashMap<String, String>();
-
 		statAvgStudentState = new CalcVector(4);
 		histStatAvgStudentStates = new LinkedHashMap<Integer, CalcVector>();
 
@@ -425,7 +423,6 @@ public class Course {
 			simulationStep(curTime);
 			curTime += SimController.realInterval;
 		}
-
 		Observers.notifyStudents();
 		Observers.notifySimUntil(false);
 	}
@@ -734,6 +731,5 @@ public class Course {
 			this.index = index;
 			this.value = value;
 		}
-
 	}
 }

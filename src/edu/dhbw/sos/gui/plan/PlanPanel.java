@@ -122,7 +122,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 
 		Observers.subscribeStatistics(paintArea);
 		Observers.subscribeSimUntil(paintArea);
-
+		
 		// create sidePanel
 		JPanel sidePanel = new JPanel();
 		sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.PAGE_AXIS));

@@ -47,8 +47,6 @@ public class MovableBlock extends Rectangle {
 	private int							index;
 	// private double X = 0;
 	// private double Y = 0;
-	private double						width					= 0;
-	private double						height				= 0;
 	
 	
 	/**
@@ -98,6 +96,11 @@ public class MovableBlock extends Rectangle {
 	}
 	
 	
+	public void addWidth(int width) {
+		this.width += width;
+	}
+	
+	
 	/**
 	 * Sets the location within parent
 	 * This method respects the movement flags moveVertical and moveHorizontal
@@ -134,6 +137,10 @@ public class MovableBlock extends Rectangle {
 	// super.setLocation(abs);
 	// }
 	
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
 	
 	public void setLocation(double x, double y) {
 		// this.X = x;
@@ -211,17 +218,6 @@ public class MovableBlock extends Rectangle {
 		this.moveVertical = moveVertical;
 	}
 	
-	
-	public void setWidth(double width) {
-		this.width = width;
-		super.width = (int) width;
-	}
-	
-	
-	public void addWidth(double width) {
-		this.setWidth(this.getWidth() + width);
-	}
-	
 
 	public void printMbTb(int index, String pos) {
 		logger.trace(pos + "; MB.index=" + index + "; TB.len=" + timeBlock.getLen() + "; MB.width=" + this.width
@@ -259,6 +255,8 @@ public class MovableBlock extends Rectangle {
 	public void draw(Graphics2D ga) {
 		ga.setPaint(this.getColor());
 		ga.fill(this);
+		ga.setPaint(Color.black);
+		ga.draw(this);
 	}
 
 	
