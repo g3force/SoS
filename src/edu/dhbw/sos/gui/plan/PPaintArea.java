@@ -114,25 +114,6 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	
 	
 	/**
-	 * TODO andres, add comment!
-	 * 
-	 * @param simController
-	 * @author andres
-	 */
-	public void subscribeTime(ITimeObserver to) {
-		timeObservers.add(to);
-	}
-	
-	
-	public void notifyTimeObservers() {
-		int timeInMilSec = tmb.getTime() * 60000;
-		for (ITimeObserver to : timeObservers) {
-			to.timeChanged(timeInMilSec);
-		}
-	}
-	
-	
-	/**
 	 * Create movableBlocks from timeBlocks
 	 * * set location
 	 * * set size
@@ -318,7 +299,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 			// this.repaint();
 		}
 		if (mode == Mode.Time)
-			notifyTimeObservers();
+			Observers.notifyTimeGUI(tmb.getTime() * 60000);
 		mode = null;
 		return;
 	}

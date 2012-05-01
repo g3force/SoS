@@ -27,7 +27,7 @@ import edu.dhbw.sos.gui.plan.RewindBtn;
 import edu.dhbw.sos.helper.CalcVector;
 import edu.dhbw.sos.observers.ICurrentCourseObserver;
 import edu.dhbw.sos.observers.IEditModeObserver;
-import edu.dhbw.sos.observers.ITimeObserver;
+import edu.dhbw.sos.observers.ITimeGUIObserver;
 import edu.dhbw.sos.observers.Observers;
 
 
@@ -39,7 +39,7 @@ import edu.dhbw.sos.observers.Observers;
  * 
  */
 
-public class SimController implements ActionListener, MouseListener, IEditModeObserver, ITimeObserver,
+public class SimController implements ActionListener, MouseListener, IEditModeObserver, ITimeGUIObserver,
 		ICurrentCourseObserver {
 	private static final Logger	logger			= Logger.getLogger(SimController.class);
 	
