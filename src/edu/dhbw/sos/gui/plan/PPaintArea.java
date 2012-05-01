@@ -98,7 +98,8 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		this.tbs = course.getLecture().getTimeBlocks();
 		this.course = course;
 		this.initMovableBlocks();
-		tmb.setLength(tbs.getTotalLength());
+		// tmb.setLength((int) (tbs.getTotalLength() * scaleRatio));
+		tmb.setLength((int) (this.getWidth() / scaleRatio));
 		
 		attDia = new Diagram(new LinkedList<Float>());
 		attDia.setLocation(new Point(5, 10));
@@ -158,8 +159,9 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		if (simulateUntil) {
 			URL iconUrl = getClass().getResource("/res/icons/sos_logo.png");
 			if (iconUrl != null) {
-				ga.drawImage(Toolkit.getDefaultToolkit().getImage(iconUrl), 40, 30, this);
+				ga.drawImage(Toolkit.getDefaultToolkit().getImage(iconUrl), 40, 15, this);
 			}
+			logger.info("Simulating until...");
 			return;
 		}
 
@@ -802,6 +804,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	@Override
 	public void updateSimUntil(boolean state) {
 		simulateUntil = state;
+		this.repaint();
 	}
 
 }
