@@ -78,10 +78,12 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	
 	private boolean							simulateUntil		= false;
 	
+	private Point								lastMouseLocation	= new Point();
+
 	// FIXME Daniel this is very confusing :o Don't know what this observer does compared to the one in Observers
 	private LinkedList<ITimeObserver>	timeObservers		= new LinkedList<ITimeObserver>();
-
 	
+
 	/**
 	 * Initialize PaintArea
 	 * 
@@ -252,6 +254,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 			
 			Point relML = new Point(e.getPoint().x - mb.x, e.getPoint().y - mb.y);
 			mb.setRelMouseLocation(relML);
+			lastMouseLocation = e.getPoint();
 			moveBlock = mb;
 			// Any block must exist only one time in the list
 			index = movableBlocks.indexOf(moveBlock);
@@ -346,6 +349,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 					dAndDTime(e.getPoint());
 					break;
 			}
+			lastMouseLocation = e.getPoint();
 		}
 		this.repaint();
 	}
@@ -425,7 +429,8 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 
 			// Calculate the movement in x and the position of y. Negative Value means to
 			// the left and positive to the right.
-			double mmt_X = e.getX() - moveBlock.getRelMouseLocation().getX() - moveBlock.getX();
+			// double mmt_X = e.getX() - moveBlock.getRelMouseLocation().getX() - moveBlock.getX();
+			int mmt_X = e.x - lastMouseLocation.x;
 			int pos_Y = (int) Math.floor(e.getY());
 			
 			/********************************/
@@ -738,7 +743,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	}
 	
 	
-	private boolean calcMBX(Point p, double moveX) {
+	private boolean calcMBX(Point p, int moveX) {
 		// calculate new position of moveBlock
 		int x_mb = moveBlock.x;
 		int paWidth = this.getWidth();
@@ -758,14 +763,14 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 			// e.getPoint().setLocation(paWidth, 0);
 			x = paWidth;
 		}
-		// if (leftBlock == null && rightBlock != null && rightBlock.getX() > moveBlock.getWidth() + 1) {
-		// moveBlock.setWidth(rightBlock.getX());
-		// } else if (rightBlock == null && leftBlock != null && leftBlock.getX() < moveBlock.getWidth() + 1) {
-		// moveBlock.setWidth(leftBlock.getX());
-		// moveBlock.setLocation(new Point(x - moveBlock.getRelMouseLocation().x, moveBlock.y));
-		// } else {
-		moveBlock.setLocation(new Point(x - moveBlock.getRelMouseLocation().x, moveBlock.y));
-		// }
+		if (leftBlock == null) {
+			moveBlock.addWidth(moveX);
+		} else if (rightBlock == null) {
+			moveBlock.addWidth(-moveX);
+			moveBlock.setLocation(new Point(x - moveBlock.getRelMouseLocation().x, moveBlock.y));
+		} else {
+			moveBlock.setLocation(new Point(x - moveBlock.getRelMouseLocation().x, moveBlock.y));
+		}
 		// moveBlock.printMbTb(index, "M");
 		return true;
 	}
@@ -807,8 +812,8 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		updateDiagram();
 		this.validate();
 	}
-
 	
+
 	@Override
 	public void updateSimUntil(boolean state) {
 		simulateUntil = state;
