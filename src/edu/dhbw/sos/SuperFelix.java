@@ -58,6 +58,7 @@ public class SuperFelix {
 		MainFrame mainFrame = new MainFrame(simController, courseController, courses, sugMngr);
 		mainFrame.pack();
 		logger.info("Sim of Students started.");
+		Observers.print();
 	}
 	
 	

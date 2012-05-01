@@ -90,7 +90,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	public PPaintArea(Course course) {
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
-		tmb = new TimeMarkerBlock(0);
+		tmb = new TimeMarkerBlock();
 		Observers.subscribeTime(tmb);
 		init(course);
 	}
@@ -100,7 +100,6 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		this.tbs = course.getLecture().getTimeBlocks();
 		this.course = course;
 		this.initMovableBlocks();
-		tmb.setLength(tbs.getTotalLength());
 		
 		attDia = new Diagram(new LinkedList<Float>());
 		attDia.setLocation(new Point(5, 10));
@@ -195,7 +194,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		}
 		
 		// TimeMarkerBlock
-		tmb.draw(ga);
+		tmb.draw(ga, scaleRatio);
 		
 		// draw diagram
 		// updateDiagram();
@@ -387,24 +386,35 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	 * @author andres
 	 */
 	private void dAndDTime(Point e) {
-		int mmt_X = (int) Math.floor(e.getX() + tmb.getRelMouseLocation().getX() - tmb.getX());
-		// calculate new position of timeMarkerBloc
-		double x_mb = tmb.getLocation().getX();
-		double paWidth = this.getWidth();
-		if (x_mb < 0 && mmt_X < 0) {
-			return;
-		} else if ((x_mb + tmb.getWidth()) >= paWidth && mmt_X >= 0) {
-			return;
-		}
 		
-		double x = e.getX();
-		if (x < 0) {
-			x = 0.0;
-		} else if (x > paWidth) {
-			x = paWidth;
-		}
-		tmb.timeChanged((int) x + 5);
-		tmb.printTmb();
+		// get new time in min
+		// TODO andres Nico: Tried this as alternative to code below.
+		// Idea: change concept of TimemarkerBlock: you use both time and width -> not good!!
+		// maybe TimeMarkerBlock should do nothing itself. It could be a simple Moveable block and everything is managed
+		// from here
+		int time = (int) (e.getX() / this.getWidth()) * tbs.getTotalLength();
+		tmb.timeChanged(time * 60000);
+
+
+		// int mmt_X = (int) Math.floor(e.getX() + tmb.getRelMouseLocation().getX() - tmb.getX());
+		//
+		// // calculate new position of timeMarkerBloc
+		// double x_mb = tmb.getLocation().getX();
+		// double paWidth = this.getWidth();
+		// if (x_mb < 0 && mmt_X < 0) {
+		// return;
+		// } else if ((x_mb + tmb.getWidth()) >= paWidth && mmt_X >= 0) {
+		// return;
+		// }
+		//
+		// double x = e.getX();
+		// if (x < 0) {
+		// x = 0.0;
+		// } else if (x > paWidth) {
+		// x = paWidth;
+		// }
+		// tmb.timeChanged((int) x + 5);
+		// logger.debug(tmb.toString());
 	}
 
 

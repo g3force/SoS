@@ -11,6 +11,8 @@ package edu.dhbw.sos.observers;
 
 import java.util.LinkedList;
 
+import org.apache.log4j.Logger;
+
 import edu.dhbw.sos.course.Course;
 
 
@@ -27,6 +29,8 @@ import edu.dhbw.sos.course.Course;
  * 
  */
 public class Observers {
+	private static final Logger									logger							= Logger.getLogger(Observers.class);
+
 	private static LinkedList<IStudentsObserver>				studentsObservers				= new LinkedList<IStudentsObserver>();
 	private static LinkedList<ISelectedStudentObserver>	selectedCourseObservers		= new LinkedList<ISelectedStudentObserver>();
 	private static LinkedList<IStatisticsObserver>			statisticsObservers			= new LinkedList<IStatisticsObserver>();
@@ -42,6 +46,40 @@ public class Observers {
 	private static LinkedList<ISimUntilObserver>				simUntilObservers				= new LinkedList<ISimUntilObserver>();
 	
 	private static LinkedList<ISuggestionsObserver>			suggestionObserver			= new LinkedList<ISuggestionsObserver>();
+
+
+	// ##################################################################################
+	// ############################# others section #####################################
+	// ##################################################################################
+	
+	
+	private Observers() {
+	}
+	
+
+	public static void print() {
+		printObserverList(studentsObservers, "studentsObservers");
+		printObserverList(selectedCourseObservers, "selectedCourseObservers");
+		printObserverList(statisticsObservers, "statisticsObservers");
+		printObserverList(currentCourseOberservers, "currentCourseOberservers");
+		printObserverList(coursesListOberservers, "coursesListOberservers");
+		printObserverList(editModeObservers, "editModeObservers");
+		printObserverList(speedObservers, "speedObservers");
+		printObserverList(timeObservers, "timeObservers");
+		printObserverList(simulationOberservers, "simulationOberservers");
+		printObserverList(simUntilObservers, "simUntilObservers");
+		printObserverList(suggestionObserver, "suggestionObserver");
+	}
+	
+	
+	private static void printObserverList(LinkedList<?> obsl, String name) {
+		logger.info("Observer: " + name);
+		logger.info("Size: " + obsl.size());
+		for (Object o : obsl) {
+			logger.info(o.toString());
+		}
+		logger.info("");
+	}
 
 
 	// ##################################################################################
@@ -207,14 +245,5 @@ public class Observers {
 	
 	public static void subscribeSuggestions(ISuggestionsObserver so) {
 		suggestionObserver.add(so);
-	}
-
-
-	// ##################################################################################
-	// ############################# others section #####################################
-	// ##################################################################################
-	
-	
-	private Observers() {
 	}
 }
