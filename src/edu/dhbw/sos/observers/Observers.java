@@ -75,12 +75,12 @@ public class Observers {
 	
 	
 	private static void printObserverList(LinkedList<?> obsl, String name) {
-		logger.info("Observer: " + name);
-		logger.info("Size: " + obsl.size());
+		logger.debug("Observer: " + name);
+		logger.debug("Size: " + obsl.size());
 		for (Object o : obsl) {
-			logger.info(o.toString());
+			logger.debug(o.toString());
 		}
-		logger.info("");
+		logger.debug("");
 	}
 
 

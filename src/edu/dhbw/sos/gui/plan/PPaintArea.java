@@ -413,184 +413,179 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 
 	private void dAndDMove(Point e) {
 		// while mouse is pressed and moving, this will move the button
-		if (moveBlock != null) {
-			double paWidth = this.getWidth();
-
-			// Calculate the movement in x and the position of y. Negative Value means to
-			// the left and positive to the right.
-			// double mmt_X = e.getX() - moveBlock.getRelMouseLocation().getX() - moveBlock.getX();
-			int mmt_X = e.x - lastMouseLocation.x;
-			int pos_Y = (int) Math.floor(e.getY());
+		if (moveBlock == null)
+			return;
+		// Calculate the movement in x and the position of y. Negative Value means to
+		// the left and positive to the right.
+		int moveX = e.x - lastMouseLocation.x;
+		
+		// 3 possiblilites: leftmost block (leftBlock is null), middle block, and rightmostblock (rightBlock is null)
+		// not the first block
+		if (leftBlock != null && leftBlock.getWidth() + moveX < 0) {
+			// Checks if the width of right Block is lower or equal then 0
+			int mouseOffset = (int) -(leftBlock.getWidth() + moveX + 1);
+			logger.info(mouseOffset);
+			int newIndex = 0;
 			
-			/********************************/
-			// Vertical Movement
-			moveVertical(pos_Y);
-			
-			/********************************/
-			// Horizontal Movement
-			moveHorizontal(mmt_X);
-			
-			/********************************/
-			// 3 possiblilites: leftmost block (leftBlock is null), middle block, and rightmostblock (rightBlock is null)
-			// not the first block
-			if (leftBlock != null) {
-				// Checks if the width of right Block is lower or equal then 0
-				if (leftBlock.getWidth() + mmt_X <= 0) {
-					int newIndex = 0;
-					
-					if (rightBlock != null) {
-						rightBlock.setWidth(savedWidthRight);
-						rightBlock.printMbTb(index + 1, "R");
-					}
-					leftBlock.setWidth(savedWidthLeft);
-					leftBlock.printMbTb(index - 1, "L");
-					
-					leftBlock.setLocation(moveBlock.getLocation().getX() + moveBlock.getWidth(), leftBlock.getY());
-					
-					// Swap the moving Block and its left neighbour
-					newIndex = movableBlocks.swap(index, index - 1);
-					rightBlock = movableBlocks.get(newIndex + 1);
-					if (newIndex > 0)
-						leftBlock = movableBlocks.get(newIndex - 1);
-					else
-						leftBlock = null;
-					
-					savedWidthRight = (int) rightBlock.getWidth();
-					if (newIndex + 2 < movableBlocks.size()) {
-						movableBlocks.get(newIndex + 2).setLocation(rightBlock.getX() + rightBlock.getWidth(),
-								movableBlocks.get(newIndex + 2).getY());
-					}
-					if (leftBlock != null) {
-						savedWidthLeft = (int) leftBlock.getWidth();
-					} else
-						savedWidthLeft = -1;
-					index = newIndex;
-				} else {
-					leftBlock.addWidth(mmt_X);
-				}
-			}
-			
-			/********************************/
-			// Calculate width of right block and new position
-			// not the last block
 			if (rightBlock != null) {
-				// Checks if the width of right Block is lower or equal then 0
-				if (rightBlock.getWidth() - mmt_X <= 0) {
-					int newIndex = 0;
-					
-					if (leftBlock != null) {
-						leftBlock.setWidth(savedWidthLeft);
-						leftBlock.printMbTb(index - 1, "L");
-					}
-					
-					rightBlock.setWidth(savedWidthRight);
-					rightBlock.printMbTb(index + 1, "R");
-					
-					
-					rightBlock.setLocation(moveBlock.getLocation().getX() + moveBlock.getWidth(), rightBlock.getY());
-					
-					// Swap the moving Block and its right neighbour
-					newIndex = movableBlocks.swap(index, index + 1);
-					
-					leftBlock = movableBlocks.get(newIndex - 1);
-					if (newIndex + 1 < movableBlocks.size())
-						rightBlock = movableBlocks.get(newIndex + 1);
-					else
-						rightBlock = null;
-					
-					
-					savedWidthLeft = (int) leftBlock.getWidth();
-					
-					leftBlock.setLocation(movableBlocks.get(newIndex).getX() - leftBlock.getWidth(), leftBlock.getY());
-					
-					if (newIndex + 1 < movableBlocks.size()) {
-						savedWidthRight = (int) rightBlock.getWidth();
-					} else
-						savedWidthRight = -1;
-					index = newIndex;
-				} else {
-					double x_P1 = rightBlock.getLocation().getX() + mmt_X;
-					if (x_P1 <= 0) {
-						x_P1 = 0;
-						mmt_X = 0;
-					} else if (x_P1 >= paWidth)
-						x_P1 = paWidth - rightBlock.getWidth();
-					rightBlock.setLocation(x_P1, rightBlock.getY());
-					
-					rightBlock.addWidth(-mmt_X);
-					rightBlock.printMbTb(index + 1, "R");
-				}
+				rightBlock.setWidth(savedWidthRight);
+				rightBlock.printMbTb(index + 1, "R");
+			}
+			leftBlock.setWidth(savedWidthLeft);
+			leftBlock.printMbTb(index - 1, "L");
+			
+			leftBlock.setLocation(moveBlock.getLocation().getX() + moveBlock.getWidth(), leftBlock.getY());
+			// leftBlock.setLocation(moveBlock.getLocation().getX() + moveBlock.getWidth() - mouseOffset,
+			// leftBlock.getY());
+			// moveHorizontal(-mouseOffset);
+			
+			// Swap the moving Block and its left neighbour
+			newIndex = movableBlocks.swap(index, index - 1);
+			rightBlock = movableBlocks.get(newIndex + 1);
+			if (newIndex > 0)
+				leftBlock = movableBlocks.get(newIndex - 1);
+			else
+				leftBlock = null;
+			
+			savedWidthRight = (int) rightBlock.getWidth();
+			if (newIndex + 2 < movableBlocks.size()) {
+				movableBlocks.get(newIndex + 2).setLocation(rightBlock.getX() + rightBlock.getWidth(),
+						movableBlocks.get(newIndex + 2).getY());
+			}
+			if (leftBlock != null) {
+				savedWidthLeft = (int) leftBlock.getWidth();
+			} else
+				savedWidthLeft = -1;
+			index = newIndex;
+		} else if (rightBlock != null && rightBlock.getWidth() - moveX < 0) {
+			// not the last block
+			// Checks if the width of right Block is lower or equal then 0
+			int newIndex = 0;
+			
+			if (leftBlock != null) {
+				leftBlock.setWidth(savedWidthLeft);
+				leftBlock.printMbTb(index - 1, "L");
 			}
 			
-
-			/********************************/
-			// Checks wether the width of left and right Blocks are lower or equal then 0
-			// if (index > 0 && leftBlock.width <= 0) {
-			// if (leftBlock != null && leftBlock.width <= 0) {
-			// int newIndex = 0;
-			//
-			// // if (index + 1 < movableBlocks.size()) {
-			// if (rightBlock != null) {
-			// rightBlock.setWidth(widthRight, scaleRatio);
-			// rightBlock.printMbTb(index + 1, "R");
-			// }
-			// leftBlock.setWidth(widthLeft, scaleRatio);
-			// leftBlock.printMbTb(index - 1, "L");
-			//
-			// leftBlock.setX(moveBlock.getLocation().getX() + moveBlock.width);
-			//
-			// // Swap the moving BLock and its left neighbour
-			// movableBlocks.swap(index, index - 1);
-			// newIndex = index - 1;
-			// // }
-			//
-			// widthRight = movableBlocks.get(newIndex + 1).width;
-			// if (newIndex + 2 < movableBlocks.size()) {
-			// movableBlocks.get(newIndex + 2).setX(
-			// movableBlocks.get(newIndex + 1).getX() + movableBlocks.get(newIndex + 1).width);
-			// }
-			// if (newIndex > 0) {
-			// widthLeft = movableBlocks.get(newIndex - 1).width;
-			// } else
-			// widthLeft = -1;
-			// index = newIndex;
-			//
-			/********************************/
-			// } else if (rightBlock != null && rightBlock.width <= 0) {
-			// else if (index + 1 < movableBlocks.size() && movableBlocks.get(index + 1).width <= 0) {
-			// int newIndex = 0;
-			//
-			// if (index > 0) {
-			// leftBlock.setWidth(widthLeft, scaleRatio);
-			// leftBlock.printMbTb(index - 1, "L");
-			// }
-			//
-			// // if (index + 1 < movableBlocks.size()) {
-			// rightBlock.setWidth(widthRight, scaleRatio);
-			// rightBlock.printMbTb(index + 1, "R");
-			//
-			//
-			// rightBlock.setX(moveBlock.getLocation().getX() + moveBlock.width);
-			//
-			// // Swap the moving BLock and its right neighbour
-			// movableBlocks.swap(index, index + 1);
-			// newIndex = index + 1;
-			// // }
-			//
-			// widthLeft = movableBlocks.get(newIndex - 1).width;
-			//
-			// movableBlocks.get(newIndex - 1).setX(
-			// movableBlocks.get(newIndex).getX() - movableBlocks.get(newIndex - 1).width);
-			//
-			// if (newIndex + 1 < movableBlocks.size()) {
-			// widthRight = movableBlocks.get(newIndex + 1).width;
-			// } else
-			// widthRight = -1;
-			// index = newIndex;
-			// }
+			rightBlock.setWidth(savedWidthRight);
+			rightBlock.printMbTb(index + 1, "R");
 			
-			logger.debug("Dragged finished: index now:" + index);
+			
+			rightBlock.setLocation(moveBlock.getLocation().getX() + moveBlock.getWidth(), rightBlock.getY());
+			
+			// Swap the moving Block and its right neighbour
+			newIndex = movableBlocks.swap(index, index + 1);
+			
+			leftBlock = movableBlocks.get(newIndex - 1);
+			if (newIndex + 1 < movableBlocks.size())
+				rightBlock = movableBlocks.get(newIndex + 1);
+			else
+				rightBlock = null;
+			
+			
+			savedWidthLeft = (int) leftBlock.getWidth();
+			
+			leftBlock.setLocation(movableBlocks.get(newIndex).getX() - leftBlock.getWidth(), leftBlock.getY());
+			
+			if (newIndex + 1 < movableBlocks.size()) {
+				savedWidthRight = (int) rightBlock.getWidth();
+			} else
+				savedWidthRight = -1;
+			index = newIndex;
+		} else {
+			// Vertical Movement
+			moveVertical((int) e.getY());
+			
+			// Horizontal Movement
+			moveHorizontal(moveX);
+			
+			// width of left and right blocks
+			if (leftBlock != null)
+				leftBlock.addWidth(moveX);
+			if (rightBlock != null) {
+				double x_P1 = rightBlock.getLocation().getX() + moveX;
+				if (x_P1 <= 0) {
+					x_P1 = 0;
+					moveX = 0;
+				} else if (x_P1 >= this.getWidth())
+					x_P1 = this.getWidth() - rightBlock.getWidth();
+				rightBlock.setLocation(x_P1, rightBlock.getY());
+				
+				rightBlock.addWidth(-moveX);
+				rightBlock.printMbTb(index + 1, "R");
+			}
 		}
+		logger.debug("danddMove finished");
+		// logger.debug("1:" + leftBlock.getWidth());
+		// logger.debug("1:" + moveBlock.getWidth());
+		// logger.debug("1:" + rightBlock.getWidth());
+		
+		
+		/********************************/
+		// Checks wether the width of left and right Blocks are lower or equal then 0
+		// if (index > 0 && leftBlock.width <= 0) {
+		// if (leftBlock != null && leftBlock.width <= 0) {
+		// int newIndex = 0;
+		//
+		// // if (index + 1 < movableBlocks.size()) {
+		// if (rightBlock != null) {
+		// rightBlock.setWidth(widthRight, scaleRatio);
+		// rightBlock.printMbTb(index + 1, "R");
+		// }
+		// leftBlock.setWidth(widthLeft, scaleRatio);
+		// leftBlock.printMbTb(index - 1, "L");
+		//
+		// leftBlock.setX(moveBlock.getLocation().getX() + moveBlock.width);
+		//
+		// // Swap the moving BLock and its left neighbour
+		// movableBlocks.swap(index, index - 1);
+		// newIndex = index - 1;
+		// // }
+		//
+		// widthRight = movableBlocks.get(newIndex + 1).width;
+		// if (newIndex + 2 < movableBlocks.size()) {
+		// movableBlocks.get(newIndex + 2).setX(
+		// movableBlocks.get(newIndex + 1).getX() + movableBlocks.get(newIndex + 1).width);
+		// }
+		// if (newIndex > 0) {
+		// widthLeft = movableBlocks.get(newIndex - 1).width;
+		// } else
+		// widthLeft = -1;
+		// index = newIndex;
+		//
+		/********************************/
+		// } else if (rightBlock != null && rightBlock.width <= 0) {
+		// else if (index + 1 < movableBlocks.size() && movableBlocks.get(index + 1).width <= 0) {
+		// int newIndex = 0;
+		//
+		// if (index > 0) {
+		// leftBlock.setWidth(widthLeft, scaleRatio);
+		// leftBlock.printMbTb(index - 1, "L");
+		// }
+		//
+		// // if (index + 1 < movableBlocks.size()) {
+		// rightBlock.setWidth(widthRight, scaleRatio);
+		// rightBlock.printMbTb(index + 1, "R");
+		//
+		//
+		// rightBlock.setX(moveBlock.getLocation().getX() + moveBlock.width);
+		//
+		// // Swap the moving BLock and its right neighbour
+		// movableBlocks.swap(index, index + 1);
+		// newIndex = index + 1;
+		// // }
+		//
+		// widthLeft = movableBlocks.get(newIndex - 1).width;
+		//
+		// movableBlocks.get(newIndex - 1).setX(
+		// movableBlocks.get(newIndex).getX() - movableBlocks.get(newIndex - 1).width);
+		//
+		// if (newIndex + 1 < movableBlocks.size()) {
+		// widthRight = movableBlocks.get(newIndex + 1).width;
+		// } else
+		// widthRight = -1;
+		// index = newIndex;
+		// }
 	}
 	
 	
