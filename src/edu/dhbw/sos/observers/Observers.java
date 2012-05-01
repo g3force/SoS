@@ -40,6 +40,7 @@ public class Observers {
 	
 	private static LinkedList<ISpeedObserver>					speedObservers					= new LinkedList<ISpeedObserver>();
 	private static LinkedList<ITimeObserver>					timeObservers					= new LinkedList<ITimeObserver>();
+	private static LinkedList<ITimeGUIObserver>				timeGUIObservers				= new LinkedList<ITimeGUIObserver>();
 	private static LinkedList<ISimulation>						simulationOberservers		= new LinkedList<ISimulation>();
 
 	// SimulateUntil Observer for showing a graphic when simulating to a point
@@ -66,6 +67,7 @@ public class Observers {
 		printObserverList(editModeObservers, "editModeObservers");
 		printObserverList(speedObservers, "speedObservers");
 		printObserverList(timeObservers, "timeObservers");
+		printObserverList(timeGUIObservers, "timeGUIObservers");
 		printObserverList(simulationOberservers, "simulationOberservers");
 		printObserverList(simUntilObservers, "simUntilObservers");
 		printObserverList(suggestionObserver, "suggestionObserver");
@@ -160,6 +162,13 @@ public class Observers {
 	}
 	
 	
+	public static void notifyTimeGUI(int time) {
+		for (ITimeGUIObserver tgo : timeGUIObservers) {
+			tgo.timeChanged(time);
+		}
+	}
+
+	
 	public static void notifySimulationStarted() {
 		for (ISimulation cco : simulationOberservers) {
 			cco.simulationStarted();
@@ -227,6 +236,11 @@ public class Observers {
 		timeObservers.add(to);
 	}
 	
+	
+	public static void subscribeTimeGUI(ITimeGUIObserver tgo) {
+		timeGUIObservers.add(tgo);
+	}
+
 	
 	public static void subscribeSpeed(ISpeedObserver so) {
 		speedObservers.add(so);

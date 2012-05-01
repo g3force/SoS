@@ -118,7 +118,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		// init paintArea
 		paintArea = new PPaintArea(course);
 		this.add(paintArea, BorderLayout.CENTER);
-		paintArea.subscribeTime(simController);
+		Observers.subscribeTimeGUI(simController);
 
 		Observers.subscribeStatistics(paintArea);
 		Observers.subscribeSimUntil(paintArea);
