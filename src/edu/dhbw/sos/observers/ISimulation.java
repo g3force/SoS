@@ -2,12 +2,12 @@
  * *********************************************************
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
- * Date: Apr 22, 2012
+ * Date: Apr 28, 2012
  * Author(s): NicolaiO
  * 
  * *********************************************************
  */
-package edu.dhbw.sos.course.suggestions;
+package edu.dhbw.sos.observers;
 
 /**
  * TODO NicolaiO, add comment!
@@ -17,6 +17,9 @@ package edu.dhbw.sos.course.suggestions;
  * @author NicolaiO
  * 
  */
-public interface ISuggestionsObserver {
-	void updateSuggestions();
+public interface ISimulation {
+	void simulationStopped();
+	
+	
+	void simulationStarted();
 }

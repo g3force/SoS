@@ -114,7 +114,7 @@ public class SPaintArea extends JPanel {
 		synchronized (diagrams) {
 			diagrams.clear();
 			try {
-				int size = course.getHistStatState().values().iterator().next().size();
+				int size = course.getHistStatAvgStudentStates().values().iterator().next().size();
 				LinkedList<LinkedList<Float>> newData = new LinkedList<LinkedList<Float>>();
 				for (int i = 0; i < size; i++) {
 					newData.add(new LinkedList<Float>());
@@ -128,7 +128,7 @@ public class SPaintArea extends JPanel {
 					diagram.setRescaleY(false);
 					diagrams.add(diagram);
 				}
-				for (Entry<Integer, CalcVector> cv : course.getHistStatState().entrySet()) {
+				for (Entry<Integer, CalcVector> cv : course.getHistStatAvgStudentStates().entrySet()) {
 					for (int i = 0; i < cv.getValue().size(); i++) {
 						newData.get(i).add(cv.getValue().getValueAt(i));
 					}

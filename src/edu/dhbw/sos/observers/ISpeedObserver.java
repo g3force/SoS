@@ -1,13 +1,13 @@
-/*
+/* 
  * *********************************************************
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
- * Date: Apr 21, 2012
+ * Date: Apr 23, 2012
  * Author(s): NicolaiO
- * 
+ *
  * *********************************************************
  */
-package edu.dhbw.sos.course;
+package edu.dhbw.sos.observers;
 
 /**
  * TODO NicolaiO, add comment!
@@ -17,6 +17,6 @@ package edu.dhbw.sos.course;
  * @author NicolaiO
  * 
  */
-public interface ICurrentCourseObserver {
-	void updateCurrentCourse(Course course);
+public interface ISpeedObserver {
+	void speedChanged(int speed);
 }

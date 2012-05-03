@@ -114,11 +114,13 @@ public class CPaintArea extends JPanel implements MouseMotionListener, MouseList
 		ga.clearRect(0, 0, this.getWidth(), this.getHeight());
 		
 		// draw all students
-		for (int y = 0; y < studentCircles.length; y++) {
-			for (int x = 0; x < studentCircles[0].length; x++) {
-				if (studentCircles[y][x].getStudent() instanceof Student) {
-					ga.setPaint(studentCircles[y][x].getColor());
-					ga.fill(studentCircles[y][x]);
+		synchronized (studentCircles) {
+			for (int y = 0; y < studentCircles.length; y++) {
+				for (int x = 0; x < studentCircles[0].length; x++) {
+					if (studentCircles[y][x].getStudent() instanceof Student) {
+						ga.setPaint(studentCircles[y][x].getColor());
+						ga.fill(studentCircles[y][x]);
+					}
 				}
 			}
 		}
@@ -198,15 +200,18 @@ public class CPaintArea extends JPanel implements MouseMotionListener, MouseList
 		
 		
 		// set the shapes (the circles) according to the values calculated above
-		studentCircles = new StudentCircle[numStudy][numStudx];
-		for (int y = 0; y < studentCircles.length; y++) {
-			for (int x = 0; x < studentCircles[0].length; x++) {
-				if (students[y][x] instanceof Student) {
-					studentCircles[y][x] = new StudentCircle(students[y][x], offset_x + x * (size) + (x + 1.0f) * spacing,
-							offset_y + y * (size) + (y + 1) * spacing, size, size);
-					studentCircles[y][x].initPizza(course.getProperties());
-				} else {
-					studentCircles[y][x] = new StudentCircle(students[y][x]);
+		synchronized (studentCircles) {
+			studentCircles = new StudentCircle[numStudy][numStudx];
+			for (int y = 0; y < studentCircles.length; y++) {
+				for (int x = 0; x < studentCircles[0].length; x++) {
+					if (students[y][x] instanceof Student) {
+						studentCircles[y][x] = new StudentCircle(students[y][x],
+								offset_x + x * (size) + (x + 1.0f) * spacing, offset_y + y * (size) + (y + 1) * spacing, size,
+								size);
+						studentCircles[y][x].initPizza(course.getProperties());
+					} else {
+						studentCircles[y][x] = new StudentCircle(students[y][x]);
+					}
 				}
 			}
 		}

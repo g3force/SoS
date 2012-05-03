@@ -15,23 +15,17 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import org.apache.log4j.Logger;
-
-import edu.dhbw.sos.simulation.ITimeObserver;
+import edu.dhbw.sos.observers.ITimeObserver;
 
 
 /**
- * A movable block is a rectangle in a paintarea, that has some attributes for supporting
- * move operations.
- * It does not actually move itself, but it has some flags and attributes for controlling
- * movement.
+ * TODO andres
  * 
- * @author NicolaiO
+ * @author andres
  * 
  */
 public class TimeMarkerBlock extends Rectangle implements ITimeObserver {
 	private static final long		serialVersionUID	= -1455862988755481811L;
-	private static final Logger	logger				= Logger.getLogger(TimeMarkerBlock.class);
 	
 	// save the point, where the mouse holds the block, relative to the block itself
 	private Point						relMouseLocation	= new Point();
@@ -39,17 +33,18 @@ public class TimeMarkerBlock extends Rectangle implements ITimeObserver {
 	// color of the block
 	private Color						color;
 	// flags for enabling/disabling movement
-	private boolean					moveHorizontal		= true;
-	private boolean					moveVertical		= false;
+	private boolean					moveHorizontal;
+	private boolean					moveVertical;
 	
 	private int							time;
-	private int							length;
 
-	public TimeMarkerBlock(int length) {
+	
+	public TimeMarkerBlock() {
 		super(new Point(-5, 135), new Dimension(10, 10));
+		moveHorizontal = true;
+		moveVertical = false;
 		setColor(Color.GRAY);
 		setTime(0);
-		setLength(length);
 	}
 
 	/**
@@ -65,8 +60,7 @@ public class TimeMarkerBlock extends Rectangle implements ITimeObserver {
 			x = p.x + relMouseLocation.x;
 		}
 		if (moveVertical) {
-			// y = p.y + relMouseLocation.y;
-			y = p.y;
+			y = p.y + relMouseLocation.y;
 		}
 		Point abs = new Point(x, y);
 		super.setLocation(abs);
@@ -120,8 +114,9 @@ public class TimeMarkerBlock extends Rectangle implements ITimeObserver {
 	}
 	
 	
-	public void printTmb() {
-		logger.trace("TBB.time" + time + "; TMB.X=" + this.x);
+	@Override
+	public String toString() {
+		return "TBB.time" + time + "; TMB.X=" + this.x;
 	}
 
 
@@ -139,28 +134,14 @@ public class TimeMarkerBlock extends Rectangle implements ITimeObserver {
 	public void setTime(int time) {
 		this.time = time;
 	}
-	
+
 	
 	/**
-	 * @return the length
+	 * @param time time in milliseconds
 	 */
-	public int getLength() {
-		return length;
-	}
-	
-	
-	/**
-	 * @param length the length to set
-	 */
-	public void setLength(int length) {
-		this.length = length;
-	}
-
-
 	@Override
 	public void timeChanged(int time) {
-		setTime(time);
-		setLocation(time - 5, this.getY());
+		setTime(time / 60000);
 	}
 	
 	
@@ -170,10 +151,10 @@ public class TimeMarkerBlock extends Rectangle implements ITimeObserver {
 	 * @param Graphics2D
 	 * @author andres
 	 */
-	public void draw(Graphics2D ga) {
+	public void draw(Graphics2D ga, double scaleRatio) {
+		setLocation((int) (getTime() * scaleRatio) - 5, this.getY());
 		ga.setPaint(getColor());
 		ga.fill(this);
-		ga.draw(this);
-		ga.drawLine(getTime(), 10, getTime(), 135);
+		ga.drawLine((int) (getTime() * scaleRatio), 10, (int) (getTime() * scaleRatio), 135); // FIXME andres constants
 	}
 }

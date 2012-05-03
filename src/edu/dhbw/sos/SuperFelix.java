@@ -14,15 +14,16 @@ import edu.dhbw.sos.course.io.CourseLoader;
 import edu.dhbw.sos.course.io.CourseSaver;
 import edu.dhbw.sos.course.suggestions.SuggestionManager;
 import edu.dhbw.sos.gui.MainFrame;
+import edu.dhbw.sos.observers.Observers;
 import edu.dhbw.sos.simulation.SimController;
 
 
 public class SuperFelix {
-	public static String					VERSION	= "0.5";
-	private static final Logger		logger	= Logger.getLogger(SuperFelix.class);
-	private static Courses				courses;
-	private static String				savepath;
-	private static String			coursepath;
+	public static String				VERSION	= "0.5";
+	public static final String		savepath	= System.getProperty("user.home") + "/.sos/";
+	public static final String		coursepath	= savepath + "/courses/";
+	private static final Logger	logger	= Logger.getLogger(SuperFelix.class);
+	private static Courses			courses;
 
 	
 	public SuperFelix() {
@@ -45,12 +46,6 @@ public class SuperFelix {
 		// Locale.setDefault(new Locale("en", "EN"));
 		Locale.setDefault(new Locale("en", "EN"));
 		
-		// load datapath
-		// works for Windows and Linux... so the data is stored in the systems userdata folder...
-		savepath = System.getProperty("user.home") + "/.sos/";
-		coursepath = savepath + "/courses/";
-		
-		
 		// create object for the data to be displayed in GUI
 		// the references will be used to update it afterwards
 		
@@ -58,11 +53,12 @@ public class SuperFelix {
 		CourseController courseController = new CourseController(courses);
 		SuggestionManager sugMngr = new SuggestionManager();
 		SimController simController = new SimController(courses.getCurrentCourse(), sugMngr);
-		courses.subscribeCurrentCourse(simController);
-		courses.subscribeEditMode(simController);
+		Observers.subscribeCurrentCourse(simController);
+		Observers.subscribeEditMode(simController);
 		MainFrame mainFrame = new MainFrame(simController, courseController, courses, sugMngr);
 		mainFrame.pack();
 		logger.info("Sim of Students started.");
+		// Observers.print();
 	}
 	
 	

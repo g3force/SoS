@@ -15,8 +15,8 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-import edu.dhbw.sos.course.ISimulation;
-import edu.dhbw.sos.gui.right.IEditModeObserver;
+import edu.dhbw.sos.observers.IEditModeObserver;
+import edu.dhbw.sos.observers.ISimulation;
 
 
 /**
