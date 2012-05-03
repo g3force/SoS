@@ -35,7 +35,7 @@ public class Student implements IPlace, Cloneable {
 	private transient LinkedHashMap<Integer, CalcVector>	historyStates;
 	private CalcVector												changeVector;
 	int																	noChange				= 0;
-	final int															donInputNoChange	= 60;
+	final int															donInputNoChange	= 600;
 	
 	
 	public Student(int vectorInitSize) {
