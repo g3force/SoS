@@ -80,9 +80,9 @@ public class Course {
 				} else {
 					Student newStud = new Student(parameters.size());
 					
-					for (int i = 0; i < 4; i++) {
-						newStud.addValueToChangeVector(i, (float) (Math.random() * 100) - 50);
-						newStud.addValueToStateVector(i, (int) (Math.random() * 100));
+					for (int i = 0; i < newStud.getActualState().size(); i++) {
+						newStud.addToChangeVector(i, (float) (Math.random() * 100) - 50);
+						newStud.addValueToStateVector(i, (int) (Math.random() * 10));
 					}
 					students[y][x] = newStud;
 				}
@@ -204,6 +204,7 @@ public class Course {
 	}
 	
 	
+	// TODO: dirk, does this work? no queue needed for suggestions?
 	public void suggestionInput(CalcVector calcVec) {
 		logger.info("Suggestion performed");
 		for (int y = 0; y < students.length; y++) {
@@ -542,7 +543,7 @@ public class Course {
 				if (x < offsetX || y < offsetY || (x - offsetX) >= oldX || (y - offsetY) >= oldY) {
 					Student newStud = new Student(parameters.size());
 					for (int i = 0; i < parameters.size(); i++) {
-						newStud.addValueToChangeVector(i, (float) (Math.random() * 100) - 50);
+						newStud.addToChangeVector(i, (float) (Math.random() * 100) - 50);
 						newStud.addValueToStateVector(i, (int) (Math.random() * 100));
 					}
 					newStudents[y][x] = newStud;

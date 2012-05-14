@@ -97,7 +97,7 @@ public class Student implements IPlace, Cloneable {
 	
 	
 	/**
-	 * takes a start and end time
+	 * takes a time
 	 * if there was an interaction from the don in this time period the latest interaction will be returned
 	 * otherwise null will be returned
 	 * @param start time in milliseconds
@@ -217,12 +217,12 @@ public class Student implements IPlace, Cloneable {
 	public void addToChangeVector(int index, float value) {
 		changeVector.setValueAt(index, changeVector.getValueAt(index) + value / 100);
 		// changeVector.addCalcVector(addVector);
-		// for (int i = 0; i < changeVector.size(); i++) {
-		// if (changeVector.getValueAt(i) < 100)
-		// changeVector.setValueAt(i, 100);
-		// if (changeVector.getValueAt(i) > 0)
-		// changeVector.setValueAt(i, 0);
-		// }
+		for (int i = 0; i < changeVector.size(); i++) {
+			if (changeVector.getValueAt(i) < 0.5)
+				changeVector.setValueAt(i, (float) 0.5);
+			if (changeVector.getValueAt(i) > 1.5)
+				changeVector.setValueAt(i, (float) 1.5);
+		}
 	}
 	
 	
@@ -291,25 +291,6 @@ public class Student implements IPlace, Cloneable {
 	}
 	
 	
-	/**
-	 * Adds value to the value of the parmeter at position index.
-	 * 
-	 * @param index
-	 * @param value
-	 * @return
-	 * @author bene
-	 */
-	public void addValueToChangeVector(int index, float value) {
-		if (index >= changeVector.size()) {
-			throw new IndexOutOfBoundsException();
-		}
-		if (value < 1.5)
-			this.changeVector.setValueAt(index, 1.5f);
-		else if (value > 0.5)
-			this.changeVector.setValueAt(index, 0.5f);
-		changeVector.setValueAt(index, changeVector.getValueAt(index) + value / 100);
-	}
-	
 	
 	/**
 	 * Adds value to the value of the parmeter at position index.
@@ -323,7 +304,9 @@ public class Student implements IPlace, Cloneable {
 		if (index >= changeVector.size()) {
 			throw new IndexOutOfBoundsException();
 		}
-		actualState.setValueAt(index, actualState.getValueAt(index) + value);
+		CalcVector add = new CalcVector(actualState.size());
+		add.setValueAt(index, value);
+		addToStateVector(add, 0, 0);
 	}
 	
 	
