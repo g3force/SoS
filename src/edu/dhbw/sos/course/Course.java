@@ -600,6 +600,17 @@ public class Course {
 	}
 	
 	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof String) {
+			return this.getName().equals((String) o);
+		} else if (o instanceof Course) {
+			return this.getName().equals(((Course) o).getName());
+		}
+		return false;
+	}
+	
+
 	// ##################################################################################
 	// ############################# getters and setters ################################
 	// ##################################################################################

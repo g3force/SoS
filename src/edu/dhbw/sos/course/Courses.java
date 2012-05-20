@@ -29,7 +29,6 @@ public class Courses implements Iterable<Course> {
 	private static final Logger	logger	= Logger.getLogger(Courses.class);
 	private Course						curCourse;
 	private LinkedList<Course>		courses;
-
 	
 
 	/**
@@ -118,5 +117,15 @@ public class Courses implements Iterable<Course> {
 		} else {
 			logger.warn("Could not find course \"" + newCurrent + "\". Cannot set as current.");
 		}
+	}
+	
+	
+	public boolean contains(String name) {
+		for (Course course : courses) {
+			if (name.equals(course.getName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

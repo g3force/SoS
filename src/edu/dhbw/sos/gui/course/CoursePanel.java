@@ -66,14 +66,18 @@ public class CoursePanel extends JPanel implements ComponentListener, ICurrentCo
 		paintArea.setCourse(courses.getCurrentCourse());
 		paintArea.addMouseListener(simController);
 		
-		JLabel leftBtn = new JLabel("Add", JLabel.CENTER);
-		JLabel rightBtn = new JLabel("Add", JLabel.CENTER);
-		JLabel topBtn = new JLabel("Hinzufügen / Entfernen", JLabel.CENTER);
-		JLabel bottomBtn = new JLabel("Hinzufügen / Entfernen", JLabel.CENTER);
+		JLabel leftBtn = new JLabel("<html><body><center>add<br>/<br>rem</center></body></html>", JLabel.CENTER);
+		JLabel rightBtn = new JLabel("<html><body><center>add<br>/<br>rem</center></body></html>", JLabel.CENTER);
+		JLabel topBtn = new JLabel("add / remove", JLabel.CENTER);
+		JLabel bottomBtn = new JLabel("add / remove", JLabel.CENTER);
 		leftBtn.setName("left");
 		rightBtn.setName("right");
 		topBtn.setName("top");
 		bottomBtn.setName("bottom");
+		leftBtn.setToolTipText("right click to remove");
+		rightBtn.setToolTipText("right click to remove");
+		topBtn.setToolTipText("right click to remove");
+		bottomBtn.setToolTipText("right click to remove");
 		editBtns.add(leftBtn);
 		editBtns.add(rightBtn);
 		editBtns.add(topBtn);

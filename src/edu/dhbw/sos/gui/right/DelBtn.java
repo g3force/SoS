@@ -9,44 +9,24 @@
  */
 package edu.dhbw.sos.gui.right;
 
-import java.awt.Image;
-import java.net.URL;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 
 
 /**
- * TODO NicolaiO, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
+ * This is a Del Button
  * 
  * @author NicolaiO
  * 
  */
-public class DelBtn extends JButton {
+public class DelBtn extends ABtn {
 	private static final long	serialVersionUID	= 1L;
 	
 	
 	/**
-	 * TODO NicolaiO, add comment!
+	 * New Del Button
 	 * 
 	 * @author NicolaiO
 	 */
 	public DelBtn() {
-		super("del");
-		URL editIconUrl = getClass().getResource("/res/icons/delete.png");
-		if (editIconUrl != null) {
-			ImageIcon icon = new ImageIcon(editIconUrl);
-			Image img = icon.getImage();
-			Image newimg = img.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
-			ImageIcon newIcon = new ImageIcon(newimg);
-			this.setIcon(newIcon);
-			this.setText("");
-			this.setBorderPainted(false);
-			// this.setBackground(new Color(0, 0, 0, 0));
-		}
+		super("del", "/res/icons/delete.png");
 	}
-
-
 }

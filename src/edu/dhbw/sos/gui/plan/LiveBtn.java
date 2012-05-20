@@ -15,6 +15,8 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
+import edu.dhbw.sos.observers.IEditModeObserver;
+
 
 /**
  * Live Button
@@ -22,7 +24,7 @@ import javax.swing.JButton;
  * @author andres
  * 
  */
-public class LiveBtn extends JButton {
+public class LiveBtn extends JButton implements IEditModeObserver {
 	private static final long	serialVersionUID	= -7859117948085381042L;
 	
 	
@@ -42,5 +44,17 @@ public class LiveBtn extends JButton {
 			this.setText("");
 			this.setBorderPainted(false);
 		}
+	}
+	
+	
+	@Override
+	public void enterEditMode() {
+		this.setEnabled(false);
+	}
+	
+	
+	@Override
+	public void exitEditMode() {
+		this.setEnabled(true);
 	}
 }

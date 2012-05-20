@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.course.student.Student;
 import edu.dhbw.sos.helper.Messages;
 import edu.dhbw.sos.observers.ICurrentCourseObserver;
 import edu.dhbw.sos.observers.ISelectedStudentObserver;
@@ -66,7 +67,7 @@ public class StudentPanel extends JPanel implements ISelectedStudentObserver, IC
 	
 	@Override
 	public void updateSelectedStudent() {
-		if (course.getSelectedStudent() != null) {
+		if (course.getSelectedStudent() != null && course.getSelectedStudent() instanceof Student) {
 			if (course.getProperties().size() == 0) {
 				logger.warn("There are no parameters!!");
 				lblParameterName.setText("");

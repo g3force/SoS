@@ -137,6 +137,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		btnLive.addActionListener(simController);
 		Observers.subscribeSimulation(btnPlay);
 		Observers.subscribeEditMode(btnPlay);
+		Observers.subscribeEditMode(btnLive);
 		
 
 		controlPanel.add(btnPlay);

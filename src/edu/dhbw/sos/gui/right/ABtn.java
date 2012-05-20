@@ -2,7 +2,7 @@
  * *********************************************************
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
- * Date: Apr 22, 2012
+ * Date: May 20, 2012
  * Author(s): NicolaiO
  * 
  * *********************************************************
@@ -13,29 +13,30 @@ import java.awt.Image;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
-import javax.swing.JToggleButton;
+import javax.swing.JButton;
 
 import edu.dhbw.sos.observers.ISimulation;
 
 
 /**
- * This is an Edit Button
+ * This is an abstract button for the RighPanel.
+ * It handles some features like the picture and reacts on the simulation
  * 
  * @author NicolaiO
  * 
  */
-public class EditBtn extends JToggleButton implements ISimulation {
+public abstract class ABtn extends JButton implements ISimulation {
 	private static final long	serialVersionUID	= 1L;
 	
 	
 	/**
-	 * New Edit Button
+	 * Create a new Button with given icon or text, if the icon could not be loaded
 	 * 
 	 * @author NicolaiO
 	 */
-	public EditBtn() {
-		super("edit");
-		URL editIconUrl = getClass().getResource("/res/icons/pencil.png");
+	public ABtn(String text, String iconUrl) {
+		super(text);
+		URL editIconUrl = getClass().getResource(iconUrl);
 		if (editIconUrl != null) {
 			ImageIcon icon = new ImageIcon(editIconUrl);
 			Image img = icon.getImage();
@@ -45,7 +46,6 @@ public class EditBtn extends JToggleButton implements ISimulation {
 			this.setText("");
 			this.setBorderPainted(false);
 		}
-		
 	}
 	
 	

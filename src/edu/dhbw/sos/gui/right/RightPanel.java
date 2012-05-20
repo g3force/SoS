@@ -31,6 +31,7 @@ import edu.dhbw.sos.helper.Messages;
 import edu.dhbw.sos.observers.ICoursesListObserver;
 import edu.dhbw.sos.observers.ICurrentCourseObserver;
 import edu.dhbw.sos.observers.IEditModeObserver;
+import edu.dhbw.sos.observers.ISimulation;
 import edu.dhbw.sos.observers.IStatisticsObserver;
 import edu.dhbw.sos.observers.ISuggestionsObserver;
 import edu.dhbw.sos.observers.Observers;
@@ -44,7 +45,7 @@ import edu.dhbw.sos.observers.Observers;
  * 
  */
 public class RightPanel extends JPanel implements ICurrentCourseObserver, ICoursesListObserver, IStatisticsObserver,
-		ISuggestionsObserver, IEditModeObserver {
+		ISuggestionsObserver, IEditModeObserver, ISimulation {
 	private static final long	serialVersionUID	= -6879799823225506209L;
 	// private static final Logger logger = Logger.getLogger(RightPanel.class);
 	
@@ -72,6 +73,7 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 		Observers.subscribeCurrentCourse(this);
 		Observers.subscribeStatistics(this);
 		Observers.subscribeSuggestions(this);
+		Observers.subscribeSimulation(this);
 		
 		// #############################################################################
 		// drop down list
@@ -100,18 +102,21 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 			}
 		});
 		courseListPanel.add(editBtn, BorderLayout.WEST);
+		Observers.subscribeSimulation(editBtn);
 		
 		// #############################################################################
 		// add button
 		AddBtn addBtn = new AddBtn();
 		addBtn.addActionListener(courseController);
 		courseListPanel.add(addBtn, BorderLayout.CENTER);
+		Observers.subscribeSimulation(addBtn);
 		
 		// #############################################################################
 		// delete button
 		DelBtn delBtn = new DelBtn();
 		delBtn.addActionListener(courseController);
 		courseListPanel.add(delBtn, BorderLayout.EAST);
+		Observers.subscribeSimulation(delBtn);
 		
 		// #############################################################################
 		// statistics
@@ -204,13 +209,23 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 	
 	@Override
 	public void enterEditMode() {
-		// TODO NicolaiO Auto-generated method stub
 	}
 	
 	
 	@Override
 	public void exitEditMode() {
-		// TODO NicolaiO Auto-generated method stub
 		
+	}
+	
+	
+	@Override
+	public void simulationStopped() {
+		courseList.setEnabled(true);
+	}
+	
+	
+	@Override
+	public void simulationStarted() {
+		courseList.setEnabled(false);
 	}
 }

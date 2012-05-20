@@ -20,7 +20,6 @@ import javax.swing.JLabel;
 
 import edu.dhbw.sos.gui.right.AddBtn;
 import edu.dhbw.sos.gui.right.DelBtn;
-import edu.dhbw.sos.gui.right.EditBtn;
 import edu.dhbw.sos.observers.Observers;
 
 
@@ -43,11 +42,15 @@ public class CourseController implements ActionListener, MouseListener, ItemList
 	public void actionPerformed(ActionEvent e) {
 		// handle add, modify, delete course
 		if (e.getSource() instanceof AddBtn) {
-			Course newC = new Course("New Course " + courses.size());
+			String name = "";
+			int i = 1;
+			do {
+				name = "New Course " + i;
+				i++;
+			} while (courses.contains(name));
+			Course newC = new Course(name);
 			courses.add(newC);
 			courses.setCurrentCourse(newC);
-		} else if (e.getSource() instanceof EditBtn) {
-			// TODO trigger edit mode
 		} else if (e.getSource() instanceof DelBtn) {
 			courses.remove(courses.getCurrentCourse());
 		}
@@ -58,7 +61,10 @@ public class CourseController implements ActionListener, MouseListener, ItemList
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
 			if (e.getItem() instanceof String) {
-				courses.getCurrentCourse().setName((String) e.getItem());
+				String newName = (String) e.getItem();
+				if (!courses.contains(newName)) {
+					courses.getCurrentCourse().setName(newName);
+				}
 				Observers.notifyCoursesList();
 			}
 			courses.setCurrentCourse(e.getItem());
