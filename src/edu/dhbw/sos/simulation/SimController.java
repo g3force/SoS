@@ -204,7 +204,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof LiveBtn) {
-			// FIXME Not implemented
+			// FIXME andres Not implemented
 		} else if (e.getSource() instanceof PlayBtn) {
 			toggle();
 		} else if (e.getSource() instanceof ForwardBtn) {

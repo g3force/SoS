@@ -70,7 +70,7 @@ public class CourseLoader {
 		} else if (allCourses.size() == 1) {
 			allCourses.setCurrentCourse(allCourses.get(0));
 		} else {
-			// TODO has to be handled yet
+			// TODO SebastianN choose last course??
 			allCourses.setCurrentCourse(allCourses.get(0));
 		}
 		logger.info("CoursesSize: " + allCourses.size() + ", setCourse: " + allCourses.getCurrentCourse());

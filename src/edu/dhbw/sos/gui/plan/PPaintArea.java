@@ -36,7 +36,6 @@ import edu.dhbw.sos.gui.plan.MovableBlock.Areas;
 import edu.dhbw.sos.helper.CalcVector;
 import edu.dhbw.sos.observers.ISimUntilObserver;
 import edu.dhbw.sos.observers.IStatisticsObserver;
-import edu.dhbw.sos.observers.ITimeObserver;
 import edu.dhbw.sos.observers.Observers;
 
 
@@ -82,9 +81,6 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 
 	private Point								lastMouseLocation	= new Point();
 
-	// FIXME Daniel this is very confusing :o Don't know what this observer does compared to the one in Observers
-	private LinkedList<ITimeObserver>	timeObservers		= new LinkedList<ITimeObserver>();
-	
 
 	/**
 	 * Initialize PaintArea
@@ -694,7 +690,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		//
 		// moveBlock.getTimeBlock().setLen((int) (moveBlock.width / scaleRatio));
 		// moveBlock.printMbTb(index, "M");
-		// // TODO setLocation of moveBlock
+		// // TODO andres setLocation of moveBlock
 		// moveBlock.setLocation(moveBlock.getX() - mmt_X, moveBlock.getY());
 		// }
 		// }
@@ -715,7 +711,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		// movableBlocks.get(index + 1).getTimeBlock()
 		// .setLen((int) (movableBlocks.get(index + 1).width / scaleRatio));
 		// movableBlocks.get(index + 1).printMbTb(index - 1, "R");
-		// // TODO setLocation of Block index+1
+		// // TODO andres setLocation of Block index+1
 		// movableBlocks.get(index + 1).setLocation(movableBlocks.get(index + 1).getX() + mmt_X,
 		// movableBlocks.get(index + 1).getY());
 		// }
@@ -764,8 +760,9 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 	
 	
 	private void moveVertical(int pos_Y) {
-		// FIXME other blocks are displayed randomly at other positions, after update() they are displayed correctly
-		// FIXME dynamic
+		// FIXME andres other blocks are displayed randomly at other positions, after update() they are displayed
+		// correctly
+		// FIXME andres dynamic
 		if (pos_Y >= 1 && pos_Y < 40) {
 			pos_Y = 10;
 			// moveBlock.getTimeBlock().setType(BlockType.pause);

@@ -475,10 +475,10 @@ public class Course {
 		}
 		if (studentNum != 0) {
 			statAvgStudentState.divide(studentNum);
-			// TODO save history statistics.
+			// TODO andres save history statistics.
 			synchronized (statistics) {
 				statistics.clear();
-				statistics.put("Last break:", "unkown"); // TODO calculate last break
+				statistics.put("Last break:", "unkown"); // TODO andres calculate last break
 				for (int i = 0; i < parameters.size(); i++) {
 					statistics.put(parameters.get(i) + ": ", ((int) statAvgStudentState.getValueAt(i)) + "");
 				}

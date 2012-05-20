@@ -165,7 +165,7 @@ public class Student implements IPlace, Cloneable {
 			addVector.printCalcVector("Sim(1,1): student influenced");
 		
 		// time depending
-		// TODO: bring all values to an average value by time
+		// TODO dirk bring all values to an average value by time
 		// addVector.multiply(0.1);
 		this.addToStateVector(addVector, x, y);
 	}

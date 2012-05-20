@@ -192,7 +192,8 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 					Pattern timeP = Pattern.compile("([0-1][0-9]|2[0-3]):[0-5][0-9]");
 					Matcher timeM = timeP.matcher(((JFormattedTextField) input).getText());
 					// checks if the colon is at the right point
-					// TODO maybe check if the number of digits is correct and maybe check the range of the numbers (now
+					// TODO andres maybe check if the number of digits is correct and maybe check the range of the numbers
+					// (now
 					// // if the number ist out of range it will overflow)
 					// if (in.isEditValid() && (((in.getText(1, 1).equals(":") && in.getText().length() == 4)))
 					// || (in.getText(2, 1).equals(":") && in.getText().length() == 5)) {

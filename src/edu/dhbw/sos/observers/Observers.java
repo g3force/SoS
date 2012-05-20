@@ -151,9 +151,9 @@ public class Observers {
 	
 	
 	/**
-	 * FIXME Daniel specify more clearly what to notify
+	 * FIXME andres specify more clearly what to notify
 	 * @param time time in milliseconds
-	 * @author NicolaiO
+	 * @author andres
 	 */
 	public static void notifyTime(int time) {
 		for (ITimeObserver to : timeObservers) {
@@ -162,6 +162,12 @@ public class Observers {
 	}
 	
 	
+	/**
+	 * TODO andres difference between this method an the one above
+	 * 
+	 * @param time
+	 * @author andres
+	 */
 	public static void notifyTimeGUI(int time) {
 		for (ITimeGUIObserver tgo : timeGUIObservers) {
 			tgo.timeChanged(time);

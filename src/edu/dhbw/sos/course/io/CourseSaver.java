@@ -22,11 +22,11 @@ import edu.dhbw.sos.course.Courses;
 
 
 /**
- * TODO NicolaiO, add comment!
+ * TODO SebastianN, add comment!
  * - What should this type do (in one sentence)?
  * - If not intuitive: A simple example how to use this class
  * 
- * @author NicolaiO
+ * @author SebastianN
  * 
  */
 public class CourseSaver {

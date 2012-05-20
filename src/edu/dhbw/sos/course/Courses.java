@@ -79,10 +79,10 @@ public class Courses implements Iterable<Course> {
 	
 	
 	/**
-	 * TODO NicolaiO, add comment!
+	 * Return the index of the given course
 	 * 
 	 * @param currentCourse
-	 * @return
+	 * @return index of currentCourse
 	 * @author NicolaiO
 	 */
 	public int indexOf(Course currentCourse) {
