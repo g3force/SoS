@@ -18,14 +18,27 @@ import edu.dhbw.sos.observers.Observers;
 import edu.dhbw.sos.simulation.SimController;
 
 
+/**
+ * SuperFelix is the main entrance class. It initializes the logging system
+ * and creates the most essential objects.
+ * 
+ * @author NicolaiO
+ * 
+ */
 public class SuperFelix {
-	public static String				VERSION	= "0.5";
-	public static final String		savepath	= System.getProperty("user.home") + "/.sos/";
+	public static final String		VERSION		= "0.5";
+	public static final String		savepath		= System.getProperty("user.home") + "/.sos/";
 	public static final String		coursepath	= savepath + "/courses/";
-	private static final Logger	logger	= Logger.getLogger(SuperFelix.class);
-	private static Courses			courses;
-
 	
+	private static final Logger	logger		= Logger.getLogger(SuperFelix.class);
+	private static Courses			courses;
+	
+	
+	/**
+	 * Initialize logger and main objects
+	 * 
+	 * @author NicolaiO
+	 */
 	public SuperFelix() {
 		/*
 		 * initialize log4j, a logger from apache.
@@ -48,20 +61,26 @@ public class SuperFelix {
 		
 		// create object for the data to be displayed in GUI
 		// the references will be used to update it afterwards
-		
 		courses = CourseLoader.loadCourses(coursepath);
 		CourseController courseController = new CourseController(courses);
 		SuggestionManager sugMngr = new SuggestionManager();
 		SimController simController = new SimController(courses.getCurrentCourse(), sugMngr);
+		
 		Observers.subscribeCurrentCourse(simController);
 		Observers.subscribeEditMode(simController);
+		
 		MainFrame mainFrame = new MainFrame(simController, courseController, courses, sugMngr);
 		mainFrame.pack();
 		logger.info("Sim of Students started.");
-		// Observers.print();
 	}
 	
 	
+	/**
+	 * Close the software.
+	 * This will save the courses before exiting.
+	 * 
+	 * @author NicolaiO
+	 */
 	public static void close() {
 		CourseSaver.saveCourses(courses, coursepath);
 		System.exit(0);

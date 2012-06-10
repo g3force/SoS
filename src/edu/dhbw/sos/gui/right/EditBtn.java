@@ -53,7 +53,7 @@ public class EditBtn extends JToggleButton implements ISimulation {
 	public void simulationStopped() {
 		this.setEnabled(true);
 	}
-
+	
 	
 	@Override
 	public void simulationStarted() {

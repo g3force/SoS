@@ -37,9 +37,9 @@ import edu.dhbw.sos.simulation.SimController;
  */
 public class CoursePanel extends JPanel implements ComponentListener, ICurrentCourseObserver, IStudentsObserver,
 		IEditModeObserver {
-	private static final long		serialVersionUID	= 5542875796802944785L;
+	private static final long	serialVersionUID	= 5542875796802944785L;
 	// private static final Logger logger = Logger.getLogger(CoursePanel.class);
-	private final CPaintArea		paintArea;
+	private final CPaintArea	paintArea;
 	// student that should be highlighted at the moment
 	private LinkedList<JLabel>	editBtns;
 	

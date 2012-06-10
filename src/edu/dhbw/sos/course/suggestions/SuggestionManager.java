@@ -60,14 +60,14 @@ public class SuggestionManager implements MouseListener {
 	 * Buffer for the CalcVector objects of clicked Suggestions.
 	 */
 	private LinkedList<CalcVector>	influences;
-
+	
 	
 	public SuggestionManager() {
 		availableSuggestions = new LinkedList<Suggestion>();
 		currentSuggestions = new LinkedList<Suggestion>();
 		influences = new LinkedList<CalcVector>();
 		
-
+		
 		// init xml writer/reader
 		xs = new XStream();
 		// aliases are not required for functionality but for improving readability of the generated xml file.
@@ -252,8 +252,8 @@ public class SuggestionManager implements MouseListener {
 	public void mouseExited(MouseEvent e) {
 		// empty
 	}
-
-
+	
+	
 	public void updateSuggestions(CalcVector averages) {
 		currentSuggestions.clear();
 		for (int i = 0; i < availableSuggestions.size(); i++) {

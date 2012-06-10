@@ -30,7 +30,7 @@ public class Courses implements Iterable<Course> {
 	private Course						curCourse;
 	private LinkedList<Course>		courses;
 	
-
+	
 	/**
 	 * Create new Courses
 	 * 
@@ -41,6 +41,13 @@ public class Courses implements Iterable<Course> {
 	}
 	
 	
+	/**
+	 * Add a new course to the list
+	 * 
+	 * @param course new course
+	 * @return true, if successful
+	 * @author NicolaiO
+	 */
 	public boolean add(Course course) {
 		boolean res = courses.add(course);
 		CourseSaver.saveCourses(this, SuperFelix.coursepath);
@@ -49,6 +56,14 @@ public class Courses implements Iterable<Course> {
 	}
 	
 	
+	/**
+	 * 
+	 * TODO BastiN, add comment!
+	 * 
+	 * @param course
+	 * @return
+	 * @author BastiN
+	 */
 	public boolean remove(Object course) {
 		if (courses.size() < 2)
 			return false;

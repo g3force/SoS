@@ -53,7 +53,7 @@ public abstract class ABtn extends JButton implements ISimulation {
 	public void simulationStopped() {
 		this.setEnabled(true);
 	}
-
+	
 	
 	@Override
 	public void simulationStarted() {

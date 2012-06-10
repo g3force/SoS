@@ -77,7 +77,7 @@ public class MainFrame extends JFrame implements WindowListener {
 		if (iconUrl != null) {
 			this.setIconImage(Toolkit.getDefaultToolkit().getImage(iconUrl));
 		}
-
+		
 		CoursePanel coursePanel = new CoursePanel(simController, courseController, courses);
 		RightPanel rightPanel = new RightPanel(courseController, courses, sm);
 		StatusBar statusBar = new StatusBar();
@@ -113,7 +113,7 @@ public class MainFrame extends JFrame implements WindowListener {
 		
 		logger.debug("Initialized.");
 	}
-
+	
 	
 	@Override
 	public void windowOpened(WindowEvent e) {

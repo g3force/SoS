@@ -26,7 +26,7 @@ import edu.dhbw.sos.helper.CalcVector;
  * 
  */
 public class Student implements IPlace, Cloneable {
-	private static final Logger									logger	= Logger.getLogger(Student.class);
+	private static final Logger									logger				= Logger.getLogger(Student.class);
 	/**
 	 * Consider to add new attributes to the clone() method
 	 * if you want to store them persistent!
@@ -69,14 +69,14 @@ public class Student implements IPlace, Cloneable {
 		init();
 		return this;
 	}
-
-
+	
+	
 	@Override
 	public void reset() {
 		init();
 	}
-
-
+	
+	
 	/**
 	 * Only for testing yet. Should be tested and discussed
 	 * 
@@ -136,7 +136,7 @@ public class Student implements IPlace, Cloneable {
 		}
 	}
 	
-
+	
 	/**
 	 * calculates the next state for the actual state vector
 	 * @param addVector
@@ -291,7 +291,6 @@ public class Student implements IPlace, Cloneable {
 	}
 	
 	
-	
 	/**
 	 * Adds value to the value of the parmeter at position index.
 	 * 
@@ -355,8 +354,8 @@ public class Student implements IPlace, Cloneable {
 	public LinkedHashMap<Integer, CalcVector> getHistoryStates() {
 		return historyStates;
 	}
-
-
+	
+	
 	public void setHistoryStates(LinkedHashMap<Integer, CalcVector> historyStates) {
 		this.historyStates = historyStates;
 	}

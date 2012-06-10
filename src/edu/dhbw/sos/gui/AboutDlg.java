@@ -21,16 +21,25 @@ import edu.dhbw.sos.helper.Messages;
 
 
 /**
- * About Dialog
  * 
+ * TODO andres, add comment!
+ * - What should this type do (in one sentence)?
+ * - If not intuitive: A simple example how to use this class
+ * 
+ * @author andres
  * 
  */
 public class AboutDlg extends JDialog {
-	/**  */
 	private static final long	serialVersionUID	= 7396599427889050631L;
 	private ImageIcon				icon;
 	
 	
+	/**
+	 * 
+	 * TODO andres, add comment!
+	 * 
+	 * @author andres
+	 */
 	public AboutDlg() {
 		this.setTitle(Messages.getString("AboutDlg.TITLE"));
 		
@@ -46,7 +55,7 @@ public class AboutDlg extends JDialog {
 		titleLbl.setAlignmentY(CENTER_ALIGNMENT);
 		JLabel descriptionLbl = new JLabel("<html>" + Messages.getString("AboutDlg.DESC1") + "<br>"
 				+ Messages.getString("AboutDlg.DESC2") + "<br>" + Messages.getString("AboutDlg.DESC3") + "<br>"
-				+ Messages.getString("AboutDlg.VERSION") +": "+  SuperFelix.VERSION + "</html>");
+				+ Messages.getString("AboutDlg.VERSION") + ": " + SuperFelix.VERSION + "</html>");
 		JLabel authorLbl = new JLabel("<html>"
 				+ "Benedikt Zirbes, Dirk Klostermann, Sebastian Nickel, Nicolai Ommer, Daniel Andres Lopez" + "<html>");
 		

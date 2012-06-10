@@ -120,11 +120,18 @@ public class Diagram {
 			drawArrowHead(ga, yAxis);
 			ga.setColor(oldColor);
 		}
-
+		
 		ga.drawPolyline(xPoints, yPoints, data.size() - 1);
 	}
 	
 	
+	/**
+	 * Draw an arrow at the end of the given line with the given graphics reference
+	 * 
+	 * @param g2d graphics to draw with
+	 * @param line line of the arrow for positioning
+	 * @author NicolaiO
+	 */
 	private void drawArrowHead(Graphics2D g2d, Line2D.Double line) {
 		aTransf.setToIdentity();
 		double angle = Math.atan2(line.y2 - line.y1, line.x2 - line.x1);
@@ -136,7 +143,7 @@ public class Diagram {
 		g.fill(arrowHead);
 		g.dispose();
 	}
-
+	
 	
 	/**
 	 * Return the maximum Y depending on rescaleY
@@ -241,16 +248,16 @@ public class Diagram {
 	public void setMaxX(float maxX) {
 		this.maxX = maxX;
 	}
-
-
+	
+	
 	/**
 	 * @return the drawAxis
 	 */
 	public boolean isDrawAxis() {
 		return drawAxis;
 	}
-
-
+	
+	
 	/**
 	 * @param drawAxis the drawAxis to set
 	 */

@@ -31,7 +31,7 @@ import edu.dhbw.sos.course.Courses;
  */
 public class CourseSaver {
 	private static final Logger	logger	= Logger.getLogger(CourseSaver.class);
-
+	
 	
 	public static void removeFile(Course course, String savepath) {
 		try {
@@ -43,6 +43,8 @@ public class CourseSaver {
 			ne.printStackTrace();
 		}
 	}
+	
+	
 	public static void saveCourse(Course course, String savepath) {
 		try {
 			File path = new File(new File(savepath).getParent());
@@ -66,8 +68,8 @@ public class CourseSaver {
 			ne.printStackTrace();
 		}
 	}
-
-
+	
+	
 	public static void saveCourses(Courses courses, String savepath) {
 		// XMLOutputFactory factory = XMLOutputFactory.newInstance();
 		try {

@@ -66,8 +66,8 @@ public class CPaintArea extends JPanel implements MouseMotionListener, MouseList
 	private float						border;
 	
 	private boolean					editMode				= false;
-
-
+	
+	
 	/**
 	 * Create a new PaintArea
 	 * 
@@ -81,6 +81,11 @@ public class CPaintArea extends JPanel implements MouseMotionListener, MouseList
 	}
 	
 	
+	/**
+	 * Recalculate circles and update hovered student
+	 * 
+	 * @author NicolaiO
+	 */
 	public void updateStudentCircles() {
 		calcStudentCircles(course.getStudents());
 		updateHoveredStudent(hoveredStudent);
@@ -88,6 +93,12 @@ public class CPaintArea extends JPanel implements MouseMotionListener, MouseList
 	}
 	
 	
+	/**
+	 * Set hovered student occording to parameter and update it
+	 * 
+	 * @param hoveredStudent
+	 * @author NicolaiO
+	 */
 	public void updateHoveredStudent(StudentCircle hoveredStudent) {
 		this.hoveredStudent = hoveredStudent;
 		if (this.hoveredStudent != null)
@@ -216,8 +227,8 @@ public class CPaintArea extends JPanel implements MouseMotionListener, MouseList
 			}
 		}
 	}
-
-
+	
+	
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (!editMode)
@@ -274,6 +285,14 @@ public class CPaintArea extends JPanel implements MouseMotionListener, MouseList
 	}
 	
 	
+	/**
+	 * Return the coordinates of the studentcircle that is below (under)
+	 * the given mouse position
+	 * 
+	 * @param p mouse position
+	 * @return x-y-coordinate of studentcircle
+	 * @author NicolaiO
+	 */
 	private Point getXYStudentCircleBelow(Point p) {
 		// catch mouse points that are not in the correct range
 		if (p.x < offset_x || p.y < offset_y || p.x > (this.getSize().width - offset_x)
@@ -293,8 +312,15 @@ public class CPaintArea extends JPanel implements MouseMotionListener, MouseList
 			return new Point(x, y);
 		}
 	}
-
-
+	
+	
+	/**
+	 * Check, if given point is within the current hovered student
+	 * 
+	 * @param p mouse position
+	 * @return true, if mouse is in hovered student
+	 * @author NicolaiO
+	 */
 	private boolean isInHoveredStudent(Point p) {
 		int offset = (int) ((hoveredStudent.getHeight() * (CPaintArea.SCALE_HOVER - 1)) / 2 - spacing);
 		int height = (int) (hoveredStudent.getHeight() * CPaintArea.SCALE_HOVER);

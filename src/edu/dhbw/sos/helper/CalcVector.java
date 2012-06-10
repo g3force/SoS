@@ -13,9 +13,11 @@ import org.apache.log4j.Logger;
 
 
 /**
- * The CalcVector class is a representation of the mathematical vector and therefore contains functionality to run calculations on objects of this class.
+ * The CalcVector class is a representation of the mathematical vector and therefore contains functionality to run
+ * calculations on objects of this class.
  * 
- * NOTE: This class has nothing in common with the Java Vector because this one is an implementation of the List interface and has nothing in common with the mathematical vector.
+ * NOTE: This class has nothing in common with the Java Vector because this one is an implementation of the List
+ * interface and has nothing in common with the mathematical vector.
  * 
  * @author bene
  * 
@@ -173,6 +175,7 @@ public class CalcVector implements Cloneable {
 		return this;
 	}
 	
+	
 	/**
 	 * Divide the CalcVektor by an scalar.
 	 * 
@@ -189,6 +192,7 @@ public class CalcVector implements Cloneable {
 		}
 		return this;
 	}
+	
 	
 	/**
 	 * Adds the CalcVector v to this CalcVector object.

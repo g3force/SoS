@@ -49,8 +49,8 @@ public class EmptyPlace implements IPlace {
 		init();
 		return this;
 	}
-
-
+	
+	
 	@Override
 	public CalcVector getActualState() {
 		return actualState;
@@ -84,7 +84,7 @@ public class EmptyPlace implements IPlace {
 	public void addToStateVector(CalcVector addVector, int x, int y) {
 		// just do nothing
 	}
-
+	
 	
 	@Override
 	public LinkedHashMap<Integer, CalcVector> getHistoryStates() {

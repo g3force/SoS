@@ -10,7 +10,6 @@
 package edu.dhbw.sos.gui.right;
 
 
-
 /**
  * This is an Add Button
  * 

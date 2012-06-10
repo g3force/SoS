@@ -1,10 +1,10 @@
-/* 
+/*
  * *********************************************************
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 22, 2012
  * Author(s): NicolaiO
- *
+ * 
  * *********************************************************
  */
 package edu.dhbw.sos.observers;
@@ -17,5 +17,7 @@ package edu.dhbw.sos.observers;
  */
 public interface IEditModeObserver {
 	void enterEditMode();
+	
+	
 	void exitEditMode();
 }

@@ -34,10 +34,10 @@ import edu.dhbw.sos.helper.CalcVector;
  */
 public class SPaintArea extends JPanel {
 	private static final long		serialVersionUID	= 1L;
-	private LinkedList<Diagram>	diagrams				= new LinkedList<Diagram>();
 	private static final Color		COLORS[]				= { Color.black, Color.blue, Color.green, Color.yellow, Color.red,
 			Color.cyan, Color.magenta						};
-
+	private LinkedList<Diagram>	diagrams				= new LinkedList<Diagram>();
+	
 	
 	// private static final Logger logger = Logger.getLogger(PaintArea.class);
 	
@@ -78,6 +78,13 @@ public class SPaintArea extends JPanel {
 	}
 	
 	
+	/**
+	 * Initialize diagrams with data from given student with given parameter.
+	 * 
+	 * @param student
+	 * @param parameterIndex
+	 * @author NicolaiO
+	 */
 	public void update(IPlace student, int parameterIndex) {
 		if (student != null) {
 			Diagram diagram;
@@ -109,7 +116,13 @@ public class SPaintArea extends JPanel {
 		repaint();
 	}
 	
-
+	
+	/**
+	 * Rebuild diagrams.
+	 * 
+	 * @param course
+	 * @author NicolaiO
+	 */
 	public void update(Course course) {
 		synchronized (diagrams) {
 			diagrams.clear();
