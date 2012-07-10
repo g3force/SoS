@@ -22,7 +22,7 @@ import org.junit.runner.notification.Failure;
  */
 public class MyTestRunner {
 	public static void main(String[] args) {
-		Result result = JUnitCore.runClasses(CourseTest.class);
+		Result result = JUnitCore.runClasses(SimulationTests.class);
 		for (Failure failure : result.getFailures()) {
 			System.out.println(failure.toString());
 		}

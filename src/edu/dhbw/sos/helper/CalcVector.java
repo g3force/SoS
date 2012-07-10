@@ -236,4 +236,14 @@ public class CalcVector implements Cloneable {
 		}
 		logger.debug(out.subSequence(0, out.length() - 3));
 	}
+	
+	
+	@Override
+	public String toString() {
+		String out = "";
+		for (int i = 0; i < this.size(); i++) {
+			out += this.vector[i] + " / ";
+		}
+		return out;
+	}
 }

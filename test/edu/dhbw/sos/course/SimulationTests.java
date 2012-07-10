@@ -13,6 +13,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import edu.dhbw.sos.simulation.SimControllerTest;
+
 
 /**
  * this suite contains all tests concerning the simulation
@@ -21,7 +23,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * 
  */
 @RunWith(Suite.class)
-@SuiteClasses({ CourseTest.class })
+@SuiteClasses({ CourseTest.class, SimControllerTest.class })
 public class SimulationTests {
 	
 }
