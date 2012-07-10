@@ -1,10 +1,10 @@
-/* 
+/*
  * *********************************************************
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: May 1, 2012
  * Author(s): andres
- *
+ * 
  * *********************************************************
  */
 package edu.dhbw.sos.observers;

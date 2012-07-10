@@ -30,6 +30,7 @@ import edu.dhbw.sos.course.Courses;
 public class CourseLoader {
 	private static final Logger	logger	= Logger.getLogger(CourseLoader.class);
 	
+	
 	/**
 	 * Loads the entire course-structure and the vectors
 	 * 

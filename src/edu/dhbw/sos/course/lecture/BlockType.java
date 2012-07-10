@@ -90,9 +90,10 @@ public enum BlockType {
 		}
 	}
 	
+	
 	/**
 	 * @return the type to compare with EInfluence type
-	 * bei Beschwerden bitte an mich wenden ;)
+	 *         bei Beschwerden bitte an mich wenden ;)
 	 * @author dirk
 	 */
 	public EInfluenceType getEinfluenceType() {

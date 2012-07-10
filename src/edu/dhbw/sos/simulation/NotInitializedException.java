@@ -1,10 +1,10 @@
-/* 
+/*
  * *********************************************************
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 18, 2012
  * Author(s): dirk
- *
+ * 
  * *********************************************************
  */
 package edu.dhbw.sos.simulation;
@@ -16,18 +16,7 @@ package edu.dhbw.sos.simulation;
  * @author dirk
  * 
  */
-/*
- * *********************************************************
- * Copyright (c) 2011 - 2011, DHBW Mannheim
- * Project: T10 On-Screen Keyboard
- * Date: 01.11.2011
- * Author(s): DanielAl
- * 
- * *********************************************************
- */
 public class NotInitializedException extends RuntimeException {
-	
-	/**  */
 	private static final long	serialVersionUID	= -3099897806604277720L;
 	
 	

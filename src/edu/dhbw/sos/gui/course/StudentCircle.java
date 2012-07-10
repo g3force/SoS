@@ -125,7 +125,7 @@ public class StudentCircle extends Ellipse2D.Float {
 		float red = LOWER_RED;
 		
 		float fullSpecturum = (510 - LOWER_RED - (255 - UPPER_RED) - LOWER_GREEN - (255 - UPPER_GREEN));
-		red += ((max-value)/max) * fullSpecturum;
+		red += ((max - value) / max) * fullSpecturum;
 		
 		if (red < LOWER_RED)
 			red = LOWER_RED;

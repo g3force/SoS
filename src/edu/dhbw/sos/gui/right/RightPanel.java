@@ -63,6 +63,14 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 	private SuggestionManager	sugMngr;
 	
 	
+	/**
+	 * Initialize...
+	 * 
+	 * @param courseController
+	 * @param courses
+	 * @param sm
+	 * @author NicolaiO
+	 */
 	public RightPanel(CourseController courseController, Courses courses, SuggestionManager sm) {
 		this.setBorder(MainFrame.COMPOUND_BORDER);
 		this.setPreferredSize(new Dimension(PREF_SIZE, 0));

@@ -30,7 +30,7 @@ import edu.dhbw.sos.course.Course;
  */
 public class Observers {
 	private static final Logger									logger							= Logger.getLogger(Observers.class);
-
+	
 	private static LinkedList<IStudentsObserver>				studentsObservers				= new LinkedList<IStudentsObserver>();
 	private static LinkedList<ISelectedStudentObserver>	selectedCourseObservers		= new LinkedList<ISelectedStudentObserver>();
 	private static LinkedList<IStatisticsObserver>			statisticsObservers			= new LinkedList<IStatisticsObserver>();
@@ -42,13 +42,13 @@ public class Observers {
 	private static LinkedList<ITimeObserver>					timeObservers					= new LinkedList<ITimeObserver>();
 	private static LinkedList<ITimeGUIObserver>				timeGUIObservers				= new LinkedList<ITimeGUIObserver>();
 	private static LinkedList<ISimulation>						simulationOberservers		= new LinkedList<ISimulation>();
-
+	
 	// SimulateUntil Observer for showing a graphic when simulating to a point
 	private static LinkedList<ISimUntilObserver>				simUntilObservers				= new LinkedList<ISimUntilObserver>();
 	
 	private static LinkedList<ISuggestionsObserver>			suggestionObserver			= new LinkedList<ISuggestionsObserver>();
-
-
+	
+	
 	// ##################################################################################
 	// ############################# others section #####################################
 	// ##################################################################################
@@ -57,7 +57,7 @@ public class Observers {
 	private Observers() {
 	}
 	
-
+	
 	public static void print() {
 		printObserverList(studentsObservers, "studentsObservers");
 		printObserverList(selectedCourseObservers, "selectedCourseObservers");
@@ -82,13 +82,13 @@ public class Observers {
 		}
 		logger.debug("");
 	}
-
-
+	
+	
 	// ##################################################################################
 	// ############################# notify section #####################################
 	// ##################################################################################
 	
-
+	
 	public static void notifyStudents() {
 		for (IStudentsObserver so : studentsObservers) {
 			so.updateStudents();
@@ -122,8 +122,8 @@ public class Observers {
 			o.exitEditMode();
 		}
 	}
-
-
+	
+	
 	public static void notifyCoursesList() {
 		for (ICoursesListObserver clo : coursesListOberservers) {
 			clo.updateCoursesList();
@@ -173,7 +173,7 @@ public class Observers {
 			tgo.timeChanged(time);
 		}
 	}
-
+	
 	
 	public static void notifySimulationStarted() {
 		for (ISimulation cco : simulationOberservers) {
@@ -201,8 +201,8 @@ public class Observers {
 			so.updateSuggestions();
 		}
 	}
-
-
+	
+	
 	// ##################################################################################
 	// ############################# subscribe section ##################################
 	// ##################################################################################
@@ -246,7 +246,7 @@ public class Observers {
 	public static void subscribeTimeGUI(ITimeGUIObserver tgo) {
 		timeGUIObservers.add(tgo);
 	}
-
+	
 	
 	public static void subscribeSpeed(ISpeedObserver so) {
 		speedObservers.add(so);

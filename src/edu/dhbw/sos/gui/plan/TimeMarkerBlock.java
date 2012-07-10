@@ -25,19 +25,19 @@ import edu.dhbw.sos.observers.ITimeObserver;
  * 
  */
 public class TimeMarkerBlock extends Rectangle implements ITimeObserver {
-	private static final long		serialVersionUID	= -1455862988755481811L;
+	private static final long	serialVersionUID	= -1455862988755481811L;
 	
 	// save the point, where the mouse holds the block, relative to the block itself
-	private Point						relMouseLocation	= new Point();
-
-	// color of the block
-	private Color						color;
-	// flags for enabling/disabling movement
-	private boolean					moveHorizontal;
-	private boolean					moveVertical;
+	private Point					relMouseLocation	= new Point();
 	
-	private int							time;
-
+	// color of the block
+	private Color					color;
+	// flags for enabling/disabling movement
+	private boolean				moveHorizontal;
+	private boolean				moveVertical;
+	
+	private int						time;
+	
 	
 	public TimeMarkerBlock() {
 		super(new Point(-5, 135), new Dimension(10, 10));
@@ -46,7 +46,8 @@ public class TimeMarkerBlock extends Rectangle implements ITimeObserver {
 		setColor(Color.GRAY);
 		setTime(0);
 	}
-
+	
+	
 	/**
 	 * Sets the location within parent
 	 * This method respects the movement flags moveVertical and moveHorizontal
@@ -92,8 +93,8 @@ public class TimeMarkerBlock extends Rectangle implements ITimeObserver {
 	public void setColor(Color color) {
 		this.color = color;
 	}
-
-
+	
+	
 	public boolean isMoveHorizontal() {
 		return moveHorizontal;
 	}
@@ -118,23 +119,23 @@ public class TimeMarkerBlock extends Rectangle implements ITimeObserver {
 	public String toString() {
 		return "TBB.time" + time + "; TMB.X=" + this.x;
 	}
-
-
+	
+	
 	/**
 	 * @return the time in minutes
 	 */
 	public int getTime() {
 		return time;
 	}
-
-
+	
+	
 	/**
 	 * @param time the time to set in minutes
 	 */
 	public void setTime(int time) {
 		this.time = time;
 	}
-
+	
 	
 	/**
 	 * @param time time in milliseconds

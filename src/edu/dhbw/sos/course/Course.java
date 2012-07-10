@@ -53,7 +53,7 @@ public class Course {
 	private Influence													influence;
 	private String														name;
 	private LinkedList<String>										parameters;
-
+	
 	// the student and property that was selected in the GUI (by hovering over the student)
 	private transient IPlace										selectedStudent;
 	private transient int											selectedProperty;
@@ -105,7 +105,7 @@ public class Course {
 		statistics = new LinkedHashMap<String, String>();
 		statAvgStudentState = new CalcVector(4);
 		histStatAvgStudentStates = new LinkedHashMap<Integer, CalcVector>();
-
+		
 		selectedStudent = null;
 		selectedProperty = 0;
 		simulating = false;
@@ -222,7 +222,7 @@ public class Course {
 		logger.debug("donInput executed with index " + index + " and value " + value);
 	}
 	
-
+	
 	/**
 	 * calculates the next step of the simulation
 	 * calculate for every student the next state
@@ -259,7 +259,7 @@ public class Course {
 		
 		BlockType bt = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType();
 		preChangeVector.addCalcVector(influence.getEnvironmentVector(bt.getEinfluenceType(), timeBlockInf));
-
+		
 		preChangeVector.printCalcVector("Sim: after timeblock (" + bt.toString() + ")");
 		
 		// timeDending ( inf(Time) * currentTime/1000 * timeInf )
@@ -296,7 +296,7 @@ public class Course {
 			}
 		}
 		
-
+		
 		// -------------------------------------------------
 		// -------------- post simulation ------------------
 		// -------------------------------------------------
@@ -451,8 +451,8 @@ public class Course {
 		}
 		simulateUntil(actualTime, time);
 	}
-
-
+	
+	
 	/**
 	 * 
 	 * Calculates the statistics for the whole course and save them in an histroy state.
@@ -592,8 +592,8 @@ public class Course {
 		students = newStudents;
 		Observers.notifyStudents();
 	}
-
-
+	
+	
 	@Override
 	public String toString() {
 		return getName();
@@ -610,7 +610,7 @@ public class Course {
 		return false;
 	}
 	
-
+	
 	// ##################################################################################
 	// ############################# getters and setters ################################
 	// ##################################################################################
@@ -671,8 +671,8 @@ public class Course {
 			this.name = _name; // name needs to be set no matter what.
 		}
 	}
-
-
+	
+	
 	public LinkedHashMap<String, String> getStatistics() {
 		return statistics;
 	}
@@ -681,8 +681,8 @@ public class Course {
 	public void setStatistics(LinkedHashMap<String, String> statistics) {
 		this.statistics = statistics;
 	}
-
-
+	
+	
 	public IPlace getSelectedStudent() {
 		return selectedStudent;
 	}

@@ -22,25 +22,30 @@ import edu.dhbw.sos.gui.AboutDlg;
 import edu.dhbw.sos.helper.Messages;
 
 
-
 /**
  * The StatusBar should show some helpful information like tool tips
+ * TODO ToolTips not implemented yet
  * 
  * @author NicolaiO
  * 
  */
 public class StatusBar extends JPanel {
-	
-	/**  */
 	private static final long	serialVersionUID	= -781636966151974445L;
 	
 	
+	/**
+	 * Initialize the status bar with a left and right area.
+	 * The right area will contain the copyright label that will
+	 * open the About Dlg on click
+	 * 
+	 * @author NicolaiO
+	 */
 	public StatusBar() {
-		this.setLayout(new BorderLayout(5,0));
+		this.setLayout(new BorderLayout(5, 0));
 		JLabel lblStatusText = new JLabel("");
 		lblStatusText.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.add(lblStatusText, BorderLayout.CENTER);
-
+		
 		JLabel lblcopyright = new JLabel("© SimSoft");
 		lblcopyright.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.add(lblcopyright, BorderLayout.EAST);

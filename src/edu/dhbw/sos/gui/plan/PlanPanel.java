@@ -65,13 +65,13 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	private JLabel						lblSpeed;
 	// reference to the timeblocks to display
 	// private TimeBlocks timeBlocks;
-
+	
 	private JFormattedTextField	txtFrom;
 	private JTextField				txtTo;
 	
 	private Courses					courses;
-
-
+	
+	
 	/**
 	 * Initialize the PlanPanel with GUIData
 	 * 
@@ -119,7 +119,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		paintArea = new PPaintArea(course);
 		this.add(paintArea, BorderLayout.CENTER);
 		Observers.subscribeTimeGUI(simController);
-
+		
 		Observers.subscribeStatistics(paintArea);
 		Observers.subscribeSimUntil(paintArea);
 		
@@ -139,7 +139,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		Observers.subscribeEditMode(btnPlay);
 		Observers.subscribeEditMode(btnLive);
 		
-
+		
 		controlPanel.add(btnPlay);
 		controlPanel.add(btnLive);
 		sidePanel.add(controlPanel);
@@ -166,19 +166,19 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		Date endTime = new Date();
 		endTime.setTime(course.getLecture().getStart().getTime() + course.getLecture().getLength() * 60 * 1000);
 		String end = timeFormat.format(endTime);
-
+		
 		JLabel lblFrom = new JLabel(Messages.getString("Lecture.FROM"), SwingConstants.LEFT);
 		JLabel lblTo = new JLabel(Messages.getString("Lecture.TO"), SwingConstants.LEFT);
-
-
+		
+		
 		txtFrom = new JFormattedTextField(new DefaultFormatterFactory(new DateFormatter(timeFormat)));
-
+		
 		txtFrom.setText(start);
 		txtFrom.setColumns(5);
 		txtTo = new JTextField(end, 5);
 		txtTo.setEditable(false);
 		txtTo.setToolTipText(Messages.getString("Lecture.TOINFO"));
-
+		
 		
 		txtFrom.addKeyListener(new EnterKeyListener());
 		
@@ -208,7 +208,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 					return false;
 			}
 			
-
+			
 			@Override
 			public boolean shouldYieldFocus(JComponent input) {
 				if (!verify(input)) {
@@ -227,10 +227,10 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 					return true;
 				}
 			}
-
-
+			
+			
 		});
-
+		
 		lblFrom.setAlignmentX(Component.LEFT_ALIGNMENT);
 		lblTo.setAlignmentX(Component.LEFT_ALIGNMENT);
 		txtFrom.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -244,7 +244,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		timePanel.add(txtTo);
 		sidePanel.add(timePanel);
 		
-
+		
 	}
 	
 	
@@ -283,7 +283,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 			
 			if (key == KeyEvent.VK_ENTER) {
 				if (e.getSource() instanceof JFormattedTextField)
-				((JFormattedTextField) e.getSource()).getInputVerifier().shouldYieldFocus((JComponent) e.getSource());
+					((JFormattedTextField) e.getSource()).getInputVerifier().shouldYieldFocus((JComponent) e.getSource());
 			}
 		}
 		
@@ -293,12 +293,12 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 			// TODO andres Auto-generated method stub
 			
 		}
-
-
+		
+		
 		@Override
 		public void keyReleased(KeyEvent e) {
 			// TODO andres Auto-generated method stub
-
+			
 		}
 	}
 	
@@ -308,13 +308,11 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		paintArea.init(course);
 		paintArea.initMovableBlocks();
 		paintArea.repaint();
-
+		
 		Observers.subscribeSimUntil(paintArea);
 	}
 	
 	
-	
-
 	/**
 	 * Updates the start time of the current course lectures.
 	 * Only used by InputVerifer of Start TextField in GUI.
@@ -337,6 +335,12 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	}
 	
 	
+	/**
+	 * 
+	 * TODO andres, add comment!
+	 * 
+	 * @author andres
+	 */
 	private void updateEnd() {
 		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 		Date endTime = new Date();

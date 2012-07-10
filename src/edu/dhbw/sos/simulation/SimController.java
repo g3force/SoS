@@ -38,7 +38,6 @@ import edu.dhbw.sos.observers.Observers;
  * @author DirkK
  * 
  */
-
 public class SimController implements ActionListener, MouseListener, IEditModeObserver, ITimeGUIObserver,
 		ICurrentCourseObserver {
 	private static final Logger	logger			= Logger.getLogger(SimController.class);
@@ -60,12 +59,26 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	private SuggestionManager		suggestionMgr;
 	
 	
+	/**
+	 * 
+	 * TODO DirkK, add comment!
+	 * 
+	 * @param course
+	 * @param sm
+	 * @author DirkK
+	 */
 	public SimController(Course course, SuggestionManager sm) {
 		this.suggestionMgr = sm;
 		reset(course);
 	}
 	
 	
+	/**
+	 * 
+	 * TODO DirkK, add comment!
+	 * 
+	 * @author DirkK
+	 */
 	public void reset() {
 		stop();
 		course.reset();
@@ -76,12 +89,25 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	}
 	
 	
+	/**
+	 * 
+	 * TODO DirkK, add comment!
+	 * 
+	 * @param course
+	 * @author DirkK
+	 */
 	public void reset(Course course) {
 		this.course = course;
 		reset();
 	}
-
-
+	
+	
+	/**
+	 * 
+	 * TODO DirkK, add comment!
+	 * 
+	 * @author DirkK
+	 */
 	private void toggle() {
 		if (run) {
 			stop();
@@ -92,6 +118,12 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	}
 	
 	
+	/**
+	 * 
+	 * TODO DirkK, add comment!
+	 * 
+	 * @author DirkK
+	 */
 	public void run() {
 		Observers.notifySimulationStarted();
 		if (pulse != null) {
@@ -268,10 +300,10 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	public void timeChanged(int time) {
 		// stop the simulation to make the correct deletions or to simulate to the correct point
 		stop();
-
+		
 		course.setTime(currentTime, time);
 		setCurrentTime(time);
-
+		
 		// if simulation was running, set running again
 		if (run)
 			run();

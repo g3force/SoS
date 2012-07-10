@@ -45,6 +45,8 @@ public class MovableBlock extends Rectangle {
 	
 	// Position in LinkedList
 	private int							index;
+	
+	
 	// private double X = 0;
 	// private double Y = 0;
 	
@@ -140,7 +142,7 @@ public class MovableBlock extends Rectangle {
 	public void setWidth(int width) {
 		this.width = width;
 	}
-
+	
 	
 	public void setLocation(double x, double y) {
 		// this.X = x;
@@ -158,7 +160,7 @@ public class MovableBlock extends Rectangle {
 		setLocation(this.getX(), y);
 	}
 	
-
+	
 	public Point getRelMouseLocation() {
 		return relMouseLocation;
 	}
@@ -218,7 +220,7 @@ public class MovableBlock extends Rectangle {
 		this.moveVertical = moveVertical;
 	}
 	
-
+	
 	public void printMbTb(int index, String pos) {
 		logger.trace(pos + "; MB.index=" + index + "; TB.len=" + timeBlock.getLen() + "; MB.width=" + this.width
 				+ "; MB.X=" + this.x);
@@ -258,7 +260,7 @@ public class MovableBlock extends Rectangle {
 		ga.setPaint(Color.black);
 		ga.draw(this);
 	}
-
+	
 	
 	@Override
 	public double getX() {
@@ -270,5 +272,5 @@ public class MovableBlock extends Rectangle {
 	public double getY() {
 		return y;
 	}
-
+	
 }

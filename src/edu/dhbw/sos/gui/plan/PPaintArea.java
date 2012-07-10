@@ -48,40 +48,40 @@ import edu.dhbw.sos.observers.Observers;
  */
 public class PPaintArea extends JPanel implements MouseListener, MouseMotionListener, IStatisticsObserver,
 		ISimUntilObserver {
-	private static final long				serialVersionUID	= 5194596384018441495L;
-	private static final Logger			logger				= Logger.getLogger(PPaintArea.class);
-	private static final int				MIN_BLOCK_WIDTH	= 0;
+	private static final long		serialVersionUID	= 5194596384018441495L;
+	private static final Logger	logger				= Logger.getLogger(PPaintArea.class);
+	private static final int		MIN_BLOCK_WIDTH	= 0;
 	
 	// list of all movable blocks
-	private MovableBlocks					movableBlocks		= new MovableBlocks();
+	private MovableBlocks			movableBlocks		= new MovableBlocks();
 	// this block is set, when a block is moved by dragging with the mouse.
 	// it is set to the reference to the moving block
 	// it should be null, if no block is moved
-	private MovableBlock						moveBlock			= null;
-	private MovableBlock						rightBlock			= null;
-	private MovableBlock						leftBlock			= null;
-	private int									index					= -1;
-	private int									savedWidthLeft		= -1;
-	private int									savedWidthRight	= -1;
-	private TimeBlocks						tbs;
-	private Course								course;
+	private MovableBlock				moveBlock			= null;
+	private MovableBlock				rightBlock			= null;
+	private MovableBlock				leftBlock			= null;
+	private int							index					= -1;
+	private int							savedWidthLeft		= -1;
+	private int							savedWidthRight	= -1;
+	private TimeBlocks				tbs;
+	private Course						course;
 	
-	private TimeMarkerBlock					tmb;
+	private TimeMarkerBlock			tmb;
 	
-	double										scaleRatio			= 1;
-	int											start;
+	double								scaleRatio			= 1;
+	int									start;
 	
-	private Diagram							attDia;
+	private Diagram					attDia;
 	
-	private Mode								mode					= null;
-	private Areas								area					= null;
+	private Mode						mode					= null;
+	private Areas						area					= null;
 	
-	private boolean							simulateUntil		= false;
+	private boolean					simulateUntil		= false;
 	
-
-	private Point								lastMouseLocation	= new Point();
-
-
+	
+	private Point						lastMouseLocation	= new Point();
+	
+	
 	/**
 	 * Initialize PaintArea
 	 * 
@@ -100,7 +100,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		this.tbs = course.getLecture().getTimeBlocks();
 		this.course = course;
 		this.initMovableBlocks();
-
+		
 		attDia = new Diagram(new LinkedList<Float>());
 		attDia.setLocation(new Point(5, 10));
 		attDia.setRescaleY(false);
@@ -145,7 +145,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 			logger.info("Simulating until...");
 			return;
 		}
-
+		
 		// draw block
 		for (MovableBlock mb : movableBlocks) {
 			mb.draw(ga);
@@ -194,7 +194,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 			newData.add(stat.getValue().getValueAt(0));
 		}
 		attDia.setData(newData);
-
+		
 		this.repaint();
 	}
 	
@@ -384,8 +384,8 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		// from here
 		int time = (int) (e.getX() / this.getWidth()) * tbs.getTotalLength();
 		tmb.timeChanged(time * 60000);
-
-
+		
+		
 		// int mmt_X = (int) Math.floor(e.getX() + tmb.getRelMouseLocation().getX() - tmb.getX());
 		//
 		// // calculate new position of timeMarkerBloc
@@ -406,8 +406,8 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		// tmb.timeChanged((int) x + 5);
 		// logger.debug(tmb.toString());
 	}
-
-
+	
+	
 	private void dAndDMove(Point e) {
 		// while mouse is pressed and moving, this will move the button
 		if (moveBlock == null)
@@ -415,7 +415,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		
 		// Vertical Movement
 		moveVertical((int) e.getY());
-
+		
 		// Calculate the movement in x and the position of y. Negative Value means to
 		// the left and positive to the right.
 		int moveX = (e.x - lastMouseLocation.x) > 0 ? 1 : -1;
@@ -449,7 +449,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 					leftBlock = movableBlocks.get(newIndex - 1);
 				else
 					leftBlock = null;
-
+				
 				savedWidthRight = (int) rightBlock.getWidth();
 				if (newIndex + 2 < movableBlocks.size()) {
 					movableBlocks.get(newIndex + 2).setLocation(rightBlock.getX() + rightBlock.getWidth(),
@@ -597,7 +597,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 			// Calculate the movement in x. Negative Value means to
 			// the left and positive to the right.
 			int mmt_X = (int) Math.floor(e.getX() + moveBlock.getRelMouseLocation().getX() - moveBlock.getX());
-
+			
 			// Blovalues, x,y,width,length
 			double moveBlock_X = 0.0;
 			double moveBlock_Y = 0.0;
@@ -606,8 +606,8 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 			if (index > 0) {
 				
 			}
-
-
+			
+			
 			// // left without neighbour
 			// if (area == Areas.BorderLeft && index == 0) {
 			//
@@ -738,7 +738,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		// if (moveBlock.x + moveX < 0) {
 		// moveX = 0;
 		// }
-
+		
 		// int x = p.x;
 		// if (x < 0) {
 		// // e.getPoint().setLocation(0, 0);
@@ -747,7 +747,7 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		// // e.getPoint().setLocation(paWidth, 0);
 		// x = this.getWidth();
 		// }
-
+		
 		if (leftBlock == null) {
 			moveBlock.addWidth(moveX);
 		} else if (rightBlock == null) {
@@ -789,19 +789,19 @@ public class PPaintArea extends JPanel implements MouseListener, MouseMotionList
 		}
 		moveBlock.setLocation(moveBlock.getX(), pos_Y);
 	}
-
-
+	
+	
 	@Override
 	public void updateStatistics() {
 		updateDiagram();
 		this.validate();
 	}
 	
-
+	
 	@Override
 	public void updateSimUntil(boolean state) {
 		simulateUntil = state;
 		this.repaint();
 	}
-
+	
 }

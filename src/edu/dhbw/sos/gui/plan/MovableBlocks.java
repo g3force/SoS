@@ -1,10 +1,10 @@
-/* 
+/*
  * *********************************************************
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 18, 2012
  * Author(s): andres
- *
+ * 
  * *********************************************************
  */
 package edu.dhbw.sos.gui.plan;
@@ -41,13 +41,13 @@ public class MovableBlocks extends LinkedList<MovableBlock> {
 	public MovableBlocks() {
 		super();
 	}
-
-
+	
+	
 	@Override
-	public boolean add(MovableBlock mb){
-		mb.setIndex(this.size()-1);
+	public boolean add(MovableBlock mb) {
+		mb.setIndex(this.size() - 1);
 		return super.add(mb);
-	} 
+	}
 	
 	
 	public double init(TimeBlocks tbs, int start, int width) {
@@ -84,12 +84,12 @@ public class MovableBlocks extends LinkedList<MovableBlock> {
 		}
 		return scaleRatio;
 	}
-
-
+	
+	
 	@Override
-	public void add(int index, MovableBlock mb){
+	public void add(int index, MovableBlock mb) {
 		mb.setIndex(index);
-		super.add(index,mb);
+		super.add(index, mb);
 	}
 	
 	
@@ -105,5 +105,5 @@ public class MovableBlocks extends LinkedList<MovableBlock> {
 		this.add(mb1, this.remove(mb2));
 		return mb2;
 	}
-
+	
 }

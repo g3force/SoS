@@ -74,12 +74,12 @@ public class TimeBlocks implements Iterable<TimeBlock> {
 		timeblocks.clear();
 	}
 	
-
+	
 	public TimeBlock get(int i) {
 		return timeblocks.get(i);
 	}
-
-
+	
+	
 	/**
 	 * Constructor with empty LinkedList
 	 * @author NicolaiO, andres
