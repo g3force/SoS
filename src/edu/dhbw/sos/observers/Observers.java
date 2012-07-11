@@ -223,6 +223,11 @@ public class Observers {
 	}
 	
 	
+	public static void unsubscribeStatistics(IStatisticsObserver so) {
+		statisticsObservers.remove(so);
+	}
+
+
 	public static void subscribeEditMode(IEditModeObserver so) {
 		editModeObservers.add(so);
 	}
@@ -263,6 +268,11 @@ public class Observers {
 	}
 	
 	
+	public static void unsubscribeSimUntil(ISimUntilObserver suo) {
+		simUntilObservers.remove(suo);
+	}
+
+
 	public static void subscribeSuggestions(ISuggestionsObserver so) {
 		suggestionObserver.add(so);
 	}

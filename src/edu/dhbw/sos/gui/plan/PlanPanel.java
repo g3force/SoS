@@ -60,7 +60,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	private static final Logger	logger				= Logger.getLogger(PlanPanel.class);
 	private static final long		serialVersionUID	= -1665784555881941508L;
 	// paintArea is the part of the Panel, where some drawings have to be done
-	private PPaintArea				paintArea;
+	private PPaintAreaV2				paintArea;
 	// label where speed of playback is shown
 	private JLabel						lblSpeed;
 	// reference to the timeblocks to display
@@ -81,6 +81,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	public PlanPanel(SimController simController, Courses courses) {
 		this.courses = courses;
 		Course course = courses.getCurrentCourse();
+		Observers.subscribeTimeGUI(simController);
 		// get data
 		// timeBlocks = new TimeBlocks(course.getLecture().getTimeBlocks());
 		
@@ -115,14 +116,6 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		lPanel.setPreferredSize(new Dimension(60, 120));
 		this.add(lPanel, BorderLayout.WEST);
 		
-		// init paintArea
-		paintArea = new PPaintArea(course);
-		this.add(paintArea, BorderLayout.CENTER);
-		Observers.subscribeTimeGUI(simController);
-		
-		Observers.subscribeStatistics(paintArea);
-		Observers.subscribeSimUntil(paintArea);
-		
 		// create sidePanel
 		JPanel sidePanel = new JPanel();
 		sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.PAGE_AXIS));
@@ -139,6 +132,8 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		Observers.subscribeEditMode(btnPlay);
 		Observers.subscribeEditMode(btnLive);
 		
+		// init paintArea
+		updateCurrentCourse(course);
 		
 		controlPanel.add(btnPlay);
 		controlPanel.add(btnLive);
@@ -250,7 +245,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	
 	@Override
 	public void componentResized(ComponentEvent e) {
-		paintArea.initMovableBlocks();
+		// paintArea.initMovableBlocks();
 		paintArea.repaint();
 	}
 	
@@ -305,11 +300,17 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	
 	@Override
 	public void updateCurrentCourse(Course course) {
-		paintArea.init(course);
-		paintArea.initMovableBlocks();
-		paintArea.repaint();
-		
+		if (paintArea != null) {
+			this.remove(paintArea);
+			Observers.unsubscribeStatistics(paintArea);
+			Observers.unsubscribeSimUntil(paintArea);
+		}
+		paintArea = new PPaintAreaV2(course);
+		this.add(paintArea, BorderLayout.CENTER);
+		Observers.subscribeStatistics(paintArea);
 		Observers.subscribeSimUntil(paintArea);
+
+		paintArea.repaint();
 	}
 	
 	

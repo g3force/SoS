@@ -14,8 +14,6 @@ import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
 
-import edu.dhbw.sos.course.Course;
-
 
 /**
  * This class holds is a LinkedListof type TimeBlock which hold as all TimeBlocks of a lecture and gives methods for
@@ -59,14 +57,14 @@ public class TimeBlocks implements Iterable<TimeBlock> {
 	
 	
 	/**
-	 * Return the index of the given course
+	 * Return the index of the given timeBlock
 	 * 
-	 * @param currentCourse
-	 * @return index of currentCourse
+	 * @param timeBlock
+	 * @return index of timeBlock
 	 * @author NicolaiO
 	 */
-	public int indexOf(Course currentCourse) {
-		return timeblocks.indexOf(currentCourse);
+	public int indexOf(TimeBlock timeBlock) {
+		return timeblocks.indexOf(timeBlock);
 	}
 	
 	
@@ -76,7 +74,11 @@ public class TimeBlocks implements Iterable<TimeBlock> {
 	
 	
 	public TimeBlock get(int i) {
-		return timeblocks.get(i);
+		try {
+			return timeblocks.get(i);
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
 	}
 	
 	
@@ -187,5 +189,17 @@ public class TimeBlocks implements Iterable<TimeBlock> {
 		}
 		
 		return result;
+	}
+	
+	
+	/**
+	 * Move a TimeBlock from one index to another
+	 * 
+	 * @param from
+	 * @param to
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 */
+	public void moveTimeBlock(TimeBlock from, TimeBlock to) {
+		this.timeblocks.add(timeblocks.indexOf(to), this.timeblocks.remove(timeblocks.indexOf(from)));
 	}
 }

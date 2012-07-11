@@ -27,6 +27,7 @@ public enum BlockType {
 	exercise(1, Color.yellow),
 	pause(2, Color.green);
 	
+	private static final int	SIZE	= 4;
 	private int		simFormulaFactors;
 	private Color	color;
 	
@@ -38,6 +39,11 @@ public enum BlockType {
 	}
 	
 	
+	public int getYLocation(int maxHeight) {
+		return maxHeight / SIZE * this.ordinal();
+	}
+	
+
 	/**
 	 * @return the color
 	 */
@@ -75,6 +81,7 @@ public enum BlockType {
 	 *         bei Beschwerden bitte an mich wenden ;)
 	 * @author dirk
 	 */
+	@Override
 	public String toString() {
 		switch (this) {
 			case exercise:
