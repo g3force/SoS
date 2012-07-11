@@ -50,7 +50,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	private int							speed;																	// in
 																														// milliseconds
 	private int							notifyStep		= 1;
-	public static final int			realInterval	= 1000;
+	public static final int			realInterval	= 1000;												// in milliseconds
 	private int							interval			= 1000;
 	private transient Timer			pulse				= new Timer();
 	private boolean					run				= false;
@@ -163,7 +163,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	 * calculates for each student a new state
 	 * @author dirk
 	 */
-	private void simulationStep() {
+	public void simulationStep() {
 		setCurrentTime(currentTime + realInterval);
 		logger.debug("Simulation Step at " + currentTime);
 		course.simulationStep(currentTime);

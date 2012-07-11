@@ -81,7 +81,7 @@ public class Course {
 					Student newStud = new Student(parameters.size());
 					
 					for (int i = 0; i < newStud.getActualState().size(); i++) {
-						newStud.addToChangeVector(i, (float) (Math.random() * 100) - 50);
+						newStud.addToChangeVector(i, (float) (((Math.random() * 100) - 50) * 0.1));
 						newStud.addValueToStateVector(i, (int) (Math.random() * 10));
 					}
 					students[y][x] = newStud;
@@ -255,7 +255,7 @@ public class Course {
 		preChangeVector.printCalcVector("Sim: Init");
 		
 		// time block depending ( inf(Break) * breakInf )
-		double timeBlockInf = 0.001;
+		double timeBlockInf = 0.0004;
 		
 		BlockType bt = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType();
 		preChangeVector.addCalcVector(influence.getEnvironmentVector(bt.getEinfluenceType(), timeBlockInf));
@@ -263,7 +263,7 @@ public class Course {
 		preChangeVector.printCalcVector("Sim: after timeblock (" + bt.toString() + ")");
 		
 		// timeDending ( inf(Time) * currentTime/1000 * timeInf )
-		double timeInf = 0.00000000001;
+		double timeInf = 0.000000000001;
 		double timeTimeInf = timeInf * currentTime / 1000; // in seconds
 		preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.TIME_DEPENDING, timeTimeInf));
 		preChangeVector.printCalcVector("Sim: after time depending");
