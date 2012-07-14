@@ -18,6 +18,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.TimeBlock;
 import edu.dhbw.sos.course.lecture.TimeBlocks;
 
@@ -36,11 +37,76 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 	// private final MovableBlock movableBlock;
 	private final TimeBlocks	timeBlocks;
 	
-	private Point					lastMousePoint		= new Point();
 	// buffer before two blocks swap place (for the TimeBlock.MIN_LEN limit)
-	private int						swapBuffer			= 0;
+	private SwapBuffer			swapBuffer			= new SwapBuffer();
 	
+	// some essential information about the block that is currently moved
+	private GrabbedBlock			grabbedBlock;
 
+	/**
+	 * Data container for storing the left and right swap buffer value
+	 * 
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 * 
+	 */
+	private class SwapBuffer {
+		/** right */
+		public int	r	= 0;
+		/** left */
+		public int	l	= 0;
+		
+		
+		/** both (sum of left and right) */
+		public int b() {
+			return r + l;
+		}
+		
+		
+		@Override
+		public String toString() {
+			return "SwapBuffer [r=" + r + ", l=" + l + "]";
+		}
+	}
+
+	/**
+	 * Data container for a grabbed block.
+	 * Saves the length of left, right and central timeBlock
+	 * and the offset from left edge of timeBlock to mouse pos
+	 * 
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 * 
+	 */
+	private final class GrabbedBlock {
+		/** block offset from left block edge to mouse pos (in GUI length, not TimeBlock-length) */
+		private final int	xOffset;
+		/** length of right and left neighbors */
+		private final int	lenRightBlock;
+		private final int	lenLeftBlock;
+		private final int	lenTimeBlock;
+		
+		
+		public GrabbedBlock(int xOffset, int lenRightBlock, int lenLeftBlock, int lenTimeBlock) {
+			this.xOffset = xOffset;
+			this.lenLeftBlock = lenLeftBlock;
+			this.lenRightBlock = lenRightBlock;
+			this.lenTimeBlock = lenTimeBlock;
+		}
+		
+		
+		@Override
+		public String toString() {
+			return "GrabbedBlock [xOffset=" + xOffset + ", lenRightBlock=" + lenRightBlock + ", lenLeftBlock="
+					+ lenLeftBlock + "]";
+		}
+	}
+
+
+	/**
+	 * Instantiate this object with the given timeBlocks
+	 * 
+	 * @param timeBlocks A timeBlocks object with timeBlocks
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 */
 	public MovableTimeBlocks(TimeBlocks timeBlocks) {
 		this.timeBlocks = timeBlocks;
 		this.addMouseListener(this);
@@ -48,11 +114,29 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 	}
 	
 	
+	/**
+	 * The scaleRatio is a conversion ratio between timeBlock length and GUI width
+	 * Example:
+	 * realwidth = len * getScaleRatio() <br/>
+	 * len = realwidth / getScaleRatio()
+	 * 
+	 * @return scaleRatio
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 */
 	private double getScaleRatio() {
 		return (double) this.getWidth() / (double) timeBlocks.getTotalLength();
 	}
 	
 	
+	/**
+	 * Returns the timeBlock occording to the mouseLocation (in GUI width).
+	 * This will convert the mouseLoction to timeBlock-length and
+	 * check timeBlocks for the timeBlock at this total length
+	 * 
+	 * @param mouseLocation MouseLocation as e.g. returned by MouseEvent.getPoint()
+	 * @return the TimeBlock
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 */
 	private TimeBlock getTimeBlockByMouseLocation(Point mouseLocation) {
 		int pos = (int) (mouseLocation.x / getScaleRatio());
 		int offset = 0;
@@ -89,52 +173,103 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		// if (e.getButton() != MouseEvent.BUTTON1) {
-		// return;
-		// }
-		if (lastMousePoint == null) {
+		if (grabbedBlock == null) {
 			assert (false);
 			return;
 		}
 		
-		if (Math.abs(lastMousePoint.x - e.getPoint().x) <= 0) {
+		// to avoid buggy behavior, do nothing when the cursor is not in our area
+		if (e.getX() < 0 || e.getX() >= this.getWidth()) {
 			return;
 		}
-		int movement = e.getPoint().x - lastMousePoint.x;
-		TimeBlock timeBlock = getTimeBlockByMouseLocation(lastMousePoint);
-		// timeBlock.setLen(timeBlock.getLen() + movement);
+
+		// save total length to ensure that we do not change it after the move operation
+		int totalLen = timeBlocks.getTotalLength();
 		
-		// get references to left and right neighbors
+		// 1. Determine direction
+		// 2. check if neighbor block can emit some width (without shrinking lower than limit)
+		// 2.1. true: set width of left and right neighbor accordingly
+		// 2.2. false: check if block was moved behind neighbor, so that they can switch place
+		// 2.2.1. true: switch place, restore sizes
+		// 2.2.2. false: fill swapBuffer
+
+		// get references to main timeBlock and left and right neighbors
+		TimeBlock timeBlock = getTimeBlockByMouseLocation(e.getPoint());
 		TimeBlock rightTimeBlock = timeBlocks.get(timeBlocks.indexOf(timeBlock) + 1);
 		TimeBlock leftTimeBlock = timeBlocks.get(timeBlocks.indexOf(timeBlock) - 1);
 		
-		// check for borders and non existing neighbors
+		// process vertical movement
+		if (e.getY() >= 0 && e.getY() < this.getHeight()) {
+			timeBlock.setType(BlockType.getInstance((int) ((e.getY() * BlockType.SIZE) / (this.getHeight()))));
+		}
+
+		
+		// calculate a movement value in timeBlock-len size (not GUI size)
 		// movement neg, when moving left
-		if (rightTimeBlock != null) {
-			int len = rightTimeBlock.getLen() - movement;
+		int movement = ((int) ((e.getX() - grabbedBlock.xOffset) / getScaleRatio())) - timeBlocks.getAddedLen(timeBlock);
+		if (movement == 0) {
+			// why proceed when we do not move?
+			return;
+		}
+		// else {
+		// System.out.println("(" + e.getX() + " - " + grabbedBlock.xOffset + ") / " + getScaleRatio() + " = "
+		// + (int) ((e.getX() - grabbedBlock.xOffset) / getScaleRatio()));
+		// System.out.println("movement=" + movement + "=" + (int) ((e.getX() - grabbedBlock.xOffset) / getScaleRatio())
+		// + " - " + timeBlocks.getAddedLen(timeBlock));
+		// }
+
+		// check for borders and non existing neighbors
+		if (rightTimeBlock == TimeBlocks.NULL_TIMEBLOCK && leftTimeBlock == TimeBlocks.NULL_TIMEBLOCK) {
+			// special case: there is only one block, so no neighbors
+			// actually, in this case we can not move anything, so lets just finish here
+			return;
+		}
+		if (rightTimeBlock != TimeBlocks.NULL_TIMEBLOCK) {
+			int len = rightTimeBlock.getLen() - movement - swapBuffer.r;
 			if (len < TimeBlock.MIN_LEN) {
-				swapBuffer += movement;
+				swapBuffer.r += movement;
 			} else {
-				swapBuffer = 0;
-				rightTimeBlock.setLen(len);
+				swapBuffer.r = 0;
+				if (swapBuffer.l == 0) {
+					rightTimeBlock.setLen(len);
+				}
 			}
 		}
-		if (leftTimeBlock != null) {
-			int len = leftTimeBlock.getLen() + movement;
+		if (leftTimeBlock != TimeBlocks.NULL_TIMEBLOCK) {
+			int len = leftTimeBlock.getLen() + movement - swapBuffer.l;
 			if (len < TimeBlock.MIN_LEN) {
-				swapBuffer -= movement;
+				swapBuffer.l -= movement;
 			} else {
-				swapBuffer = 0;
-				leftTimeBlock.setLen(len);
+				swapBuffer.l = 0;
+				if (swapBuffer.r == 0) {
+					leftTimeBlock.setLen(len);
+				}
+			}
+		} else {
+			// special case: left block is NULL
+			// any movement of the timeBlock results in an change of the grabbedBlock.xOffset
+			// xOffset will change to current mouse location
+			grabbedBlock = new GrabbedBlock(grabbedBlock.xOffset + movement, grabbedBlock.lenRightBlock,
+					grabbedBlock.lenLeftBlock, grabbedBlock.lenTimeBlock);
+		}
+		
+		// if there is only one neighbor, only that has changed length. timeBlock needs to compensate the rest
+		int offsetLen = totalLen - timeBlocks.getTotalLength(); // negative, when there is too much length
+		timeBlock.setLen(timeBlock.getLen() + offsetLen);
+		
+		// now, it might be that timeBlock is too small... we can fix that!
+		if (timeBlock.getLen() < TimeBlock.MIN_LEN) {
+			if (rightTimeBlock != TimeBlocks.NULL_TIMEBLOCK) {
+				rightTimeBlock.setLen(rightTimeBlock.getLen() - (TimeBlock.MIN_LEN - timeBlock.getLen()));
+				timeBlock.setLen(TimeBlock.MIN_LEN);
+			} else {
+				leftTimeBlock.setLen(leftTimeBlock.getLen() - (TimeBlock.MIN_LEN - timeBlock.getLen()));
+				timeBlock.setLen(TimeBlock.MIN_LEN);
 			}
 		}
 		
-		if (swapBuffer == 0 && (rightTimeBlock == null || leftTimeBlock == null)) {
-			// decrease size of timeBlock
-			timeBlock.setLen(timeBlock.getLen() - Math.abs(movement));
-		}
-		
-		if (swapBuffer >= TimeBlock.MIN_LEN) {
+		// handle swapping of timeBlocks
+		if (swapBuffer.b() >= TimeBlock.MIN_LEN) {
 			if (movement > 0) {
 				// right movement
 				timeBlocks.moveTimeBlock(timeBlock, rightTimeBlock);
@@ -142,9 +277,20 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 				// left movement
 				timeBlocks.moveTimeBlock(timeBlock, leftTimeBlock);
 			}
+			rightTimeBlock.setLen(grabbedBlock.lenRightBlock);
+			leftTimeBlock.setLen(grabbedBlock.lenLeftBlock);
+			timeBlock.setLen(grabbedBlock.lenTimeBlock);
+			grabbedBlock = new GrabbedBlock(grabbedBlock.xOffset, timeBlocks.get(timeBlocks.indexOf(timeBlock) + 1)
+					.getLen(), timeBlocks.get(timeBlocks.indexOf(timeBlock) - 1).getLen(), timeBlock.getLen());
+			swapBuffer.r = 0;
+			swapBuffer.l = 0;
 		}
 		
-		lastMousePoint = e.getPoint();
+		// System.out.println(this.toString());
+		
+		// there should never be an increase in the total length while moving!
+		assert (timeBlocks.getTotalLength() == totalLen);
+
 		this.repaint();
 	}
 
@@ -164,8 +310,15 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 		if (e.getButton() != MouseEvent.BUTTON1) {
 			return;
 		}
-		lastMousePoint = e.getPoint();
-		swapBuffer = 0;
+		swapBuffer.r = 0;
+		swapBuffer.l = 0;
+		TimeBlock timeBlock = getTimeBlockByMouseLocation(e.getPoint());
+		
+		// get references to left and right neighbors
+		TimeBlock rightTimeBlock = timeBlocks.get(timeBlocks.indexOf(timeBlock) + 1);
+		TimeBlock leftTimeBlock = timeBlocks.get(timeBlocks.indexOf(timeBlock) - 1);
+		grabbedBlock = new GrabbedBlock(e.getX() - (int) (timeBlocks.getAddedLen(timeBlock) * getScaleRatio()),
+				rightTimeBlock.getLen(), leftTimeBlock.getLen(), timeBlock.getLen());
 	}
 	
 	
@@ -174,8 +327,9 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 		if (e.getButton() != MouseEvent.BUTTON1) {
 			return;
 		}
-		lastMousePoint = null;
-		swapBuffer = 0;
+		swapBuffer.r = 0;
+		swapBuffer.l = 0;
+		grabbedBlock = null;
 	}
 	
 	
@@ -186,5 +340,12 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 	
 	@Override
 	public void mouseExited(MouseEvent e) {
+	}
+	
+	
+	@Override
+	public String toString() {
+		return "MovableTimeBlocks [timeBlocks=" + timeBlocks + ", swapBuffer=" + swapBuffer + ", grabbedBlock="
+				+ grabbedBlock + "]";
 	}
 }

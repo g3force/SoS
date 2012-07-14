@@ -90,12 +90,12 @@ public class Course {
 		}
 		influence = new Influence();
 		TimeBlocks tbs = new TimeBlocks();
-		tbs.add(new TimeBlock(60, BlockType.theory));
+		tbs.add(new TimeBlock(20, BlockType.theory));
 		tbs.add(new TimeBlock(15, BlockType.pause));
 		tbs.add(new TimeBlock(30, BlockType.exercise));
 		tbs.add(new TimeBlock(30, BlockType.group));
 		tbs.add(new TimeBlock(10, BlockType.pause));
-		tbs.add(new TimeBlock(50, BlockType.theory));
+		tbs.add(new TimeBlock(20, BlockType.theory));
 		lecture = new Lecture(new Date(), tbs);
 		
 	}

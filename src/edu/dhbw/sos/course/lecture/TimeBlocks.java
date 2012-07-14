@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 public class TimeBlocks implements Iterable<TimeBlock> {
 	private static final Logger	logger	= Logger.getLogger(TimeBlocks.class);
 	private LinkedList<TimeBlock>	timeblocks;
+	public static final TimeBlock	NULL_TIMEBLOCK	= new TimeBlock(0, BlockType.exercise);
 	
 	
 	/**
@@ -77,7 +78,7 @@ public class TimeBlocks implements Iterable<TimeBlock> {
 		try {
 			return timeblocks.get(i);
 		} catch (IndexOutOfBoundsException e) {
-			return null;
+			return NULL_TIMEBLOCK;
 		}
 	}
 	
@@ -201,5 +202,17 @@ public class TimeBlocks implements Iterable<TimeBlock> {
 	 */
 	public void moveTimeBlock(TimeBlock from, TimeBlock to) {
 		this.timeblocks.add(timeblocks.indexOf(to), this.timeblocks.remove(timeblocks.indexOf(from)));
+	}
+	
+	
+	public int getAddedLen(TimeBlock timeBlock) {
+		int sum = 0;
+		for (TimeBlock tb : timeblocks) {
+			if (tb == timeBlock) {
+				break;
+			}
+			sum += tb.getLen();
+		}
+		return sum;
 	}
 }

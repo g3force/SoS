@@ -27,7 +27,8 @@ public enum BlockType {
 	exercise(1, Color.yellow),
 	pause(2, Color.green);
 	
-	private static final int	SIZE	= 4;
+	public static final int		SIZE		= 4;
+	private static final int	OFFSET	= 5;
 	private int		simFormulaFactors;
 	private Color	color;
 	
@@ -37,10 +38,27 @@ public enum BlockType {
 		this.setColor(c);
 		
 	}
-	
+
+
+	public static BlockType getInstance(int number) {
+		switch (number) {
+			case 0:
+				return theory;
+			case 1:
+				return group;
+			case 2:
+				return exercise;
+			case 3:
+				return pause;
+		}
+		System.err.println("getInstance(" + number + ") called");
+		assert (false);
+		return null;
+	}
+
 	
 	public int getYLocation(int maxHeight) {
-		return maxHeight / SIZE * this.ordinal();
+		return ((maxHeight - 2 * OFFSET) / SIZE * this.ordinal()) + OFFSET;
 	}
 	
 
