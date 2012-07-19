@@ -108,7 +108,7 @@ public class Student implements IPlace, Cloneable {
 	public Entry<Integer, CalcVector> nearestHistoryState(int time) {
 		Entry<Integer, CalcVector> latest = null;
 		for (Entry<Integer, CalcVector> historyState : historyStates.entrySet()) {
-			if (historyState.getKey() < time) {
+			if (historyState.getKey() <= time) {
 				if (latest == null || latest.getKey() < historyState.getKey())
 					latest = historyState;
 			}
