@@ -47,6 +47,7 @@ public class Observers {
 	private static LinkedList<ISimUntilObserver>				simUntilObservers				= new LinkedList<ISimUntilObserver>();
 	
 	private static LinkedList<ISuggestionsObserver>			suggestionObserver			= new LinkedList<ISuggestionsObserver>();
+	private static LinkedList<ITimeBlocksLengthObserver>	timeBlocksLengthObservers	= new LinkedList<ITimeBlocksLengthObserver>();
 	
 	
 	// ##################################################################################
@@ -71,6 +72,7 @@ public class Observers {
 		printObserverList(simulationOberservers, "simulationOberservers");
 		printObserverList(simUntilObservers, "simUntilObservers");
 		printObserverList(suggestionObserver, "suggestionObserver");
+		printObserverList(timeBlocksLengthObservers, "timeBlocksLengthObservers");
 	}
 	
 	
@@ -203,6 +205,12 @@ public class Observers {
 	}
 	
 	
+	public static void notifyTimeBLocksLength() {
+		for (ITimeBlocksLengthObserver tblo : timeBlocksLengthObservers) {
+			tblo.lengthChanged();
+		}
+	}
+	
 	// ##################################################################################
 	// ############################# subscribe section ##################################
 	// ##################################################################################
@@ -275,5 +283,15 @@ public class Observers {
 
 	public static void subscribeSuggestions(ISuggestionsObserver so) {
 		suggestionObserver.add(so);
+	}
+	
+	
+	public static void subscribeTimeBlocksLength(ITimeBlocksLengthObserver tblo) {
+		timeBlocksLengthObservers.add(tblo);
+	}
+	
+	
+	public static void unsubscribeTimeBlocksLength(ITimeBlocksLengthObserver tblo) {
+		timeBlocksLengthObservers.remove(tblo);
 	}
 }
