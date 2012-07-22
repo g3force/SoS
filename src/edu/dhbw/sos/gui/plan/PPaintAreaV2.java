@@ -32,6 +32,7 @@ import edu.dhbw.sos.gui.plan.data.MovableTimeBlocks;
 import edu.dhbw.sos.helper.CalcVector;
 import edu.dhbw.sos.observers.ISimUntilObserver;
 import edu.dhbw.sos.observers.IStatisticsObserver;
+import edu.dhbw.sos.observers.ITimeBlocksLengthObserver;
 import edu.dhbw.sos.observers.Observers;
 
 
@@ -43,7 +44,7 @@ import edu.dhbw.sos.observers.Observers;
  * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
-public class PPaintAreaV2 extends JPanel implements IStatisticsObserver, ISimUntilObserver {
+public class PPaintAreaV2 extends JPanel implements IStatisticsObserver, ISimUntilObserver, ITimeBlocksLengthObserver {
 	private static final long	serialVersionUID	= -3407230660397557204L;
 	
 	private static final int	TMB_START			= 0;
@@ -85,6 +86,10 @@ public class PPaintAreaV2 extends JPanel implements IStatisticsObserver, ISimUnt
 		timeDiagram.setLocation(new Point(5, 10));
 		timeDiagram.setRescaleY(false);
 		timeDiagram.setMaxY(100);
+		
+		// subscribe to changes of the length of all time blocks (length of lecture), this is used for redrawing the time
+		// markers
+		Observers.subscribeTimeBlocksLength(this);
 	}
 	
 	
@@ -112,8 +117,20 @@ public class PPaintAreaV2 extends JPanel implements IStatisticsObserver, ISimUnt
 		ga.setPaint(Color.blue);
 		ga.drawLine(TMB_START, 140, this.getWidth() - TMB_START, 140);
 		
-		// Timemarkers for each 60 min
-		double mi = 60.0;
+		// Timemarkers
+		int mi = 60;
+		int totalLength = course.getLecture().getTimeBlocks().getTotalLength();
+
+		if (totalLength < 90)
+			mi = 15;
+		else if (totalLength < 180)
+			mi = 30;
+		else if (totalLength < 360)
+			mi = 60;
+		else if (totalLength < 720)
+			mi = 120;
+		else if (totalLength < 1440)
+			mi = 240;
 		double timemarkers = movableTimeBlocks.getScaleRatio() * mi;
 		// logger.debug(timemarkers + "");
 		if (timemarkers > 0.0) {
@@ -124,7 +141,7 @@ public class PPaintAreaV2 extends JPanel implements IStatisticsObserver, ISimUnt
 				String time = timeFormat.format(timeCal.getTime());
 				ga.drawLine(i, 135, i, 145);
 				ga.drawString(time, i + 2, 139);
-				timeCal.add(Calendar.HOUR, 1);
+				timeCal.add(Calendar.MINUTE, mi);
 			}
 		}
 		
@@ -200,5 +217,10 @@ public class PPaintAreaV2 extends JPanel implements IStatisticsObserver, ISimUnt
 		}
 		
 	}
+	
 
+	@Override
+	public void lengthChanged() {
+		myRepaint();
+	}
 }

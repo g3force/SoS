@@ -43,6 +43,7 @@ import edu.dhbw.sos.course.Courses;
 import edu.dhbw.sos.helper.Messages;
 import edu.dhbw.sos.observers.ICurrentCourseObserver;
 import edu.dhbw.sos.observers.ISpeedObserver;
+import edu.dhbw.sos.observers.ITimeBlocksLengthObserver;
 import edu.dhbw.sos.observers.Observers;
 import edu.dhbw.sos.simulation.SimController;
 
@@ -56,7 +57,8 @@ import edu.dhbw.sos.simulation.SimController;
  * @author NicolaiO
  * 
  */
-public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserver, ICurrentCourseObserver {
+public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserver, ICurrentCourseObserver,
+		ITimeBlocksLengthObserver {
 	private static final Logger	logger				= Logger.getLogger(PlanPanel.class);
 	private static final long		serialVersionUID	= -1665784555881941508L;
 	// paintArea is the part of the Panel, where some drawings have to be done
@@ -156,6 +158,8 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		
 		
 		// time
+		Observers.subscribeTimeBlocksLength(this);
+
 		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 		String start = timeFormat.format(course.getLecture().getStart());
 		Date endTime = new Date();
@@ -337,8 +341,8 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	
 	
 	/**
-	 * 
-	 * TODO andres, add comment!
+	 * Updates the displayed end time. This value is only displayed and not saved.
+	 * Called after editing start time or when changing the lecture length.
 	 * 
 	 * @author andres
 	 */
@@ -349,5 +353,11 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 				+ courses.getCurrentCourse().getLecture().getLength() * 60 * 1000);
 		String end = timeFormat.format(endTime);
 		txtTo.setText(end);
+	}
+	
+	
+	@Override
+	public void lengthChanged() {
+		updateEnd();
 	}
 }

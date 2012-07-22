@@ -21,6 +21,7 @@ import java.awt.event.MouseMotionListener;
 import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.course.lecture.TimeBlock;
 import edu.dhbw.sos.course.lecture.TimeBlocks;
+import edu.dhbw.sos.observers.Observers;
 
 
 /**
@@ -78,11 +79,11 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 	 */
 	private final class GrabbedBlock {
 		/** block offset from left block edge to mouse pos (in GUI length, not TimeBlock-length) */
-		private final int	xOffset;
+		private final int			xOffset;
 		/** length of right and left neighbors */
-		private final int	lenRightBlock;
-		private final int	lenLeftBlock;
-		private final int	lenTimeBlock;
+		private final int			lenRightBlock;
+		private final int			lenLeftBlock;
+		private final int			lenTimeBlock;
 		
 		private final TimeBlock	timeBlock;
 		
@@ -181,7 +182,7 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 		}
 		
 		// to avoid buggy behavior, do nothing when the cursor is not in our area
-		if (e.getX() < 0 || e.getX() >= this.getWidth()) {
+		if (e.getX() < 0 || e.getX() >= this.getWidth() || e.getY() < 0 || e.getY() >= this.getHeight()) {
 			return;
 		}
 
@@ -211,8 +212,8 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 		if (e.getY() >= 0 && e.getY() < this.getHeight()) {
 			timeBlock.setType(BlockType.getInstance((int) ((e.getY() * BlockType.SIZE) / (this.getHeight()))));
 		}
-
 		
+
 		// calculate a movement value in timeBlock-len size (not GUI size)
 		// movement neg, when moving left
 		int movement = ((int) ((e.getX() - grabbedBlock.xOffset) / getScaleRatio())) - timeBlocks.getAddedLen(timeBlock);
@@ -327,6 +328,27 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		
+		// Change length of a Block
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			TimeBlock timeBlock = getTimeBlockByMouseLocation(e.getPoint());
+			int newLength = timeBlock.getLen() + TimeBlock.STEP;
+			timeBlock.setLen(newLength);
+			this.repaint();
+			Observers.notifyTimeBLocksLength();
+		} else if (e.getButton() == MouseEvent.BUTTON3) {
+			TimeBlock timeBlock = getTimeBlockByMouseLocation(e.getPoint());
+			int newLength = timeBlock.getLen() - TimeBlock.STEP;
+			if (newLength > TimeBlock.MIN_LEN)
+				timeBlock.setLen(newLength);
+			// else if (newLength == 0) {
+			// timeBlocks.remove(timeBlock);
+			// }
+			else
+				timeBlock.setLen(TimeBlock.MIN_LEN);
+			this.repaint();
+			Observers.notifyTimeBLocksLength();
+		}
 	}
 	
 	

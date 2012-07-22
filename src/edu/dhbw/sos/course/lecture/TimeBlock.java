@@ -10,7 +10,6 @@
 package edu.dhbw.sos.course.lecture;
 
 
-
 /**
  * The TimeBlock class is a single Block in a Lecture. It provides Information about the length and the type
  * 
@@ -19,9 +18,10 @@ package edu.dhbw.sos.course.lecture;
  */
 public class TimeBlock {
 	// private static final Logger logger = Logger.getLogger(TimeBlock.class);
-	private int							len;
-	private BlockType					type;
-	public static final int			MIN_LEN	= 10;
+	private int					len;
+	private BlockType			type;
+	public static final int	MIN_LEN	= 10;
+	public static final int	STEP		= 5;
 	
 	
 	/**
