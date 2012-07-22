@@ -10,15 +10,18 @@
 package edu.dhbw.sos.course.lecture;
 
 
+
 /**
- * The TiomeBlock class is a single Block in a Lecture. It provides Information about the length and the type
+ * The TimeBlock class is a single Block in a Lecture. It provides Information about the length and the type
  * 
  * @author andres
  * 
  */
 public class TimeBlock {
-	private int			len;
-	private BlockType	type;
+	// private static final Logger logger = Logger.getLogger(TimeBlock.class);
+	private int							len;
+	private BlockType					type;
+	public static final int			MIN_LEN	= 10;
 	
 	
 	/**
@@ -28,8 +31,8 @@ public class TimeBlock {
 	 * @author NicolaiO, andres
 	 */
 	public TimeBlock(int _len, BlockType _type) {
-		len = _len;
-		type = _type;
+		setLen(_len);
+		setType(_type);
 	}
 	
 	
@@ -45,6 +48,11 @@ public class TimeBlock {
 	 * @param len the length to set
 	 */
 	public void setLen(int len) {
+		if (len < MIN_LEN) {
+			this.len = MIN_LEN;
+			new AssertionError("Tried to set len to " + len + ", but MIN_LEN is " + MIN_LEN
+					+ ". This should be catched earlier!", null);
+		}
 		this.len = len;
 	}
 	
