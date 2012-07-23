@@ -444,7 +444,7 @@ public class Course {
 					Entry<Integer, CalcVector> historyState = student.nearestHistoryState(time);
 					if (historyState != null) {
 						student.setActualState(historyState.getValue().clone());
-						student.deleteHistoryStateFrom(historyState.getKey());
+						student.deleteHistoryStateFrom(time);
 					}
 				}
 			}
