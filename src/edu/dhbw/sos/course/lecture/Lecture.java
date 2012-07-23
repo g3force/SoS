@@ -9,6 +9,7 @@
  */
 package edu.dhbw.sos.course.lecture;
 
+import java.util.Calendar;
 import java.util.Date;
 
 
@@ -22,18 +23,19 @@ import java.util.Date;
 public class Lecture {
 	
 	private Date			start;
+	private long			timeInMiliSec;
 	private TimeBlocks	timeBlocks;
 	
 	
 	@Deprecated
 	public Lecture(Date start) {
-		this.start = start;
+		setStart(start);
 		this.timeBlocks = new TimeBlocks();
 	}
 	
 	
 	public Lecture(Date start, TimeBlocks timeBlocks) {
-		this.start = start;
+		setStart(start);
 		setTimeBlocks(timeBlocks);
 	}
 	
@@ -51,6 +53,30 @@ public class Lecture {
 	 */
 	public void setStart(Date start) {
 		this.start = start;
+		setStartInMilis();
+	}
+	
+	
+	/**
+	 * Returns the start time in miliseconds. This is the time without any Days and months, etc.Only Hours, Minutes,
+	 * Seconds and Miliseconds.
+	 * @return startInMilis
+	 * @author andres
+	 */
+	public long getStartInMilis() {
+		return timeInMiliSec;
+	}
+	
+	
+	private void setStartInMilis() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(start);
+		long hoursInMiliSec = Calendar.HOUR_OF_DAY * 60 * 60 * 1000;
+		long minsInMiliSec = Calendar.MINUTE * 60 * 1000;
+		long secsInMiliSec = Calendar.SECOND * 1000;
+		long miliSec = Calendar.MILLISECOND;
+		
+		timeInMiliSec = hoursInMiliSec + minsInMiliSec + secsInMiliSec + miliSec;
 	}
 	
 	

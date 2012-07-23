@@ -335,7 +335,7 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 			int newLength = timeBlock.getLen() + TimeBlock.STEP;
 			timeBlock.setLen(newLength);
 			this.repaint();
-			Observers.notifyTimeBLocksLength();
+			Observers.notifyTimeBlocksLength();
 		} else if (e.getButton() == MouseEvent.BUTTON3) {
 			TimeBlock timeBlock = getTimeBlockByMouseLocation(e.getPoint());
 			int newLength = timeBlock.getLen() - TimeBlock.STEP;
@@ -347,7 +347,7 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 			else
 				timeBlock.setLen(TimeBlock.MIN_LEN);
 			this.repaint();
-			Observers.notifyTimeBLocksLength();
+			Observers.notifyTimeBlocksLength();
 		}
 	}
 	

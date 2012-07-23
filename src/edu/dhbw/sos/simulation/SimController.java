@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -236,7 +237,12 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof LiveBtn) {
-			// FIXME andres Not implemented
+			stop();
+			setSpeed(1);
+			Observers.notifySpeed(this.getSpeed());
+			setCurrentTime((int) getCurrentSystemTime());
+			Observers.notifyTime(this.getCurrentTime());
+			run();
 		} else if (e.getSource() instanceof PlayBtn) {
 			toggle();
 		} else if (e.getSource() instanceof ForwardBtn) {
@@ -249,6 +255,34 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	}
 	
 	
+	/**
+	 * Get the current System Time in milisec. This method will convert the absolute day specific time in a value that
+	 * only contains the time infomration.
+	 * @return System time in respect to this Lecture
+	 * @author andres
+	 */
+	// FIXME current time is int and not long ??
+	private long getCurrentSystemTime() {
+		// Get real System time
+		long hoursInMiliSec = Calendar.HOUR_OF_DAY * 60 * 60 * 1000;
+		long minsInMiliSec = Calendar.MINUTE * 60 * 1000;
+		long secsInMiliSec = Calendar.SECOND * 1000;
+		long miliSec = Calendar.MILLISECOND;
+
+		long timeInMiliSec = hoursInMiliSec + minsInMiliSec + secsInMiliSec + miliSec;
+		
+		// Change the value for internal time
+		long start = course.getLecture().getStartInMilis();
+
+		if (start > timeInMiliSec) // if start is bigger then timeInMilisec, then the current time is at the day after the
+											// start, so add a full day to timeInMiliSec
+			timeInMiliSec += 24 * 60 * 60 * 1000;
+		long virtualSystemTime = timeInMiliSec - start;
+		logger.debug("Start: " + start + "; Time: " + timeInMiliSec);
+		return virtualSystemTime;
+	}
+	
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		float value = -20;
