@@ -153,7 +153,7 @@ public class Observers {
 	
 	
 	/**
-	 * FIXME andres specify more clearly what to notify
+	 * This method is called when the time is changed by the simulation. Used in SimController.
 	 * @param time time in milliseconds
 	 * @author andres
 	 */
@@ -165,8 +165,8 @@ public class Observers {
 	
 	
 	/**
-	 * TODO andres difference between this method an the one above
-	 * 
+	 * This method should be called if the current time is changed by a GUI component. Used in TimeMarkerBlock and
+	 * LiveButton
 	 * @param time
 	 * @author andres
 	 */
@@ -205,12 +205,19 @@ public class Observers {
 	}
 	
 	
-	public static void notifyTimeBLocksLength() {
+	/**
+	 * 
+	 * This method is called when the length of a Time Block is changed. Then the total length of the lecture changes,
+	 * too.
+	 * @author andres
+	 */
+	public static void notifyTimeBlocksLength() {
 		for (ITimeBlocksLengthObserver tblo : timeBlocksLengthObservers) {
 			tblo.lengthChanged();
 		}
 	}
 	
+
 	// ##################################################################################
 	// ############################# subscribe section ##################################
 	// ##################################################################################

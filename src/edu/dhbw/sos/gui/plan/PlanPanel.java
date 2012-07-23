@@ -289,15 +289,11 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		
 		@Override
 		public void keyTyped(KeyEvent e) {
-			// TODO andres Auto-generated method stub
-			
 		}
 		
 		
 		@Override
 		public void keyReleased(KeyEvent e) {
-			// TODO andres Auto-generated method stub
-			
 		}
 	}
 	

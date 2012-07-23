@@ -205,8 +205,8 @@ public class PPaintAreaV2 extends JPanel implements IStatisticsObserver, ISimUnt
 			// System.out.println(this.getWidth());
 			if (e.getX() >= 0 || e.getX() < this.getWidth()) {
 				int time = (int) (e.getX() / movableTimeBlocks.getScaleRatio());
-				System.out.println(time);
-				Observers.notifyTime(time * 60000);
+				// System.out.println(time);
+				Observers.notifyTimeGUI(time * 60000); // Call the SimController to set the new time.
 				myRepaint();
 			}
 		}
