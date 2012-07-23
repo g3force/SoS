@@ -206,7 +206,6 @@ public class Observers {
 	
 	
 	/**
-	 * 
 	 * This method is called when the length of a Time Block is changed. Then the total length of the lecture changes,
 	 * too.
 	 * @author andres
@@ -217,7 +216,6 @@ public class Observers {
 		}
 	}
 	
-
 	// ##################################################################################
 	// ############################# subscribe section ##################################
 	// ##################################################################################

@@ -131,6 +131,7 @@ public class PPaintAreaV2 extends JPanel implements IStatisticsObserver, ISimUnt
 			mi = 120;
 		else if (totalLength < 1440)
 			mi = 240;
+		
 		double timemarkers = movableTimeBlocks.getScaleRatio() * mi;
 		// logger.debug(timemarkers + "");
 		if (timemarkers > 0.0) {
