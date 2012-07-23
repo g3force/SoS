@@ -7,7 +7,7 @@
  * 
  * *********************************************************
  */
-package edu.dhbw.sos.gui.plan;
+package edu.dhbw.sos.gui.plan.data;
 
 import java.awt.Color;
 import java.awt.Dimension;

@@ -7,13 +7,15 @@
  * 
  * *********************************************************
  */
-package edu.dhbw.sos.gui.plan;
+package edu.dhbw.sos.gui.plan.buttons;
 
 import java.awt.Image;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+
+import edu.dhbw.sos.observers.IEditModeObserver;
 
 
 /**
@@ -22,7 +24,7 @@ import javax.swing.JButton;
  * @author andres
  * 
  */
-public class RewindBtn extends JButton {
+public class LiveBtn extends JButton implements IEditModeObserver {
 	private static final long	serialVersionUID	= -7859117948085381042L;
 	
 	
@@ -30,9 +32,9 @@ public class RewindBtn extends JButton {
 	 * Live Button Constructor with icon.
 	 * @author andres
 	 */
-	public RewindBtn() {
-		super("<<");
-		URL iconUrlLive = getClass().getResource("/res/icons/rewind.png");
+	public LiveBtn() {
+		super("L");
+		URL iconUrlLive = getClass().getResource("/res/icons/record.png");
 		if (iconUrlLive != null) {
 			ImageIcon icon = new ImageIcon(iconUrlLive);
 			Image img = icon.getImage();
@@ -42,5 +44,17 @@ public class RewindBtn extends JButton {
 			this.setText("");
 			this.setBorderPainted(false);
 		}
+	}
+	
+	
+	@Override
+	public void enterEditMode() {
+		this.setEnabled(false);
+	}
+	
+	
+	@Override
+	public void exitEditMode() {
+		this.setEnabled(true);
 	}
 }

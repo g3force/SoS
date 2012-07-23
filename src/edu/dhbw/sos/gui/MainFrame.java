@@ -29,7 +29,7 @@ import edu.dhbw.sos.course.CourseController;
 import edu.dhbw.sos.course.Courses;
 import edu.dhbw.sos.course.suggestions.SuggestionManager;
 import edu.dhbw.sos.gui.course.CoursePanel;
-import edu.dhbw.sos.gui.plan.PlanPanel;
+import edu.dhbw.sos.gui.plan.buttons.PlanPanel;
 import edu.dhbw.sos.gui.right.RightPanel;
 import edu.dhbw.sos.gui.status.StatusBar;
 import edu.dhbw.sos.gui.student.StudentPanel;

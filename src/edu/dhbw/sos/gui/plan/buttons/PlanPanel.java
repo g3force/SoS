@@ -7,7 +7,7 @@
  * 
  * *********************************************************
  */
-package edu.dhbw.sos.gui.plan;
+package edu.dhbw.sos.gui.plan.buttons;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -40,6 +40,8 @@ import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.Courses;
+import edu.dhbw.sos.gui.plan.ForwardBtn;
+import edu.dhbw.sos.gui.plan.PPaintArea;
 import edu.dhbw.sos.helper.Messages;
 import edu.dhbw.sos.observers.ICurrentCourseObserver;
 import edu.dhbw.sos.observers.ISpeedObserver;
@@ -62,7 +64,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	private static final Logger	logger				= Logger.getLogger(PlanPanel.class);
 	private static final long		serialVersionUID	= -1665784555881941508L;
 	// paintArea is the part of the Panel, where some drawings have to be done
-	private PPaintAreaV2				paintArea;
+	private PPaintArea				paintArea;
 	// label where speed of playback is shown
 	private JLabel						lblSpeed;
 	// reference to the timeblocks to display
@@ -305,12 +307,13 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 			Observers.unsubscribeStatistics(paintArea);
 			Observers.unsubscribeSimUntil(paintArea);
 		}
-		paintArea = new PPaintAreaV2(course);
+		paintArea = new PPaintArea(course);
 		this.add(paintArea, BorderLayout.CENTER);
 		Observers.subscribeStatistics(paintArea);
 		Observers.subscribeSimUntil(paintArea);
 
 		paintArea.repaint();
+		this.validate();
 	}
 	
 	
