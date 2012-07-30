@@ -20,8 +20,8 @@ public class TimeBlock {
 	// private static final Logger logger = Logger.getLogger(TimeBlock.class);
 	private int					len;
 	private BlockType			type;
-	public static final int	MIN_LEN	= 10;
-	public static final int	STEP		= 5;
+	public static final int	MIN_LEN	= 5;
+	public static final int	STEP		= 5;	// should be >= MIN_LEN
 	
 	
 	/**
