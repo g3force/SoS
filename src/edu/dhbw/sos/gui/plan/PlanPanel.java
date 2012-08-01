@@ -7,7 +7,7 @@
  * 
  * *********************************************************
  */
-package edu.dhbw.sos.gui.plan.buttons;
+package edu.dhbw.sos.gui.plan;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -27,6 +27,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.InputVerifier;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
@@ -40,8 +41,10 @@ import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.Courses;
-import edu.dhbw.sos.gui.plan.ForwardBtn;
-import edu.dhbw.sos.gui.plan.PPaintArea;
+import edu.dhbw.sos.gui.plan.buttons.ForwardBtn;
+import edu.dhbw.sos.gui.plan.buttons.LiveBtn;
+import edu.dhbw.sos.gui.plan.buttons.PlayBtn;
+import edu.dhbw.sos.gui.plan.buttons.RewindBtn;
 import edu.dhbw.sos.helper.Messages;
 import edu.dhbw.sos.observers.ICurrentCourseObserver;
 import edu.dhbw.sos.observers.ISpeedObserver;
@@ -97,26 +100,30 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		// create Labels for pPaintArea
 		JPanel lPanel = new JPanel();
 		lPanel.setLayout(new BoxLayout(lPanel, BoxLayout.Y_AXIS));
-		JLabel lBreak = new JLabel(Messages.getString("BlockType.BREAK"));
-		JLabel lExercise = new JLabel(Messages.getString("BlockType.EXERCISE"));
-		JLabel lGroup = new JLabel(Messages.getString("BlockType.GROUP"));
-		JLabel lTheroy = new JLabel(Messages.getString("BlockType.THEORY"));
+		JButton lBreak = new JButton(Messages.getString("BlockType.BREAK"));
+		JButton lExercise = new JButton(Messages.getString("BlockType.EXERCISE"));
+		JButton lGroup = new JButton(Messages.getString("BlockType.GROUP"));
+		JButton lTheory = new JButton(Messages.getString("BlockType.THEORY"));
 		// lPanel.setSize(40, 10);
 		lBreak.setPreferredSize(new Dimension(80, 40));
 		lBreak.setVerticalTextPosition(JLabel.BOTTOM);
+		lBreak.addActionListener(paintArea);
 		lExercise.setPreferredSize(new Dimension(80, 40));
 		lExercise.setVerticalTextPosition(JLabel.BOTTOM);
+		lExercise.addActionListener(paintArea);
 		lGroup.setPreferredSize(new Dimension(80, 40));
 		lGroup.setVerticalTextPosition(JLabel.BOTTOM);
-		lTheroy.setPreferredSize(new Dimension(80, 60));
-		lTheroy.setVerticalTextPosition(JLabel.BOTTOM);
+		lGroup.addActionListener(paintArea);
+		lTheory.setPreferredSize(new Dimension(80, 60));
+		lTheory.setVerticalTextPosition(JLabel.BOTTOM);
+		lTheory.addActionListener(paintArea);
 		
 		lPanel.add(Box.createVerticalGlue());
 		
 		lPanel.add(lBreak);
 		lPanel.add(lExercise);
 		lPanel.add(lGroup);
-		lPanel.add(lTheroy);
+		lPanel.add(lTheory);
 		lPanel.setPreferredSize(new Dimension(60, 120));
 		this.add(lPanel, BorderLayout.WEST);
 		

@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.suggestions.SuggestionManager;
-import edu.dhbw.sos.gui.plan.ForwardBtn;
+import edu.dhbw.sos.gui.plan.buttons.ForwardBtn;
 import edu.dhbw.sos.gui.plan.buttons.LiveBtn;
 import edu.dhbw.sos.gui.plan.buttons.PlayBtn;
 import edu.dhbw.sos.gui.plan.buttons.RewindBtn;

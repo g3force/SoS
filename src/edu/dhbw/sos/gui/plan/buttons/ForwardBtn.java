@@ -7,7 +7,7 @@
  * 
  * *********************************************************
  */
-package edu.dhbw.sos.gui.plan;
+package edu.dhbw.sos.gui.plan.buttons;
 
 import java.awt.Image;
 import java.net.URL;

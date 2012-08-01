@@ -154,6 +154,13 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 		assert (false);
 		return null;
 	}
+	
+	
+	public void addNewTimeBlock(BlockType bt) {
+		System.out.println("blubb");
+		timeBlocks.add(new TimeBlock(30, bt));
+		this.repaint();
+	}
 
 
 	@Override
