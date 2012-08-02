@@ -17,6 +17,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,7 +29,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.InputVerifier;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
@@ -41,10 +42,12 @@ import org.apache.log4j.Logger;
 
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.Courses;
+import edu.dhbw.sos.course.lecture.BlockType;
 import edu.dhbw.sos.gui.plan.buttons.ForwardBtn;
 import edu.dhbw.sos.gui.plan.buttons.LiveBtn;
 import edu.dhbw.sos.gui.plan.buttons.PlayBtn;
 import edu.dhbw.sos.gui.plan.buttons.RewindBtn;
+import edu.dhbw.sos.gui.plan.data.MovableTimeBlocks;
 import edu.dhbw.sos.helper.Messages;
 import edu.dhbw.sos.observers.ICurrentCourseObserver;
 import edu.dhbw.sos.observers.ISpeedObserver;
@@ -66,6 +69,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		ITimeBlocksLengthObserver {
 	private static final Logger	logger				= Logger.getLogger(PlanPanel.class);
 	private static final long		serialVersionUID	= -1665784555881941508L;
+	private static final int		LABEL_WIDTH			= 60;
 	// paintArea is the part of the Panel, where some drawings have to be done
 	private PPaintArea				paintArea;
 	// label where speed of playback is shown
@@ -97,34 +101,76 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		this.setLayout(new BorderLayout());
 		this.addComponentListener(this);
 		
-		// create Labels for pPaintArea
+		MouseListener ml = new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+			
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (e.getSource() instanceof JLabel) {
+					JLabel label = (JLabel) e.getSource();
+					if (label.getText().equals(" " + Messages.getString("BlockType.BREAK"))) {
+						paintArea.addNewTimeBlock(BlockType.pause);
+					} else if (label.getText().equals(" " + Messages.getString("BlockType.EXERCISE"))) {
+						paintArea.addNewTimeBlock(BlockType.exercise);
+					} else if (label.getText().equals(" " + Messages.getString("BlockType.GROUP"))) {
+						paintArea.addNewTimeBlock(BlockType.group);
+					} else if (label.getText().equals(" " + Messages.getString("BlockType.THEORY"))) {
+						paintArea.addNewTimeBlock(BlockType.theory);
+					} else {
+						assert false : "Label has another text then expected.";
+					}
+				}
+			}
+			
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}
+			
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			}
+			
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+		};
+
+		// create panel
 		JPanel lPanel = new JPanel();
 		lPanel.setLayout(new BoxLayout(lPanel, BoxLayout.Y_AXIS));
-		JButton lBreak = new JButton(Messages.getString("BlockType.BREAK"));
-		JButton lExercise = new JButton(Messages.getString("BlockType.EXERCISE"));
-		JButton lGroup = new JButton(Messages.getString("BlockType.GROUP"));
-		JButton lTheory = new JButton(Messages.getString("BlockType.THEORY"));
-		// lPanel.setSize(40, 10);
-		lBreak.setPreferredSize(new Dimension(80, 40));
+		
+		// create labels
+		JLabel lBreak = new JLabel(" " + Messages.getString("BlockType.BREAK"));
+		JLabel lExercise = new JLabel(" " + Messages.getString("BlockType.EXERCISE"));
+		JLabel lGroup = new JLabel(" " + Messages.getString("BlockType.GROUP"));
+		JLabel lTheory = new JLabel(" " + Messages.getString("BlockType.THEORY"));
+		
+		lBreak.setPreferredSize(new Dimension(LABEL_WIDTH, MovableTimeBlocks.BLOCK_HEIGHT));
 		lBreak.setVerticalTextPosition(JLabel.BOTTOM);
-		lBreak.addActionListener(paintArea);
-		lExercise.setPreferredSize(new Dimension(80, 40));
+		lBreak.addMouseListener(ml);
+		lExercise.setPreferredSize(new Dimension(LABEL_WIDTH, MovableTimeBlocks.BLOCK_HEIGHT));
 		lExercise.setVerticalTextPosition(JLabel.BOTTOM);
-		lExercise.addActionListener(paintArea);
-		lGroup.setPreferredSize(new Dimension(80, 40));
+		lExercise.addMouseListener(ml);
+		lGroup.setPreferredSize(new Dimension(LABEL_WIDTH, MovableTimeBlocks.BLOCK_HEIGHT));
 		lGroup.setVerticalTextPosition(JLabel.BOTTOM);
-		lGroup.addActionListener(paintArea);
-		lTheory.setPreferredSize(new Dimension(80, 60));
+		lGroup.addMouseListener(ml);
+		lTheory.setPreferredSize(new Dimension(LABEL_WIDTH, MovableTimeBlocks.BLOCK_HEIGHT));
 		lTheory.setVerticalTextPosition(JLabel.BOTTOM);
-		lTheory.addActionListener(paintArea);
+		lTheory.addMouseListener(ml);
 		
-		lPanel.add(Box.createVerticalGlue());
-		
-		lPanel.add(lBreak);
-		lPanel.add(lExercise);
-		lPanel.add(lGroup);
+		lPanel.add(Box.createVerticalStrut(5));
 		lPanel.add(lTheory);
-		lPanel.setPreferredSize(new Dimension(60, 120));
+		lPanel.add(lGroup);
+		lPanel.add(lExercise);
+		lPanel.add(lBreak);
+		lPanel.add(Box.createVerticalGlue());
 		this.add(lPanel, BorderLayout.WEST);
 		
 		// create sidePanel

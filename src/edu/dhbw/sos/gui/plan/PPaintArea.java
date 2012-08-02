@@ -16,8 +16,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.net.URL;
@@ -48,8 +46,7 @@ import edu.dhbw.sos.observers.Observers;
  * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
-public class PPaintArea extends JPanel implements IStatisticsObserver, ISimUntilObserver, ITimeBlocksLengthObserver,
-		ActionListener {
+public class PPaintArea extends JPanel implements IStatisticsObserver, ISimUntilObserver, ITimeBlocksLengthObserver {
 	private static final long	serialVersionUID	= -3407230660397557204L;
 	
 	private static final int	TMB_START			= 0;
@@ -97,6 +94,11 @@ public class PPaintArea extends JPanel implements IStatisticsObserver, ISimUntil
 		Observers.subscribeTimeBlocksLength(this);
 	}
 	
+	
+	public void addNewTimeBlock(BlockType blocktype) {
+		movableTimeBlocks.addNewTimeBlock(blocktype);
+	}
+
 	
 	/**
 	 * Will be called by JPanel.
@@ -229,12 +231,5 @@ public class PPaintArea extends JPanel implements IStatisticsObserver, ISimUntil
 	@Override
 	public void lengthChanged() {
 		myRepaint();
-	}
-
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		System.out.println("abc");
-		movableTimeBlocks.addNewTimeBlock(BlockType.exercise);
 	}
 }

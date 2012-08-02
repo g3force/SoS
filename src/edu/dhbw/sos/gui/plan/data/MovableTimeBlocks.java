@@ -34,7 +34,7 @@ import edu.dhbw.sos.observers.Observers;
  */
 public class MovableTimeBlocks extends Component implements MouseMotionListener, MouseListener {
 	private static final long	serialVersionUID	= -2721121301356409440L;
-	private static final int	BLOCK_HEIGHT		= 30;
+	public static final int		BLOCK_HEIGHT		= 30;
 	// private final MovableBlock movableBlock;
 	private final TimeBlocks	timeBlocks;
 	
@@ -120,7 +120,7 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 	
 	/**
 	 * The scaleRatio is a conversion ratio between timeBlock length and GUI width
-	 * Example:
+	 * Example:<br/>
 	 * realwidth = len * getScaleRatio() <br/>
 	 * len = realwidth / getScaleRatio()
 	 * 
@@ -208,7 +208,6 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 		TimeBlock rightTimeBlock = timeBlocks.get(timeBlocks.indexOf(timeBlock) + 1);
 		TimeBlock leftTimeBlock = timeBlocks.get(timeBlocks.indexOf(timeBlock) - 1);
 		
-		
 		if (timeBlock != grabbedBlock.timeBlock) {
 			return;
 		}
@@ -218,6 +217,7 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 		// process vertical movement
 		if (e.getY() >= 0 && e.getY() < this.getHeight()) {
 			timeBlock.setType(BlockType.getInstance((int) ((e.getY() * BlockType.SIZE) / (this.getHeight()))));
+			this.repaint();
 		}
 		
 
@@ -242,16 +242,12 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 			return;
 		}
 		if (leftTimeBlock == TimeBlocks.NULL_TIMEBLOCK) {
-			// special case: left Block is null and moving left
+			// special case: left Block is null
 			// Instead of resizing the most left block, do nothing.
 			// this is safer...
-			// grabbedBlock = new GrabbedBlock(e.getX(), grabbedBlock.lenRightBlock, grabbedBlock.lenLeftBlock,
-			// grabbedBlock.lenTimeBlock, timeBlock);
-			
-			// quit the movement to be very safe
-			swapBuffer.r = 0;
-			swapBuffer.l = 0;
-			grabbedBlock = null;
+			if (e.getX() > grabbedBlock.timeBlock.getLen() * getScaleRatio() + grabbedBlock.xOffset) {
+				timeBlocks.moveTimeBlock(timeBlock, rightTimeBlock);
+			}
 			return;
 		}
 		if (rightTimeBlock != TimeBlocks.NULL_TIMEBLOCK) {
