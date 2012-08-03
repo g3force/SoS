@@ -160,13 +160,12 @@ public class Student implements IPlace, Cloneable {
 		
 		if (y == 1 && x == 1)
 			changeVector.printCalcVector("Sim(1,1): Change vector");
-		addVector.multiply(this.getChangeVector());
-		if (y == 1 && x == 1)
-			addVector.printCalcVector("Sim(1,1): student influenced");
-		
-		// time depending
-		// TODO dirk bring all values to an average value by time
-		// addVector.multiply(0.1);
+		for (int i = 0; i < addVector.size(); i++)
+			if (addVector.getValueAt(i) > 0) {
+				addVector.setValueAt(i, addVector.getValueAt(i) * this.getChangeVector().getValueAt(i));
+			} else {
+				addVector.setValueAt(i, addVector.getValueAt(i) * (2 - this.getChangeVector().getValueAt(i)));
+			}
 		this.addToStateVector(addVector, x, y);
 	}
 	
@@ -215,6 +214,7 @@ public class Student implements IPlace, Cloneable {
 	 * @author dirk
 	 */
 	public void addToChangeVector(int index, float value) {
+		float old = changeVector.getValueAt(index);
 		changeVector.setValueAt(index, changeVector.getValueAt(index) + value / 100);
 		// changeVector.addCalcVector(addVector);
 		for (int i = 0; i < changeVector.size(); i++) {
@@ -223,6 +223,7 @@ public class Student implements IPlace, Cloneable {
 			if (changeVector.getValueAt(i) > 1.5)
 				changeVector.setValueAt(i, (float) 1.5);
 		}
+		logger.warn("change vector changed(" + index + "): " + old + " -> " + changeVector.getValueAt(index));
 	}
 	
 	
