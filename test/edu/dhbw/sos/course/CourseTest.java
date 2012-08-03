@@ -127,14 +127,18 @@ public class CourseTest {
 	
 	/**
 	 * Test method for {@link edu.dhbw.sos.course.Course#setTime(int, int)}.
-	 * Process:
-	 * 1. simulate 1 step (time = 0)
-	 * 2. set time to 5
-	 * 3. simulate 1 step (time = 5)
-	 * 4. check (2 history states, both not null and not the same for each student)
-	 * 5. set time to 4
-	 * 6. check (1 history state, time of only state is 0 and same as vector as before, actual state is a copy of history
-	 * state (time = 0))
+	 * Process:<br>
+	 * simuliere 1 Schritt (time = 0) <br>
+	 * speichere den Schritt zwischen<br>
+	 * setze die Zeit auf 5<br>
+	 * die fehlenden Schritte zwischen 0 und 5 werden automatisch simuliert (Anzahl der gespeicherten Zustände werden
+	 * überprüft)<br>
+	 * simuliere 1 Schritt (time = 6)<br>
+	 * Überprüfe: 6 gespeicherte Zustände<br>
+	 * Setze die Zeit auf 4<br>
+	 * Überprüfe: 4 gespeicherte Zustände<br>
+	 * Setze die Zeit auf 0<br>
+	 * Überprüfe: 1 gespeicherter Zustand und dieser ist identisch mit dem ersten
 	 */
 	@Test
 	public void testSetTime() {

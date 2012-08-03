@@ -234,6 +234,9 @@ public class Course {
 		simulating = true;
 		students[0][0].printAcutalState();
 		
+		// calculate state statistics for whole course
+		calcStatistics(currentTime);
+
 		// -------------------------------------------------
 		// -------------- pre conditions -------------------
 		// -------------------------------------------------
@@ -259,7 +262,8 @@ public class Course {
 		
 		BlockType bt = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType();
 		preChangeVector.addCalcVector(influence.getEnvironmentVector(bt.getEInfluenceType(), timeBlockInf));
-		
+		TimeBlock actual = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000);
+		logger.warn("currentTime: " + currentTime + " Block: " + actual.getType().toString() + " len: " + actual.getLen());
 		preChangeVector.printCalcVector("Sim: after timeblock (" + bt.toString() + ")");
 		
 		// timeDending ( inf(Time) * currentTime/1000 * timeInf )
@@ -426,6 +430,8 @@ public class Course {
 		}
 		Observers.notifyStudents();
 		Observers.notifySimUntil(false);
+		Observers.notifyStatistics();
+		logger.warn("historyStates: " + students[0][0].getHistoryStates().size());
 	}
 	
 	
@@ -445,6 +451,7 @@ public class Course {
 					if (historyState != null) {
 						student.setActualState(historyState.getValue().clone());
 						student.deleteHistoryStateFrom(time);
+						deleteHistoryStatStateFrom(time);
 					}
 				}
 			}

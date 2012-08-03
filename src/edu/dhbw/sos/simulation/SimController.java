@@ -169,8 +169,6 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		logger.debug("Simulation Step at " + currentTime);
 		course.simulationStep(currentTime);
 		
-		// calculate state statistics for whole course
-		course.calcStatistics(currentTime);
 		// update suggestions using statistics of whole course
 		suggestionMgr.updateSuggestions(course.getStatAvgStudentState());
 		
@@ -189,12 +187,6 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		}
 	}
 	
-	
-	// FIXME Dirk not used
-	public void jumpTo(int time) {
-		currentTime = time;
-		// fetch start state from history
-	}
 	
 	
 	// --- GETTERS and SETTERS ---
