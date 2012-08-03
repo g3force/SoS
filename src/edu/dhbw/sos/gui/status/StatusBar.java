@@ -23,8 +23,7 @@ import edu.dhbw.sos.helper.Messages;
 
 
 /**
- * The StatusBar should show some helpful information like tool tips
- * TODO ToolTips not implemented yet
+ * The StatusBar can show some helpful information like tool tips, if applicable
  * 
  * @author NicolaiO
  * 
@@ -46,7 +45,7 @@ public class StatusBar extends JPanel {
 		lblStatusText.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.add(lblStatusText, BorderLayout.CENTER);
 		
-		JLabel lblcopyright = new JLabel("Â© SimSoft");
+		JLabel lblcopyright = new JLabel(" © SimSoft ");
 		lblcopyright.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.add(lblcopyright, BorderLayout.EAST);
 		lblcopyright.setToolTipText(Messages.getString("AboutDlg.TITLE"));

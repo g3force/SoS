@@ -258,10 +258,10 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	/**
 	 * Get the current System Time in milisec. This method will convert the absolute day specific time in a value that
 	 * only contains the time infomration.
-	 * @return System time in respect to this Lecture
+	 * @return System time [ms] in respect to this Lecture
 	 * @author andres
 	 */
-	// FIXME current time is int and not long ??
+	// FIXME andres current time is int and not long ??
 	private long getCurrentSystemTime() {
 		// Get real System time
 		long hoursInMiliSec = Calendar.HOUR_OF_DAY * 60 * 60 * 1000;

@@ -25,9 +25,9 @@ import edu.dhbw.sos.observers.Observers;
 
 
 /**
- * TODO Nicolai Ommer <nicolai.ommer@gmail.com>, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
+ * This Class represents a swing Component, that contains the timeblocks for the PlanPanel.
+ * It also handles the movement of those blocks.
+ * It does NOT include any labels, diagrams and markers.
  * 
  * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
@@ -156,9 +156,15 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 	}
 	
 	
-	public void addNewTimeBlock(BlockType bt) {
-		System.out.println("blubb");
-		timeBlocks.add(new TimeBlock(30, bt));
+	/**
+	 * Create a new default timeblock from given type and
+	 * add it.
+	 * 
+	 * @param blocktype
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 */
+	public void addNewTimeBlock(BlockType blocktype) {
+		timeBlocks.add(new TimeBlock(30, blocktype));
 		this.repaint();
 	}
 
@@ -245,6 +251,7 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 			// special case: left Block is null
 			// Instead of resizing the most left block, do nothing.
 			// this is safer...
+			// FIXME Nicolai consider doing something thats enables moving most left block back.
 			if (e.getX() > grabbedBlock.timeBlock.getLen() * getScaleRatio() + grabbedBlock.xOffset) {
 				timeBlocks.moveTimeBlock(timeBlock, rightTimeBlock);
 			}

@@ -33,13 +33,26 @@ public enum BlockType {
 	private Color	color;
 	
 	
-	BlockType(int simFormulaFactors, Color c) {
+	/**
+	 * 
+	 * @param simFormulaFactors sim factor for simulation calculations
+	 * @param color Color of the block
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 */
+	BlockType(int simFormulaFactors, Color color) {
 		this.setSimFormulaFactors(simFormulaFactors);
-		this.setColor(c);
+		this.setColor(color);
 		
 	}
 
 
+	/**
+	 * Get type of block by number
+	 * 
+	 * @param number number between 0 and 3
+	 * @return BlockType
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 */
 	public static BlockType getInstance(int number) {
 		switch (number) {
 			case 0:
@@ -57,6 +70,13 @@ public enum BlockType {
 	}
 
 	
+	/**
+	 * Get the y location depending on the the blocktype, offset, size and maxHeight
+	 * 
+	 * @param maxHeight Maximal available size for all blocks
+	 * @return Y location
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 */
 	public int getYLocation(int maxHeight) {
 		return ((maxHeight - 2 * OFFSET) / SIZE * this.ordinal()) + OFFSET;
 	}
@@ -121,7 +141,7 @@ public enum BlockType {
 	 *         bei Beschwerden bitte an mich wenden ;)
 	 * @author dirk
 	 */
-	public EInfluenceType getEinfluenceType() {
+	public EInfluenceType getEInfluenceType() {
 		switch (this) {
 			case exercise:
 				return EInfluenceType.EXERCISE_REACTION;

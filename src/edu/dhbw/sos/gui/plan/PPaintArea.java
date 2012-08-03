@@ -39,9 +39,7 @@ import edu.dhbw.sos.observers.Observers;
 
 
 /**
- * TODO Nicolai Ommer <nicolai.ommer@gmail.com>, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
+ * The PaintArea of the PlanPanel draws the timeblocks, timemarker and diagram.
  * 
  * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
@@ -49,31 +47,23 @@ import edu.dhbw.sos.observers.Observers;
 public class PPaintArea extends JPanel implements IStatisticsObserver, ISimUntilObserver, ITimeBlocksLengthObserver {
 	private static final long	serialVersionUID	= -3407230660397557204L;
 	
-	private static final int	TMB_START			= 0;
-
-	// list of all movable blocks
-	// private MovableBlocks movableBlocks;
+	// time marker
 	private TimeMarkerBlock		timeMarkerBlock;
-	// private Course course;
+	// time diagram within planPanel
 	private Diagram				timeDiagram;
-	
+	// flag for reacting occordingly, when simulating
 	private boolean				simulateUntil		= false;
-	
+	// reference to current course
 	private Course					course;
-	
+	// swing component of timeblock area
 	private MovableTimeBlocks	movableTimeBlocks;
 	
 
 	public PPaintArea(Course course) {
-		// this.setBorder(BorderFactory.createLineBorder(Color.green));
 		this.setLayout(new BorderLayout());
-		// this.addComponentListener(this);
 		this.course = course;
-		// this.addMouseListener(this);
-		// this.addMouseMotionListener(this);
 		timeMarkerBlock = new TimeMarkerBlock();
 		Observers.subscribeTime(timeMarkerBlock);
-		// this.course = course;
 		movableTimeBlocks = new MovableTimeBlocks(course.getLecture().getTimeBlocks());
 
 		TimeMarkerBlockPanel timeMarkerBlockPanel = new TimeMarkerBlockPanel();
@@ -95,6 +85,12 @@ public class PPaintArea extends JPanel implements IStatisticsObserver, ISimUntil
 	}
 	
 	
+	/**
+	 * Add a new timeblock to timeblock area
+	 * 
+	 * @param blocktype
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 */
 	public void addNewTimeBlock(BlockType blocktype) {
 		movableTimeBlocks.addNewTimeBlock(blocktype);
 	}
@@ -110,7 +106,6 @@ public class PPaintArea extends JPanel implements IStatisticsObserver, ISimUntil
 		super.paint(g);
 		// initialize
 		Graphics2D ga = (Graphics2D) g;
-		// ga.clearRect(0, 0, this.getWidth(), this.getHeight());
 		
 		if (simulateUntil) {
 			URL iconUrl = getClass().getResource("/res/icons/sos_logo.png");
@@ -122,7 +117,7 @@ public class PPaintArea extends JPanel implements IStatisticsObserver, ISimUntil
 		
 		// draw Timeline
 		ga.setPaint(Color.blue);
-		ga.drawLine(TMB_START, 140, this.getWidth() - TMB_START, 140);
+		ga.drawLine(0, 140, this.getWidth() - 0, 140);
 		
 		// Timemarkers
 		int mi = 60;
@@ -140,12 +135,11 @@ public class PPaintArea extends JPanel implements IStatisticsObserver, ISimUntil
 			mi = 240;
 		
 		double timemarkers = movableTimeBlocks.getScaleRatio() * mi;
-		// logger.debug(timemarkers + "");
 		if (timemarkers > 0.0) {
 			SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 			Calendar timeCal = Calendar.getInstance();
 			timeCal.setTime(course.getLecture().getStart());
-			for (int i = TMB_START; i < this.getWidth(); i += (int) timemarkers) {
+			for (int i = 0; i < this.getWidth(); i += (int) timemarkers) {
 				String time = timeFormat.format(timeCal.getTime());
 				ga.drawLine(i, 135, i, 145);
 				ga.drawString(time, i + 2, 139);
@@ -157,7 +151,6 @@ public class PPaintArea extends JPanel implements IStatisticsObserver, ISimUntil
 		timeMarkerBlock.draw(ga, movableTimeBlocks.getScaleRatio());
 		
 		// draw diagram
-		// updateDiagram();
 		ga.setColor(Color.black);
 		timeDiagram.draw(ga);
 	}
@@ -185,36 +178,38 @@ public class PPaintArea extends JPanel implements IStatisticsObserver, ISimUntil
 	}
 	
 	
+	/**
+	 * Helper function for calling repaint from within a subclass
+	 * 
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 */
 	protected void myRepaint() {
 		this.repaint();
 	}
 
+	
+	/**
+	 * This class represents the area below the blocks,
+	 * where the block of the timemarker and the time axis
+	 * is located.
+	 * It is used to provide a area, to drag and move the timeMarker
+	 * 
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 * 
+	 */
 	private class TimeMarkerBlockPanel extends JPanel implements MouseMotionListener {
-		/**  */
 		private static final long	serialVersionUID	= -6662154284384951511L;
 
 
-		/**
-		 * TODO Nicolai Ommer <nicolai.ommer@gmail.com>, add comment!
-		 * 
-		 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
-		 */
 		public TimeMarkerBlockPanel() {
 			this.setPreferredSize(new Dimension(this.getWidth(), 15));
-			// setBackground(Color.red);
 		}
 		
 		
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			// int time = (int) ((float) e.getX() / (float) this.getWidth())
-			// * course.getLecture().getTimeBlocks().getTotalLength();
-			// System.out.println(time);
-			// System.out.println(course.getLecture().getTimeBlocks().getTotalLength());
-			// System.out.println(this.getWidth());
 			if (e.getX() >= 0 || e.getX() < this.getWidth()) {
 				int time = (int) (e.getX() / movableTimeBlocks.getScaleRatio());
-				// System.out.println(time);
 				Observers.notifyTimeGUI(time * 60000); // Call the SimController to set the new time.
 				myRepaint();
 			}
