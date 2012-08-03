@@ -122,7 +122,9 @@ public class CPaintArea extends JPanel implements MouseMotionListener, MouseList
 		ga.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		
 		// Initialize
+		ga.setColor(getBackground());
 		ga.clearRect(0, 0, this.getWidth(), this.getHeight());
+		ga.fillRect(0, 0, this.getWidth(), this.getHeight());
 		
 		// draw all students
 		synchronized (studentCircles) {

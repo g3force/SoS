@@ -60,7 +60,9 @@ public class SPaintArea extends JPanel {
 	public void paint(Graphics g) {
 		// initialize
 		Graphics2D ga = (Graphics2D) g;
+		ga.setColor(getBackground());
 		ga.clearRect(0, 0, this.getWidth(), this.getHeight());
+		ga.fillRect(0, 0, this.getWidth(), this.getHeight());
 		
 		// draw diagram
 		int i = 0;
