@@ -30,6 +30,7 @@ import edu.dhbw.sos.helper.Messages;
  */
 public class StatusBar extends JPanel {
 	private static final long	serialVersionUID	= -781636966151974445L;
+	public static final String	COPYRIGHT			= "\u00a9";
 	
 	
 	/**
@@ -45,7 +46,7 @@ public class StatusBar extends JPanel {
 		lblStatusText.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.add(lblStatusText, BorderLayout.CENTER);
 		
-		JLabel lblcopyright = new JLabel(" © SimSoft ");
+		JLabel lblcopyright = new JLabel(" " + COPYRIGHT + " SimSoft ");
 		lblcopyright.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.add(lblcopyright, BorderLayout.EAST);
 		lblcopyright.setToolTipText(Messages.getString("AboutDlg.TITLE"));
