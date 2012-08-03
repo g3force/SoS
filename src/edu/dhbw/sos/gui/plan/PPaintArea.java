@@ -14,6 +14,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
@@ -103,22 +104,31 @@ public class PPaintArea extends JPanel implements IStatisticsObserver, ISimUntil
 	 */
 	@Override
 	public void paint(Graphics g) {
-		super.paint(g);
 		// initialize
 		Graphics2D ga = (Graphics2D) g;
-		
+		ga.setColor(getBackground());
+		ga.clearRect(0, 0, this.getWidth(), this.getHeight());
+		ga.fillRect(0, 0, this.getWidth(), this.getHeight());
+
 		if (simulateUntil) {
 			URL iconUrl = getClass().getResource("/res/icons/sos_logo.png");
 			if (iconUrl != null) {
-				ga.drawImage(Toolkit.getDefaultToolkit().getImage(iconUrl), 40, 15, this);
+				Image image = Toolkit.getDefaultToolkit().getImage(iconUrl);
+				ga.drawImage(image, this.getWidth() / 2 - 60, 5, this);
 			}
-			return;
+		} else {
+			// will draw the movableTimeBlocks (because its a swing component and part of this panel)
+			super.paint(g);
+			
+			// draw diagram
+			ga.setColor(Color.black);
+			timeDiagram.draw(ga);
 		}
 		
 		// draw Timeline
 		ga.setPaint(Color.blue);
 		ga.drawLine(0, 140, this.getWidth() - 0, 140);
-		
+
 		// Timemarkers
 		int mi = 60;
 		int totalLength = course.getLecture().getTimeBlocks().getTotalLength();
@@ -149,16 +159,13 @@ public class PPaintArea extends JPanel implements IStatisticsObserver, ISimUntil
 		
 		// TimeMarkerBlock
 		timeMarkerBlock.draw(ga, movableTimeBlocks.getScaleRatio());
-		
-		// draw diagram
-		ga.setColor(Color.black);
-		timeDiagram.draw(ga);
 	}
 
 
 	@Override
 	public void updateSimUntil(boolean state) {
 		simulateUntil = state;
+		this.repaint();
 	}
 
 
