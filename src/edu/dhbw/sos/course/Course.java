@@ -98,6 +98,7 @@ public class Course {
 		tbs.add(new TimeBlock(20, BlockType.theory));
 		lecture = new Lecture(new Date(), tbs);
 		
+		Observers.notifySelectedStudent();
 	}
 	
 	
@@ -110,6 +111,9 @@ public class Course {
 		selectedProperty = 0;
 		simulating = false;
 		donInputQueue = new LinkedList<DonInput>();
+		
+		// calculate state statistics for whole course
+		calcStatistics(0);
 	}
 	
 	
@@ -428,9 +432,12 @@ public class Course {
 			simulationStep(curTime);
 			curTime += SimController.realInterval;
 		}
+		// calculate state statistics for whole course
+		calcStatistics(requiredTime);
 		Observers.notifyStudents();
 		Observers.notifySimUntil(false);
 		Observers.notifyStatistics();
+
 		logger.warn("historyStates: " + students[0][0].getHistoryStates().size());
 	}
 	
@@ -485,7 +492,7 @@ public class Course {
 			// TODO andres save history statistics.
 			synchronized (statistics) {
 				statistics.clear();
-				statistics.put("Last break:", "unkown"); // TODO andres calculate last break
+				statistics.put("Last break:", "" + this.lecture.getTimeBlocks().getLastBreak(time / 1000 / 60));
 				for (int i = 0; i < parameters.size(); i++) {
 					statistics.put(parameters.get(i) + ": ", ((int) statAvgStudentState.getValueAt(i)) + "");
 				}

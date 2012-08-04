@@ -334,6 +334,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		if (run)
 			run();
 		logger.debug(course.getPlace(0, 0).getHistoryStates().size());
+		Observers.notifySelectedStudent();
 	}
 	
 	

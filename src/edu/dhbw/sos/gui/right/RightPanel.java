@@ -21,6 +21,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.CourseController;
@@ -141,8 +142,9 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 		// suggestions
 		suggestionPanel = new JPanel();
 		suggestionPanel.setBorder(MainFrame.COMPOUND_BORDER);
-		suggestionPanel.setLayout(new GridLayout(0, 1, 5, 5));
-		suggestionPanel.setMaximumSize(new Dimension(PREF_SIZE - MARGIN_LR * 2, 100));
+		suggestionPanel.setLayout(new GridLayout(7, 1, 5, 5));
+		suggestionPanel.setMaximumSize(new Dimension(PREF_SIZE - MARGIN_LR * 2, 150));
+		suggestionPanel.setPreferredSize(new Dimension(PREF_SIZE - MARGIN_LR * 2, 150));
 		this.add(Box.createVerticalStrut(10));
 		this.add(suggestionPanel);
 		updateSuggestions();
@@ -177,7 +179,7 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 		// suggestions
 		if (suggestionPanel.getComponentCount() != courses.getCurrentCourse().getStatistics().size() + 1) {
 			suggestionPanel.removeAll();
-			suggestionPanel.add(new JLabel(Messages.getString("suggestions")));
+			suggestionPanel.add(new JLabel(Messages.getString("suggestions"), SwingConstants.CENTER));
 			for (String sugg : this.sugMngr.getSuggestionNames()) {
 				JLabel lblSug = new JLabel(sugg);
 				lblSug.addMouseListener(this.sugMngr);
@@ -193,6 +195,8 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 		if (statsPanel.getComponentCount() == 0
 				|| statsPanel.getComponentCount() == courses.getCurrentCourse().getStatistics().size()) {
 			statsPanel.removeAll();
+			statsPanel.add(new JLabel(Messages.getString("statistics")));
+			statsPanel.add(new JLabel());
 			for (Map.Entry<String, String> entry : courses.getCurrentCourse().getStatistics().entrySet()) {
 				JLabel lblKey = new JLabel(entry.getKey());
 				JLabel lblValue = new JLabel(entry.getValue(), JLabel.CENTER);
@@ -203,13 +207,12 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 			int i = 0;
 			for (Map.Entry<String, String> entry : courses.getCurrentCourse().getStatistics().entrySet()) {
 				synchronized (statsPanel.getTreeLock()) {
-					((JLabel) statsPanel.getComponent(i)).setText(entry.getKey());
-					((JLabel) statsPanel.getComponent(i + 1)).setText(entry.getValue());
+					((JLabel) statsPanel.getComponent(i + 2)).setText(entry.getKey());
+					((JLabel) statsPanel.getComponent(i + 3)).setText(entry.getValue());
 					i += 2;
 				}
 			}
 		}
-		
 		
 		this.validate();
 	}
