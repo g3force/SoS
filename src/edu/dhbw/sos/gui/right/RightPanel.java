@@ -78,11 +78,6 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		this.courses = courses;
 		this.sugMngr = sm;
-		Observers.subscribeCoursesList(this);
-		Observers.subscribeCurrentCourse(this);
-		Observers.subscribeStatistics(this);
-		Observers.subscribeSuggestions(this);
-		Observers.subscribeSimulation(this);
 		
 		// #############################################################################
 		// drop down list
@@ -152,6 +147,13 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 		// #############################################################################
 		// fill the rest of the space
 		this.add(Box.createVerticalGlue());
+		
+		// subscribe to events
+		Observers.subscribeCoursesList(this);
+		Observers.subscribeCurrentCourse(this);
+		Observers.subscribeStatistics(this);
+		Observers.subscribeSuggestions(this);
+		Observers.subscribeSimulation(this);
 	}
 	
 	
@@ -193,7 +195,7 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 	public void updateStatistics() {
 		// statistics
 		if (statsPanel.getComponentCount() == 0
-				|| statsPanel.getComponentCount() == courses.getCurrentCourse().getStatistics().size()) {
+				|| statsPanel.getComponentCount() - 2 != courses.getCurrentCourse().getStatistics().size() * 2) {
 			statsPanel.removeAll();
 			statsPanel.add(new JLabel(Messages.getString("statistics")));
 			statsPanel.add(new JLabel());

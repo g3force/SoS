@@ -64,7 +64,6 @@ public class Course {
 	
 	public Course(String name) {
 		this.name = name;
-		init();
 		
 		students = new IPlace[5][7];
 		parameters = new LinkedList<String>();
@@ -75,7 +74,7 @@ public class Course {
 		for (int y = 0; y < 5; y++) {
 			for (int x = 0; x < 7; x++) {
 				if ((y == 1 && x == 6) || (y == 2 && x == 6) || (y == 2 && x == 5) || (y == 3 && x == 6)
-						|| (y == 4 && x == 6)) {
+						|| (y == 4 && x == 6) || (y == 1 && x == 2) || (y == 4 && x == 0) || (y == 0 && x == 3)) {
 					students[y][x] = new EmptyPlace(parameters.size());
 				} else {
 					Student newStud = new Student(parameters.size());
@@ -97,8 +96,7 @@ public class Course {
 		tbs.add(new TimeBlock(10, BlockType.pause));
 		tbs.add(new TimeBlock(20, BlockType.theory));
 		lecture = new Lecture(new Date(), tbs);
-		
-		Observers.notifySelectedStudent();
+		init();
 	}
 	
 	
@@ -114,6 +112,7 @@ public class Course {
 		
 		// calculate state statistics for whole course
 		calcStatistics(0);
+		Observers.notifyStatistics();
 	}
 	
 	
@@ -476,9 +475,6 @@ public class Course {
 	public void calcStatistics(int time) {
 		statAvgStudentState.multiply(0);
 		int studentNum = 0;
-		// for (IPlace[] studentRow : students) {
-		// for (IPlace student : studentRow) {
-		// if (student instanceof Student) {
 		for (IPlace[] student : students) {
 			for (IPlace iplace : student) {
 				if (iplace instanceof Student) {
@@ -492,9 +488,9 @@ public class Course {
 			// TODO andres save history statistics.
 			synchronized (statistics) {
 				statistics.clear();
-				statistics.put("Last break:", "" + this.lecture.getTimeBlocks().getLastBreak(time / 1000 / 60));
+				statistics.put("Last break:", this.lecture.getTimeBlocks().getLastBreak(time / 1000 / 60) + " min");
 				for (int i = 0; i < parameters.size(); i++) {
-					statistics.put(parameters.get(i) + ": ", ((int) statAvgStudentState.getValueAt(i)) + "");
+					statistics.put(parameters.get(i) + ": ", ((int) statAvgStudentState.getValueAt(i)) + " %");
 				}
 			}
 			histStatAvgStudentStates.put(time, statAvgStudentState.clone());

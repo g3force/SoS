@@ -384,6 +384,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 			startDate = timeFormat.parse(time);
 			String oldDate = timeFormat.format(courses.getCurrentCourse().getLecture().getStart());
 			courses.getCurrentCourse().getLecture().setStart(startDate);
+			paintArea.repaint();
 			logger.debug("Changed Start of Lecture from " + oldDate + " to " + time);
 		} catch (ParseException err) {
 			// Normally this exception shouldn't be thrown, because the input is already verified by the calling method
