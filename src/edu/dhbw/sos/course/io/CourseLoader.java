@@ -18,6 +18,7 @@ import com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverte
 import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 
 import edu.dhbw.sos.course.Course;
+import edu.dhbw.sos.course.Course.ECourseType;
 import edu.dhbw.sos.course.Courses;
 
 
@@ -65,9 +66,15 @@ public class CourseLoader {
 		}
 		if (allCourses.size() == 0) {
 			logger.info("No courses found. Creating dummy course instead.");
-			Course dummy = new Course("Dummy Course");
-			allCourses.add(dummy);
-			allCourses.setCurrentCourse(dummy);
+			Course holiday = new Course("Holiday", ECourseType.HOLIDAY);
+			allCourses.add(holiday);
+			Course group = new Course("Group work", ECourseType.GROUP);
+			allCourses.add(group);
+			Course normal = new Course("Normal lesson", ECourseType.NORMAL);
+			allCourses.add(normal);
+			Course theory = new Course("Theory lesson", ECourseType.THEORY);
+			allCourses.add(theory);
+			allCourses.setCurrentCourse(theory);
 		} else if (allCourses.size() == 1) {
 			allCourses.setCurrentCourse(allCourses.get(0));
 		} else {

@@ -61,27 +61,46 @@ public class Course {
 	private transient boolean										simulating;
 	private transient LinkedList<DonInput>						donInputQueue;
 	
+	public enum ECourseType {
+		THEORY,
+		GROUP,
+		HOLIDAY,
+		NORMAL
+	}
+	
 	
 	public Course(String name) {
+		createDummyCourse(name, ECourseType.NORMAL);
+	}
+	
+
+	public Course(String name, ECourseType type) {
+		createDummyCourse(name, type);
+	}
+	
+	
+	private void createDummyCourse(String name, ECourseType type) {
 		this.name = name;
 		init();
 		
-		students = new IPlace[5][7];
+		int rows = (int) (Math.random() * 5) + 5;
+		int columns = (int) (Math.random() * 5) + 10;
+		students = new IPlace[rows][columns];
 		parameters = new LinkedList<String>();
 		parameters.add("Tireness");
 		parameters.add("Loudness");
 		parameters.add("Attention");
 		parameters.add("Quality");
-		for (int y = 0; y < 5; y++) {
-			for (int x = 0; x < 7; x++) {
-				if ((y == 1 && x == 6) || (y == 2 && x == 6) || (y == 2 && x == 5) || (y == 3 && x == 6)
-						|| (y == 4 && x == 6)) {
+		for (int y = 0; y < rows; y++) {
+			for (int x = 0; x < columns; x++) {
+				double createStudent = Math.random();
+				if (createStudent > 0.8 && (x!=0 || y!=0)) {
 					students[y][x] = new EmptyPlace(parameters.size());
 				} else {
 					Student newStud = new Student(parameters.size());
 					
 					for (int i = 0; i < newStud.getActualState().size(); i++) {
-						newStud.addToChangeVector(i, (float) (((Math.random() * 100) - 50) * 0.1));
+						newStud.addToChangeVector(i, (float) ((Math.random() * 10) - 5));
 						newStud.addValueToStateVector(i, (int) (Math.random() * 10));
 					}
 					students[y][x] = newStud;
@@ -90,14 +109,37 @@ public class Course {
 		}
 		influence = new Influence();
 		TimeBlocks tbs = new TimeBlocks();
-		tbs.add(new TimeBlock(20, BlockType.theory));
-		tbs.add(new TimeBlock(15, BlockType.pause));
-		tbs.add(new TimeBlock(30, BlockType.exercise));
-		tbs.add(new TimeBlock(30, BlockType.group));
-		tbs.add(new TimeBlock(10, BlockType.pause));
-		tbs.add(new TimeBlock(20, BlockType.theory));
+		switch (type) {
+			case HOLIDAY:
+				tbs.add(new TimeBlock(20, BlockType.pause));
+				tbs.add(new TimeBlock(5, BlockType.theory));
+				tbs.add(new TimeBlock(30, BlockType.exercise));
+				tbs.add(new TimeBlock(5, BlockType.theory));
+				tbs.add(new TimeBlock(10, BlockType.pause));
+				tbs.add(new TimeBlock(5, BlockType.theory));
+				break;
+			case GROUP:
+				tbs.add(new TimeBlock(20, BlockType.theory));
+				tbs.add(new TimeBlock(5, BlockType.pause));
+				tbs.add(new TimeBlock(80, BlockType.group));
+				break;
+			case THEORY:
+				tbs.add(new TimeBlock(40, BlockType.theory));
+				tbs.add(new TimeBlock(5, BlockType.pause));
+				tbs.add(new TimeBlock(60, BlockType.theory));
+				tbs.add(new TimeBlock(10, BlockType.pause));
+				tbs.add(new TimeBlock(50, BlockType.theory));
+				break;
+			case NORMAL:
+				tbs.add(new TimeBlock(20, BlockType.theory));
+				tbs.add(new TimeBlock(15, BlockType.pause));
+				tbs.add(new TimeBlock(30, BlockType.exercise));
+				tbs.add(new TimeBlock(30, BlockType.group));
+				tbs.add(new TimeBlock(10, BlockType.pause));
+				tbs.add(new TimeBlock(20, BlockType.theory));
+				break;
+		}
 		lecture = new Lecture(new Date(), tbs);
-		
 	}
 	
 	
@@ -271,6 +313,7 @@ public class Course {
 		double timeTimeInf = timeInf * currentTime / 1000; // in seconds
 		preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.TIME_DEPENDING, timeTimeInf));
 		preChangeVector.printCalcVector("Sim: after time depending");
+
 		// -------------------------------------------------
 		// ---------- iterate over all students ------------
 		// -------------------------------------------------
@@ -278,22 +321,22 @@ public class Course {
 			for (int x = 0; x < students[y].length; x++) {
 				if (students[y][x] instanceof Student) {
 					Student student = (Student) students[y][x];
-					
+
 					// influence of the surrounding students
 					CalcVector neighborInfl = getNeighborsInfluence(student, oldVec, x, y);
 					// output for one student (1,1) -> only for analyzing the simulation behavior
 					if (y == 1 && x == 1)
 						neighborInfl.printCalcVector("Sim(1,1): Neighbor");
-					
+
 					// create a new vector which contains the pre calculates vector and the neighbor vector
-					CalcVector preChangeVectorSpecial = neighborInfl.addCalcVector(preChangeVector).clone()
-							.addCalcVector(neighborInfl);
+					CalcVector preChangeVectorSpecial = neighborInfl.clone().addCalcVector(preChangeVector);
+
 					// output for one student (1,1) -> only for analyzing the simulation behavior
 					if (y == 1 && x == 1)
 						neighborInfl.printCalcVector("Sim(1,1): preChangeVectorSpecial = Neighbor + preChangeVector");
 					
 					// create a new student and let him calculate a new change vector
-					student.calcNextSimulationStep(preChangeVectorSpecial, influence, currentTime, x, y);
+						student.calcNextSimulationStep(preChangeVectorSpecial, influence, currentTime, x, y);
 					if (y == 1 && x == 1)
 						student.getActualState().printCalcVector("Sim(1,1): actualStateEnd");
 				}
@@ -323,24 +366,11 @@ public class Course {
 	 * @author dirk
 	 */
 	private CalcVector getNeighborsInfluence(Student student, CalcVector[][] oldVec, int x, int y) {
-		// neighbor ( inf(Neighbor) * state(studentLeft) * neighbor + inf(Neighbor) * state(studentRight) * ... )
 		
 		// x x x factor for each relative position to the student
 		// x o x
 		// x x x
 		CalcVector changeVector = new CalcVector(student.getActualState().size());
-		// double[][] neighborInf = { { 0.0001, 0.0001, 0.0001 }, { 0.0010, 0.00, 0.0010 }, { 0.000010, 0.000010, 0.000010
-		// } };// new double[3][3];
-		// for (int i = 0; i < 3; i++) {
-		// for (int j = 0; j < 3; j++) {
-		// neighborInf[j][i] = 0.01;
-		// }
-		// }
-		// if(x==0 && y==0)
-		// influence.getEnvironmentVector(EInfluenceType.NEIGHBOR, neighborInf[0][0])
-		// .printCalcVector("Influence neighbor: ");
-		
-		// System.out.println("x: "+x+" / y: "+y);
 		CalcVector surronding = new CalcVector(student.getActualState().size());
 		int neighbourAmount = 0;
 		for (int i = -1; i <= 1; i++) {
@@ -353,13 +383,6 @@ public class Course {
 							surronding = surronding.addCalcVector(oldVec[newy][newx]);
 							neighbourAmount++;
 						}
-						
-						// add small percentage of surrounding students to every student
-						// problem: will increase until infinity
-						// CalcVector studentsState = s.getActualState();
-						// changeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR,
-						// neighborInf[j + 1][i + 1]).multiplyWithVector(studentsState));
-						
 					}
 				}
 			}
@@ -381,6 +404,10 @@ public class Course {
 						* reducer * 0.1f);
 			changeVector.setValueAt(i, (average - student.getActualState().getValueAt(i)) * reducer * 0.001f);
 			// changeVector.multiplyWithVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR,0.01));
+			// in every 3 million cases this calculation result in NaN
+			if (Double.isNaN(changeVector.getValueAt(0)) || Double.isNaN(changeVector.getValueAt(1))
+					|| Double.isNaN(changeVector.getValueAt(2)) || Double.isNaN(changeVector.getValueAt(3)))
+				changeVector = new CalcVector(4);
 		}
 		if (x == 1 && y == 1)
 			changeVector.printCalcVector("Sim(1,1): Change vector (neighbors): ");

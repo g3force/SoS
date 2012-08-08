@@ -10,6 +10,7 @@
 package edu.dhbw.sos.simulation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -43,10 +44,10 @@ public class SimControllerTest {
 		for(int i=0; i<10; i++) { //test for 10 different dummy courses
 			
 			LinkedList<TimeBlock> tblist = new LinkedList<TimeBlock>();
-			tblist.add(new TimeBlock(2000000, BlockType.theory));
-			tblist.add(new TimeBlock(2000000, BlockType.exercise));
-			tblist.add(new TimeBlock(2000000, BlockType.group));
-			tblist.add(new TimeBlock(2000000, BlockType.pause));
+			tblist.add(new TimeBlock(4000000, BlockType.theory));
+			tblist.add(new TimeBlock(4000000, BlockType.exercise));
+			tblist.add(new TimeBlock(4000000, BlockType.group));
+			tblist.add(new TimeBlock(4000000, BlockType.pause));
 			
 			for(int j=0; j<4; j++) {
 				Course course = new Course("test");
@@ -68,9 +69,24 @@ public class SimControllerTest {
 					x = 0;
 					y++;
 				}
+				x = 0;
+				y = 0;
 				assertEquals("Start time is 0", simCon.getCurrentTime(), 0);
-				while (simCon.getCurrentTime() < 1000 * 60 * 30) { // half an hour
+				while (simCon.getCurrentTime() < 1000 * 60 * 60) { // half an hour
 					simCon.simulationStep();
+					for (IPlace[] row : course.getStudents()) {
+						for (IPlace s : row) {
+							if (s instanceof Student) {
+								if (Float.isNaN(s.getActualState().getValueAt(0)))
+									fail(x + " NaN " + y + s.getHistoryStates().size()
+											+ s.getHistoryStates().values().iterator().next().toString()
+											+ ((Student) s).getChangeVector().toString());
+							}
+							x++;
+						}
+						x = 0;
+						y++;
+					}
 				}
 				assertEquals("Time block at the end does not match", course.getLecture().getTimeBlocks()
 						.getTimeBlockAtTime(simCon.getCurrentTime()).getType().toString(), tblist.get(j).getType().toString());
@@ -82,22 +98,22 @@ public class SimControllerTest {
 						if (s instanceof Student) {
 							switch (j) {
 								case 0: // theory
-									double[] exspected = { 45, 15, -30, -30 };
+									double[] exspected = { -45, -15, -30, -30 };
 									double[] delta = { 15, 5, 10, 10 };
 									testAllAttributes("Theory", start[y][x], s.getActualState(), exspected, delta);
 									break;
 								case 1: // exercise
-									double[] exspected2 = { -15, -25, 45, 20 };
+									double[] exspected2 = { 15, -25, 45, 20 };
 									double[] delta2 = { 5, 5, 15, 10 };
 									testAllAttributes("Exercise", start[y][x], s.getActualState(), exspected2, delta2);
 									break;
 								case 2: // group
-									double[] exspected3 = { -40, 15, 35, 37 };
+									double[] exspected3 = { 40, -15, 35, 37 };
 									double[] delta3 = { 10, 5, 15, 13 };
 									testAllAttributes("Group", start[y][x], s.getActualState(), exspected3, delta3);
 									break;
 								case 3: // pause
-									double[] exspected4 = { -62, -20, 45, 40 };
+									double[] exspected4 = { 62, 20, 45, 40 };
 									double[] delta4 = { 13, 10, 15, 10 };
 									testAllAttributes("Pause", start[y][x], s.getActualState(), exspected4, delta4);
 									break;

@@ -72,8 +72,8 @@ public class Influence {
 		parameterInfl = array.clone();
 		
 		LinkedList<String> l = new LinkedList<String>();
-		l.add("Tireness");
-		l.add("Loudness");
+		l.add("Awakeness");
+		l.add("Silence");
 		l.add("Attention");
 		l.add("Quality");
 		environmentalInfl = new HashMap<EInfluenceType, CalcVector>();
@@ -83,19 +83,19 @@ public class Influence {
 		}
 		environmentalInfl.put(EInfluenceType.NEIGHBOR, cv1); // not used atm
 		
-		float[] breakReaction = { -62.0f, -20.0f, 45.0f, 40.0f };
+		float[] breakReaction = { 62.0f, 20.0f, 45.0f, 40.0f };
 		environmentalInfl.put(EInfluenceType.BREAK_REACTION, new CalcVector(breakReaction));
 		
 		float[] timeReaction = { -20.0f, -10.0f, -10.0f, -20.0f };
 		environmentalInfl.put(EInfluenceType.TIME_DEPENDING, new CalcVector(timeReaction));
 		
-		float[] exerciseReaction = { -15.0f, -25.0f, 45.0f, 15.0f };
+		float[] exerciseReaction = { 15.0f, -25.0f, 45.0f, 15.0f };
 		environmentalInfl.put(EInfluenceType.EXERCISE_REACTION, new CalcVector(exerciseReaction));
 		
-		float[] groupReaction = { -40.0f, 15.0f, 35.0f, 37.0f };
+		float[] groupReaction = { 40.0f, -15.0f, 35.0f, 37.0f };
 		environmentalInfl.put(EInfluenceType.GROUP_REACTION, new CalcVector(groupReaction));
 		
-		float[] theoryReaction = { 45.0f, 15.0f, -30.0f, -30.0f };
+		float[] theoryReaction = { -40.0f, -15.0f, -30.0f, -30.0f };
 		environmentalInfl.put(EInfluenceType.THEORY_REACTION, new CalcVector(theoryReaction));
 	}
 	

@@ -85,7 +85,14 @@ public class CourseTest {
 	 */
 	@Test
 	public void testSuggestionInput() {
-		Student s = (Student) course.getPlace(0, 0);
+		Student s = null;
+		for (IPlace[] row : course.getStudents()) {
+			for (IPlace is : row) {
+				if (is instanceof Student) {
+					s = (Student)is;
+				}
+			}
+		}
 		CalcVector as = s.getActualState().clone();
 		CalcVector cv = s.getChangeVector().clone();
 		CalcVector testInput = new CalcVector(as.size());
