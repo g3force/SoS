@@ -81,7 +81,6 @@ public class Course {
 	
 	private void createDummyCourse(String name, ECourseType type) {
 		this.name = name;
-		init();
 		
 		int rows = (int) (Math.random() * 5) + 5;
 		int columns = (int) (Math.random() * 5) + 10;
@@ -140,6 +139,7 @@ public class Course {
 				break;
 		}
 		lecture = new Lecture(new Date(), tbs);
+		init();
 	}
 	
 	
@@ -152,6 +152,10 @@ public class Course {
 		selectedProperty = 0;
 		simulating = false;
 		donInputQueue = new LinkedList<DonInput>();
+		
+		// calculate state statistics for whole course
+		calcStatistics(0);
+		Observers.notifyStatistics();
 	}
 	
 	
@@ -455,9 +459,12 @@ public class Course {
 			simulationStep(curTime);
 			curTime += SimController.realInterval;
 		}
+		// calculate state statistics for whole course
+		calcStatistics(requiredTime);
 		Observers.notifyStudents();
 		Observers.notifySimUntil(false);
 		Observers.notifyStatistics();
+
 		logger.warn("historyStates: " + students[0][0].getHistoryStates().size());
 	}
 	
@@ -496,9 +503,6 @@ public class Course {
 	public void calcStatistics(int time) {
 		statAvgStudentState.multiply(0);
 		int studentNum = 0;
-		// for (IPlace[] studentRow : students) {
-		// for (IPlace student : studentRow) {
-		// if (student instanceof Student) {
 		for (IPlace[] student : students) {
 			for (IPlace iplace : student) {
 				if (iplace instanceof Student) {
@@ -512,9 +516,9 @@ public class Course {
 			// TODO andres save history statistics.
 			synchronized (statistics) {
 				statistics.clear();
-				statistics.put("Last break:", "unkown"); // TODO andres calculate last break
+				statistics.put("Last break:", this.lecture.getTimeBlocks().getLastBreak(time / 1000 / 60) + " min");
 				for (int i = 0; i < parameters.size(); i++) {
-					statistics.put(parameters.get(i) + ": ", ((int) statAvgStudentState.getValueAt(i)) + "");
+					statistics.put(parameters.get(i) + ": ", ((int) statAvgStudentState.getValueAt(i)) + " %");
 				}
 			}
 			histStatAvgStudentStates.put(time, statAvgStudentState.clone());

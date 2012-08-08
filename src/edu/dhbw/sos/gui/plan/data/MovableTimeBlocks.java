@@ -167,6 +167,23 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 		timeBlocks.add(new TimeBlock(30, blocktype));
 		this.repaint();
 	}
+	
+	
+	/**
+	 * Return a step size for increasing and decreasing of blocks
+	 * depending on the block size
+	 * 
+	 * @param blockLen
+	 * @return
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 */
+	private int getLengthChangeStepByBlockLen(int blockLen) {
+		if (blockLen >= 60) {
+			return 15;
+		} else {
+			return 5;
+		}
+	}
 
 
 	@Override
@@ -342,12 +359,12 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 		// Change length of a Block
 		if (e.getButton() == MouseEvent.BUTTON1) { // left click
 			TimeBlock timeBlock = getTimeBlockByMouseLocation(e.getPoint());
-			int newLength = timeBlock.getLen() + TimeBlock.STEP;
+			int newLength = timeBlock.getLen() + getLengthChangeStepByBlockLen(timeBlock.getLen());
 			timeBlock.setLen(newLength);
 			Observers.notifyTimeBlocksLength();
 		} else if (e.getButton() == MouseEvent.BUTTON3) { // right click
 			TimeBlock timeBlock = getTimeBlockByMouseLocation(e.getPoint());
-			int newLength = timeBlock.getLen() - TimeBlock.STEP;
+			int newLength = timeBlock.getLen() - getLengthChangeStepByBlockLen(timeBlock.getLen());
 			if (newLength > TimeBlock.MIN_LEN) {
 				timeBlock.setLen(newLength);
 			} else if (newLength == 0 && timeBlocks.size() > 1) {
@@ -359,7 +376,7 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 		Observers.notifyTimeBlocksLength();
 		this.repaint();
 	}
-	
+
 	
 	@Override
 	public void mousePressed(MouseEvent e) {

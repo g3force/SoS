@@ -57,6 +57,25 @@ public class TimeBlocks implements Iterable<TimeBlock> {
 	}
 	
 	
+	public int getLastBreak(int time) {
+		// get the timeBlock at given time
+		TimeBlock timeBlock = getTimeBlockAtTime(time);
+		int result = time - getAddedLen(timeBlock);
+		
+		int i = timeblocks.lastIndexOf(timeBlock) - 1;
+		while (i >= 0) {
+			TimeBlock tb = timeblocks.get(i);
+			if (tb.getType() == BlockType.pause) {
+				break;
+			}
+			result += tb.getLen();
+			i--;
+		}
+		
+		return result;
+	}
+
+
 	/**
 	 * Return the index of the given timeBlock
 	 * 
@@ -185,8 +204,8 @@ public class TimeBlocks implements Iterable<TimeBlock> {
 		try {
 			result = timeblocks.get(getIndexAtPos(pos));
 		} catch (IndexOutOfBoundsException e) {
-			logger.warn("No TimeBlock. Create Theory Block of length 1");
-			result = new TimeBlock(1, BlockType.theory);
+			logger.warn("No TimeBlock. Create Theory Block of length 10");
+			result = new TimeBlock(10, BlockType.theory);
 		}
 		
 		return result;
@@ -205,6 +224,13 @@ public class TimeBlocks implements Iterable<TimeBlock> {
 	}
 	
 	
+	/**
+	 * Returns the length from first block until start of given block (not including)
+	 * 
+	 * @param timeBlock
+	 * @return
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 */
 	public int getAddedLen(TimeBlock timeBlock) {
 		int sum = 0;
 		for (TimeBlock tb : timeblocks) {

@@ -143,6 +143,8 @@ public class PPaintArea extends JPanel implements IStatisticsObserver, ISimUntil
 			mi = 120;
 		else if (totalLength < 1440)
 			mi = 240;
+		else
+			mi = 360;
 		
 		double timemarkers = movableTimeBlocks.getScaleRatio() * mi;
 		if (timemarkers > 0.0) {
@@ -164,8 +166,10 @@ public class PPaintArea extends JPanel implements IStatisticsObserver, ISimUntil
 
 	@Override
 	public void updateSimUntil(boolean state) {
-		simulateUntil = state;
-		this.repaint();
+		// this can enable a loading image, when simulation tooks too long.
+		// however, this is not really usefull, because 1. simulation usually takes not long
+		// and 2. it does not look better
+		// simulateUntil = state;
 	}
 
 
@@ -215,11 +219,9 @@ public class PPaintArea extends JPanel implements IStatisticsObserver, ISimUntil
 		
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			if (e.getX() >= 0 || e.getX() < this.getWidth()) {
+			if (e.getX() >= 0 && e.getX() < this.getWidth()) {
 				int time = (int) (e.getX() / movableTimeBlocks.getScaleRatio());
 				Observers.notifyTimeGUI(time * 60000); // Call the SimController to set the new time.
-				Observers.notifySelectedStudent();
-				myRepaint();
 			}
 		}
 		

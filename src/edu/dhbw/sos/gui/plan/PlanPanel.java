@@ -69,7 +69,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		ITimeBlocksLengthObserver {
 	private static final Logger	logger				= Logger.getLogger(PlanPanel.class);
 	private static final long		serialVersionUID	= -1665784555881941508L;
-	private static final int		LABEL_WIDTH			= 60;
+	private static final int		LABEL_WIDTH			= 80;
 	// paintArea is the part of the Panel, where some drawings have to be done
 	private PPaintArea				paintArea;
 	// label where speed of playback is shown
@@ -384,6 +384,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 			startDate = timeFormat.parse(time);
 			String oldDate = timeFormat.format(courses.getCurrentCourse().getLecture().getStart());
 			courses.getCurrentCourse().getLecture().setStart(startDate);
+			paintArea.repaint();
 			logger.debug("Changed Start of Lecture from " + oldDate + " to " + time);
 		} catch (ParseException err) {
 			// Normally this exception shouldn't be thrown, because the input is already verified by the calling method

@@ -148,8 +148,24 @@ public class SPaintArea extends JPanel {
 						newData.get(i).add(cv.getValue().getValueAt(i));
 					}
 				}
+				if (newData.get(0).isEmpty()) {
+					newData.get(0).add(0f);
+				}
 			} catch (NoSuchElementException e) {
 				// well, then no diagrams...
+			}
+			if (diagrams.isEmpty()) {
+
+				LinkedList<Float> newData = new LinkedList<Float>();
+				newData.add(0f);
+				Diagram diagram = new Diagram(newData);
+				diagram.setHeight(this.getHeight() - 20);
+				diagram.setWidth(this.getWidth() - 20);
+				diagram.setLocation(new Point(10, 10));
+				diagram.setDrawAxis(true);
+				diagram.setMaxY(100.0f);
+				diagram.setRescaleY(false);
+				diagrams.add(diagram);
 			}
 			repaint();
 		}
