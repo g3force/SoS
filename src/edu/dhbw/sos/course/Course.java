@@ -240,6 +240,13 @@ public class Course {
 	}
 	
 	
+	/**
+	 * is called when the user makes an input, it queues the input first, so it cannot get lost during a simulation step
+	 * 
+	 * @param index which value is changed
+	 * @param value how much
+	 * @author dirk
+	 */
 	public void donInputQueue(int index, float value) {
 		if (simulating) {
 			logger.debug("donInput queued with index " + index + " and value " + value);
@@ -250,17 +257,29 @@ public class Course {
 	}
 	
 	
-	// TODO: dirk, does this work? no queue needed for suggestions?
+	/**
+	 * the input of a suggestion
+	 * 
+	 * @param calcVec
+	 * @author dirk
+	 */
 	public void suggestionInput(CalcVector calcVec) {
 		logger.info("Suggestion performed");
 		for (int y = 0; y < students.length; y++) {
 			for (int x = 0; x < students[y].length; x++) {
-				students[y][x].addToStateVector(calcVec, x, y);
+				students[y][x].addToStateVector(calcVec);
 			}
 		}
 	}
 	
 	
+	/**
+	 * used by the queue to input suggestions to the selected student
+	 * 
+	 * @param index
+	 * @param value
+	 * @author dirk
+	 */
 	public void donInput(int index, float value) {
 		selectedStudent.getActualState().printCalcVector("Don Input: preActualState: ");
 		selectedStudent.donInput(index, value);
@@ -278,7 +297,6 @@ public class Course {
 	 */
 	public void simulationStep(int currentTime) {
 		simulating = true;
-		students[0][0].printAcutalState();
 		
 		// calculate state statistics for whole course
 		calcStatistics(currentTime);
@@ -309,7 +327,7 @@ public class Course {
 		BlockType bt = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType();
 		preChangeVector.addCalcVector(influence.getEnvironmentVector(bt.getEInfluenceType(), timeBlockInf));
 		TimeBlock actual = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000);
-		logger.warn("currentTime: " + currentTime + " Block: " + actual.getType().toString() + " len: " + actual.getLen());
+		logger.info("currentTime: " + currentTime + " Block: " + actual.getType().toString() + " len: " + actual.getLen());
 		preChangeVector.printCalcVector("Sim: after timeblock (" + bt.toString() + ")");
 		
 		// timeDending ( inf(Time) * currentTime/1000 * timeInf )
@@ -328,21 +346,12 @@ public class Course {
 
 					// influence of the surrounding students
 					CalcVector neighborInfl = getNeighborsInfluence(student, oldVec, x, y);
-					// output for one student (1,1) -> only for analyzing the simulation behavior
-					if (y == 1 && x == 1)
-						neighborInfl.printCalcVector("Sim(1,1): Neighbor");
 
 					// create a new vector which contains the pre calculates vector and the neighbor vector
 					CalcVector preChangeVectorSpecial = neighborInfl.clone().addCalcVector(preChangeVector);
 
-					// output for one student (1,1) -> only for analyzing the simulation behavior
-					if (y == 1 && x == 1)
-						neighborInfl.printCalcVector("Sim(1,1): preChangeVectorSpecial = Neighbor + preChangeVector");
-					
 					// create a new student and let him calculate a new change vector
-						student.calcNextSimulationStep(preChangeVectorSpecial, influence, currentTime, x, y);
-					if (y == 1 && x == 1)
-						student.getActualState().printCalcVector("Sim(1,1): actualStateEnd");
+					student.calcNextSimulationStep(preChangeVectorSpecial, influence, currentTime);
 				}
 			}
 		}
@@ -428,14 +437,14 @@ public class Course {
 		int isnull = 0;
 		int studentsA = 0;
 		int empty = 0;
-		for (int a = 0; a < 5; a++) {
-			for (int b = 0; b < 7; b++) {
-				if (students[a][b] == null) {
+		for (int a = 0; a < students.length; a++) {
+			for (int b = 0; b < students[0].length; b++) {
+				if (students[b][a] == null) {
 					isnull++;
 					System.out.println(a + " / " + b);
-				} else if (students[a][b] instanceof EmptyPlace)
+				} else if (students[b][a] instanceof EmptyPlace)
 					empty++;
-				else if (students[a][b] instanceof Student)
+				else if (students[b][a] instanceof Student)
 					studentsA++;
 			}
 		}
@@ -470,11 +479,13 @@ public class Course {
 	
 	
 	/**
-	 * 
+	 * set the time of the simulation to a given time
+	 * the old time is needed to because the course does not know the time
+	 * if the new time is in the past all history states
 	 * 
 	 * @param actualTime current time (milliseconds)
 	 * @param time new time (milliseconds)
-	 * @author ???
+	 * @author dirk
 	 */
 	public void setTime(int actualTime, int time) {
 		for (int y = 0; y < students.length; y++) {
@@ -501,7 +512,7 @@ public class Course {
 	 * @author andres
 	 */
 	public void calcStatistics(int time) {
-		statAvgStudentState.multiply(0);
+		statAvgStudentState.multiply(0);// TODO daniel wtf?
 		int studentNum = 0;
 		for (IPlace[] student : students) {
 			for (IPlace iplace : student) {

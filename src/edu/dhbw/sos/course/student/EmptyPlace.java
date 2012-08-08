@@ -81,7 +81,7 @@ public class EmptyPlace implements IPlace {
 	
 	
 	@Override
-	public void addToStateVector(CalcVector addVector, int x, int y) {
+	public void addToStateVector(CalcVector addVector) {
 		// just do nothing
 	}
 	

@@ -38,7 +38,7 @@ public interface IPlace {
 	void donInput(int index, float value);
 	
 	
-	void addToStateVector(CalcVector addVector, int x, int y);
+	void addToStateVector(CalcVector addVector);
 	
 	
 	void reset();

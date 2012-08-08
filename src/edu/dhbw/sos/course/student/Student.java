@@ -55,6 +55,11 @@ public class Student implements IPlace, Cloneable {
 	}
 	
 	
+	/**
+	 * inits a new student, the changeVector has to be set before
+	 * 
+	 * @author dirk
+	 */
 	private void init() {
 		this.actualState = new CalcVector(changeVector.size());
 		for (int i = 0; i < changeVector.size(); i++) {
@@ -78,7 +83,7 @@ public class Student implements IPlace, Cloneable {
 	
 	
 	/**
-	 * Only for testing yet. Should be tested and discussed
+	 * TODO NicolaiO Only for testing yet. Should be tested and discussed
 	 * 
 	 * @param index index in vector
 	 * @param value value to add (negative to sub)
@@ -91,17 +96,16 @@ public class Student implements IPlace, Cloneable {
 		cv.setValueAt(index, value);
 		changeVector.printCalcVector("Don Input: preChangeVector: ");
 		addToChangeVector(index, value);
-		addToStateVector(cv, 0, 0);
+		addToStateVector(cv);
 		changeVector.printCalcVector("Don Input: postChangeVector: ");
 	}
 	
 	
 	/**
 	 * takes a time
-	 * if there was an interaction from the don in this time period the latest interaction will be returned
-	 * otherwise null will be returned
-	 * @param start time in milliseconds
-	 * @param end time in milliseconds
+	 * it returns the last saved history state before the given time
+	 * 
+	 * @param time time in milliseconds
 	 * @return
 	 * @author dirk
 	 */
@@ -143,7 +147,7 @@ public class Student implements IPlace, Cloneable {
 	 * @param influence
 	 * @author dirk
 	 */
-	public void calcNextSimulationStep(CalcVector addVector, Influence influence, int time, int x, int y) {
+	public void calcNextSimulationStep(CalcVector addVector, Influence influence, int time) {
 		if (noChange > 0) {
 			noChange--;
 			return;
@@ -151,22 +155,16 @@ public class Student implements IPlace, Cloneable {
 		saveHistoryStates(time);
 		
 		// parameter matrix * actual state
-		// double parameterInf = 0.00000001;
-		// addVector.addCalcVector(influence.getInfluencedParameterVector(this.getActualState().clone(), parameterInf));
-		// if (y == 1 && x == 1)
-		// addVector.printCalcVector("Sim(1,1): matrix influenced");
+		double parameterInf = 0.00000001;
+		addVector.addCalcVector(influence.getInfluencedParameterVector(this.getActualState().clone(), parameterInf));
 		
-		// usual behavior of the student ( usualBehav * behaviorInf )
-		
-		if (y == 1 && x == 1)
-			changeVector.printCalcVector("Sim(1,1): Change vector");
 		for (int i = 0; i < addVector.size(); i++)
 			if (addVector.getValueAt(i) > 0) {
 				addVector.setValueAt(i, addVector.getValueAt(i) * this.getChangeVector().getValueAt(i));
 			} else {
 				addVector.setValueAt(i, addVector.getValueAt(i) * (2 - this.getChangeVector().getValueAt(i)));
 			}
-		this.addToStateVector(addVector, x, y);
+		this.addToStateVector(addVector);
 	}
 	
 	
@@ -175,16 +173,10 @@ public class Student implements IPlace, Cloneable {
 	 * adds a change vector to the state vector of a student
 	 * 
 	 * @param addVector
-	 * @param x TO DELETE, only for simulation debug
-	 * @param y TO DELETE, only for simulation debug
 	 * @author dirk
 	 */
 	@Override
-	public void addToStateVector(CalcVector addVector, int x, int y) {
-		if (y == 1 && x == 1)
-			addVector.printCalcVector("Add(1,1): addVector");
-		if (y == 1 && x == 1)
-			actualState.printCalcVector("Add(1,1): preActualState");
+	public void addToStateVector(CalcVector addVector) {
 		for (int i = 0; i < addVector.size(); i++) {
 			double sValue = actualState.getValueAt(i);
 			double vValue = addVector.getValueAt(i);
@@ -229,6 +221,9 @@ public class Student implements IPlace, Cloneable {
 	}
 	
 	
+	/**
+	 * prints the actual state of a student
+	 */
 	@Override
 	public void printAcutalState() {
 		String out = "Students state: ";
@@ -284,8 +279,6 @@ public class Student implements IPlace, Cloneable {
 	/**
 	 * Returns the changeVector of this student to allow further access to it.
 	 * 
-	 * NOTE: this is only for testing. Should be replaced by a separate method in Student.
-	 * 
 	 * @return
 	 * @author bene
 	 */
@@ -308,7 +301,7 @@ public class Student implements IPlace, Cloneable {
 		}
 		CalcVector add = new CalcVector(actualState.size());
 		add.setValueAt(index, value);
-		addToStateVector(add, 0, 0);
+		addToStateVector(add);
 	}
 	
 	
