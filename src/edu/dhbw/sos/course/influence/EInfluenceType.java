@@ -10,9 +10,7 @@
 package edu.dhbw.sos.course.influence;
 
 /**
- * TODO dirk, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
+ * this enums represent the different types of influences, please use this to decide between influences
  * 
  * @author dirk
  * 
