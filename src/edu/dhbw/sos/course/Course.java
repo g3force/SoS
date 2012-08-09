@@ -93,7 +93,7 @@ public class Course {
 		for (int y = 0; y < rows; y++) {
 			for (int x = 0; x < columns; x++) {
 				double createStudent = Math.random();
-				if (createStudent > 0.8 && (x!=0 || y!=0)) {
+				if (createStudent > 0.8 && (x != 0 || y != 0)) {
 					students[y][x] = new EmptyPlace(parameters.size());
 				} else {
 					Student newStud = new Student(parameters.size());
@@ -296,77 +296,80 @@ public class Course {
 	 * @author dirk
 	 */
 	public void simulationStep(int currentTime) {
-		simulating = true;
-		
-		// calculate state statistics for whole course
-		calcStatistics(currentTime);
-
-		// -------------------------------------------------
-		// -------------- pre conditions -------------------
-		// -------------------------------------------------
-		
-		// the new array for the calculated students, fill it with EmptyPalce
-		CalcVector[][] oldVec = new CalcVector[students.length][students[0].length];
-		for (int y = 0; y < students.length; y++) {
-			for (int x = 0; x < students[0].length; x++) {
-				if (students[y][x] instanceof Student)
-					oldVec[y][x] = ((Student) students[y][x]).getActualState().clone();
-			}
-		}
-		
-		// -------------------------------------------------
-		// -------- student independent calculations -------
-		// -------------------------------------------------
-		
-		CalcVector preChangeVector = new CalcVector(parameters.size());
-		preChangeVector.printCalcVector("Sim: Init");
-		
-		// time block depending ( inf(Break) * breakInf )
-		double timeBlockInf = 0.0004;
-		
-		BlockType bt = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType();
-		preChangeVector.addCalcVector(influence.getEnvironmentVector(bt.getEInfluenceType(), timeBlockInf));
-		TimeBlock actual = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000);
-		logger.info("currentTime: " + currentTime + " Block: " + actual.getType().toString() + " len: " + actual.getLen());
-		preChangeVector.printCalcVector("Sim: after timeblock (" + bt.toString() + ")");
-		
-		// timeDending ( inf(Time) * currentTime/1000 * timeInf )
-		double timeInf = 0.000000000001;
-		double timeTimeInf = timeInf * currentTime / 1000; // in seconds
-		preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.TIME_DEPENDING, timeTimeInf));
-		preChangeVector.printCalcVector("Sim: after time depending");
-
-		// -------------------------------------------------
-		// ---------- iterate over all students ------------
-		// -------------------------------------------------
-		for (int y = 0; y < students.length; y++) {
-			for (int x = 0; x < students[y].length; x++) {
-				if (students[y][x] instanceof Student) {
-					Student student = (Student) students[y][x];
-
-					// influence of the surrounding students
-					CalcVector neighborInfl = getNeighborsInfluence(student, oldVec, x, y);
-
-					// create a new vector which contains the pre calculates vector and the neighbor vector
-					CalcVector preChangeVectorSpecial = neighborInfl.clone().addCalcVector(preChangeVector);
-
-					// create a new student and let him calculate a new change vector
-					student.calcNextSimulationStep(preChangeVectorSpecial, influence, currentTime);
+		synchronized (this) {
+			simulating = true;
+			
+			// calculate state statistics for whole course
+			calcStatistics(currentTime);
+			
+			// -------------------------------------------------
+			// -------------- pre conditions -------------------
+			// -------------------------------------------------
+			
+			// the new array for the calculated students, fill it with EmptyPalce
+			CalcVector[][] oldVec = new CalcVector[students.length][students[0].length];
+			for (int y = 0; y < students.length; y++) {
+				for (int x = 0; x < students[0].length; x++) {
+					if (students[y][x] instanceof Student)
+						oldVec[y][x] = ((Student) students[y][x]).getActualState().clone();
 				}
 			}
+			
+			// -------------------------------------------------
+			// -------- student independent calculations -------
+			// -------------------------------------------------
+			
+			CalcVector preChangeVector = new CalcVector(parameters.size());
+			preChangeVector.printCalcVector("Sim: Init");
+			
+			// time block depending ( inf(Break) * breakInf )
+			double timeBlockInf = 0.0004;
+			
+			BlockType bt = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType();
+			preChangeVector.addCalcVector(influence.getEnvironmentVector(bt.getEInfluenceType(), timeBlockInf));
+			TimeBlock actual = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000);
+			logger.info("currentTime: " + currentTime + " Block: " + actual.getType().toString() + " len: "
+					+ actual.getLen());
+			preChangeVector.printCalcVector("Sim: after timeblock (" + bt.toString() + ")");
+			
+			// timeDending ( inf(Time) * currentTime/1000 * timeInf )
+			double timeInf = 0.000000000001;
+			double timeTimeInf = timeInf * currentTime / 1000; // in seconds
+			preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.TIME_DEPENDING, timeTimeInf));
+			preChangeVector.printCalcVector("Sim: after time depending");
+			
+			// -------------------------------------------------
+			// ---------- iterate over all students ------------
+			// -------------------------------------------------
+			for (int y = 0; y < students.length; y++) {
+				for (int x = 0; x < students[y].length; x++) {
+					if (students[y][x] instanceof Student) {
+						Student student = (Student) students[y][x];
+						
+						// influence of the surrounding students
+						CalcVector neighborInfl = getNeighborsInfluence(student, oldVec, x, y);
+						
+						// create a new vector which contains the pre calculates vector and the neighbor vector
+						CalcVector preChangeVectorSpecial = neighborInfl.clone().addCalcVector(preChangeVector);
+						
+						// create a new student and let him calculate a new change vector
+						student.calcNextSimulationStep(preChangeVectorSpecial, influence, currentTime);
+					}
+				}
+			}
+			
+			
+			// -------------------------------------------------
+			// -------------- post simulation ------------------
+			// -------------------------------------------------
+			
+			// handle any donInputs, that had accord during simulation
+			simulating = false;
+			for (DonInput di : donInputQueue) {
+				donInput(di.index, di.value);
+			}
+			donInputQueue.clear();
 		}
-		
-		
-		// -------------------------------------------------
-		// -------------- post simulation ------------------
-		// -------------------------------------------------
-		
-		// handle any donInputs, that had accord during simulation
-		simulating = false;
-		for (DonInput di : donInputQueue) {
-			donInput(di.index, di.value);
-		}
-		donInputQueue.clear();
 	}
 	
 	

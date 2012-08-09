@@ -127,47 +127,49 @@ public class SPaintArea extends JPanel {
 	 */
 	public void update(Course course) {
 		synchronized (diagrams) {
-			diagrams.clear();
-			try {
-				int size = course.getHistStatAvgStudentStates().values().iterator().next().size();
-				LinkedList<LinkedList<Float>> newData = new LinkedList<LinkedList<Float>>();
-				for (int i = 0; i < size; i++) {
-					newData.add(new LinkedList<Float>());
-					Diagram diagram = new Diagram(new LinkedList<Float>());
+			synchronized (course) {
+				diagrams.clear();
+				try {
+					int size = course.getHistStatAvgStudentStates().values().iterator().next().size();
+					LinkedList<LinkedList<Float>> newData = new LinkedList<LinkedList<Float>>();
+					for (int i = 0; i < size; i++) {
+						newData.add(new LinkedList<Float>());
+						Diagram diagram = new Diagram(new LinkedList<Float>());
+						diagram.setHeight(this.getHeight() - 20);
+						diagram.setWidth(this.getWidth() - 20);
+						diagram.setData(newData.get(i));
+						diagram.setLocation(new Point(10, 10));
+						diagram.setDrawAxis(true);
+						diagram.setMaxY(100.0f);
+						diagram.setRescaleY(false);
+						diagrams.add(diagram);
+					}
+					for (Entry<Integer, CalcVector> cv : course.getHistStatAvgStudentStates().entrySet()) {
+						for (int i = 0; i < cv.getValue().size(); i++) {
+							newData.get(i).add(cv.getValue().getValueAt(i));
+						}
+					}
+					if (newData.get(0).isEmpty()) {
+						newData.get(0).add(0f);
+					}
+				} catch (NoSuchElementException e) {
+					// well, then no diagrams...
+				}
+				if (diagrams.isEmpty()) {
+					
+					LinkedList<Float> newData = new LinkedList<Float>();
+					newData.add(0f);
+					Diagram diagram = new Diagram(newData);
 					diagram.setHeight(this.getHeight() - 20);
 					diagram.setWidth(this.getWidth() - 20);
-					diagram.setData(newData.get(i));
 					diagram.setLocation(new Point(10, 10));
 					diagram.setDrawAxis(true);
 					diagram.setMaxY(100.0f);
 					diagram.setRescaleY(false);
 					diagrams.add(diagram);
 				}
-				for (Entry<Integer, CalcVector> cv : course.getHistStatAvgStudentStates().entrySet()) {
-					for (int i = 0; i < cv.getValue().size(); i++) {
-						newData.get(i).add(cv.getValue().getValueAt(i));
-					}
-				}
-				if (newData.get(0).isEmpty()) {
-					newData.get(0).add(0f);
-				}
-			} catch (NoSuchElementException e) {
-				// well, then no diagrams...
+				repaint();
 			}
-			if (diagrams.isEmpty()) {
-
-				LinkedList<Float> newData = new LinkedList<Float>();
-				newData.add(0f);
-				Diagram diagram = new Diagram(newData);
-				diagram.setHeight(this.getHeight() - 20);
-				diagram.setWidth(this.getWidth() - 20);
-				diagram.setLocation(new Point(10, 10));
-				diagram.setDrawAxis(true);
-				diagram.setMaxY(100.0f);
-				diagram.setRescaleY(false);
-				diagrams.add(diagram);
-			}
-			repaint();
 		}
 	}
 }
