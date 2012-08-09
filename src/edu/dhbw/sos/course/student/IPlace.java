@@ -15,9 +15,7 @@ import edu.dhbw.sos.helper.CalcVector;
 
 
 /**
- * TODO dirk, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
+ * interface for the places in the class, implemented by EmptyPlace and Student
  * 
  * @author dirk
  * 

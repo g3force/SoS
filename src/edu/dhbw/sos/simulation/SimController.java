@@ -62,7 +62,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	/**
 	 * 
-	 * TODO DirkK, add comment!
+	 * creates a SimController, manages the simulation of one specific course
 	 * 
 	 * @param course
 	 * @param sm
@@ -76,7 +76,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	/**
 	 * 
-	 * TODO DirkK, add comment!
+	 * reset the course to the start
 	 * 
 	 * @author DirkK
 	 */
@@ -92,7 +92,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	/**
 	 * 
-	 * TODO DirkK, add comment!
+	 * reset the course to the start
 	 * 
 	 * @param course
 	 * @author DirkK
@@ -105,7 +105,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	/**
 	 * 
-	 * TODO DirkK, add comment!
+	 * toggle the simulation, start/stop it
 	 * 
 	 * @author DirkK
 	 */
@@ -121,7 +121,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	/**
 	 * 
-	 * TODO DirkK, add comment!
+	 * runs a simulation, invokes a simulation step in every interval until the timer is stopped
 	 * 
 	 * @author DirkK
 	 */
