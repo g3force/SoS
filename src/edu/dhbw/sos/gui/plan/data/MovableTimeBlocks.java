@@ -269,9 +269,36 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 			// Instead of resizing the most left block, do nothing.
 			// this is safer...
 			// FIXME Nicolai consider doing something thats enables moving most left block back.
-			if (e.getX() > grabbedBlock.timeBlock.getLen() * getScaleRatio() + grabbedBlock.xOffset) {
-				timeBlocks.moveTimeBlock(timeBlock, rightTimeBlock);
-			}
+			// if (e.getX() > grabbedBlock.timeBlock.getLen() * getScaleRatio() + grabbedBlock.xOffset) {
+			// timeBlocks.moveTimeBlock(timeBlock, rightTimeBlock);
+			// }
+			// // any movement of the timeBlock results in an change of the grabbedBlock.xOffset
+			// // xOffset will change to current mouse location
+			
+			// int len = rightTimeBlock.getLen() - movement - swapBuffer.r;
+			// if (len < TimeBlock.MIN_LEN) {
+			// swapBuffer.r += movement;
+			// } else {
+			// swapBuffer.r = 0;
+			// if (swapBuffer.l == 0) {
+			// rightTimeBlock.setLen(len);
+			// }
+			// }
+			// // swap
+			// if(swapBuffer.b() >= TimeBlock.MIN_LEN) {
+			// timeBlocks.moveTimeBlock(timeBlock, rightTimeBlock);
+			// swapBuffer.r = 0;
+			// swapBuffer.l = 0;
+			// rightTimeBlock.setLen(grabbedBlock.lenRightBlock);
+			// timeBlock.setLen(grabbedBlock.lenTimeBlock);
+			// grabbedBlock = new GrabbedBlock(grabbedBlock.xOffset + movement, grabbedBlock.lenRightBlock,
+			// grabbedBlock.lenLeftBlock, grabbedBlock.lenTimeBlock, grabbedBlock.timeBlock);
+			//
+			// }
+			// grabbedBlock = new GrabbedBlock(grabbedBlock.xOffset + movement, grabbedBlock.lenRightBlock,
+			// grabbedBlock.lenLeftBlock, grabbedBlock.lenTimeBlock, grabbedBlock.timeBlock);
+
+
 			return;
 		}
 		if (rightTimeBlock != TimeBlocks.NULL_TIMEBLOCK) {
@@ -296,13 +323,6 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 				}
 			}
 		}
-		// else {
-		// // special case: left block is NULL
-		// // any movement of the timeBlock results in an change of the grabbedBlock.xOffset
-		// // xOffset will change to current mouse location
-		// grabbedBlock = new GrabbedBlock(grabbedBlock.xOffset + movement, grabbedBlock.lenRightBlock,
-		// grabbedBlock.lenLeftBlock, grabbedBlock.lenTimeBlock);
-		// }
 		
 		// if there is only one neighbor, only that has changed length. timeBlock needs to compensate the rest
 		int offsetLen = totalLen - timeBlocks.getTotalLength(); // negative, when there is too much length

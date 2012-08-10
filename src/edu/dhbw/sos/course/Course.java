@@ -624,12 +624,16 @@ public class Course {
 		int oldY = students.length;
 		int newX = oldX;
 		int newY = oldY;
+		int offsetX = 0;
+		int offsetY = 0;
 		if (location.equals("left")) {
 			newX--;
+			offsetX = 1;
 		} else if (location.equals("right")) {
 			newX--;
 		} else if (location.equals("top")) {
 			newY--;
+			offsetY = 1;
 		} else if (location.equals("bottom")) {
 			newY--;
 		} else {
@@ -638,7 +642,7 @@ public class Course {
 		IPlace[][] newStudents = new IPlace[newY][newX];
 		for (int y = 0; y < newY; y++) {
 			for (int x = 0; x < newX; x++) {
-				newStudents[y][x] = students[y][x];
+				newStudents[y][x] = students[y + offsetY][x + offsetX];
 			}
 		}
 		students = newStudents;

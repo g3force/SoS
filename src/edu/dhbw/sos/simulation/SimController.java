@@ -70,7 +70,8 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	 */
 	public SimController(Course course, SuggestionManager sm) {
 		this.suggestionMgr = sm;
-		reset(course);
+		this.course = course;
+		reset();
 	}
 	
 	
@@ -81,25 +82,12 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	 * @author DirkK
 	 */
 	public void reset() {
+		run = false;
 		stop();
 		course.reset();
 		setCurrentTime(0);
 		setSpeed(1);
 		suggestionMgr.reset(course.getProperties());
-		run = false;
-	}
-	
-	
-	/**
-	 * 
-	 * reset the course to the start
-	 * 
-	 * @param course
-	 * @author DirkK
-	 */
-	public void reset(Course course) {
-		this.course = course;
-		reset();
 	}
 	
 	
@@ -139,6 +127,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 				// Check if end of simulation reached
 				if (course.getLecture().getLength() * 60 < currentTime / realInterval) {
 					stop();
+					run = false;
 				}
 			}
 		};
@@ -341,7 +330,13 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	
 	@Override
 	public void updateCurrentCourse(Course course) {
+		// reset old course
 		this.course.reset();
-		reset(course);
+		
+		// change and reset new course
+		this.course = course;
+		
+		// reset simController
+		reset();
 	}
 }

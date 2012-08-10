@@ -83,7 +83,7 @@ public class Student implements IPlace, Cloneable {
 	
 	
 	/**
-	 * TODO NicolaiO Only for testing yet. Should be tested and discussed
+	 * React on an input from the user (Dozent)
 	 * 
 	 * @param index index in vector
 	 * @param value value to add (negative to sub)
