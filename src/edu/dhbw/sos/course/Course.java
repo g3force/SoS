@@ -100,7 +100,7 @@ public class Course {
 					Student newStud = new Student(parameters.size());
 					
 					for (int i = 0; i < newStud.getActualState().size(); i++) {
-						newStud.addToChangeVector(i, (float) ((Math.random() * 10) - 5));
+						newStud.addToChangeVector(i, (float) ((Math.random() * 100) - 50));
 						newStud.addValueToStateVector(i, (int) (Math.random() * 10));
 					}
 					students[y][x] = newStud;
@@ -146,7 +146,7 @@ public class Course {
 	
 	private void init() {
 		statistics = new LinkedHashMap<String, String>();
-		statAvgStudentState = new CalcVector(4);
+		statAvgStudentState = new CalcVector(parameters.size());
 		histStatAvgStudentStates = new LinkedHashMap<Integer, CalcVector>();
 		
 		selectedStudent = null;
@@ -328,6 +328,7 @@ public class Course {
 			
 			BlockType bt = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType();
 			preChangeVector.addCalcVector(influence.getEnvironmentVector(bt.getEInfluenceType(), timeBlockInf));
+			// System.out.println(influence.getEnvironmentVector(bt.getEInfluenceType(), timeBlockInf).toString());
 			// TimeBlock actual = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000);
 			// logger.info("currentTime: " + currentTime + " Block: " + actual.getType().toString() + " len: "
 			// + actual.getLen());
@@ -349,10 +350,10 @@ public class Course {
 						
 						// influence of the surrounding students
 						CalcVector neighborInfl = getNeighborsInfluence(student, oldVec, x, y);
-						
+
 						// create a new vector which contains the pre calculates vector and the neighbor vector
 						CalcVector preChangeVectorSpecial = neighborInfl.clone().addCalcVector(preChangeVector);
-						
+
 						// create a new student and let him calculate a new change vector
 						student.calcNextSimulationStep(preChangeVectorSpecial, influence, currentTime);
 					}
@@ -384,9 +385,7 @@ public class Course {
 	 */
 	private CalcVector getNeighborsInfluence(Student student, CalcVector[][] oldVec, int x, int y) {
 		
-		// x x x factor for each relative position to the student
-		// x o x
-		// x x x
+		// add all the vectors of the students around and count them
 		CalcVector changeVector = new CalcVector(student.getActualState().size());
 		CalcVector surronding = new CalcVector(student.getActualState().size());
 		int neighbourAmount = 0;
@@ -410,25 +409,35 @@ public class Course {
 		// 2. calculate difference of students value and average
 		// 3. changeVector = difference of students value and average
 		for (int i = 0; i < changeVector.size(); i++) {
+			float studentsValue = student.getActualState().getValueAt(i);
 			float average = surronding.getValueAt(i) / neighbourAmount;
-			float studentMAverage = student.getActualState().getValueAt(i) - average;
+			
+			float studentMAverage = average - studentsValue;
 			if (studentMAverage < 0)
 				studentMAverage *= -1;
 			float reducer = (100 - studentMAverage) / 100;
 			if (x == 1 && y == 1)
-				logger.debug("Sim(1,1): average: " + average + " / actualState: " + student.getActualState().getValueAt(i)
-						+ " / reducer: " + reducer + " / value: " + (average - student.getActualState().getValueAt(i))
-						* reducer * 0.1f);
-			changeVector.setValueAt(i, (average - student.getActualState().getValueAt(i)) * reducer * 0.001f);
+				logger.debug("Sim(1,1): average: " + average + " / actualState: " + studentsValue + " / reducer: "
+						+ reducer + " / value: " + studentMAverage
+ * reducer * 0.05f);
+			changeVector.setValueAt(i, (average - studentsValue) * reducer * 0.01f);
 			// changeVector.multiplyWithVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR,0.01));
 			// in every 3 million cases this calculation result in NaN
 			if (Double.isNaN(changeVector.getValueAt(0)) || Double.isNaN(changeVector.getValueAt(1))
 					|| Double.isNaN(changeVector.getValueAt(2)) || Double.isNaN(changeVector.getValueAt(3)))
 				changeVector = new CalcVector(4);
 		}
-		if (x == 1 && y == 1)
-			changeVector.printCalcVector("Sim(1,1): Change vector (neighbors): ");
-		
+		for (int i = 0; i < changeVector.size(); i++) {
+			float addValue = changeVector.getValueAt(i);
+			if (addValue > 0) {
+				changeVector.setValueAt(i, addValue * student.getChangeVector().getValueAt(i));
+			} else {
+				changeVector.setValueAt(i, addValue * (2 - student.getChangeVector().getValueAt(i)));
+			}
+			// System.out.println(addValue + "->" + addVector.getValueAt(i) + "(" + this.getChangeVector().getValueAt(i)
+			// + ")");
+		}
+		// System.out.println(changeVector.toString() + " - " + student.getChangeVector().toString());
 		return changeVector;
 	}
 	

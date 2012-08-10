@@ -46,7 +46,8 @@ public class Student implements IPlace, Cloneable {
 			changeVectorF[i] = 1f;
 		}
 		this.changeVector = new CalcVector(changeVectorF);
-		init();
+
+		init(vectorInitSize);
 	}
 	
 	
@@ -62,9 +63,10 @@ public class Student implements IPlace, Cloneable {
 	 * 
 	 * @author dirk
 	 */
-	private void init() {
-		this.actualState = new CalcVector(changeVector.size());
-		for (int i = 0; i < changeVector.size(); i++) {
+	private void init(int vectorInitSize) {
+
+		this.actualState = new CalcVector(vectorInitSize);
+		for (int i = 0; i < vectorInitSize; i++) {
 			float changeVectorFloat = changeVector.getValueAt(i);
 			this.actualState.setValueAt(i, changeVectorFloat * 50);
 		}
@@ -73,14 +75,14 @@ public class Student implements IPlace, Cloneable {
 	
 	
 	private Object readResolve() {
-		init();
+		init(4);
 		return this;
 	}
 	
 	
 	@Override
 	public void reset() {
-		init();
+		init(4);
 	}
 	
 	
@@ -165,15 +167,19 @@ public class Student implements IPlace, Cloneable {
 		}
 		
 		// parameter matrix * actual state
-		double parameterInf = 0.00000001;
-		addVector.addCalcVector(influence.getInfluencedParameterVector(this.getActualState().clone(), parameterInf));
+		// double parameterInf = 0.00000001;
+		// addVector.addCalcVector(influence.getInfluencedParameterVector(this.getActualState().clone(), parameterInf));
 		
-		for (int i = 0; i < addVector.size(); i++)
-			if (addVector.getValueAt(i) > 0) {
-				addVector.setValueAt(i, addVector.getValueAt(i) * this.getChangeVector().getValueAt(i));
+		for (int i = 0; i < addVector.size(); i++) {
+			float addValue = addVector.getValueAt(i);
+			if (addValue > 0) {
+				addVector.setValueAt(i, addValue * this.getChangeVector().getValueAt(i));
 			} else {
-				addVector.setValueAt(i, addVector.getValueAt(i) * (2 - this.getChangeVector().getValueAt(i)));
+				addVector.setValueAt(i, addValue * (2 - this.getChangeVector().getValueAt(i)));
 			}
+			// System.out.println(addValue + "->" + addVector.getValueAt(i) + "(" + this.getChangeVector().getValueAt(i)
+			// + ")");
+		}
 		this.addToStateVector(addVector);
 	}
 	
@@ -188,8 +194,9 @@ public class Student implements IPlace, Cloneable {
 	@Override
 	public void addToStateVector(CalcVector addVector) {
 		for (int i = 0; i < addVector.size(); i++) {
-			double sValue = actualState.getValueAt(i);
-			double vValue = addVector.getValueAt(i);
+			float oldValue = actualState.getValueAt(i);
+			float addValue = addVector.getValueAt(i);
+			float newValue;
 			// if (Double.isNaN(vValue))
 			// vValue = 0;
 			// if the add value is positive, take the percentage missing to 100, and multiply it with 2
@@ -197,17 +204,18 @@ public class Student implements IPlace, Cloneable {
 			// i.e. acutalState = 80, addVector = 20 -> (100-80)*2/100 -> 0,4*20 = 8 -> 88
 			// i.e. acutalState = 95, addVector = 20 -> (100-95)*2/100 -> 0,1*20 = 2 -> 97
 			// i.e. acutalState = 98, addVector = 20 -> (100-98)*2/100 -> 0,04*20 = 0.8 -> 98.8
-			if (vValue > 0) {
-				actualState.setValueAt(i, actualState.getValueAt(i) + (float) (vValue * ((100 - sValue) * 2 / 100)));
+			if (addValue > 0) {
+				newValue = oldValue + (float) (addValue * ((100 - oldValue) * 2 / 100));
 			} else {
-				actualState.setValueAt(i, actualState.getValueAt(i) + (float) (vValue * ((sValue) * 2 / 100)));
+				newValue = oldValue + (float) (addValue * ((oldValue) * 2 / 100));
 			}
-			if (actualState.getValueAt(i) < 0) {
-				actualState.setValueAt(i, 0);
+			if (newValue < 0) {
+				newValue = 0;
 			}
-			if (actualState.getValueAt(i) > 100) {
-				actualState.setValueAt(i, 100);
+			if (newValue > 100) {
+				newValue = 100;
 			}
+			actualState.setValueAt(i, newValue);
 		}
 	}
 	

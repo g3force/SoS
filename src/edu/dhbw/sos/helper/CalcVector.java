@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 public class CalcVector implements Cloneable {
 	private float[]					vector;
 	private static final Logger	logger	= Logger.getLogger(CalcVector.class);
+	private int							size		= 4;
 	
 	
 	/**
@@ -35,6 +36,7 @@ public class CalcVector implements Cloneable {
 	 */
 	public CalcVector(int initSize) {
 		this.vector = new float[initSize];
+		size = initSize;
 		for (int i = 0; i < initSize; i++)
 			this.vector[i] = 0;
 	}
@@ -48,6 +50,7 @@ public class CalcVector implements Cloneable {
 	 */
 	public CalcVector(float[] values) {
 		this.vector = new float[values.length];
+		size = values.length;
 		for (int i = 0; i < this.vector.length; i++)
 			this.vector[i] = values[i];
 	}
@@ -61,9 +64,9 @@ public class CalcVector implements Cloneable {
 	 * @author bene
 	 */
 	public float getValueAt(int index) {
-		if (index >= this.vector.length) {
-			throw new IllegalArgumentException("Cannot access index outside of vector");
-		}
+		// if (index >= this.vector.length) {
+		// throw new IllegalArgumentException("Cannot access index outside of vector");
+		// }
 		return this.vector[index];
 	}
 	
@@ -87,9 +90,10 @@ public class CalcVector implements Cloneable {
 	 * 
 	 * @return
 	 * @author bene
+	 * @throws Exception
 	 */
 	public int size() {
-		return this.vector.length;
+		return size;// this.vector.length;
 	}
 	
 	
@@ -202,10 +206,10 @@ public class CalcVector implements Cloneable {
 	 * @author bene
 	 */
 	public CalcVector addCalcVector(CalcVector v) {
-		if (v.size() != this.size()) {
-			throw new IllegalArgumentException("Can not add vectors with different sizes. (this=" + this.size() + " / v="
-					+ v.size());
-		}
+		// if (v.size() != this.size()) {
+		// throw new IllegalArgumentException("Can not add vectors with different sizes. (this=" + this.size() + " / v="
+		// + v.size());
+		// }
 		for (int i = 0; i < this.size(); i++) {
 			this.vector[i] += v.getValueAt(i);
 		}
