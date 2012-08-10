@@ -32,8 +32,8 @@ public class Influence {
 		parameterInfl = paraInfl.clone();
 		
 		LinkedList<String> l = new LinkedList<String>();
-		l.add("Tireness");
-		l.add("Loudness");
+		l.add("Awakeness");
+		l.add("Silence");
 		l.add("Attention");
 		l.add("Quality");
 		environmentalInfl = new HashMap<EInfluenceType, CalcVector>();

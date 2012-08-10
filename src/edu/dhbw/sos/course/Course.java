@@ -86,8 +86,8 @@ public class Course {
 		int columns = (int) (Math.random() * 5) + 10;
 		students = new IPlace[rows][columns];
 		parameters = new LinkedList<String>();
-		parameters.add("Tireness");
-		parameters.add("Loudness");
+		parameters.add("Awakeness");
+		parameters.add("Silence");
 		parameters.add("Attention");
 		parameters.add("Quality");
 		for (int y = 0; y < rows; y++) {

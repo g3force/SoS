@@ -183,6 +183,7 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 			suggestionPanel.removeAll();
 			suggestionPanel.add(new JLabel(Messages.getString("suggestions"), SwingConstants.CENTER));
 			for (String sugg : this.sugMngr.getSuggestionNames()) {
+				System.out.println(sugg);
 				JLabel lblSug = new JLabel(sugg);
 				lblSug.addMouseListener(this.sugMngr);
 				suggestionPanel.add(lblSug);

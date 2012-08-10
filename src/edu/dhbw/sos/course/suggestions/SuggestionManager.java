@@ -154,22 +154,125 @@ public class SuggestionManager implements MouseListener {
 	
 	// generates 4 random suggestions with the current course parameters.
 	private boolean writeDummySuggestions() {
-		Suggestion[] sugArray = new Suggestion[4];
+		int dummySuggestions = 6;
+		Suggestion[] sugArray = new Suggestion[dummySuggestions];
 		Random r = new Random();
-		for (int i = 0; i < 4; i++) {
-			float[][] range = new float[courseParams.size()][2];
-			float[] influence = new float[courseParams.size()];
-			for (int j = 0; j < courseParams.size(); j++) {
-				range[j][0] = r.nextInt(40);
-				range[j][1] = r.nextInt(60);
-				influence[j] = r.nextInt(50);
-			}
-			sugArray[i] = new Suggestion(range, "Vorschlag " + i, r.nextInt(5), influence, courseParams);
-		}
+		float[][] range = new float[courseParams.size()][2];
+		float[] influence = new float[courseParams.size()];
+		range[0][0] = 0;
+		range[0][1] = 60;
+		influence[0] = 30;
+		
+		range[1][0] = 0;
+		range[1][1] = 60;
+		influence[1] = 10;
+		
+		range[2][0] = 0;
+		range[2][1] = 50;
+		influence[2] = 10;
+		
+		range[3][0] = 0;
+		range[3][1] = 100;
+		influence[3] = -20;
+		sugArray[0] = new Suggestion(range, "Bewerfen Sie Studenten mit Gegenständen", r.nextInt(5), influence,
+				courseParams);
+		
+		range[0][0] = 0;
+		range[0][1] = 60;
+		influence[0] = 30;
+		
+		range[1][0] = 0;
+		range[1][1] = 20;
+		influence[1] = 10;
+		
+		range[2][0] = 0;
+		range[2][1] = 100;
+		influence[2] = 60;
+		
+		range[3][0] = 0;
+		range[3][1] = 100;
+		influence[3] = 20;
+		sugArray[1] = new Suggestion(range, "Rufen Sie \"Klausur\"", r.nextInt(5), influence,
+				courseParams);
+		
+		range[0][0] = 0;
+		range[0][1] = 100;
+		influence[0] = 40;
+		
+		range[1][0] = 0;
+		range[1][1] = 100;
+		influence[1] = -30;
+		
+		range[2][0] = 0;
+		range[2][1] = 30;
+		influence[2] = 60;
+		
+		range[3][0] = 0;
+		range[3][1] = 100;
+		influence[3] = -20;
+		sugArray[2] = new Suggestion(range, "Fragen Sie einen unaufmerksamen Studenten", r.nextInt(5), influence,
+				courseParams);
+		
+		
+		range[0][0] = 0;
+		range[0][1] = 20;
+		influence[0] = 30;
+		
+		range[1][0] = 0;
+		range[1][1] = 20;
+		influence[1] = -10;
+		
+		range[2][0] = 0;
+		range[2][1] = 20;
+		influence[2] = 20;
+		
+		range[3][0] = 0;
+		range[3][1] = 20;
+		influence[3] = -20;
+		sugArray[3] = new Suggestion(range, "Schicken Sie die Studenten nach Hause", r.nextInt(5), influence,
+				courseParams);
+		
+		range[0][0] = 0;
+		range[0][1] = 30;
+		influence[0] = 100;
+		
+		range[1][0] = 0;
+		range[1][1] = 100;
+		influence[1] = -10;
+		
+		range[2][0] = 0;
+		range[2][1] = 30;
+		influence[2] = 20;
+		
+		range[3][0] = 0;
+		range[3][1] = 100;
+		influence[3] = 0;
+		sugArray[4] = new Suggestion(range, "Holen Sie den Studenten Kaffee", r.nextInt(5), influence, courseParams);
+
+		
+		range[0][0] = 0;
+		range[0][1] = 100;
+		influence[0] = -10;
+		
+		range[1][0] = 0;
+		range[1][1] = 100;
+		influence[1] = 10;
+		
+		range[2][0] = 0;
+		range[2][1] = 30;
+		influence[2] = 60;
+		
+		range[3][0] = 0;
+		range[3][1] = 100;
+		influence[3] = 40;
+		sugArray[5] = new Suggestion(range, "Zwingen Sie die Studenten die Laptops zu zuklappen", r.nextInt(5),
+				influence, courseParams);
+
+
 		try {
 			ObjectOutputStream out = xs.createObjectOutputStream(new FileWriter(SUGGESTION_FILE), "suggestionList");
 			
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < dummySuggestions; i++) {
 				out.writeObject(sugArray[i]);
 			}
 			
