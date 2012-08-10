@@ -110,6 +110,7 @@ public class SuggestionManager implements MouseListener {
 	 */
 	private boolean removeSuggestion(Suggestion s) {
 		if (currentSuggestions.contains(s)) {
+			logger.warn(s.getMessage() + " removed");
 			currentSuggestions.remove(s);
 			return true;
 		} else {
@@ -322,8 +323,10 @@ public class SuggestionManager implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		String sugText = ((JLabel) e.getSource()).getText();
+		logger.warn(sugText + " clicked");
 		Suggestion clicked = this.lookUpSuggestion(sugText);
 		if (clicked != null) {
+			logger.warn(sugText + " found");
 			this.influences.add(clicked.getInfluenceVector());
 			this.removeSuggestion(clicked);
 			Observers.notifySuggestion();

@@ -154,6 +154,12 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	 * @author dirk
 	 */
 	public void simulationStep() {
+		// handle any suggestions
+		for (CalcVector cv : suggestionMgr.getAndClearInfluences()) {
+			logger.warn("suggestion " + cv.toString());
+			course.suggestionInput(cv);
+		}
+
 		setCurrentTime(currentTime + realInterval);
 		logger.debug("Simulation Step at " + currentTime);
 		course.simulationStep(currentTime);
@@ -169,13 +175,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 			Observers.notifySelectedStudent();
 			Observers.notifyStatistics();
 		}
-		
-		// handle any suggestions
-		for (CalcVector cv : suggestionMgr.getAndClearInfluences()) {
-			course.suggestionInput(cv);
-		}
 	}
-	
 	
 	
 	// --- GETTERS and SETTERS ---
@@ -339,4 +339,11 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		// reset simController
 		reset();
 	}
+	
+	
+	public boolean isRun() {
+		return run;
+	}
+
+
 }

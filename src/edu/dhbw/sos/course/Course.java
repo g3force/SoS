@@ -60,7 +60,8 @@ public class Course {
 	// simulating indicates, that we are currently within a simulation step (important for donInput)
 	private transient boolean										simulating;
 	private transient LinkedList<DonInput>						donInputQueue;
-	
+
+
 	public enum ECourseType {
 		THEORY,
 		GROUP,
@@ -327,13 +328,13 @@ public class Course {
 			
 			BlockType bt = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000).getType();
 			preChangeVector.addCalcVector(influence.getEnvironmentVector(bt.getEInfluenceType(), timeBlockInf));
-			TimeBlock actual = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000);
-			logger.info("currentTime: " + currentTime + " Block: " + actual.getType().toString() + " len: "
-					+ actual.getLen());
+			// TimeBlock actual = lecture.getTimeBlocks().getTimeBlockAtTime(currentTime / 60000);
+			// logger.info("currentTime: " + currentTime + " Block: " + actual.getType().toString() + " len: "
+			// + actual.getLen());
 			preChangeVector.printCalcVector("Sim: after timeblock (" + bt.toString() + ")");
 			
 			// timeDending ( inf(Time) * currentTime/1000 * timeInf )
-			double timeInf = 0.000000000001;
+			double timeInf = 0.00000005;
 			double timeTimeInf = timeInf * currentTime / 1000; // in seconds
 			preChangeVector.addCalcVector(influence.getEnvironmentVector(EInfluenceType.TIME_DEPENDING, timeTimeInf));
 			preChangeVector.printCalcVector("Sim: after time depending");

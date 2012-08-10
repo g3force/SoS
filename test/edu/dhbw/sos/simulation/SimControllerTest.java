@@ -99,17 +99,17 @@ public class SimControllerTest {
 							switch (j) {
 								case 0: // theory
 									double[] exspected = { -45, -15, -30, -30 };
-									double[] delta = { 15, 5, 10, 10 };
+									double[] delta = { 15, 10, 10, 10 };
 									testAllAttributes("Theory", start[y][x], s.getActualState(), exspected, delta);
 									break;
 								case 1: // exercise
 									double[] exspected2 = { 15, -25, 45, 20 };
-									double[] delta2 = { 5, 5, 15, 10 };
+									double[] delta2 = { 10, 10, 15, 10 };
 									testAllAttributes("Exercise", start[y][x], s.getActualState(), exspected2, delta2);
 									break;
 								case 2: // group
 									double[] exspected3 = { 40, -15, 35, 37 };
-									double[] delta3 = { 10, 5, 15, 13 };
+									double[] delta3 = { 10, 10, 15, 13 };
 									testAllAttributes("Group", start[y][x], s.getActualState(), exspected3, delta3);
 									break;
 								case 3: // pause

@@ -179,16 +179,16 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 	@Override
 	public void updateSuggestions() {
 		// suggestions
-		if (suggestionPanel.getComponentCount() != courses.getCurrentCourse().getStatistics().size() + 1) {
+		// if (suggestionPanel.getComponentCount() != courses.getCurrentCourse().getStatistics().size() + 1) {
 			suggestionPanel.removeAll();
 			suggestionPanel.add(new JLabel(Messages.getString("suggestions"), SwingConstants.CENTER));
 			for (String sugg : this.sugMngr.getSuggestionNames()) {
-				System.out.println(sugg);
+				// System.out.println(sugg);
 				JLabel lblSug = new JLabel(sugg);
 				lblSug.addMouseListener(this.sugMngr);
 				suggestionPanel.add(lblSug);
 			}
-		}
+		// }
 	}
 	
 	

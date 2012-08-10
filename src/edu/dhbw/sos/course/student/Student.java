@@ -37,7 +37,9 @@ public class Student implements IPlace, Cloneable {
 	int																	noChange				= 0;
 	final int															donInputNoChange	= 600;
 	
+	private int															historyCounter		= 0;
 	
+
 	public Student(int vectorInitSize) {
 		float[] changeVectorF = new float[vectorInitSize];
 		for (int i = 0; i < vectorInitSize; i++) {
@@ -152,7 +154,15 @@ public class Student implements IPlace, Cloneable {
 			noChange--;
 			return;
 		}
-		saveHistoryStates(time);
+
+		// save the first 20 history states all, after that only every 100 simulation step
+		if (historyStates.size() < 20 || historyCounter == 0) {
+			saveHistoryStates(time);
+		}
+		historyCounter++;
+		if (historyCounter == 100) {
+			historyCounter = 0;
+		}
 		
 		// parameter matrix * actual state
 		double parameterInf = 0.00000001;
