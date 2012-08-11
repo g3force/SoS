@@ -178,17 +178,37 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 	
 	@Override
 	public void updateSuggestions() {
-		// suggestions
-		// if (suggestionPanel.getComponentCount() != courses.getCurrentCourse().getStatistics().size() + 1) {
-			suggestionPanel.removeAll();
-			suggestionPanel.add(new JLabel(Messages.getString("suggestions"), SwingConstants.CENTER));
-			for (String sugg : this.sugMngr.getSuggestionNames()) {
-				// System.out.println(sugg);
-				JLabel lblSug = new JLabel(sugg);
-				lblSug.addMouseListener(this.sugMngr);
-				suggestionPanel.add(lblSug);
-			}
+		if (suggestionPanel.getComponentCount() == 1 && this.sugMngr.getSuggestionNames().size() == 0) {
+			// in current Panel, there is only the title
+			// there are no suggs to be displayed
+			// => nothing to update
+			return;
+		}
+		// boolean found1 = false;
+		// for (String sugg : this.sugMngr.getSuggestionNames()) {
+		// boolean found = false;
+		// for(int i=1; i < suggestionPanel.getComponentCount(); i++) {
+		// JLabel lbl = (JLabel) suggestionPanel.getComponent(i);
+		// if (sugg.equals(lbl.getText())) {
+		// found = true;
+		// break;
 		// }
+		// }
+		// if(found) {
+		// // sugg should be in Panel and is in Panel.
+		// // no need for update yet
+		// found1 = true;
+		// }
+		// }
+		suggestionPanel.removeAll();
+		suggestionPanel.add(new JLabel(Messages.getString("suggestions"), SwingConstants.CENTER));
+		for (String sugg : this.sugMngr.getSuggestionNames()) {
+			// System.out.println(sugg);
+			JLabel lblSug = new JLabel(sugg);
+			lblSug.addMouseListener(this.sugMngr);
+			suggestionPanel.add(lblSug);
+		}
+		suggestionPanel.repaint(); // not the best way, but everything else had no effect
 	}
 	
 	

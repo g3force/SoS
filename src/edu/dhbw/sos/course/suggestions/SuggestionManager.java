@@ -361,18 +361,21 @@ public class SuggestionManager implements MouseListener {
 	
 	
 	public void updateSuggestions(CalcVector averages) {
-		currentSuggestions.clear();
+		LinkedList<Suggestion> newSuggs = new LinkedList<Suggestion>();
 		for (int i = 0; i < availableSuggestions.size(); i++) {
 			boolean addSuggestion = true;
 			for (int j = 0; j < courseParams.size(); j++) {
 				addSuggestion = addSuggestion && availableSuggestions.get(i).paramIsInRange(j, averages.getValueAt(j));
 			}
 			if (addSuggestion) {
-				currentSuggestions.add(availableSuggestions.get(i));
+				newSuggs.add(availableSuggestions.get(i));
 			}
 		}
-		Collections.sort(currentSuggestions);
-		Observers.notifySuggestion();
+		Collections.sort(newSuggs);
+		if (!currentSuggestions.equals(newSuggs)) {
+			currentSuggestions = newSuggs;
+			Observers.notifySuggestion();
+		}
 	}
 	
 	
