@@ -60,6 +60,12 @@ public class PPaintArea extends JPanel implements IStatisticsObserver, ISimUntil
 	private MovableTimeBlocks	movableTimeBlocks;
 	
 
+	/**
+	 * Create a paintarea for the planPanel.
+	 * 
+	 * @param course initial course
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 */
 	public PPaintArea(Course course) {
 		this.setLayout(new BorderLayout());
 		this.course = course;

@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 5, 2012
- * Author(s): NicolaiO
+ * Author(s): Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  * *********************************************************
  */
@@ -62,7 +62,7 @@ import edu.dhbw.sos.simulation.SimController;
  * 
  * It also contains some controls
  * 
- * @author NicolaiO
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserver, ICurrentCourseObserver,
@@ -87,7 +87,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	 * Initialize the PlanPanel with GUIData
 	 * 
 	 * @param data general GUIData object with needed information for GUI
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public PlanPanel(SimController simController, Courses courses) {
 		this.courses = courses;

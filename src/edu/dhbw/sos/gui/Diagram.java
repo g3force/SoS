@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 20, 2012
- * Author(s): NicolaiO
+ * Author(s): Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  * *********************************************************
  */
@@ -25,7 +25,7 @@ import java.util.LinkedList;
  * It will use an float list for data and is used by calling the draw() method with a
  * Graphics2D object.
  * 
- * @author NicolaiO
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public class Diagram {
@@ -55,7 +55,7 @@ public class Diagram {
 	 * However, this should be done on every update, so
 	 * that the diagram can be resized, when the GUI was resized
 	 * 
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public Diagram(LinkedList<Float> _data) {
 		data = _data;
@@ -76,7 +76,7 @@ public class Diagram {
 	 * before calling this method
 	 * 
 	 * @param ga Graphics2D object for drawing
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public void draw(Graphics2D ga) {
 		if (data.size() == 0 || width <= 0 || height <= 0)
@@ -93,12 +93,7 @@ public class Diagram {
 		for (int i = 1; i < data.size(); i++) {
 			value = data.get(i);
 			float x1 = location.x + (i - 1) * scalex;
-			// float x2 = location.x + (i) * scalex;
 			float y1 = (height + location.y) - lastValue * scaley;
-			// float y2 = (height + location.y) - value * scaley;
-			// System.out.printf("%f %f %f %f\n", x1, y1, x2, y2);
-			// Line2D.Float l = new Line2D.Float(x1, y1, x2, y2);
-			// ga.draw(l);
 			lastValue = value;
 			xPoints[i - 1] = (int) x1;
 			yPoints[i - 1] = (int) y1;
@@ -130,7 +125,7 @@ public class Diagram {
 	 * 
 	 * @param g2d graphics to draw with
 	 * @param line line of the arrow for positioning
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	private void drawArrowHead(Graphics2D g2d, Line2D.Double line) {
 		aTransf.setToIdentity();
@@ -149,7 +144,7 @@ public class Diagram {
 	 * Return the maximum Y depending on rescaleY
 	 * 
 	 * @return maximum Y
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	private float getMaxY() {
 		if (rescaleY) {
@@ -169,7 +164,7 @@ public class Diagram {
 	 * Return the maximum X depending on rescaleX
 	 * 
 	 * @return maximum X
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	private float getMaxX() {
 		if (rescaleX) {

@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 16, 2012
- * Author(s): NicolaiO
+ * Author(s): Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  * *********************************************************
  */
@@ -18,7 +18,8 @@ import org.apache.log4j.Logger;
 /**
  * This class holds is a LinkedListof type TimeBlock which hold as all TimeBlocks of a lecture and gives methods for
  * adding, moving and removing blocks.
- * @author NicolaiO, andres
+ * 
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>, andres
  * 
  */
 public class TimeBlocks implements Iterable<TimeBlock> {
@@ -29,7 +30,7 @@ public class TimeBlocks implements Iterable<TimeBlock> {
 	
 	/**
 	 * Constructor with non-empty LinkedList
-	 * @author NicolaiO, andres
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>, andres
 	 */
 	public TimeBlocks(LinkedList<TimeBlock> timeblocks) {
 		this.timeblocks = timeblocks;
@@ -81,7 +82,7 @@ public class TimeBlocks implements Iterable<TimeBlock> {
 	 * 
 	 * @param timeBlock
 	 * @return index of timeBlock
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public int indexOf(TimeBlock timeBlock) {
 		return timeblocks.indexOf(timeBlock);
@@ -104,7 +105,7 @@ public class TimeBlocks implements Iterable<TimeBlock> {
 	
 	/**
 	 * Constructor with empty LinkedList
-	 * @author NicolaiO, andres
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>, andres
 	 */
 	public TimeBlocks() {
 		timeblocks = new LinkedList<TimeBlock>();
@@ -115,7 +116,7 @@ public class TimeBlocks implements Iterable<TimeBlock> {
 	 * Returns the total length of all TimeBlocks of an Lecture
 	 * 
 	 * @return total length of all TimeBlocks
-	 * @author NicolaiO, andres
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>, andres
 	 */
 	public int getTotalLength() {
 		int sum = 0;
@@ -161,7 +162,9 @@ public class TimeBlocks implements Iterable<TimeBlock> {
 			// werden
 			timeblocks.get(index + 1).setLen(lengthNext - lengthToTrim);
 		} else {
-			// Wenn verschobene Block Länge - neue Block Länge kleiner 0 ist wird der verschobene Blcok gelöscht
+			// TODO andres deutsch?! Wenn verschobene Block Länge - neue Block Länge kleiner 0 ist wird der verschobene
+			// Blcok
+			// gelöscht
 			timeblocks.remove(index + 1);
 			trimTBlen(index, lengthToTrim - lengthNext);
 		}

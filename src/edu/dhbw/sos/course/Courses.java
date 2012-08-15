@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 21, 2012
- * Author(s): NicolaiO
+ * Author(s): Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  * *********************************************************
  */
@@ -22,7 +22,7 @@ import edu.dhbw.sos.observers.Observers;
 /**
  * Contains a list of all courses, handles the current course
  * 
- * @author NicolaiO
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public class Courses implements Iterable<Course> {
@@ -34,7 +34,7 @@ public class Courses implements Iterable<Course> {
 	/**
 	 * Create new Courses
 	 * 
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public Courses() {
 		courses = new LinkedList<Course>();
@@ -46,7 +46,7 @@ public class Courses implements Iterable<Course> {
 	 * 
 	 * @param course new course
 	 * @return true, if successful
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public boolean add(Course course) {
 		boolean res = courses.add(course);
@@ -98,7 +98,7 @@ public class Courses implements Iterable<Course> {
 	 * 
 	 * @param currentCourse
 	 * @return index of currentCourse
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public int indexOf(Course currentCourse) {
 		return courses.indexOf(currentCourse);

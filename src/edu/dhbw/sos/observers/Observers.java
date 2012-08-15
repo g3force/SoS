@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 30, 2012
- * Author(s): NicolaiO
+ * Author(s): Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  * *********************************************************
  */
@@ -25,7 +25,7 @@ import edu.dhbw.sos.course.Course;
  * This class should not be instantiated, but should only serve as a static global module, that all other modules have
  * access to.
  * 
- * @author NicolaiO
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public class Observers {
@@ -55,10 +55,20 @@ public class Observers {
 	// ##################################################################################
 	
 	
+	/**
+	 * Instantiation not allowed
+	 * 
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 */
 	private Observers() {
 	}
 	
 	
+	/**
+	 * Print all subscribers.
+	 * 
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 */
 	public static void print() {
 		printObserverList(studentsObservers, "studentsObservers");
 		printObserverList(selectedCourseObservers, "selectedCourseObservers");
@@ -76,13 +86,20 @@ public class Observers {
 	}
 	
 	
+	/**
+	 * Print an observer list (subscribers and size) to debug logger.
+	 * 
+	 * @param obsl
+	 * @param name
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 */
 	private static void printObserverList(LinkedList<?> obsl, String name) {
 		logger.debug("Observer: " + name);
 		logger.debug("Size: " + obsl.size());
 		for (Object o : obsl) {
 			logger.debug(o.toString());
 		}
-		logger.debug("");
+		logger.debug(""); // new line
 	}
 	
 	
@@ -143,7 +160,7 @@ public class Observers {
 	/**
 	 * 
 	 * @param speed value should be between 1 and 1024, preferably multiples of 2
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public static void notifySpeed(int speed) {
 		for (ISpeedObserver so : speedObservers) {

@@ -24,8 +24,14 @@ import edu.dhbw.sos.observers.Observers;
 
 
 /**
- * Handles action events concerning the courses
- * @author NicolaiO
+ * Handles action events concerning the courses.
+ * 
+ * The course controller handles:
+ * * the change of the current course
+ * * adding of a new course
+ * * deleting a course
+ * 
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public class CourseController implements ActionListener, MouseListener, ItemListener {

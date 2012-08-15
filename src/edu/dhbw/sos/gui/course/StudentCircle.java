@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 18, 2012
- * Author(s): NicolaiO
+ * Author(s): Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  * *********************************************************
  */
@@ -22,7 +22,7 @@ import edu.dhbw.sos.course.student.IPlace;
  * A StudentCircle extends a Circle and contains a reference to the actual student.
  * It furthermore stores and handles the color and the hovering pizza
  * 
- * @author NicolaiO
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public class StudentCircle extends Ellipse2D.Float {
@@ -36,7 +36,7 @@ public class StudentCircle extends Ellipse2D.Float {
 	 * Create a new StudentCircle object with a reference to the actual student
 	 * 
 	 * @param _student
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public StudentCircle(IPlace _student) {
 		super();
@@ -55,7 +55,7 @@ public class StudentCircle extends Ellipse2D.Float {
 	 * @param y
 	 * @param w
 	 * @param h
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public StudentCircle(IPlace _student, float x, float y, float w, float h) {
 		super(x, y, w, h);
@@ -70,7 +70,7 @@ public class StudentCircle extends Ellipse2D.Float {
 	 * 
 	 * @param properties
 	 * @param offset
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public void initPizza(LinkedList<String> properties) {
 		float offset = (float) (this.getBounds2D().getWidth() * (CPaintArea.SCALE_HOVER - 1)) / 2;
@@ -90,7 +90,7 @@ public class StudentCircle extends Ellipse2D.Float {
 	/**
 	 * Update the color of the pizza
 	 * 
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	private void updatePizza() {
 		for (PizzaPiece pizzaPiece : pizza) {
@@ -115,7 +115,7 @@ public class StudentCircle extends Ellipse2D.Float {
 	 * @param value value between 0 and max
 	 * @param max maximal possible value
 	 * @return Color between Green and Red
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public static Color getColorFromValue(float value, float max) {
 		float LOWER_GREEN = 0;

@@ -268,7 +268,7 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 			// special case: left Block is null
 			// Instead of resizing the most left block, do nothing.
 			// this is safer...
-			// FIXME Nicolai consider doing something thats enables moving most left block back.
+			// FIXME Dirk consider doing something thats enables moving most left block back.
 			// if (e.getX() > grabbedBlock.timeBlock.getLen() * getScaleRatio() + grabbedBlock.xOffset) {
 			// timeBlocks.moveTimeBlock(timeBlock, rightTimeBlock);
 			// }

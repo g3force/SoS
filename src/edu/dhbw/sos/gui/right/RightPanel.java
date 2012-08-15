@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 5, 2012
- * Author(s): NicolaiO
+ * Author(s): Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  * *********************************************************
  */
@@ -42,7 +42,7 @@ import edu.dhbw.sos.observers.Observers;
  * This Panel contains everything that is on the right.
  * This is the course management and some information
  * 
- * @author NicolaiO
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public class RightPanel extends JPanel implements ICurrentCourseObserver, ICoursesListObserver, IStatisticsObserver,
@@ -70,7 +70,7 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 	 * @param courseController
 	 * @param courses
 	 * @param sm
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public RightPanel(CourseController courseController, Courses courses, SuggestionManager sm) {
 		this.setBorder(MainFrame.COMPOUND_BORDER);
@@ -184,26 +184,9 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 			// => nothing to update
 			return;
 		}
-		// boolean found1 = false;
-		// for (String sugg : this.sugMngr.getSuggestionNames()) {
-		// boolean found = false;
-		// for(int i=1; i < suggestionPanel.getComponentCount(); i++) {
-		// JLabel lbl = (JLabel) suggestionPanel.getComponent(i);
-		// if (sugg.equals(lbl.getText())) {
-		// found = true;
-		// break;
-		// }
-		// }
-		// if(found) {
-		// // sugg should be in Panel and is in Panel.
-		// // no need for update yet
-		// found1 = true;
-		// }
-		// }
 		suggestionPanel.removeAll();
 		suggestionPanel.add(new JLabel(Messages.getString("suggestions"), SwingConstants.CENTER));
 		for (String sugg : this.sugMngr.getSuggestionNames()) {
-			// System.out.println(sugg);
 			JLabel lblSug = new JLabel(sugg);
 			lblSug.addMouseListener(this.sugMngr);
 			suggestionPanel.add(lblSug);
@@ -237,7 +220,7 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 			}
 		}
 		
-		this.validate();
+		statsPanel.validate();
 	}
 	
 	

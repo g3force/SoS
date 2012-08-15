@@ -337,14 +337,12 @@ public class SuggestionManager implements MouseListener {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// empty
-		
 	}
 	
 	
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// empty
-		
 	}
 	
 	

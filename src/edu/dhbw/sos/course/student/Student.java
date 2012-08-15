@@ -91,7 +91,7 @@ public class Student implements IPlace, Cloneable {
 	 * 
 	 * @param index index in vector
 	 * @param value value to add (negative to sub)
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	@Override
 	public void donInput(int index, float value) {
@@ -256,7 +256,7 @@ public class Student implements IPlace, Cloneable {
 	 * another interface that is needed but should be reconsidered
 	 * 
 	 * @return
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	@Override
 	public int getAverageState() {

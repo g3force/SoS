@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Mar 30, 2012
- * Author(s): NicolaiO
+ * Author(s): Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  * *********************************************************
  */
@@ -42,7 +42,7 @@ import edu.dhbw.sos.simulation.SimController;
  * This is the main window that contains all the elements, that are needed...
  * It adds the different panels and organize the layout.
  * 
- * @author NicolaiO
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public class MainFrame extends JFrame implements WindowListener {
@@ -59,7 +59,7 @@ public class MainFrame extends JFrame implements WindowListener {
 	 * Initialize GUI with given data.
 	 * 
 	 * @param data
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public MainFrame(SimController simController, CourseController courseController, Courses courses,
 			SuggestionManager sm) {
@@ -78,12 +78,15 @@ public class MainFrame extends JFrame implements WindowListener {
 			this.setIconImage(Toolkit.getDefaultToolkit().getImage(iconUrl));
 		}
 		
+		// create all panels
 		CoursePanel coursePanel = new CoursePanel(simController, courseController, courses);
 		RightPanel rightPanel = new RightPanel(courseController, courses, sm);
-		StatusBar statusBar = new StatusBar();
 		StudentPanel studentPanel = new StudentPanel(courses.getCurrentCourse());
 		PlanPanel planPanel = new PlanPanel(simController, courses);
 		
+		// create status bar
+		StatusBar statusBar = new StatusBar();
+
 		// some subscriptions
 		Observers.subscribeEditMode(simController);
 		Observers.subscribeEditMode(coursePanel);
