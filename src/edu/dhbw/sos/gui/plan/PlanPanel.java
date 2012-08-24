@@ -114,12 +114,16 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 					JLabel label = (JLabel) e.getSource();
 					if (label.getText().equals(" " + Messages.getString("BlockType.BREAK"))) {
 						paintArea.addNewTimeBlock(BlockType.pause);
+						paintArea.repaint();
 					} else if (label.getText().equals(" " + Messages.getString("BlockType.EXERCISE"))) {
 						paintArea.addNewTimeBlock(BlockType.exercise);
+						paintArea.repaint();
 					} else if (label.getText().equals(" " + Messages.getString("BlockType.GROUP"))) {
 						paintArea.addNewTimeBlock(BlockType.group);
+						paintArea.repaint();
 					} else if (label.getText().equals(" " + Messages.getString("BlockType.THEORY"))) {
 						paintArea.addNewTimeBlock(BlockType.theory);
+						paintArea.repaint();
 					} else {
 						assert false : "Label has another text then expected.";
 					}
@@ -406,7 +410,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	
 	
 	@Override
-	public void lengthChanged() {
+	public void lengthChanged(int newLengthMin) {
 		updateEnd();
 	}
 }

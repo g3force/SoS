@@ -69,8 +69,9 @@ public class PPaintArea extends JPanel implements IStatisticsObserver, ISimUntil
 	public PPaintArea(Course course) {
 		this.setLayout(new BorderLayout());
 		this.course = course;
-		timeMarkerBlock = new TimeMarkerBlock();
+		timeMarkerBlock = new TimeMarkerBlock(course.getLecture().getLength());
 		Observers.subscribeTime(timeMarkerBlock);
+		Observers.subscribeTimeBlocksLength(timeMarkerBlock);
 		movableTimeBlocks = new MovableTimeBlocks(course.getLecture().getTimeBlocks());
 
 		TimeMarkerBlockPanel timeMarkerBlockPanel = new TimeMarkerBlockPanel();
@@ -240,7 +241,7 @@ public class PPaintArea extends JPanel implements IStatisticsObserver, ISimUntil
 	
 
 	@Override
-	public void lengthChanged() {
+	public void lengthChanged(int newLengthMin) {
 		myRepaint();
 	}
 }

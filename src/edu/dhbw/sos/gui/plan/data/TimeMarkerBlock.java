@@ -15,16 +15,17 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
+import edu.dhbw.sos.observers.ITimeBlocksLengthObserver;
 import edu.dhbw.sos.observers.ITimeObserver;
 
 
 /**
- * TODO andres
+ * This class implements the marker of the current time during the lectures in the plan panel. It can be moved.
  * 
  * @author andres
  * 
  */
-public class TimeMarkerBlock extends Rectangle implements ITimeObserver {
+public class TimeMarkerBlock extends Rectangle implements ITimeObserver, ITimeBlocksLengthObserver {
 	private static final long	serialVersionUID	= -1455862988755481811L;
 	
 	// save the point, where the mouse holds the block, relative to the block itself
@@ -37,14 +38,16 @@ public class TimeMarkerBlock extends Rectangle implements ITimeObserver {
 	private boolean				moveVertical;
 	
 	private int						time;
+	private int						length;													// = lecture length in minutes
 	
 	
-	public TimeMarkerBlock() {
+	public TimeMarkerBlock(int lengthInMin) {
 		super(new Point(-5, 135), new Dimension(10, 10));
 		moveHorizontal = true;
 		moveVertical = false;
 		setColor(Color.GRAY);
 		setTime(0);
+		setLength(lengthInMin);
 	}
 	
 	
@@ -133,7 +136,20 @@ public class TimeMarkerBlock extends Rectangle implements ITimeObserver {
 	 * @param time the time to set in minutes
 	 */
 	public void setTime(int time) {
-		this.time = time;
+		if (time < 0) // time is before start --> set time marker to start
+			this.time = 0;
+		else if (time > this.length) // time is after end --> set time marker to end
+			this.time = this.length;
+		else
+			this.time = time;
+	}
+	
+	
+	/**
+	 * @param length the length to set in minutes for the length of the lecture
+	 */
+	public void setLength(int length) {
+		this.length = length;
 	}
 	
 	
@@ -157,5 +173,19 @@ public class TimeMarkerBlock extends Rectangle implements ITimeObserver {
 		ga.setPaint(getColor());
 		ga.fill(this);
 		ga.drawLine((int) (getTime() * scaleRatio), 10, (int) (getTime() * scaleRatio), 135); // FIXME andres constants
+	}
+	
+	
+	/**
+	 * This method is called by the TimeBlockLengthChanged Observer. It will validate the position of the
+	 * timeMarkerBlock. <br>
+	 * If the lecture length is reduced and the timeMarkerBlock would be placed outside of th visible field, it will be
+	 * resetted to the end of the lecture.
+	 */
+	@Override
+	public void lengthChanged(int newLengthMin) {
+		if (getTime() > newLengthMin)
+			setTime(newLengthMin);
+		setLength(newLengthMin);
 	}
 }

@@ -227,9 +227,9 @@ public class Observers {
 	 * too.
 	 * @author andres
 	 */
-	public static void notifyTimeBlocksLength() {
+	public static void notifyTimeBlocksLength(int newLengthMin) {
 		for (ITimeBlocksLengthObserver tblo : timeBlocksLengthObservers) {
-			tblo.lengthChanged();
+			tblo.lengthChanged(newLengthMin);
 		}
 	}
 	
