@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 5, 2012
- * Author(s): NicolaiO
+ * Author(s): Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  * *********************************************************
  */
@@ -42,7 +42,7 @@ import edu.dhbw.sos.observers.Observers;
  * This Panel contains everything that is on the right.
  * This is the course management and some information
  * 
- * @author NicolaiO
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public class RightPanel extends JPanel implements ICurrentCourseObserver, ICoursesListObserver, IStatisticsObserver,
@@ -70,7 +70,7 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 	 * @param courseController
 	 * @param courses
 	 * @param sm
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public RightPanel(CourseController courseController, Courses courses, SuggestionManager sm) {
 		this.setBorder(MainFrame.COMPOUND_BORDER);

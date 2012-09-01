@@ -11,10 +11,9 @@ package edu.dhbw.sos.observers;
 
 
 /**
- * TODO andres, add comment!
- * - What should this type do (in one sentence)?
- * - If not intuitive: A simple example how to use this class
- * 
+ * This interface is used to inform interested objects by changes of the currentTime, if it is changed by a internal
+ * object like the SimController. <br>
+ * See also ITimeGUIObserver for time changes made by GUI components.
  * @author andres
  * 
  */

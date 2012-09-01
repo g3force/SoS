@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 5, 2012
- * Author(s): NicolaiO
+ * Author(s): Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  * *********************************************************
  */
@@ -62,7 +62,7 @@ import edu.dhbw.sos.simulation.SimController;
  * 
  * It also contains some controls
  * 
- * @author NicolaiO
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserver, ICurrentCourseObserver,
@@ -87,7 +87,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	 * Initialize the PlanPanel with GUIData
 	 * 
 	 * @param data general GUIData object with needed information for GUI
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public PlanPanel(SimController simController, Courses courses) {
 		this.courses = courses;
@@ -114,12 +114,16 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 					JLabel label = (JLabel) e.getSource();
 					if (label.getText().equals(" " + Messages.getString("BlockType.BREAK"))) {
 						paintArea.addNewTimeBlock(BlockType.pause);
+						paintArea.repaint();
 					} else if (label.getText().equals(" " + Messages.getString("BlockType.EXERCISE"))) {
 						paintArea.addNewTimeBlock(BlockType.exercise);
+						paintArea.repaint();
 					} else if (label.getText().equals(" " + Messages.getString("BlockType.GROUP"))) {
 						paintArea.addNewTimeBlock(BlockType.group);
+						paintArea.repaint();
 					} else if (label.getText().equals(" " + Messages.getString("BlockType.THEORY"))) {
 						paintArea.addNewTimeBlock(BlockType.theory);
+						paintArea.repaint();
 					} else {
 						assert false : "Label has another text then expected.";
 					}
@@ -189,9 +193,6 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		Observers.subscribeEditMode(btnPlay);
 		Observers.subscribeEditMode(btnLive);
 		
-		// init paintArea
-		updateCurrentCourse(course);
-		
 		controlPanel.add(btnPlay);
 		controlPanel.add(btnLive);
 		sidePanel.add(controlPanel);
@@ -215,25 +216,15 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		// time
 		Observers.subscribeTimeBlocksLength(this);
 
-		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
-		String start = timeFormat.format(course.getLecture().getStart());
-		Date endTime = new Date();
-		endTime.setTime(course.getLecture().getStart().getTime() + course.getLecture().getLength() * 60 * 1000);
-		String end = timeFormat.format(endTime);
-		
 		JLabel lblFrom = new JLabel(Messages.getString("Lecture.FROM"), SwingConstants.LEFT);
 		JLabel lblTo = new JLabel(Messages.getString("Lecture.TO"), SwingConstants.LEFT);
 		
-		
-		txtFrom = new JFormattedTextField(new DefaultFormatterFactory(new DateFormatter(timeFormat)));
-		
-		txtFrom.setText(start);
+		txtFrom = new JFormattedTextField(new DefaultFormatterFactory(new DateFormatter(new SimpleDateFormat("HH:mm"))));
 		txtFrom.setColumns(5);
-		txtTo = new JTextField(end, 5);
+		txtTo = new JTextField(5);
 		txtTo.setEditable(false);
 		txtTo.setToolTipText(Messages.getString("Lecture.TOINFO"));
-		
-		
+
 		txtFrom.addKeyListener(new EnterKeyListener());
 		
 		txtFrom.setInputVerifier(new InputVerifier() {
@@ -242,13 +233,9 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 				if ((input instanceof JFormattedTextField)) {
 					JFormattedTextField in = (JFormattedTextField) input;
 					
-					
 					Pattern timeP = Pattern.compile("([0-1][0-9]|2[0-3]):[0-5][0-9]");
 					Matcher timeM = timeP.matcher(((JFormattedTextField) input).getText());
 					// checks if the colon is at the right point
-					// TODO andres maybe check if the number of digits is correct and maybe check the range of the numbers
-					// (now
-					// // if the number ist out of range it will overflow)
 					// if (in.isEditValid() && (((in.getText(1, 1).equals(":") && in.getText().length() == 4)))
 					// || (in.getText(2, 1).equals(":") && in.getText().length() == 5)) {
 					if (timeM.matches()) {
@@ -297,11 +284,13 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 		timePanel.add(lblTo);
 		timePanel.add(txtTo);
 		sidePanel.add(timePanel);
-		
-		
+
+		// init paintArea and time fields
+		updateCurrentCourse(course);
+
 	}
 	
-	
+
 	@Override
 	public void componentResized(ComponentEvent e) {
 		// paintArea.initMovableBlocks();
@@ -353,6 +342,10 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	}
 	
 	
+	/**
+	 * This method will reinitialize the lecture dates from a course object. This contains a new paintarea for lecture
+	 * blocks and the time information in the time fields.
+	 */
 	@Override
 	public void updateCurrentCourse(Course course) {
 		if (paintArea != null) {
@@ -367,6 +360,15 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 
 		paintArea.repaint();
 		this.validate();
+
+		// update the time fields
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+		String start = timeFormat.format(course.getLecture().getStart());
+		Date endTime = new Date();
+		endTime.setTime(course.getLecture().getStart().getTime() + course.getLecture().getLength() * 60 * 1000);
+		String end = timeFormat.format(endTime);
+		txtFrom.setText(start);
+		txtTo.setText(end);
 	}
 	
 	
@@ -410,7 +412,7 @@ public class PlanPanel extends JPanel implements ComponentListener, ISpeedObserv
 	
 	
 	@Override
-	public void lengthChanged() {
+	public void lengthChanged(int newLengthMin) {
 		updateEnd();
 	}
 }

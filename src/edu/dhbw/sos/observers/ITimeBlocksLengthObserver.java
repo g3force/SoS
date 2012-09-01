@@ -19,6 +19,7 @@ package edu.dhbw.sos.observers;
  */
 
 // currently used for PPaintAreaV2 to redraw the timemarkers and the PlanPanel to update the end time
+// used also to verify the position of the timemarkerblock
 public interface ITimeBlocksLengthObserver {
-	void lengthChanged();
+	void lengthChanged(int newLengthMin);
 }

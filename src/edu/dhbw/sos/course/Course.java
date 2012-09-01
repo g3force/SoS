@@ -163,7 +163,7 @@ public class Course {
 	/**
 	 * Reset the non persistent data (simulation, statistics, etc.)
 	 * 
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public void reset() {
 		init();
@@ -175,9 +175,14 @@ public class Course {
 	}
 	
 	
+	/**
+	 * This method is used for deserialization of the course XML file
+	 * 
+	 * @return course object read from serialized file
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 */
 	private Object readResolve() {
 		init();
-		getPlace(0, 0).getActualState().printCalcVector("COURSE INIT");
 		return this;
 	}
 	
@@ -574,7 +579,7 @@ public class Course {
 	 * location may be one of: left, right, top, bottom
 	 * 
 	 * @param location
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public void addStudents(String location) {
 		int oldX = 0;
@@ -624,7 +629,7 @@ public class Course {
 	 * location may be one of: left, right, top, bottom
 	 * 
 	 * @param location
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public void subStudents(String location) {
 		int oldX = 0;
@@ -788,7 +793,7 @@ public class Course {
 	/**
 	 * Storage class for a don input
 	 * 
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 * 
 	 */
 	private class DonInput {
@@ -803,7 +808,7 @@ public class Course {
 		 * 
 		 * @param index index of selected parameter
 		 * @param value positiv or negativ change value
-		 * @author NicolaiO
+		 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 		 */
 		public DonInput(int index, float value) {
 			this.index = index;

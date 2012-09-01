@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 5, 2012
- * Author(s): NicolaiO
+ * Author(s): Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  * *********************************************************
  */
@@ -31,8 +31,8 @@ import edu.dhbw.sos.simulation.SimController;
 /**
  * The CoursePanel is the biggest part of the GUI.
  * It contains the students.
- * joa
- * @author NicolaiO
+ * 
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public class CoursePanel extends JPanel implements ComponentListener, ICurrentCourseObserver, IStudentsObserver,
@@ -49,7 +49,7 @@ public class CoursePanel extends JPanel implements ComponentListener, ICurrentCo
 	 * 
 	 * @param courseController
 	 * @param courses
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public CoursePanel(SimController simController, CourseController courseController, Courses courses) {
 		this.setBorder(MainFrame.COMPOUND_BORDER);

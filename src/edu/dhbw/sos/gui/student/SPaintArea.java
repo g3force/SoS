@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 18, 2012
- * Author(s): NicolaiO
+ * Author(s): Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  * *********************************************************
  */
@@ -29,7 +29,7 @@ import edu.dhbw.sos.helper.CalcVector;
  * PaintArea for the PlanPanel.
  * This will draw the timeBlocks, etc.
  * 
- * @author NicolaiO
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public class SPaintArea extends JPanel {
@@ -45,7 +45,7 @@ public class SPaintArea extends JPanel {
 	/**
 	 * Initialize PaintArea
 	 * 
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public SPaintArea() {
 	}
@@ -85,7 +85,7 @@ public class SPaintArea extends JPanel {
 	 * 
 	 * @param student
 	 * @param parameterIndex
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public void update(IPlace student, int parameterIndex) {
 		if (student != null) {
@@ -123,7 +123,7 @@ public class SPaintArea extends JPanel {
 	 * Rebuild diagrams.
 	 * 
 	 * @param course
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public void update(Course course) {
 		synchronized (diagrams) {
