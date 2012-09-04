@@ -22,7 +22,7 @@ import edu.dhbw.sos.simulation.SimController;
  * SuperFelix is the main entrance class. It initializes the logging system
  * and creates the most essential objects.
  * 
- * @author NicolaiO
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public class SuperFelix {
@@ -37,7 +37,7 @@ public class SuperFelix {
 	/**
 	 * Initialize logger and main objects
 	 * 
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public SuperFelix() {
 		/*
@@ -56,22 +56,26 @@ public class SuperFelix {
 			logger.setLevel(Level.ALL);
 		}
 		
-		// Locale.setDefault(new Locale("en", "EN"));
+		// initialize language system
 		Locale.setDefault(new Locale("en", "EN"));
 		
-		// create object for the data to be displayed in GUI
-		// the references will be used to update it afterwards
+		// load saved courses
 		courses = CourseLoader.loadCourses(coursepath);
+		// load courseController, that manages changes of the current course
 		CourseController courseController = new CourseController(courses);
+		// load SuggestionManager, that monitors the course state and create suggestions
 		SuggestionManager sugMngr = new SuggestionManager();
+		// load controller for simulation
 		SimController simController = new SimController(courses.getCurrentCourse(), sugMngr);
 		
+		// subscribe sim controller to some events
 		Observers.subscribeCurrentCourse(simController);
 		Observers.subscribeEditMode(simController);
 		
+		// create GUI
 		MainFrame mainFrame = new MainFrame(simController, courseController, courses, sugMngr);
 		mainFrame.pack();
-		logger.info("Sim of Students started.");
+		logger.debug("Sim of Students started.");
 	}
 	
 	
@@ -79,7 +83,7 @@ public class SuperFelix {
 	 * Close the software.
 	 * This will save the courses before exiting.
 	 * 
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public static void close() {
 		CourseSaver.saveCourses(courses, coursepath);

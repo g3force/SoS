@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 5, 2012
- * Author(s): NicolaiO
+ * Author(s): Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  * *********************************************************
  */
@@ -25,7 +25,9 @@ import edu.dhbw.sos.helper.Messages;
 /**
  * The StatusBar can show some helpful information like tool tips, if applicable
  * 
- * @author NicolaiO
+ * However, version 1.0 will most properly not have any tool tips.
+ * 
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public class StatusBar extends JPanel {
@@ -38,7 +40,7 @@ public class StatusBar extends JPanel {
 	 * The right area will contain the copyright label that will
 	 * open the About Dlg on click
 	 * 
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public StatusBar() {
 		this.setLayout(new BorderLayout(5, 0));

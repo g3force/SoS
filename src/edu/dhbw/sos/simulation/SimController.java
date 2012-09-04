@@ -103,7 +103,7 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		} else {
 			run();
 		}
-		run = !run;
+		// run = !run;
 	}
 	
 	
@@ -132,6 +132,9 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 			}
 		};
 		pulse.scheduleAtFixedRate(simulation, 0, interval);
+		// run is set to true to indicate that simulation is running, this isn't done in toggle to ensure that the
+		// variable is set properly, also when it isn't called by toggle
+		run = true;
 		logger.info("Simulation started");
 	}
 	
@@ -145,6 +148,9 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 		pulse.cancel();
 		pulse.purge();
 		Observers.notifySimulationStopped();
+		// run is set to false to indicate that simulation isn't running, this isn't done in toggle to ensure that the
+		// variable is set properly, also when it isn't called by toggle
+		run = false;
 		logger.info("Simulation stopped");
 	}
 	

@@ -33,16 +33,17 @@ import edu.dhbw.sos.observers.Observers;
  * 
  */
 public class MovableTimeBlocks extends Component implements MouseMotionListener, MouseListener {
-	private static final long	serialVersionUID	= -2721121301356409440L;
-	public static final int		BLOCK_HEIGHT		= 30;
+	private static final long		serialVersionUID	= -2721121301356409440L;
+	
+	public static final int			BLOCK_HEIGHT		= 30;
 	// private final MovableBlock movableBlock;
-	private final TimeBlocks	timeBlocks;
+	private final TimeBlocks		timeBlocks;
 	
 	// buffer before two blocks swap place (for the TimeBlock.MIN_LEN limit)
-	private SwapBuffer			swapBuffer			= new SwapBuffer();
+	private SwapBuffer				swapBuffer			= new SwapBuffer();
 	
 	// some essential information about the block that is currently moved
-	private GrabbedBlock			grabbedBlock;
+	private GrabbedBlock				grabbedBlock;
 
 	/**
 	 * Data container for storing the left and right swap buffer value
@@ -268,7 +269,7 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 			// special case: left Block is null
 			// Instead of resizing the most left block, do nothing.
 			// this is safer...
-			// FIXME Nicolai consider doing something thats enables moving most left block back.
+			// FIXME Dirk consider doing something thats enables moving most left block back.
 			// if (e.getX() > grabbedBlock.timeBlock.getLen() * getScaleRatio() + grabbedBlock.xOffset) {
 			// timeBlocks.moveTimeBlock(timeBlock, rightTimeBlock);
 			// }
@@ -381,7 +382,7 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 			TimeBlock timeBlock = getTimeBlockByMouseLocation(e.getPoint());
 			int newLength = timeBlock.getLen() + getLengthChangeStepByBlockLen(timeBlock.getLen());
 			timeBlock.setLen(newLength);
-			Observers.notifyTimeBlocksLength();
+			Observers.notifyTimeBlocksLength(timeBlocks.getTotalLength());
 		} else if (e.getButton() == MouseEvent.BUTTON3) { // right click
 			TimeBlock timeBlock = getTimeBlockByMouseLocation(e.getPoint());
 			int newLength = timeBlock.getLen() - getLengthChangeStepByBlockLen(timeBlock.getLen());
@@ -392,12 +393,13 @@ public class MovableTimeBlocks extends Component implements MouseMotionListener,
 			} else {
 				timeBlock.setLen(TimeBlock.MIN_LEN);
 			}
+			Observers.notifyTimeBlocksLength(timeBlocks.getTotalLength());
 		}
-		Observers.notifyTimeBlocksLength();
+		// Observers.notifyTimeBlocksLength(timeBlocks.getTotalLength());
 		this.repaint();
 	}
-
 	
+
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if (e.getButton() != MouseEvent.BUTTON1) {

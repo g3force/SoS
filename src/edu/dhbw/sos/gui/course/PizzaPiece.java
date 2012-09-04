@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 18, 2012
- * Author(s): NicolaiO
+ * Author(s): Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  * *********************************************************
  */
@@ -17,7 +17,7 @@ import java.awt.geom.Arc2D;
  * PizzaPiece is part of a circle in the form of a piece of pizza.
  * It is used for splitting the student circle for each property.
  * 
- * @author NicolaiO
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public class PizzaPiece extends Arc2D.Double {
@@ -38,7 +38,7 @@ public class PizzaPiece extends Arc2D.Double {
 	 * @param start
 	 * @param extent
 	 * @param type
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public PizzaPiece(String _text, double x, double y, double w, double h, double start, double extent, int type) {
 		super(x, y, w, h, start, extent, type);

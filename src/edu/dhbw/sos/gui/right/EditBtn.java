@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 22, 2012
- * Author(s): NicolaiO
+ * Author(s): Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  * *********************************************************
  */
@@ -21,7 +21,7 @@ import edu.dhbw.sos.observers.ISimulation;
 /**
  * This is an Edit Button
  * 
- * @author NicolaiO
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public class EditBtn extends JToggleButton implements ISimulation {
@@ -31,7 +31,7 @@ public class EditBtn extends JToggleButton implements ISimulation {
 	/**
 	 * New Edit Button
 	 * 
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public EditBtn() {
 		super("edit");

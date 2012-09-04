@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 15, 2012
- * Author(s): NicolaiO
+ * Author(s): Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  * *********************************************************
  */
@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
  * It does not actually move itself, but it has some flags and attributes for controlling.
  * movement.
  * 
- * @author NicolaiO
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public class MovableBlock {
@@ -32,11 +32,8 @@ public class MovableBlock {
 	private static final Logger	logger			= Logger.getLogger(MovableBlock.class);
 	private static final int		AREA_OFFSET		= 8;
 	
+	// rectangle is the base of the block
 	private final Rectangle			rectangle;
-	// save the point, where the mouse holds the block, relative to the block itself
-	// private Point relMouseLocation = new Point();
-	// corresponding timeblock object for this block
-	// private final TimeBlock timeBlock;
 	// color of the block
 	private Color						color;
 	// flags for enabling/disabling movement
@@ -56,7 +53,7 @@ public class MovableBlock {
 	 * 
 	 * @param size size of the block
 	 * @param _color color of the block
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public MovableBlock(Dimension size, Color color) {
 		this(new Point(0, 0), size, color);
@@ -70,7 +67,7 @@ public class MovableBlock {
 	 * @param location location within parent
 	 * @param size size of the block
 	 * @param _color color of the block
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public MovableBlock(Point location, Dimension size, Color color) {
 		this.rectangle = new Rectangle(location, size);
@@ -79,24 +76,11 @@ public class MovableBlock {
 	
 	
 	/**
-	 * Initialize a new block with given size and color
-	 * Additionally set the location within the parent of this block
-	 * (this is given to the constructor of the rectangle
-	 * Additionally set the corresponding timeblock
+	 * Draw the block into the given Graphics object
 	 * 
-	 * @param location location within parent
-	 * @param size size of the block
-	 * @param _color color of the block
-	 * @param tb reference to the corresponding timeblock
-	 * @author NicolaiO
+	 * @param ga
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
-	// public MovableBlock(Point location, Dimension size, Color _color, TimeBlock tb) {
-	// super(location, size);
-	// color = _color;
-	// timeBlock = tb;
-	// }
-	
-	
 	public void draw(Graphics2D ga) {
 		ga.setPaint(this.getColor());
 		ga.fill(this.rectangle);
@@ -125,6 +109,13 @@ public class MovableBlock {
 	}
 	
 	
+	/**
+	 * Check, if given point is in a special area
+	 * 
+	 * @param p point to be checked
+	 * @return the Area, p is in
+	 * @author andres
+	 */
 	public Areas containsArea(Point p) {
 		if (p.y >= this.rectangle.y && p.y < this.rectangle.y + this.rectangle.height) {
 			if (p.x >= this.rectangle.x) {
@@ -140,25 +131,16 @@ public class MovableBlock {
 	}
 	
 	
+	/**
+	 * Add width to the width of the block
+	 * 
+	 * @param width
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
+	 */
 	public void addWidth(int width) {
 		this.rectangle.width += width;
 	}
 
-
-	// @Deprecated
-	// public void setLocationRelMouse(Point p) {
-	// // default values
-	// int x = this.getLocation().x;
-	// int y = this.getLocation().y;
-	// if (moveHorizontal) {
-	// x = p.x - relMouseLocation.x;
-	// }
-	// if (moveVertical) {
-	// y = p.y - relMouseLocation.y;
-	// }
-	// Point abs = new Point(x, y);
-	// super.setLocation(abs);
-	// }
 	
 	public void setWidth(int width) {
 		this.rectangle.width = width;
@@ -173,16 +155,6 @@ public class MovableBlock {
 	public void setY(int y) {
 		this.setLocation(new Point(this.rectangle.x, y));
 	}
-	
-	
-	// public Point getRelMouseLocation() {
-	// return relMouseLocation;
-	// }
-	//
-	//
-	// public void setRelMouseLocation(Point relMouseLocation) {
-	// this.relMouseLocation = relMouseLocation;
-	// }
 	
 	
 	public Color getColor() {

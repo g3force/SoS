@@ -28,7 +28,7 @@ public class TimeBlock {
 	 * Constructor with type and length.
 	 * @param _len Length of TimeBlock
 	 * @param _type type of TimeBlock (--> Enum BlockType)
-	 * @author NicolaiO, andres
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>, andres
 	 */
 	public TimeBlock(int _len, BlockType _type) {
 		setLen(_len);

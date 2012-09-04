@@ -27,13 +27,6 @@ public class Lecture {
 	private TimeBlocks	timeBlocks;
 	
 	
-	@Deprecated
-	public Lecture(Date start) {
-		setStart(start);
-		this.timeBlocks = new TimeBlocks();
-	}
-	
-	
 	public Lecture(Date start, TimeBlocks timeBlocks) {
 		setStart(start);
 		setTimeBlocks(timeBlocks);

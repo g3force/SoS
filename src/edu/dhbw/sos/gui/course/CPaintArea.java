@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 18, 2012
- * Author(s): NicolaiO
+ * Author(s): Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  * *********************************************************
  */
@@ -36,7 +36,7 @@ import edu.dhbw.sos.course.student.Student;
  * Paint Area for CoursePanel
  * This will draw the students, etc.
  * 
- * @author NicolaiO
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public class CPaintArea extends JPanel implements MouseMotionListener, MouseListener {
@@ -71,7 +71,7 @@ public class CPaintArea extends JPanel implements MouseMotionListener, MouseList
 	/**
 	 * Create a new PaintArea
 	 * 
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public CPaintArea() {
 		this.studentCircles = new StudentCircle[0][0];
@@ -84,7 +84,7 @@ public class CPaintArea extends JPanel implements MouseMotionListener, MouseList
 	/**
 	 * Recalculate circles and update hovered student
 	 * 
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public void updateStudentCircles() {
 		calcStudentCircles(course.getStudents());
@@ -97,7 +97,7 @@ public class CPaintArea extends JPanel implements MouseMotionListener, MouseList
 	 * Set hovered student occording to parameter and update it
 	 * 
 	 * @param hoveredStudent
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public void updateHoveredStudent(StudentCircle hoveredStudent) {
 		this.hoveredStudent = hoveredStudent;
@@ -112,7 +112,7 @@ public class CPaintArea extends JPanel implements MouseMotionListener, MouseList
 	 * Data should only be used here, not modified, if it is possible
 	 * 
 	 * @param g
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	@Override
 	public void paint(Graphics g) {
@@ -171,7 +171,7 @@ public class CPaintArea extends JPanel implements MouseMotionListener, MouseList
 	/**
 	 * Set and update all important values for the student circles
 	 * 
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public void calcStudentCircles(IPlace[][] students) {
 		// get available size
@@ -293,7 +293,7 @@ public class CPaintArea extends JPanel implements MouseMotionListener, MouseList
 	 * 
 	 * @param p mouse position
 	 * @return x-y-coordinate of studentcircle
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	private Point getXYStudentCircleBelow(Point p) {
 		// catch mouse points that are not in the correct range
@@ -321,7 +321,7 @@ public class CPaintArea extends JPanel implements MouseMotionListener, MouseList
 	 * 
 	 * @param p mouse position
 	 * @return true, if mouse is in hovered student
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	private boolean isInHoveredStudent(Point p) {
 		int offset = (int) ((hoveredStudent.getHeight() * (CPaintArea.SCALE_HOVER - 1)) / 2 - spacing);

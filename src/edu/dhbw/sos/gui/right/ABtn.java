@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: May 20, 2012
- * Author(s): NicolaiO
+ * Author(s): Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  * *********************************************************
  */
@@ -22,7 +22,7 @@ import edu.dhbw.sos.observers.ISimulation;
  * This is an abstract button for the RighPanel.
  * It handles some features like the picture and reacts on the simulation
  * 
- * @author NicolaiO
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public abstract class ABtn extends JButton implements ISimulation {
@@ -32,7 +32,7 @@ public abstract class ABtn extends JButton implements ISimulation {
 	/**
 	 * Create a new Button with given icon or text, if the icon could not be loaded
 	 * 
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public ABtn(String text, String iconUrl) {
 		super(text);

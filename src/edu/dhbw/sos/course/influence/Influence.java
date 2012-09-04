@@ -59,7 +59,7 @@ public class Influence {
 	/**
 	 * Constructs influence with dummy data
 	 * 
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public Influence() {
 		float[][] array = { { 0f, 10f, -20f, -20f }, { 20f, 0f, -20f, -20f }, { -20f, 10f, 0f, 20f },
@@ -106,7 +106,6 @@ public class Influence {
 	 * 10 20 30
 	 * 10 20 30
 	 */
-	
 	public CalcVector getEnvironmentVector(EInfluenceType type, double times) {
 		return getEnvironmentVector(type).multiply(times);
 	}

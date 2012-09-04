@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 5, 2012
- * Author(s): NicolaiO
+ * Author(s): Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  * *********************************************************
  */
@@ -42,7 +42,7 @@ import edu.dhbw.sos.observers.Observers;
  * This Panel contains everything that is on the right.
  * This is the course management and some information
  * 
- * @author NicolaiO
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public class RightPanel extends JPanel implements ICurrentCourseObserver, ICoursesListObserver, IStatisticsObserver,
@@ -70,7 +70,7 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 	 * @param courseController
 	 * @param courses
 	 * @param sm
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public RightPanel(CourseController courseController, Courses courses, SuggestionManager sm) {
 		this.setBorder(MainFrame.COMPOUND_BORDER);
@@ -178,17 +178,20 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 	
 	@Override
 	public void updateSuggestions() {
-		// suggestions
-		// if (suggestionPanel.getComponentCount() != courses.getCurrentCourse().getStatistics().size() + 1) {
-			suggestionPanel.removeAll();
-			suggestionPanel.add(new JLabel(Messages.getString("suggestions"), SwingConstants.CENTER));
-			for (String sugg : this.sugMngr.getSuggestionNames()) {
-				// System.out.println(sugg);
-				JLabel lblSug = new JLabel(sugg);
-				lblSug.addMouseListener(this.sugMngr);
-				suggestionPanel.add(lblSug);
-			}
-		// }
+		if (suggestionPanel.getComponentCount() == 1 && this.sugMngr.getSuggestionNames().size() == 0) {
+			// in current Panel, there is only the title
+			// there are no suggs to be displayed
+			// => nothing to update
+			return;
+		}
+		suggestionPanel.removeAll();
+		suggestionPanel.add(new JLabel(Messages.getString("suggestions"), SwingConstants.CENTER));
+		for (String sugg : this.sugMngr.getSuggestionNames()) {
+			JLabel lblSug = new JLabel(sugg);
+			lblSug.addMouseListener(this.sugMngr);
+			suggestionPanel.add(lblSug);
+		}
+		suggestionPanel.repaint(); // not the best way, but everything else had no effect
 	}
 	
 	
@@ -217,7 +220,7 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 			}
 		}
 		
-		this.validate();
+		statsPanel.validate();
 	}
 	
 	

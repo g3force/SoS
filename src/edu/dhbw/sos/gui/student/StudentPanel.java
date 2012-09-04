@@ -3,7 +3,7 @@
  * Copyright (c) 2012 - 2012, DHBW Mannheim
  * Project: SoS
  * Date: Apr 5, 2012
- * Author(s): NicolaiO
+ * Author(s): Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  * *********************************************************
  */
@@ -33,7 +33,7 @@ import edu.dhbw.sos.observers.Observers;
  * It displays statistics of the currently selected student and property.
  * If no student is selected, an average is shown instead.
  * 
- * @author NicolaiO
+ * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
 public class StudentPanel extends JPanel implements ISelectedStudentObserver, ICurrentCourseObserver {
@@ -48,7 +48,7 @@ public class StudentPanel extends JPanel implements ISelectedStudentObserver, IC
 	 * Initialize StudentPanel with GUIData
 	 * 
 	 * @param data
-	 * @author NicolaiO
+	 * @author Nicolai Ommer <nicolai.ommer@gmail.com>
 	 */
 	public StudentPanel(Course course) {
 		paintArea = new SPaintArea();
