@@ -18,6 +18,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
@@ -27,6 +31,7 @@ import javax.swing.JLabel;
 import org.apache.log4j.Logger;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 
 import edu.dhbw.sos.SuperFelix;
 import edu.dhbw.sos.helper.CalcVector;
@@ -80,9 +85,8 @@ public class SuggestionManager implements MouseListener {
 	private void loadXML() {// TODO @bene ladeprozess korrigieren
 		// try loading the suggestions from file
 		int retCode = loadSuggestionsFromFile();
-		// no file was found => create file with dummy data and try loading again
-		if (retCode < 0) {
-			if (writeDummySuggestions(true)) {
+		if (retCode <= 0) { // file was not (retCode==0) found or had errors (retCode<0)
+			if (writeDummySuggestions(retCode < 0)) {
 				if (loadSuggestionsFromFile() != 1) {
 					logger.error("Cannot create a suggestions.xml file. Please check the permission of \"" + SUGGESTION_FILE
 							+ "\" and the surrounding folder.");
@@ -137,26 +141,36 @@ public class SuggestionManager implements MouseListener {
 				}
 			}
 		} catch (FileNotFoundException err) {
-			logger.info("The suggestion file could not be found");
+			logger.info("The suggestion file could not be found. A file with sample suggestions will be created.");
 			return 0;
 		} catch (ClassNotFoundException err) {
-			logger.error("There are errors in the suggestions.xml file.");
+			logger.error("There are errors in your suggestions.xml file. The program created a backup copy and replaced the file with a valid one.");
+			return -1;
+		} catch (CannotResolveClassException err) {
+			logger.error("There are errors in your suggestions.xml file. The program created a backup copy and replaced the file with a valid one.");
 			return -1;
 		} catch (IOException err) {
 			if (err.getClass().equals(EOFException.class)) {
 				return 1;
 			} else {
-				logger.error("There are errors in the suggestions.xml file.");
+				logger.error("There are errors in your suggestions.xml file. The program created a backup copy and replaced the file with a valid one.");
 				return -1;
 			}
 		}
 	}
 	
 	
-	// generates 4 random suggestions with the current course parameters.
+	// generates suggestions with the current course parameters. If keepCorruptedFile is true, the corrupted file is
+	// saved before creating a new one with dummy suggestions
 	private boolean writeDummySuggestions(boolean keepCorruptedFile) {
 		if (keepCorruptedFile) {
-			// save old file
+			Path source = FileSystems.getDefault().getPath(SUGGESTION_FILE);
+			Path destination = FileSystems.getDefault().getPath(SUGGESTION_FILE + "_corrupted");
+			try {
+				Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException err) {
+				logger.error("Error on copying corrupted XML File.");
+			}
 		}
 		int dummySuggestions = 6;
 		Suggestion[] sugArray = new Suggestion[dummySuggestions];
@@ -196,8 +210,7 @@ public class SuggestionManager implements MouseListener {
 		range[3][0] = 0;
 		range[3][1] = 100;
 		influence[3] = 20;
-		sugArray[1] = new Suggestion(range, "Rufen Sie \"Klausur\"", r.nextInt(5), influence,
-				courseParams);
+		sugArray[1] = new Suggestion(range, "Rufen Sie \"Klausur\"", r.nextInt(5), influence, courseParams);
 		
 		range[0][0] = 0;
 		range[0][1] = 100;
@@ -252,8 +265,8 @@ public class SuggestionManager implements MouseListener {
 		range[3][1] = 100;
 		influence[3] = 0;
 		sugArray[4] = new Suggestion(range, "Holen Sie den Studenten Kaffee", r.nextInt(5), influence, courseParams);
-
 		
+
 		range[0][0] = 0;
 		range[0][1] = 100;
 		influence[0] = -10;
