@@ -41,11 +41,7 @@ public class Student implements IPlace, Cloneable {
 	
 
 	public Student(int vectorInitSize) {
-		float[] changeVectorF = new float[vectorInitSize];
-		for (int i = 0; i < vectorInitSize; i++) {
-			changeVectorF[i] = 1f;
-		}
-		this.changeVector = new CalcVector(changeVectorF);
+		initChangeVector(vectorInitSize);
 
 		init(vectorInitSize);
 	}
@@ -372,5 +368,14 @@ public class Student implements IPlace, Cloneable {
 	
 	public void setHistoryStates(LinkedHashMap<Integer, CalcVector> historyStates) {
 		this.historyStates = historyStates;
+	}
+	
+	
+	public void initChangeVector(int vectorInitSize) {
+		float[] changeVectorF = new float[vectorInitSize];
+		for (int i = 0; i < vectorInitSize; i++) {
+			changeVectorF[i] = 1f;
+		}
+		this.changeVector = new CalcVector(changeVectorF);
 	}
 }
