@@ -81,8 +81,8 @@ public class SuggestionManager implements MouseListener {
 		// try loading the suggestions from file
 		int retCode = loadSuggestionsFromFile();
 		// no file was found => create file with dummy data and try loading again
-		if (retCode == 0) {
-			if (writeDummySuggestions()) {
+		if (retCode < 0) {
+			if (writeDummySuggestions(true)) {
 				if (loadSuggestionsFromFile() != 1) {
 					logger.error("Cannot create a suggestions.xml file. Please check the permission of \"" + SUGGESTION_FILE
 							+ "\" and the surrounding folder.");
@@ -154,7 +154,10 @@ public class SuggestionManager implements MouseListener {
 	
 	
 	// generates 4 random suggestions with the current course parameters.
-	private boolean writeDummySuggestions() {
+	private boolean writeDummySuggestions(boolean keepCorruptedFile) {
+		if (keepCorruptedFile) {
+			// save old file
+		}
 		int dummySuggestions = 6;
 		Suggestion[] sugArray = new Suggestion[dummySuggestions];
 		Random r = new Random();
