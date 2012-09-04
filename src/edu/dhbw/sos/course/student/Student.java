@@ -162,7 +162,7 @@ public class Student implements IPlace, Cloneable {
 			saveHistoryStates(time);
 		}
 		historyCounter++;
-		if (historyCounter == 100) {
+		if (historyCounter == 10) {
 			historyCounter = 0;
 		}
 		
