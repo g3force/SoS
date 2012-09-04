@@ -100,7 +100,7 @@ public class Course {
 					Student newStud = new Student(parameters.size());
 					
 					for (int i = 0; i < newStud.getActualState().size(); i++) {
-						newStud.addToChangeVector(i, (float) ((Math.random() * 100) - 50));
+						newStud.addToChangeVector(i, (float) (((Math.random() * 100) - 50)));
 						newStud.addValueToStateVector(i, (int) (Math.random() * 10));
 					}
 					students[y][x] = newStud;
