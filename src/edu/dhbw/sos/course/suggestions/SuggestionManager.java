@@ -77,7 +77,7 @@ public class SuggestionManager implements MouseListener {
 	}
 	
 	
-	private void loadXML() {
+	private void loadXML() {// TODO @bene ladeprozess korrigieren
 		// try loading the suggestions from file
 		int retCode = loadSuggestionsFromFile();
 		// no file was found => create file with dummy data and try loading again
