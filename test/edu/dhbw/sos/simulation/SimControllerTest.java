@@ -51,6 +51,14 @@ public class SimControllerTest {
 			
 			for(int j=0; j<4; j++) {
 				Course course = new Course("test");
+				// fake the state vector value to have a communism course where everybody is equal
+				for (IPlace[] row : course.getStudents()) {
+					for (IPlace s : row) {
+						if (s instanceof Student) {
+							((Student) s).initChangeVector(4);
+						}
+					}
+				}
 				SimController simCon = new SimController(course, sugMngr);
 				LinkedList<TimeBlock> tempList = new LinkedList<TimeBlock>();
 				tempList.add(tblist.get(j));
