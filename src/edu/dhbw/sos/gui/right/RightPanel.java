@@ -14,7 +14,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Map;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -203,17 +204,45 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 			statsPanel.removeAll();
 			statsPanel.add(new JLabel(Messages.getString("statistics")));
 			statsPanel.add(new JLabel());
-			for (Map.Entry<String, String> entry : courses.getCurrentCourse().getStatistics().entrySet()) {
-				JLabel lblKey = new JLabel(entry.getKey());
+			for (final Course.Stats entry : courses.getCurrentCourse().getStatistics()) {
+				JLabel lblKey = new JLabel(entry.getName());
+				lblKey.addMouseListener(new MouseListener() {
+					
+					@Override
+					public void mouseReleased(MouseEvent e) {
+					}
+					
+					
+					@Override
+					public void mousePressed(MouseEvent arg0) {
+					}
+					
+					
+					@Override
+					public void mouseExited(MouseEvent arg0) {
+						Observers.notifySelectedParameterAverage(-42); // negative numbers will rebuild "normal" diagrams
+					}
+					
+					
+					@Override
+					public void mouseEntered(MouseEvent arg0) {
+						Observers.notifySelectedParameterAverage(entry.getId()); // set diagram with given parameter
+					}
+					
+					
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+					}
+				});
 				JLabel lblValue = new JLabel(entry.getValue(), JLabel.CENTER);
 				statsPanel.add(lblKey);
 				statsPanel.add(lblValue);
 			}
 		} else {
 			int i = 0;
-			for (Map.Entry<String, String> entry : courses.getCurrentCourse().getStatistics().entrySet()) {
+			for (Course.Stats entry : courses.getCurrentCourse().getStatistics()) {
 				synchronized (statsPanel.getTreeLock()) {
-					((JLabel) statsPanel.getComponent(i + 2)).setText(entry.getKey());
+					((JLabel) statsPanel.getComponent(i + 2)).setText(entry.getName());
 					((JLabel) statsPanel.getComponent(i + 3)).setText(entry.getValue());
 					i += 2;
 				}

@@ -42,7 +42,7 @@ public class Course {
 	private static final Logger									logger	= Logger.getLogger(Course.class);
 	
 	// statistics (data for each simulation step)
-	private transient LinkedHashMap<String, String>			statistics;
+	private transient LinkedList<Stats>							statistics;
 	// current statistics (average parameter values of students)
 	private transient CalcVector									statAvgStudentState;
 	private transient LinkedHashMap<Integer, CalcVector>	histStatAvgStudentStates;
@@ -145,7 +145,7 @@ public class Course {
 	
 	
 	private void init() {
-		statistics = new LinkedHashMap<String, String>();
+		statistics = new LinkedList<Stats>();
 		statAvgStudentState = new CalcVector(parameters.size());
 		histStatAvgStudentStates = new LinkedHashMap<Integer, CalcVector>();
 		
@@ -423,8 +423,7 @@ public class Course {
 			float reducer = (100 - studentMAverage) / 100;
 			if (x == 1 && y == 1)
 				logger.debug("Sim(1,1): average: " + average + " / actualState: " + studentsValue + " / reducer: "
-						+ reducer + " / value: " + studentMAverage
- * reducer * 0.05f);
+						+ reducer + " / value: " + studentMAverage * reducer * 0.05f);
 			changeVector.setValueAt(i, (average - studentsValue) * reducer * 0.01f);
 			// changeVector.multiplyWithVector(influence.getEnvironmentVector(EInfluenceType.NEIGHBOR,0.01));
 			// in every 3 million cases this calculation result in NaN
@@ -474,7 +473,7 @@ public class Course {
 	
 	/**
 	 * 
-	 * TODO andres, add comment!
+	 * Simulate until a specific time.
 	 * 
 	 * @param curTime time in milliseconds
 	 * @param requiredTime time in milliseconds
@@ -530,7 +529,7 @@ public class Course {
 	 * @author andres
 	 */
 	public void calcStatistics(int time) {
-		statAvgStudentState.multiply(0);// TODO daniel wtf?
+		statAvgStudentState.multiply(0); // This is done easily reset the CalcVector, without instantiation of a new one
 		int studentNum = 0;
 		for (IPlace[] student : students) {
 			for (IPlace iplace : student) {
@@ -542,19 +541,52 @@ public class Course {
 		}
 		if (studentNum != 0) {
 			statAvgStudentState.divide(studentNum);
-			// TODO andres save history statistics.
+			histStatAvgStudentStates.put(time, statAvgStudentState.clone());
 			synchronized (statistics) {
 				statistics.clear();
-				statistics.put("Last break:", this.lecture.getTimeBlocks().getLastBreak(time / 1000 / 60) + " min");
+				statistics.add(new Stats(-1, "Last break:", this.lecture.getTimeBlocks().getLastBreak(time / 1000 / 60)
+						+ " min"));
 				for (int i = 0; i < parameters.size(); i++) {
-					statistics.put(parameters.get(i) + ": ", ((int) statAvgStudentState.getValueAt(i)) + " %");
+					statistics.add(new Stats(i, parameters.get(i) + ": ", ((int) statAvgStudentState.getValueAt(i)) + " %"));
 				}
 			}
-			histStatAvgStudentStates.put(time, statAvgStudentState.clone());
 		}
 	}
 	
+	/**
+	 * Class for saving stat values in strings.
+	 * 
+	 * @author andres
+	 */
+	public class Stats {
+		private String	name;
+		private String	value;
+		private int		id;
+		
+
+		public Stats(int id, String name, String value) {
+			this.id = id;
+			this.name = name;
+			this.value = value;
+		}
+		
+		
+		public String getName() {
+			return name;
+		}
+		
+		
+		public String getValue() {
+			return value;
+		}
+		
+		
+		public int getId() {
+			return id;
+		}
+	}
 	
+
 	/**
 	 * 
 	 * 
@@ -744,12 +776,12 @@ public class Course {
 	}
 	
 	
-	public LinkedHashMap<String, String> getStatistics() {
+	public LinkedList<Stats> getStatistics() {
 		return statistics;
 	}
 	
 	
-	public void setStatistics(LinkedHashMap<String, String> statistics) {
+	public void setStatistics(LinkedList<Stats> statistics) {
 		this.statistics = statistics;
 	}
 	

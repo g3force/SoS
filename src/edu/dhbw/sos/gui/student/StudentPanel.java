@@ -24,6 +24,7 @@ import edu.dhbw.sos.course.Course;
 import edu.dhbw.sos.course.student.Student;
 import edu.dhbw.sos.helper.Messages;
 import edu.dhbw.sos.observers.ICurrentCourseObserver;
+import edu.dhbw.sos.observers.ISelectedParameterAverageObserver;
 import edu.dhbw.sos.observers.ISelectedStudentObserver;
 import edu.dhbw.sos.observers.Observers;
 
@@ -36,7 +37,8 @@ import edu.dhbw.sos.observers.Observers;
  * @author Nicolai Ommer <nicolai.ommer@gmail.com>
  * 
  */
-public class StudentPanel extends JPanel implements ISelectedStudentObserver, ICurrentCourseObserver {
+public class StudentPanel extends JPanel implements ISelectedStudentObserver, ICurrentCourseObserver,
+		ISelectedParameterAverageObserver {
 	private static final Logger	logger				= Logger.getLogger(StudentPanel.class);
 	private static final long		serialVersionUID	= 722304874911423036L;
 	private final SPaintArea		paintArea;
@@ -58,6 +60,7 @@ public class StudentPanel extends JPanel implements ISelectedStudentObserver, IC
 		this.course = course;
 		this.add(paintArea, BorderLayout.CENTER);
 		Observers.subscribeSelectedStudent(this);
+		Observers.subscribeParameterAverageStudent(this);
 		
 		lblParameterName = new JLabel("", JLabel.CENTER);
 		lblParameterName.setFont(new Font("Book Antiqua", Font.BOLD, 30));
@@ -74,7 +77,7 @@ public class StudentPanel extends JPanel implements ISelectedStudentObserver, IC
 			} else {
 				lblParameterName.setText(course.getProperties().get(course.getSelectedProperty()));
 			}
-			paintArea.update(course.getSelectedStudent(), course.getSelectedProperty());
+			paintArea.update(course.getSelectedStudent(), course.getSelectedProperty(), course);
 		} else {
 			lblParameterName.setText(Messages.getString("StudentPanel.AVG"));
 			paintArea.update(course);
@@ -88,4 +91,21 @@ public class StudentPanel extends JPanel implements ISelectedStudentObserver, IC
 		updateSelectedStudent();
 	}
 	
+	
+	@Override
+	public void updateSelectedParameterAverage(int parameterIndex) {
+		if ((course.getSelectedStudent() == null || !(course.getSelectedStudent() instanceof Student))
+				&& parameterIndex >= 0 && parameterIndex < course.getProperties().size()) {
+			if (course.getProperties().size() == 0) {
+				logger.warn("There are no parameters!!");
+				lblParameterName.setText("");
+			} else {
+				lblParameterName.setText(course.getProperties().get(parameterIndex));
+			}
+			paintArea.update(course, parameterIndex);
+		} else {
+			updateSelectedStudent();
+		}
+	}
+
 }

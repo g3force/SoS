@@ -29,25 +29,27 @@ import edu.dhbw.sos.course.Course;
  * 
  */
 public class Observers {
-	private static final Logger									logger							= Logger.getLogger(Observers.class);
+	private static final Logger												logger										= Logger
+																																				.getLogger(Observers.class);
 	
-	private static LinkedList<IStudentsObserver>				studentsObservers				= new LinkedList<IStudentsObserver>();
-	private static LinkedList<ISelectedStudentObserver>	selectedCourseObservers		= new LinkedList<ISelectedStudentObserver>();
-	private static LinkedList<IStatisticsObserver>			statisticsObservers			= new LinkedList<IStatisticsObserver>();
-	private static LinkedList<ICurrentCourseObserver>		currentCourseOberservers	= new LinkedList<ICurrentCourseObserver>();
-	private static LinkedList<ICoursesListObserver>			coursesListOberservers		= new LinkedList<ICoursesListObserver>();
-	private static LinkedList<IEditModeObserver>				editModeObservers				= new LinkedList<IEditModeObserver>();
+	private static LinkedList<IStudentsObserver>							studentsObservers							= new LinkedList<IStudentsObserver>();
+	private static LinkedList<ISelectedStudentObserver>				selectedCourseObservers					= new LinkedList<ISelectedStudentObserver>();
+	private static LinkedList<ISelectedParameterAverageObserver>	selectedParameterAverageObservers	= new LinkedList<ISelectedParameterAverageObserver>();
+	private static LinkedList<IStatisticsObserver>						statisticsObservers						= new LinkedList<IStatisticsObserver>();
+	private static LinkedList<ICurrentCourseObserver>					currentCourseOberservers				= new LinkedList<ICurrentCourseObserver>();
+	private static LinkedList<ICoursesListObserver>						coursesListOberservers					= new LinkedList<ICoursesListObserver>();
+	private static LinkedList<IEditModeObserver>							editModeObservers							= new LinkedList<IEditModeObserver>();
 	
-	private static LinkedList<ISpeedObserver>					speedObservers					= new LinkedList<ISpeedObserver>();
-	private static LinkedList<ITimeObserver>					timeObservers					= new LinkedList<ITimeObserver>();
-	private static LinkedList<ITimeGUIObserver>				timeGUIObservers				= new LinkedList<ITimeGUIObserver>();
-	private static LinkedList<ISimulation>						simulationOberservers		= new LinkedList<ISimulation>();
+	private static LinkedList<ISpeedObserver>								speedObservers								= new LinkedList<ISpeedObserver>();
+	private static LinkedList<ITimeObserver>								timeObservers								= new LinkedList<ITimeObserver>();
+	private static LinkedList<ITimeGUIObserver>							timeGUIObservers							= new LinkedList<ITimeGUIObserver>();
+	private static LinkedList<ISimulation>									simulationOberservers					= new LinkedList<ISimulation>();
 	
 	// SimulateUntil Observer for showing a graphic when simulating to a point
-	private static LinkedList<ISimUntilObserver>				simUntilObservers				= new LinkedList<ISimUntilObserver>();
+	private static LinkedList<ISimUntilObserver>							simUntilObservers							= new LinkedList<ISimUntilObserver>();
 	
-	private static LinkedList<ISuggestionsObserver>			suggestionObserver			= new LinkedList<ISuggestionsObserver>();
-	private static LinkedList<ITimeBlocksLengthObserver>	timeBlocksLengthObservers	= new LinkedList<ITimeBlocksLengthObserver>();
+	private static LinkedList<ISuggestionsObserver>						suggestionObserver						= new LinkedList<ISuggestionsObserver>();
+	private static LinkedList<ITimeBlocksLengthObserver>				timeBlocksLengthObservers				= new LinkedList<ITimeBlocksLengthObserver>();
 	
 	
 	// ##################################################################################
@@ -72,6 +74,7 @@ public class Observers {
 	public static void print() {
 		printObserverList(studentsObservers, "studentsObservers");
 		printObserverList(selectedCourseObservers, "selectedCourseObservers");
+		printObserverList(selectedParameterAverageObservers, "selectedParameterAverageObservers");
 		printObserverList(statisticsObservers, "statisticsObservers");
 		printObserverList(currentCourseOberservers, "currentCourseOberservers");
 		printObserverList(coursesListOberservers, "coursesListOberservers");
@@ -121,6 +124,12 @@ public class Observers {
 		}
 	}
 	
+	
+	public static void notifySelectedParameterAverage(int parameterindex) {
+		for (ISelectedParameterAverageObserver so : selectedParameterAverageObservers) {
+			so.updateSelectedParameterAverage(parameterindex);
+		}
+	}
 	
 	public static void notifyStatistics() {
 		for (IStatisticsObserver so : statisticsObservers) {
@@ -248,6 +257,10 @@ public class Observers {
 		selectedCourseObservers.add(so);
 	}
 	
+	
+	public static void subscribeParameterAverageStudent(ISelectedParameterAverageObserver so) {
+		selectedParameterAverageObservers.add(so);
+	}
 	
 	public static void subscribeStatistics(IStatisticsObserver so) {
 		statisticsObservers.add(so);
