@@ -125,6 +125,12 @@ public class Observers {
 	}
 	
 	
+	/**
+	 * This will notify if another parameter is choosed for the average values
+	 * 
+	 * @param parameterindex
+	 * @author andres
+	 */
 	public static void notifySelectedParameterAverage(int parameterindex) {
 		for (ISelectedParameterAverageObserver so : selectedParameterAverageObservers) {
 			so.updateSelectedParameterAverage(parameterindex);

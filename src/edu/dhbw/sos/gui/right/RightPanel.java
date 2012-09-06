@@ -206,6 +206,7 @@ public class RightPanel extends JPanel implements ICurrentCourseObserver, ICours
 			statsPanel.add(new JLabel());
 			for (final Course.Stats entry : courses.getCurrentCourse().getStatistics()) {
 				JLabel lblKey = new JLabel(entry.getName());
+				// Add Mouselistener so that mouseevents will change the diagramm in the left corner diagram panel
 				lblKey.addMouseListener(new MouseListener() {
 					
 					@Override

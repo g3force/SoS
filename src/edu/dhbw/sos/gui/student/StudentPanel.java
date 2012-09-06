@@ -92,6 +92,10 @@ public class StudentPanel extends JPanel implements ISelectedStudentObserver, IC
 	}
 	
 	
+	/**
+	 * This method will update the panel with the label of a specific parameter and its average value diagram.
+	 * @author andres
+	 */
 	@Override
 	public void updateSelectedParameterAverage(int parameterIndex) {
 		if ((course.getSelectedStudent() == null || !(course.getSelectedStudent() instanceof Student))
