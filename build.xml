@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_exe" name="Create Runnable Jar for Project sos with Jar-in-Jar Loader">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="/home/geforce/workspace/sos/build/SoS.jar">
+            <manifest>
+                <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
+                <attribute name="Rsrc-Main-Class" value="edu.dhbw.sos.SuperFelix"/>
+                <attribute name="Class-Path" value="."/>
+                <attribute name="Rsrc-Class-Path" value="./ log4j-1.2.16.jar xstream-1.4.2.jar kxml2-2.3.0.jar junit.jar org.hamcrest.core_1.1.0.v20090501071000.jar"/>
+            </manifest>
+            <zipfileset src="jar-in-jar-loader.zip"/>
+            <fileset dir="/home/geforce/workspace/sos/bin"/>
+            <zipfileset dir="/home/geforce/workspace/sos/lib" includes="log4j-1.2.16.jar"/>
+            <zipfileset dir="/home/geforce/workspace/sos/lib" includes="xstream-1.4.2.jar"/>
+            <zipfileset dir="/home/geforce/workspace/sos/lib" includes="kxml2-2.3.0.jar"/>
+            <zipfileset dir="/home/geforce/.eclipse/plugins/org.junit_4.8.2.v4_8_2_v20110321-1705" includes="junit.jar"/>
+            <zipfileset dir="/home/geforce/.eclipse/plugins" includes="org.hamcrest.core_1.1.0.v20090501071000.jar"/>
+        </jar>
+    </target>
+	
+	<target name="create_exe" depends="create_run_jar">
+		<exec executable="launch4j" failifexecutionfails="true">
+			<arg line="${basedir}/launch4j.xml" />
+		</exec>
+	</target>
+</project>

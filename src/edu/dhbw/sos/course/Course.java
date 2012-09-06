@@ -100,7 +100,7 @@ public class Course {
 					Student newStud = new Student(parameters.size());
 					
 					for (int i = 0; i < newStud.getActualState().size(); i++) {
-						newStud.addToChangeVector(i, (float) ((Math.random() * 100) - 50));
+						newStud.addToChangeVector(i, (float) (((Math.random() * 100) - 50)));
 						newStud.addValueToStateVector(i, (int) (Math.random() * 10));
 					}
 					students[y][x] = newStud;
@@ -193,7 +193,7 @@ public class Course {
 	 * 
 	 * @param row
 	 * @param column
-	 * @return
+	 * @return Returns the wanted student. Throws "IllegalStateException" if the student equals null.
 	 * @author SebastianN
 	 */
 	public IPlace getPlace(int row, int column) {

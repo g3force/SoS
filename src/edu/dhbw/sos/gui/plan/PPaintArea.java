@@ -242,6 +242,7 @@ public class PPaintArea extends JPanel implements IStatisticsObserver, ISimUntil
 
 	@Override
 	public void lengthChanged(int newLengthMin) {
+		updateStatistics();
 		myRepaint();
 	}
 }

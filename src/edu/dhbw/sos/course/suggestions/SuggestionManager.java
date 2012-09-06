@@ -18,6 +18,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
@@ -27,6 +31,7 @@ import javax.swing.JLabel;
 import org.apache.log4j.Logger;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 
 import edu.dhbw.sos.SuperFelix;
 import edu.dhbw.sos.helper.CalcVector;
@@ -35,8 +40,17 @@ import edu.dhbw.sos.observers.Observers;
 
 
 /**
- * This class manages available and displayed suggestions. It also allows removing executed Suggestions and offers the
- * corresponding influence vectors to the simulation.
+ * SuggestionManager is used to manage the suggestions shown to the lecturer.
+ * At program startup it uses the file .sos/suggestions.xml to load the suggestions that will be available during
+ * runtime. Only suggestions that match the parameters used in the current course will be loaded.
+ * 
+ * If there is no suggestions.xml file SuggestionManager will create one with some sample suggestions.
+ * If the file already exists but contains errors or defines attributes that cannot be mapped to the suggestion object,
+ * SuggestionManager will copy the suggestions.xml file to a file named suggestions.xml_corrupted and create a new
+ * suggestions.xml file like if there had not been one in the first place.
+ * 
+ * During runtime SuggestionManager manages the displayed suggestions by returning their display text to the gui and
+ * handling the effects of a clicked suggestion by returning the influence vectors to the simulation.
  * 
  * @author bene
  * 
@@ -77,12 +91,11 @@ public class SuggestionManager implements MouseListener {
 	}
 	
 	
-	private void loadXML() {
+	private void loadXML() {// TODO @bene ladeprozess korrigieren
 		// try loading the suggestions from file
 		int retCode = loadSuggestionsFromFile();
-		// no file was found => create file with dummy data and try loading again
-		if (retCode == 0) {
-			if (writeDummySuggestions()) {
+		if (retCode <= 0) { // file was not (retCode==0) found or had errors (retCode<0)
+			if (writeDummySuggestions(retCode < 0)) {
 				if (loadSuggestionsFromFile() != 1) {
 					logger.error("Cannot create a suggestions.xml file. Please check the permission of \"" + SUGGESTION_FILE
 							+ "\" and the surrounding folder.");
@@ -137,24 +150,37 @@ public class SuggestionManager implements MouseListener {
 				}
 			}
 		} catch (FileNotFoundException err) {
-			logger.info("The suggestion file could not be found");
+			logger.info("The suggestion file could not be found. A file with sample suggestions will be created.");
 			return 0;
 		} catch (ClassNotFoundException err) {
-			logger.error("There are errors in the suggestions.xml file.");
+			logger.error("There are errors in your suggestions.xml file. The program created a backup copy and replaced the file with a valid one.");
+			return -1;
+		} catch (CannotResolveClassException err) {
+			logger.error("There are errors in your suggestions.xml file. The program created a backup copy and replaced the file with a valid one.");
 			return -1;
 		} catch (IOException err) {
 			if (err.getClass().equals(EOFException.class)) {
 				return 1;
 			} else {
-				logger.error("There are errors in the suggestions.xml file.");
+				logger.error("There are errors in your suggestions.xml file. The program created a backup copy and replaced the file with a valid one.");
 				return -1;
 			}
 		}
 	}
 	
 	
-	// generates 4 random suggestions with the current course parameters.
-	private boolean writeDummySuggestions() {
+	// generates suggestions with the current course parameters. If keepCorruptedFile is true, the corrupted file is
+	// saved before creating a new one with dummy suggestions
+	private boolean writeDummySuggestions(boolean keepCorruptedFile) {
+		if (keepCorruptedFile) {
+			Path source = FileSystems.getDefault().getPath(SUGGESTION_FILE);
+			Path destination = FileSystems.getDefault().getPath(SUGGESTION_FILE + "_corrupted");
+			try {
+				Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException err) {
+				logger.error("Error on copying corrupted XML File.");
+			}
+		}
 		int dummySuggestions = 6;
 		Suggestion[] sugArray = new Suggestion[dummySuggestions];
 		Random r = new Random();
@@ -193,8 +219,7 @@ public class SuggestionManager implements MouseListener {
 		range[3][0] = 0;
 		range[3][1] = 100;
 		influence[3] = 20;
-		sugArray[1] = new Suggestion(range, "Rufen Sie \"Klausur\"", r.nextInt(5), influence,
-				courseParams);
+		sugArray[1] = new Suggestion(range, "Rufen Sie \"Klausur\"", r.nextInt(5), influence, courseParams);
 		
 		range[0][0] = 0;
 		range[0][1] = 100;
@@ -249,8 +274,8 @@ public class SuggestionManager implements MouseListener {
 		range[3][1] = 100;
 		influence[3] = 0;
 		sugArray[4] = new Suggestion(range, "Holen Sie den Studenten Kaffee", r.nextInt(5), influence, courseParams);
-
 		
+
 		range[0][0] = 0;
 		range[0][1] = 100;
 		influence[0] = -10;
