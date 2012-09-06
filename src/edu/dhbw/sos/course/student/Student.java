@@ -371,6 +371,12 @@ public class Student implements IPlace, Cloneable {
 	}
 	
 	
+	/**
+	 * Initiates a ChangeVector
+	 * 
+	 * @param vectorInitSize
+	 * @author SebastianN
+	 */
 	public void initChangeVector(int vectorInitSize) {
 		float[] changeVectorF = new float[vectorInitSize];
 		for (int i = 0; i < vectorInitSize; i++) {

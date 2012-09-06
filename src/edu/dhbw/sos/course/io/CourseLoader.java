@@ -36,6 +36,7 @@ public class CourseLoader {
 	 * Loads the entire course-structure and the vectors
 	 * 
 	 * @param savepath
+	 * @return Returns every loaded course (as Courses)
 	 * @author SebastianN
 	 */
 	public static Courses loadCourses(String savepath) {
@@ -43,14 +44,20 @@ public class CourseLoader {
 		File dir = new File(savepath);
 		Courses allCourses = new Courses();
 		
+		// If the dir isn't empty, parse through every entry.
 		if (dir.list() != null) {
 			for (int i = 0; i < dir.list().length; i++) {
 				String curFile = dir.list()[i];
+				
+				// Get extension of the file
 				String ext = curFile.substring(curFile.lastIndexOf(".") + 1, curFile.length());
+				
+				// If the extension = "XML", open it (if it's not empty)
 				if (ext.contentEquals("xml")) {
 					File xmlfile = new File(savepath + dir.list()[i]);
 					if (xmlfile.length() > 0) {
 						try {
+							// Add the course from XML to our "Courses"-list
 							Course course = (Course) xstream.fromXML(xmlfile);
 							allCourses.add(course);
 						} catch (CannotResolveClassException e) {
@@ -64,6 +71,7 @@ public class CourseLoader {
 				}
 			}
 		}
+		// In case there were no previous courses, a dummy course is created.
 		if (allCourses.size() == 0) {
 			logger.info("No courses found. Creating dummy course instead.");
 			Course holiday = new Course("Holiday", ECourseType.HOLIDAY);
@@ -75,12 +83,9 @@ public class CourseLoader {
 			Course theory = new Course("Theory lesson", ECourseType.THEORY);
 			allCourses.add(theory);
 			allCourses.setCurrentCourse(theory);
-		} else if (allCourses.size() == 1) {
-			allCourses.setCurrentCourse(allCourses.get(0));
-		} else {
-			// TODO SebastianN choose last course??
-			allCourses.setCurrentCourse(allCourses.get(0));
 		}
+		// For now, we'll just load the first course.
+		allCourses.setCurrentCourse(allCourses.get(0));
 		logger.info("CoursesSize: " + allCourses.size() + ", setCourse: " + allCourses.getCurrentCourse());
 		return allCourses;
 		/*

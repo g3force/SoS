@@ -193,7 +193,7 @@ public class Course {
 	 * 
 	 * @param row
 	 * @param column
-	 * @return
+	 * @return Returns the wanted student. Throws "IllegalStateException" if the student equals null.
 	 * @author SebastianN
 	 */
 	public IPlace getPlace(int row, int column) {
