@@ -40,8 +40,17 @@ import edu.dhbw.sos.observers.Observers;
 
 
 /**
- * This class manages available and displayed suggestions. It also allows removing executed Suggestions and offers the
- * corresponding influence vectors to the simulation.
+ * SuggestionManager is used to manage the suggestions shown to the lecturer.
+ * At program startup it uses the file .sos/suggestions.xml to load the suggestions that will be available during
+ * runtime. Only suggestions that match the parameters used in the current course will be loaded.
+ * 
+ * If there is no suggestions.xml file SuggestionManager will create one with some sample suggestions.
+ * If the file already exists but contains errors or defines attributes that cannot be mapped to the suggestion object,
+ * SuggestionManager will copy the suggestions.xml file to a file named suggestions.xml_corrupted and create a new
+ * suggestions.xml file like if there had not been one in the first place.
+ * 
+ * During runtime SuggestionManager manages the displayed suggestions by returning their display text to the gui and
+ * handling the effects of a clicked suggestion by returning the influence vectors to the simulation.
  * 
  * @author bene
  * 
