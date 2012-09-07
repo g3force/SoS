@@ -17,6 +17,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 import edu.dhbw.sos.gui.right.AddBtn;
 import edu.dhbw.sos.gui.right.DelBtn;
@@ -54,11 +55,20 @@ public class CourseController implements ActionListener, MouseListener, ItemList
 				name = "New Course " + i;
 				i++;
 			} while (courses.contains(name));
+			//
 			Course newC = new Course(name);
 			courses.add(newC);
 			courses.setCurrentCourse(newC);
 		} else if (e.getSource() instanceof DelBtn) {
-			courses.remove(courses.getCurrentCourse());
+			// In case the delete button was pressed, show a confirmation dialog.
+			int result = JOptionPane.showConfirmDialog(null, "Do you really want to delete the course '"
+					+ courses.getCurrentCourse().getName() + "'?", "Confirmation", JOptionPane.YES_NO_OPTION);
+			
+			// If user clicked 'Yes'
+			if (result == 0)
+				courses.remove(courses.getCurrentCourse());
+			
+			// Otherwise nothing happens.
 		}
 	}
 	

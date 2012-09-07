@@ -17,11 +17,12 @@ import edu.dhbw.sos.helper.CalcVector;
 /**
  * interface for the places in the class, implemented by EmptyPlace and Student
  * 
- * TODO Dirk document interfaces
  * @author dirk
  * 
  */
 public interface IPlace {
+
+
 	CalcVector getActualState();
 	
 	

@@ -58,22 +58,24 @@ public class Courses implements Iterable<Course> {
 	
 	/**
 	 * 
-	 * TODO BastiN, add comment!
+	 * Removal of a course object
 	 * 
 	 * @param course
-	 * @return
-	 * @author BastiN
+	 * @return True if removal was successful. Otherwise false.
+	 * @author SebastianN
 	 */
 	public boolean remove(Object course) {
-		if (courses.size() < 2)
+		if (courses.size() <= 1) // We must NOT have an empty list.
 			return false;
 		boolean changeCurCourse = false;
+		// If we want to delete the currently seleceted course, flag it.
 		if (curCourse.equals(course)) {
 			changeCurCourse = true;
 		}
 		boolean res = courses.remove(course);
 		CourseSaver.removeFile((Course) course, SuperFelix.coursepath);
 		if (changeCurCourse) {
+			// If flagged, get the first course.
 			setCurrentCourse(courses.get(0));
 		}
 		CourseSaver.saveCourses(this, SuperFelix.coursepath);

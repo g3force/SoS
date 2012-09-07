@@ -14,8 +14,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 
@@ -224,10 +227,26 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof LiveBtn) {
+			long start = course.getLecture().getStartInMilis();
+			long end = start + course.getLecture().getLength() * 60 * 1000;
+			long currentSystemtime = getCurrentSystemTime();
+			
+			logger.fatal("start: " + start + "; end: " + end + "; current: " + currentSystemtime);
+			if (currentSystemtime + start < start) {
+				JOptionPane.showMessageDialog(null, "Live Mode not possible, current time is before the selected lecture.");
+				logger.debug("Live Modus not activated, current time is before the selected lecture.");
+				return;
+			} else if (currentSystemtime + start > end) {
+				JOptionPane.showMessageDialog(null, "Live Mode not possible, current time is after the selected lecture.");
+				logger.debug("Live Modus not activated, current time is after the selected lecture.");
+				return;
+			}
+
 			stop();
 			setSpeed(1);
 			Observers.notifySpeed(this.getSpeed());
-			setCurrentTime((int) getCurrentSystemTime());
+			// setCurrentTime((int) currentSystemtime);
+			Observers.notifyTimeGUI((int) currentSystemtime);
 			Observers.notifyTime(this.getCurrentTime());
 			run();
 		} else if (e.getSource() instanceof PlayBtn) {
@@ -251,21 +270,26 @@ public class SimController implements ActionListener, MouseListener, IEditModeOb
 	// FIXME andres current time is int and not long ??
 	private long getCurrentSystemTime() {
 		// Get real System time
-		long hoursInMiliSec = Calendar.HOUR_OF_DAY * 60 * 60 * 1000;
-		long minsInMiliSec = Calendar.MINUTE * 60 * 1000;
-		long secsInMiliSec = Calendar.SECOND * 1000;
-		long miliSec = Calendar.MILLISECOND;
-
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		// Date test = new Date();
+		// test.getTime();
+		// long timeInMiliSec = cal.getTime().getTime();
+		long hoursInMiliSec = cal.get(Calendar.HOUR_OF_DAY) * 60 * 60 * 1000;
+		long minsInMiliSec = cal.get(Calendar.MINUTE) * 60 * 1000;
+		long secsInMiliSec = cal.get(Calendar.SECOND) * 1000;
+		long miliSec = cal.get(Calendar.MILLISECOND);
+		
 		long timeInMiliSec = hoursInMiliSec + minsInMiliSec + secsInMiliSec + miliSec;
 		
 		// Change the value for internal time
 		long start = course.getLecture().getStartInMilis();
 
-		if (start > timeInMiliSec) // if start is bigger then timeInMilisec, then the current time is at the day after the
-											// start, so add a full day to timeInMiliSec
-			timeInMiliSec += 24 * 60 * 60 * 1000;
+		// if (start > timeInMiliSec) // if start is bigger then timeInMilisec, then the current time is at the day after
+		// // the start, so add a full day to timeInMiliSec
+		// timeInMiliSec += 24 * 60 * 60 * 1000;
 		long virtualSystemTime = timeInMiliSec - start;
-		logger.debug("Start: " + start + "; Time: " + timeInMiliSec);
+		logger.debug("Start: " + start + "; Time: " + timeInMiliSec + "; Diff: " + virtualSystemTime);
 		return virtualSystemTime;
 	}
 	
