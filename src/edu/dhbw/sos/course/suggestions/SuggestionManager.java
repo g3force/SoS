@@ -187,102 +187,110 @@ public class SuggestionManager implements MouseListener {
 		float[][] range = new float[courseParams.size()][2];
 		float[] influence = new float[courseParams.size()];
 		range[0][0] = 0;
-		range[0][1] = 60;
+		range[0][1] = 30;
 		influence[0] = 30;
 		
-		range[1][0] = 0;
-		range[1][1] = 60;
-		influence[1] = 10;
+		range[1][0] = 40;
+		range[1][1] = 80;
+		influence[1] = -20;
 		
 		range[2][0] = 0;
-		range[2][1] = 50;
-		influence[2] = 10;
+		range[2][1] = 40;
+		influence[2] = 40;
 		
-		range[3][0] = 0;
-		range[3][1] = 100;
-		influence[3] = -20;
-		sugArray[0] = new Suggestion(range, "Bewerfen Sie Studenten mit Gegenständen", r.nextInt(5), influence,
+		range[3][0] = 10;
+		range[3][1] = 40;
+		influence[3] = 50;
+		sugArray[0] = new Suggestion(range, "Exercises", r.nextInt(5), influence,
 				courseParams);
 		
+		influence = new float[courseParams.size()];
+		range = new float[courseParams.size()][2];
 		range[0][0] = 0;
-		range[0][1] = 60;
-		influence[0] = 30;
+		range[0][1] = 20;
+		influence[0] = 60;
 		
 		range[1][0] = 0;
-		range[1][1] = 20;
-		influence[1] = 10;
-		
-		range[2][0] = 0;
-		range[2][1] = 100;
-		influence[2] = 60;
-		
-		range[3][0] = 0;
-		range[3][1] = 100;
-		influence[3] = 20;
-		sugArray[1] = new Suggestion(range, "Rufen Sie \"Klausur\"", r.nextInt(5), influence, courseParams);
-		
-		range[0][0] = 0;
-		range[0][1] = 100;
-		influence[0] = 40;
-		
-		range[1][0] = 0;
-		range[1][1] = 100;
-		influence[1] = -30;
+		range[1][1] = 40;
+		influence[1] = 60;
 		
 		range[2][0] = 0;
 		range[2][1] = 30;
-		influence[2] = 60;
-		
-		range[3][0] = 0;
-		range[3][1] = 100;
-		influence[3] = -20;
-		sugArray[2] = new Suggestion(range, "Fragen Sie einen unaufmerksamen Studenten", r.nextInt(5), influence,
-				courseParams);
-		
-		
-		range[0][0] = 0;
-		range[0][1] = 20;
-		influence[0] = 30;
-		
-		range[1][0] = 0;
-		range[1][1] = 20;
-		influence[1] = -10;
-		
-		range[2][0] = 0;
-		range[2][1] = 20;
-		influence[2] = 20;
+		influence[2] = 70;
 		
 		range[3][0] = 0;
 		range[3][1] = 20;
-		influence[3] = -20;
-		sugArray[3] = new Suggestion(range, "Schicken Sie die Studenten nach Hause", r.nextInt(5), influence,
+		influence[3] = 10;
+		sugArray[1] = new Suggestion(range, "Mention Exam", r.nextInt(5), influence, courseParams);
+		
+		influence = new float[courseParams.size()];
+		range = new float[courseParams.size()][2];
+		range[0][0] = 10;
+		range[0][1] = 60;
+		influence[0] = 40;
+		
+		range[1][0] = 30;
+		range[1][1] = 70;
+		influence[1] = 20;
+		
+		range[2][0] = 10;
+		range[2][1] = 50;
+		influence[2] = 30;
+		
+		range[3][0] = 20;
+		range[3][1] = 50;
+		influence[3] = 15;
+		sugArray[2] = new Suggestion(range, "Ask Question", r.nextInt(5), influence,
 				courseParams);
 		
+		influence = new float[courseParams.size()];
+		range = new float[courseParams.size()][2];
 		range[0][0] = 0;
-		range[0][1] = 30;
-		influence[0] = 100;
+		range[0][1] = 100;
+		influence[0] = 0;
 		
 		range[1][0] = 0;
-		range[1][1] = 100;
-		influence[1] = -10;
+		range[1][1] = 30;
+		influence[1] = 65;
 		
 		range[2][0] = 0;
-		range[2][1] = 30;
-		influence[2] = 20;
+		range[2][1] = 80;
+		influence[2] = 0;
 		
 		range[3][0] = 0;
 		range[3][1] = 100;
 		influence[3] = 0;
-		sugArray[4] = new Suggestion(range, "Holen Sie den Studenten Kaffee", r.nextInt(5), influence, courseParams);
+		sugArray[3] = new Suggestion(range, "Ask for Silence", r.nextInt(5), influence,
+				courseParams);
 		
-
+		influence = new float[courseParams.size()];
+		range = new float[courseParams.size()][2];
 		range[0][0] = 0;
-		range[0][1] = 100;
-		influence[0] = -10;
+		range[0][1] = 20;
+		influence[0] = 80;
+		
+		range[1][0] = 0;
+		range[1][1] = 10;
+		influence[1] = 80;
+		
+		range[2][0] = 0;
+		range[2][1] = 20;
+		influence[2] = 50;
+		
+		range[3][0] = 0;
+		range[3][1] = 10;
+		influence[3] = 80;
+		sugArray[4] = new Suggestion(range, "Break", r.nextInt(5), influence, courseParams);
+		
+		influence = new float[courseParams.size()];
+		range = new float[courseParams.size()][2];
+		range[0][0] = 3;
+		range[0][1] = 50;
+		influence[0] = 15;
 		
 		range[1][0] = 0;
 		range[1][1] = 100;
-		influence[1] = 10;
+		influence[1] = 0;
 		
 		range[2][0] = 0;
 		range[2][1] = 30;
@@ -290,8 +298,8 @@ public class SuggestionManager implements MouseListener {
 		
 		range[3][0] = 0;
 		range[3][1] = 100;
-		influence[3] = 40;
-		sugArray[5] = new Suggestion(range, "Zwingen Sie die Studenten die Laptops zu zuklappen", r.nextInt(5),
+		influence[3] = 0;
+		sugArray[5] = new Suggestion(range, "Switch Media", r.nextInt(5),
 				influence, courseParams);
 
 
