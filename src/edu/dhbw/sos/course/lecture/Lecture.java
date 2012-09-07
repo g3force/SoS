@@ -64,10 +64,10 @@ public class Lecture {
 	private void setStartInMilis() {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(start);
-		long hoursInMiliSec = Calendar.HOUR_OF_DAY * 60 * 60 * 1000;
-		long minsInMiliSec = Calendar.MINUTE * 60 * 1000;
-		long secsInMiliSec = Calendar.SECOND * 1000;
-		long miliSec = Calendar.MILLISECOND;
+		long hoursInMiliSec = cal.get(Calendar.HOUR_OF_DAY) * 60 * 60 * 1000;
+		long minsInMiliSec = cal.get(Calendar.MINUTE) * 60 * 1000;
+		long secsInMiliSec = cal.get(Calendar.SECOND) * 1000;
+		long miliSec = cal.get(Calendar.MILLISECOND);
 		
 		timeInMiliSec = hoursInMiliSec + minsInMiliSec + secsInMiliSec + miliSec;
 	}
