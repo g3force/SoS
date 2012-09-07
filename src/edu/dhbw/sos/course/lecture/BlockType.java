@@ -138,7 +138,6 @@ public enum BlockType {
 	
 	/**
 	 * @return the type to compare with EInfluence type
-	 *         TODO Dirk bei Beschwerden bitte an mich wenden ;)
 	 * @author dirk
 	 */
 	public EInfluenceType getEInfluenceType() {
